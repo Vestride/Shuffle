@@ -129,9 +129,9 @@
             <section>
                 <h2>Options</h2>
                 
-                <p>Settings you can change</p>
                 <div>
-                    <pre rel="HTML" class="prettyprint">
+                    <p>Settings you can change</p>
+                    <pre rel="JavaScript" class="prettyprint">
 <code>
 var options = {
     'itemWidth' : 230, // Width of the grid item
@@ -140,13 +140,20 @@ var options = {
 };
 </code>
                     </pre>
+                    
+                    <p>Change the length of the transition by changing the "0.8s" (lines 14-18 in <a href="css/shuffle.css">shuffle.css</a>)</p>
+                    <pre rel="CSS" class="prettyprint">
+<code>
+transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+</code>
+                    </pre>
                 </div>
             
             <section>
                 <h2>Usage</h2>
                 
-                <p>The html structure. The only real important thing here is the 'data-key' attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
                 <div>
+                    <p>The html structure. The only real important thing here is the 'data-key' attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
                     <pre rel="HTML" class="prettyprint">
 <code>
 &lt;div id=&quot;grid&quot;&gt;
@@ -283,6 +290,16 @@ $(document).ready(function(){
                 
                 <p>
                     Browsers that don't support CSS transitions and transforms <strong>*cough*</strong> IE &lt;= 9 <strong>*cough*</strong> will see a less cool, javascript based version of the effect.
+                </p>
+            </section>
+                
+            <section>
+                <h2>Links</h2>
+                
+                <p>
+                    <a href="https://github.com/Vestride/Shuffle">Github Repo</a><br />
+                    <a href="http://isotope.metafizzy.co/">Inspired by Isotope</a><br />
+                    <a href="http://glencheney.com">Me</a>
                 </p>
             </section>
             
