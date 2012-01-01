@@ -200,7 +200,7 @@ $(document).ready(function(){
         $this.addClass('active');
 
         // Filter elements
-        $grid.shuffle({key : $this.attr('data-key')});
+        $grid.shuffle('shuffle', $this.attr('data-key'));
     });
 
     // instantiate the plugin
@@ -331,7 +331,7 @@ $(document).ready(function(){
                     $this.addClass('active');
 
                     // Filter elements
-                    $grid.shuffle({key : $this.attr('data-key')});
+                    $grid.shuffle('shuffle', $this.attr('data-key'));
                 });
                 
                 // instantiate the plugin
