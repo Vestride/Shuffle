@@ -12,10 +12,8 @@
  * Inspired by Isotope http://isotope.metafizzy.co/
  * Copyright (c) 2011 Glen Cheney cheney [dot] glen [at] gmail [dot] com http://glencheney.com
  * @author Glen Cheney
- * @version 1.1
- * @date 10/31/11
- * 
- * TODO custom events!
+ * @version 1.2
+ * @date 12/31/11
  * 
  */
 (function($) {
