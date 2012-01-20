@@ -1,4 +1,4 @@
-# jQuery Shuffle Plugin
+# [jQuery Shuffle Plugin] (http://vestride.github.com/Shuffle)
 
 ## Features
 
@@ -7,6 +7,7 @@
 * Items can have multiple categories
 
 ## How to Use
+
 ```js
 var options = {
     'itemWidth' : 230, // Width of the grid item
@@ -18,6 +19,7 @@ $('#grid').shuffle(options);
 
 ### The HTML
 The html structure. The only real important thing here is the 'data-key' attribute. It has to be a [valid JSON](http://jsonlint.com/) array of strings.
+
 ```html
 <div id="grid">
     <div class="item" data-key='["photography"]'>
@@ -49,6 +51,7 @@ The html structure. The only real important thing here is the 'data-key' attribu
 
 ## How to "Shuffle"
 Say you have this markup
+
 ```html
 <ul class="filter-options">
     <li class="active" data-key="all">Most Recent</li>
@@ -89,6 +92,7 @@ $(document).ready(function(){
 
 ## The CSS
 This is all that's in `shuffle.css`.
+
 ```css
 #grid {
     position: relative;
