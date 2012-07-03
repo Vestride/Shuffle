@@ -209,9 +209,6 @@ header p {margin-top: 0;}
 \*=============================================*/
 
 #grid .item {
-    float: left;
-    margin: 0 20px 20px 0;
-    width: 230px;
     background-color: #2D2D2D;
 }
 

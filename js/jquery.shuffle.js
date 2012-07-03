@@ -1,58 +1,87 @@
 // IMPORTANT!
 // If you're already using Modernizr, delete it from this file. If you don't know what Modernizr is, leave it :)
 
-/* Modernizr 2.0.6 (Custom Build) | MIT & BSD
- * Build: http://www.modernizr.com/download/#-csstransforms-csstransforms3d-csstransitions-cssclasses-teststyles-testprop-testallprops-prefixes-domprefixes
+/* Modernizr 2.5.3 (Custom Build) | MIT & BSD
+ * Build: http://modernizr.com/download/#-csstransforms-csstransforms3d-csstransitions-cssclasses-prefixed-teststyles-testprop-testallprops-prefixes-domprefixes
  */
-;window.Modernizr=function(a,b,c){function C(a,b){var c=a.charAt(0).toUpperCase()+a.substr(1),d=(a+" "+o.join(c+" ")+c).split(" ");return B(d,b)}function B(a,b){for(var d in a)if(k[a[d]]!==c)return b=="pfx"?a[d]:!0;return!1}function A(a,b){return!!~(""+a).indexOf(b)}function z(a,b){return typeof a===b}function y(a,b){return x(n.join(a+";")+(b||""))}function x(a){k.cssText=a}var d="2.0.6",e={},f=!0,g=b.documentElement,h=b.head||b.getElementsByTagName("head")[0],i="modernizr",j=b.createElement(i),k=j.style,l,m=Object.prototype.toString,n=" -webkit- -moz- -o- -ms- -khtml- ".split(" "),o="Webkit Moz O ms Khtml".split(" "),p={},q={},r={},s=[],t=function(a,c,d,e){var f,h,j,k=b.createElement("div");if(parseInt(d,10))while(d--)j=b.createElement("div"),j.id=e?e[d]:i+(d+1),k.appendChild(j);f=["&shy;","<style>",a,"</style>"].join(""),k.id=i,k.innerHTML+=f,g.appendChild(k),h=c(k,a),k.parentNode.removeChild(k);return!!h},u,v={}.hasOwnProperty,w;!z(v,c)&&!z(v.call,c)?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],c)};var D=function(a,c){var d=a.join(""),f=c.length;t(d,function(a,c){var d=b.styleSheets[b.styleSheets.length-1],g=d.cssRules&&d.cssRules[0]?d.cssRules[0].cssText:d.cssText||"",h=a.childNodes,i={};while(f--)i[h[f].id]=h[f];e.csstransforms3d=i.csstransforms3d.offsetLeft===9},f,c)}([,["@media (",n.join("transform-3d),("),i,")","{#csstransforms3d{left:9px;position:absolute}}"].join("")],[,"csstransforms3d"]);p.csstransforms=function(){return!!B(["transformProperty","WebkitTransform","MozTransform","OTransform","msTransform"])},p.csstransforms3d=function(){var a=!!B(["perspectiveProperty","WebkitPerspective","MozPerspective","OPerspective","msPerspective"]);a&&"webkitPerspective"in g.style&&(a=e.csstransforms3d);return a},p.csstransitions=function(){return C("transitionProperty")};for(var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));x(""),j=l=null,e._version=d,e._prefixes=n,e._domPrefixes=o,e.testProp=function(a){return B([a])},e.testAllProps=C,e.testStyles=t,g.className=g.className.replace(/\bno-js\b/,"")+(f?" js "+s.join(" "):"");return e}(this,this.document);
+;window.Modernizr=function(a,b,c){function z(a){j.cssText=a}function A(a,b){return z(m.join(a+";")+(b||""))}function B(a,b){return typeof a===b}function C(a,b){return!!~(""+a).indexOf(b)}function D(a,b){for(var d in a)if(j[a[d]]!==c)return b=="pfx"?a[d]:!0;return!1}function E(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:B(f,"function")?f.bind(d||b):f}return!1}function F(a,b,c){var d=a.charAt(0).toUpperCase()+a.substr(1),e=(a+" "+o.join(d+" ")+d).split(" ");return B(b,"string")||B(b,"undefined")?D(e,b):(e=(a+" "+p.join(d+" ")+d).split(" "),E(e,b,c))}var d="2.5.3",e={},f=!0,g=b.documentElement,h="modernizr",i=b.createElement(h),j=i.style,k,l={}.toString,m=" -webkit- -moz- -o- -ms- ".split(" "),n="Webkit Moz O ms",o=n.split(" "),p=n.toLowerCase().split(" "),q={},r={},s={},t=[],u=t.slice,v,w=function(a,c,d,e){var f,i,j,k=b.createElement("div"),l=b.body,m=l?l:b.createElement("body");if(parseInt(d,10))while(d--)j=b.createElement("div"),j.id=e?e[d]:h+(d+1),k.appendChild(j);return f=["&#173;","<style>",a,"</style>"].join(""),k.id=h,(l?k:m).innerHTML+=f,m.appendChild(k),l||(m.style.background="",g.appendChild(m)),i=c(k,a),l?k.parentNode.removeChild(k):m.parentNode.removeChild(m),!!i},x={}.hasOwnProperty,y;!B(x,"undefined")&&!B(x.call,"undefined")?y=function(a,b){return x.call(a,b)}:y=function(a,b){return b in a&&B(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=u.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(u.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(u.call(arguments)))};return e});var G=function(a,c){var d=a.join(""),f=c.length;w(d,function(a,c){var d=b.styleSheets[b.styleSheets.length-1],g=d?d.cssRules&&d.cssRules[0]?d.cssRules[0].cssText:d.cssText||"":"",h=a.childNodes,i={};while(f--)i[h[f].id]=h[f];e.csstransforms3d=(i.csstransforms3d&&i.csstransforms3d.offsetLeft)===9&&i.csstransforms3d.offsetHeight===3},f,c)}([,["@media (",m.join("transform-3d),("),h,")","{#csstransforms3d{left:9px;position:absolute;height:3px;}}"].join("")],[,"csstransforms3d"]);q.csstransforms=function(){return!!F("transform")},q.csstransforms3d=function(){var a=!!F("perspective");return a&&"webkitPerspective"in g.style&&(a=e.csstransforms3d),a},q.csstransitions=function(){return F("transition")};for(var H in q)y(q,H)&&(v=H.toLowerCase(),e[v]=q[H](),t.push((e[v]?"":"no-")+v));return z(""),i=k=null,e._version=d,e._prefixes=m,e._domPrefixes=p,e._cssomPrefixes=o,e.testProp=function(a){return D([a])},e.testAllProps=F,e.testStyles=w,e.prefixed=function(a,b,c){return b?F(a,b,c):F(a,"pfx")},g.className=g.className.replace(/(^|\s)no-js(\s|$)/,"$1$2")+(f?" js "+t.join(" "):""),e}(this,this.document);
 
 /**
  * jQuery Shuffle Plugin
  * Uses CSS Transforms to filter down a grid of items (degrades to jQuery's animate).
  * Inspired by Isotope http://isotope.metafizzy.co/
- * Copyright (c) 2011 Glen Cheney cheney [dot] glen [at] gmail [dot] com http://glencheney.com
- * @author Glen Cheney
- * @version 1.2
- * @date 12/31/11
+ * Use it for whatever you want!
+ * @author Glen Cheney (http://glencheney.com)
+ * @version 1.3
+ * @date 7/3/12
  * 
  */
 (function($) {
-    var methods = {
+    var supported = Modernizr.csstransforms || Modernizr.csstransitions,
+        methods = {
         
         init : function(options) {
             var settings = {
-                'itemWidth' : 230,
-                'margins' : 20,
-                'key' : 'all'
+                itemWidth : 230,
+                marginTop : 20,
+                marginRight: 20,
+                key : 'all',
+                speed : 800,
+                easing : 'ease-out'
             };
             
             if (options) {
                 $.extend(settings, options);
             }
+
+            settings.itemCss = {
+                position: 'absolute',
+                opacity: 1, // Everything after this is for jQuery fallback
+                top: 0,
+                left: 0,
+                marginTop: settings.marginTop,
+                marginRight: settings.marginRight,
+                float: 'left'
+            };
             
             return this.each(function() {
                 var $this = $(this),
                     $items = $this.children(),
                     itemsPerRow = Math.floor($this.width() / settings.itemWidth),
-                    numRows = 2,
                     itemHeight = $items.first().outerHeight(),
-                    data;
+                    data,
+                    transition = Modernizr.prefixed('transition'),
+                    transform = methods.getPrefixed('transform');
+
+                // Set up css for transitions
+                $this.css('position', 'relative').get(0).style[transition] = 'height ' + settings.speed + 'ms ' + settings.easing;
+                $items.each(function(index) {
+                    var defaults = settings.itemCss;
+                    
+                    // Set CSS transition for transforms and opacity
+                    if (supported) {
+                        this.style[transition] = transform + ' ' + settings.speed + 'ms ' + settings.easing + ', opacity ' + settings.speed + 'ms ' + settings.easing;
+                    }
+                    
+                    // Set the margin-right to zero for the last item in the row
+                    if ((index + 1) % itemsPerRow === 0)
+                        defaults.marginRight = 0;
+
+                    $(this).css(settings.itemCss);
+                });
 
                 data = {
-                    '$items' : $items,
-                    'itemsPerRow' : itemsPerRow,
-                    'numRows' : numRows,
-                    'itemHeight' : itemHeight,
-                    'itemWidth' : settings.itemWidth,
-                    'margins' : settings.margins
+                    $items : $items,
+                    itemsPerRow : itemsPerRow,
+                    itemHeight : itemHeight,
+                    itemWidth : settings.itemWidth,
+                    marginTop : settings.marginTop,
+                    marginRight : settings.marginRight,
+                    settings : settings
                 };
 
+                // Save our settings for recall
                 $this.data('shuffle', data);
-
-                // Disabled CSS Animations if we're going to use jQuery to animate
-                if (!Modernizr.csstransforms || !Modernizr.csstransitions) {
-                    methods.setPrefixedCss($items, 'transition', 'none');
-                }
                 
                 // Do it
                 methods.shuffle.call(this, 'all');
@@ -87,6 +116,7 @@
                 });
             }
             
+            // How many filtered elements?
             numElements = data.$items.not('.concealed').addClass('filtered').length;
 
             // Shrink each concealed item
@@ -96,7 +126,7 @@
             methods.filter.call(this);
             
             // Adjust the height of the grid
-            gridHeight = (Math.ceil(numElements / data.itemsPerRow) * (data.itemHeight + data.margins)) - data.margins;
+            gridHeight = (Math.ceil(numElements / data.itemsPerRow) * (data.itemHeight + data.marginTop)) - data.marginTop;
             $this.css('height', gridHeight + 'px');
         },
         
@@ -135,11 +165,11 @@
             $filtered.each(function(index) {
                 var $this = $(this),
                     data = $this.parent().data('shuffle'),
-                    x = (index % data.itemsPerRow) * (data.itemWidth + data.margins),
+                    x = (index % data.itemsPerRow) * (data.itemWidth + data.marginRight),
                     row = Math.floor(index / data.itemsPerRow)
 
-                if (index % data.itemsPerRow == 0) {
-                    y = row * (data.itemHeight + data.margins);
+                if (index % data.itemsPerRow === 0) {
+                    y = row * (data.itemHeight + data.marginTop);
                 }
 
                 // Save data for shrink
@@ -160,14 +190,17 @@
         },
         
         /**
-         * Uses Modernizr's testAllProps (aka prefixed()) to get the correct
-         * vendor property name and sets it using jQuery .css()
+         * Uses Modernizr's prefixed() to get the correct vendor property name and sets it using jQuery .css()
          * @param {jq} $el the jquery object to set the css on
          * @param {string} prop the property to set (e.g. 'transition')
          * @param {string} value the value of the prop
          */
         setPrefixedCss : function($el, prop, value) {
-            $el.css(Modernizr.testAllProps(prop, 'pfx'), value);
+            $el.css(Modernizr.prefixed(prop), value);
+        },
+
+        getPrefixed : function(prop) {
+            return Modernizr.prefixed(prop).replace(/([A-Z])/g, function(str,m1){ return '-' + m1.toLowerCase(); }).replace(/^ms-/,'-ms-');
         },
         
         /**
@@ -187,7 +220,7 @@
         transition: function(opts) {
             var transform;
             // Use CSS Transforms if we have them
-            if (Modernizr.csstransforms && Modernizr.csstransitions) {
+            if (supported) {
                 if (Modernizr.csstransforms3d) {
                     transform = 'translate3d(' + opts.x + 'px, ' + opts.y + 'px, 0px) scale3d(' + opts.scale + ', ' + opts.scale + ', ' + opts.scale + ')';
                 } else {
@@ -195,6 +228,7 @@
                 }
 
                 // Update css to trigger CSS Animation
+                opts.$this.css('opacity' , opts.opacity);
                 methods.setPrefixedCss(opts.$this, 'transform', transform);
             } else {
                 // Use jQuery to animate left/top

@@ -5,11 +5,9 @@
         <title>Shuffle</title>
         
         <link rel="stylesheet" href="css/style.css" />
-        <link rel="stylesheet" href="css/shuffle.css" />
         <link rel="stylesheet" href="css/prettify.css" />
         <link href='http://fonts.googleapis.com/css?family=Poly:400,400italic' rel='stylesheet' type='text/css' />
-        <!--<link href='http://fonts.googleapis.com/css?family=Poly:400,400italic|Open+Sans:400italic,600italic,400,700,300,800' rel='stylesheet' type='text/css'>
-        <script src="http://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.0.6-development-only.js"></script>-->
+        <!--<link href='http://fonts.googleapis.com/css?family=Poly:400,400italic|Open+Sans:400italic,600italic,400,700,300,800' rel='stylesheet' type='text/css'>-->
     </head>
     <body>
         <div id="main">
@@ -22,7 +20,6 @@
                 <h2>Downloads</h2>
                 <a href="js/jquery.shuffle.js">jquery.shuffle.js</a>
                 <a href="js/jquery.shuffle.min.js">jquery.shuffle.min.js</a>
-                <a href="css/shuffle.css">shuffle.css</a>
             </section>
             
             
@@ -130,23 +127,21 @@
                 <h2>Options</h2>
                 
                 <div>
-                    <p>Settings you can change</p>
+                    <p>Settings you can change (these are the defaults)</p>
                     <pre rel="JavaScript" class="prettyprint">
 <code>
 var options = {
-    'itemWidth' : 230, // Width of the grid item
-    'margins' : 20, // right and bottom margins
-    'key' : 'all' // Which category to show
+    itemWidth : 230, // Width of the grid item
+    marginTop : 20, // Top margin
+    marginRight: 20, // Right margin
+    key : 'all' // Which category to show
+    speed : 800, // Speed of the transition (in milliseconds). 800 = .8 seconds
+    easing : 'ease-out' // css easing function to use
 };
 </code>
                     </pre>
                     
-                    <p>Change the length of the transition by changing the "0.8s" (lines 14-18 in <a href="css/shuffle.css">shuffle.css</a>)</p>
-                    <pre rel="CSS" class="prettyprint">
-<code>
-transition: transform 0.8s ease-out, opacity 0.8s ease-out;
-</code>
-                    </pre>
+                    <p>The easing function is one of <code>default</code>, <code>linear</code>, <code>ease-in</code>, <code>ease-out</code>, <code>ease-in-out</code>, or <code>cubic-bezier</code>.</p>
                 </div>
             
             <section>
@@ -191,7 +186,7 @@ transition: transform 0.8s ease-out, opacity 0.8s ease-out;
 $(document).ready(function(){
 
     // Set up button clicks
-    $('.filter-options li').click(function() {
+    $('.filter-options li').on('click', function() {
         var $this = $(this),
             $grid = $('#grid');
 
@@ -206,55 +201,16 @@ $(document).ready(function(){
     // instantiate the plugin
     $('#grid').shuffle({
         itemWidth : 230,
-        margins : 20
+        marginTop : 20,
+        marginRight: 20,
+        key : 'all',
+        speed : 800,
+        easing : 'ease-out'
     });
 });
 </code>
                     </pre>
                     
-                    
-                    <p>This is the shuffle.css file</p>
-                    <pre rel="CSS" class="prettyprint">
-<code>
-#grid {
-    position: relative;
-
-     -moz-transition: height 0.8s ease-out;
-       -o-transition: height 0.8s ease-out;
-  -webkit-transition: height 0.8s ease-out;
-      -ms-transition: height 0.8s ease-out;
-          transition: height 0.8s ease-out;
-}
-
-#grid .item {
-    position: relative;
-
-     -moz-transition: -moz-transform 0.8s ease-out, opacity 0.8s ease-out;
-       -o-transition: -o-transform 0.8s ease-out, opacity 0.8s ease-out;
-  -webkit-transition: -webkit-transform 0.8s ease-out, opacity 0.8s ease-out;
-      -ms-transition: -ms-transform 0.8s ease-out, opacity 0.8s ease-out;
-          transition: transform 0.8s ease-out, opacity 0.8s ease-out;
-}
-
-#grid .item.filtered {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 1;
-}
-
-#grid .item.concealed {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-}
-
-#grid .item:nth-child(4n) {
-    margin-right: 0;
-}
-</code>
-                    </pre>
                     
                 </div>
             </section>
@@ -303,13 +259,14 @@ $(document).ready(function(){
                 </p>
             </section>
             
-            <!--
+            
             <section>
                 <h2>Changes</h2>
-                
+                <ul>
+                    <li>7.3.12 - Removed dependency on the css file and now apply the css with javascript</li>
+                </ul>
                 
             </section>
-            -->
         </div>
 
         
@@ -322,7 +279,7 @@ $(document).ready(function(){
                 prettyPrint();
                 
                 // Set up button clicks
-                $('.filter-options li').click(function() {
+                $('.filter-options li').on('click', function() {
                     var $this = $(this),
                         $grid = $('#grid');
 
@@ -337,7 +294,11 @@ $(document).ready(function(){
                 // instantiate the plugin
                 $('#grid').shuffle({
                     itemWidth : 230,
-                    margins : 20
+                    marginTop : 20,
+                    marginRight: 20,
+                    key : 'all',
+                    speed : 800,
+                    easing : 'ease-out'
                 });
             });
         </script>
