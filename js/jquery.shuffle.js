@@ -14,13 +14,16 @@
  * @author Glen Cheney (http://glencheney.com)
  * @version 1.3
  * @date 7/3/12
- * 
  */
-(function($) {
+;(function($, Modernizr) {
+    "use strict";
+
     var supported = Modernizr.csstransforms || Modernizr.csstransitions,
         methods = {
         
         init : function(options) {
+
+            // Customizable options
             var settings = {
                 itemWidth : 230,
                 marginTop : 20,
@@ -64,8 +67,9 @@
                     }
                     
                     // Set the margin-right to zero for the last item in the row
-                    if ((index + 1) % itemsPerRow === 0)
+                    if ((index + 1) % itemsPerRow === 0) {
                         defaults.marginRight = 0;
+                    }
 
                     $(this).css(settings.itemCss);
                 });
@@ -88,6 +92,9 @@
             });
         },
         
+        /**
+         * The magic. This is what makes the plugin 'shuffle'
+         */
         shuffle : function(category) {
             var $this = $(this),
                 data = $this.data('shuffle'),
@@ -103,7 +110,7 @@
             if (!category) category = 'all';
 
             // Hide/show appropriate items
-            if (category == 'all') {
+            if (category === 'all') {
                 data.$items.removeClass('concealed');
             } else {
                 data.$items.removeClass('concealed filtered').each(function() {
@@ -131,6 +138,9 @@
         },
         
         
+        /**
+         * Hides the elements that don't match our filter
+         */
         shrink : function() {
             var $concealed = $(this).find('.concealed');
             if ($concealed.length === 0) {
@@ -138,8 +148,8 @@
             }
             $concealed.each(function() {
                 var $this = $(this),
-                    x = parseInt($this.attr('data-x')),
-                    y = parseInt($this.attr('data-y')),
+                    x = parseInt($this.attr('data-x'), 10),
+                    y = parseInt($this.attr('data-y'), 10),
                     data = $this.parent().data('shuffle');
 
                 if (!x) x = 0;
@@ -159,6 +169,11 @@
             });
         },
 
+
+        /**
+         * Loops through each item that should be shown
+         * Calculates the x and y position and then tranitions it
+         */
         filter : function() {
             var y = 0, $filtered = $(this).find('.filtered');
             
@@ -166,7 +181,7 @@
                 var $this = $(this),
                     data = $this.parent().data('shuffle'),
                     x = (index % data.itemsPerRow) * (data.itemWidth + data.marginRight),
-                    row = Math.floor(index / data.itemsPerRow)
+                    row = Math.floor(index / data.itemsPerRow);
 
                 if (index % data.itemsPerRow === 0) {
                     y = row * (data.itemHeight + data.marginTop);
@@ -199,6 +214,11 @@
             $el.css(Modernizr.prefixed(prop), value);
         },
 
+        /**
+         * Returns things like -webkit-transition or -moz-box-sizing
+         * @param {string} property to be prefixed.
+         * @return {string} the prefixed css property
+         */
         getPrefixed : function(prop) {
             return Modernizr.prefixed(prop).replace(/([A-Z])/g, function(str,m1){ return '-' + m1.toLowerCase(); }).replace(/^ms-/,'-ms-');
         },
@@ -243,6 +263,7 @@
         }
     };
         
+    // Plugin definition
     $.fn.shuffle = function(method) {
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
@@ -253,4 +274,4 @@
             return false;
         }
     };
-})(jQuery);
+})(jQuery, Modernizr);
