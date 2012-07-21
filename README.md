@@ -84,7 +84,7 @@ $(document).ready(function(){
         $this.addClass('active');
 
         // Filter elements
-        $grid.shuffle('shuffle', $this.attr('data-key'));
+        $grid.shuffle($this.attr('data-key'));
     });
 
     // instantiate the plugin
@@ -98,6 +98,7 @@ $(document).ready(function(){
     });
 });
 ```
+Events that get triggered: `shrink.shuffle`, `shrunk.shuffle`, `filter.shuffle`, and `filtered.shuffle`.
 
 ## Dependencies
 
@@ -119,6 +120,7 @@ _Browsers that don't support CSS transitions and transforms *cough* IE <= 9 *cou
 
 ## Changes
 
+* 7.21.12 - Rewrote plugin in more object oriented structure. Added custom events. Updated to Modernizr 2.6.1.
 * 7.3.12 - Removed dependency on the css file and now apply the css with javascript. Updated Modernizr to 2.5.3.
 
 ## Links
