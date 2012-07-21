@@ -69,7 +69,7 @@ Say you have this markup
     <li data-key="motion">Motion Graphics</li>
 </ul>
 ```
-And when you click on a li, you want the plugin to shuffle (you need to call the 'shuffle' method). Here's an example:
+And when you click on a li, you want the plugin to shuffle. Here's an example:
 
 ```js
 $(document).ready(function(){
