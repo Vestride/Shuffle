@@ -7,7 +7,6 @@
         <link rel="stylesheet" href="css/style.css" />
         <link rel="stylesheet" href="css/prettify.css" />
         <link href='http://fonts.googleapis.com/css?family=Poly:400,400italic' rel='stylesheet' type='text/css' />
-        <!--<link href='http://fonts.googleapis.com/css?family=Poly:400,400italic|Open+Sans:400italic,600italic,400,700,300,800' rel='stylesheet' type='text/css'>-->
     </head>
     <body>
         <div id="main">
@@ -195,7 +194,7 @@ $(document).ready(function(){
         $this.addClass('active');
 
         // Filter elements
-        $grid.shuffle('shuffle', $this.attr('data-key'));
+        $grid.shuffle($this.attr('data-key'));
     });
 
     // instantiate the plugin
@@ -211,7 +210,7 @@ $(document).ready(function(){
 </code>
                     </pre>
                     
-                    
+                    <p>Events that get triggered: <code>shrink.shuffle</code>, <code>shrunk.shuffle</code>, <code>filter.shuffle</code>, and <code>filtered.shuffle</code>.</p>
                 </div>
             </section>
             
@@ -263,6 +262,7 @@ $(document).ready(function(){
             <section>
                 <h2>Changes</h2>
                 <ul>
+                    <li>7.21.12 - Rewrote plugin in more object oriented structure. Added custom events. Updated to Modernizr 2.6.1</li>
                     <li>7.3.12 - Removed dependency on the css file and now apply the css with javascript</li>
                 </ul>
                 
@@ -275,8 +275,11 @@ $(document).ready(function(){
         <script defer src="js/prettify.js"></script>
         
         <script>
-            $(document).ready(function(){
+            $(document).ready(function() {
+
+                // Make code pretty
                 prettyPrint();
+
                 
                 // Set up button clicks
                 $('.filter-options li').on('click', function() {
@@ -288,7 +291,7 @@ $(document).ready(function(){
                     $this.addClass('active');
 
                     // Filter elements
-                    $grid.shuffle('shuffle', $this.attr('data-key'));
+                    $grid.shuffle($this.attr('data-key'));
                 });
                 
                 // instantiate the plugin
@@ -300,6 +303,13 @@ $(document).ready(function(){
                     speed : 800,
                     easing : 'ease-out'
                 });
+
+
+                // You can subscribe to custom events: shrink, shrunk, filter, and filtered
+                // $('#grid').on('shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle', function(evt, shuffle) {
+                    
+                // });
+
             });
         </script>
         
