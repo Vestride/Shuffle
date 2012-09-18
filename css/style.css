@@ -306,7 +306,7 @@ header p {margin-top: 0;}
 .rfloat { float: right; }
 
 
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 860px) {
     header h1 {
         font-size: 150px;
     }
