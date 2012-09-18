@@ -13,7 +13,7 @@
  * Use it for whatever you want!
  * @author Glen Cheney (http://glencheney.com)
  * @version 1.5
- * @date 9/17/12
+ * @date 9/18/12
  */
 ;(function($, Modernizr) {
     'use strict';
