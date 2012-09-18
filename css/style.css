@@ -1,4 +1,13 @@
 /*=============================================*\
+ $Shuffle grabs these values
+\*=============================================*/
+#grid .item {
+    width: 230px;
+    margin-top: 20px;
+    margin-right: 20px;
+}
+
+/*=============================================*\
  $Structure
 \*=============================================*/
 
@@ -9,7 +18,7 @@ body {
     font-family: 'Poly', serif;
 }
 
-#main {
+.container-main {
     width: 1000px;
     margin: 0 auto;
 }
@@ -28,6 +37,11 @@ h1 {
     margin: 0 0 20px;
     text-shadow: 0 1px #000;
     color: #0aaacb;
+
+    -webkit-transition: all 0.2s ease-out;
+       -moz-transition: all 0.2s ease-out;
+         -o-transition: all 0.2s ease-out;
+            transition: all 0.2s ease-out;
 }
 
 h2 {
@@ -44,36 +58,27 @@ section {
     margin: 40px 0;
 }
 
-p {
-    font-style: italic;
-}
-
 a {
     color: #0AAAC8;
     text-decoration: none;
     
+  -webkit-transition: all 0.2s ease-out;
      -moz-transition: all 0.2s ease-out;
        -o-transition: all 0.2s ease-out;
-  -webkit-transition: all 0.2s ease-out;
-      -ms-transition: all 0.2s ease-out;
           transition: all 0.2s ease-out;
 }
 a:visited { color: #0AAAC8;}
 a:hover { color: #F0F0F0; text-decoration: underline; }
 a:focus { outline: thin dotted; }
 
-pre[rel] {
-    padding-top: 20px;
-    position: relative;
-}
-
-pre[rel]::after {
+pre[rel]::before {
     content: attr(rel);
-    font-family: 'Poly', serif;
-    position: absolute;
-    left: 0;
-    top: 0;
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bolder;
     font-size: 16px;
+    font-family: 'Poly', serif;
+    text-decoration: underline;
     color: #0AAAC8;
 }
 
@@ -144,28 +149,40 @@ header p {margin-top: 0;}
     box-sizing: border-box;
 }
 
-.filter-options {
+.filter .label {
+    margin: 3px 5px 0 15px;
+}
+
+.filter .label:first-child {
+    margin-left: 0;
+}
+
+.control-group {
+    margin: 0;
     padding: 0;
-    display: inline;
     list-style: none;
 }
 
-.filter-options li {
+.control-group + .control-group {
+    margin-left: 40px;
+}
+
+.control-group li {
     display: block;
     position: relative;
     margin: 0;
     color: #F0F0F0;
     float: left;
-    padding: 5px 15px;
+    padding: 5px;
     border: 1px solid #454545;
-    
+    font-size: 12px;
     
     background-color: #333333;
     background-image: -webkit-linear-gradient(top, #333333, #242424); 
     background-image:    -moz-linear-gradient(top, #333333, #242424); 
     background-image:     -ms-linear-gradient(top, #333333, #242424); 
     background-image:      -o-linear-gradient(top, #333333, #242424); 
-    background-image:         linear-gradient(top, #333333, #242424);
+    background-image:         linear-gradient(to bottom, #333333, #242424);
             filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#242424'); 
    
     
@@ -178,22 +195,32 @@ header p {margin-top: 0;}
 
 }
 
-.filter-options li:first-child {
+.control-group li:first-child {
     border-radius: 5px 0 0 5px;
 }
 
-.filter-options li:last-child {
+.control-group li:last-child {
     border-radius: 0 5px 5px 0;
 }
 
-.filter-options li:hover,
-.filter-options li.active {
+.control-group li:hover,
+.control-group li.active {
     cursor: pointer;
     color: #0AAAC8;
     border-color: #0AAAC8;
 }
 
-.filter-options li:hover::before {
+.control-group .active {
+    background-color: #242424;
+    background-image: -webkit-linear-gradient(top, #242424, #333333); 
+    background-image:    -moz-linear-gradient(top, #242424, #333333); 
+    background-image:     -ms-linear-gradient(top, #242424, #333333); 
+    background-image:      -o-linear-gradient(top, #242424, #333333); 
+    background-image:         linear-gradient(to bottom, #242424, #333333);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#242424', EndColorStr='#333333'); 
+}
+
+.control-group li:hover::before {
     content: '';
     position: absolute;
     left: 0;
@@ -217,8 +244,112 @@ header p {margin-top: 0;}
     padding: 14px 20px;
 }
 
+#grid .item:before {
+    content: 'Date: ' attr(data-date-created);
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-shadow:
+        1px 0 rgba(0, 0, 0, .75),
+        0 1px rgba(0, 0, 0, .75),
+        0 -1px rgba(0, 0, 0, .75),
+        -1px 0 rgba(0, 0, 0, .75);
+}
 
 /* Contain floats: h5bp.com/q */ 
 .clearfix:before, .clearfix:after { content: ""; display: table; }
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
+.lfloat { float: left; }
+.rfloat { float: right; }
+
+
+@media only screen and (max-width: 767px) {
+    header h1 {
+        font-size: 150px;
+    }
+
+    .container {
+        width: auto;
+        margin: auto;
+    }
+
+    .container-main {
+        padding: 15px;
+    }
+
+    .downloads a {
+        display: block;
+        margin: 0;
+    }
+    
+    .filter .label {
+        float: none;
+        margin: 10px 0 0 0;
+    }
+
+    .filter .label:first-child {
+        margin: 0;
+    }
+
+    .control-group,
+    .control-group li {
+        float: none;
+        margin: 0;
+        display: block;
+    }
+
+    .control-group li {
+        font-size: initial;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    
+    .control-group + .control-group {
+        margin: 10px 0;
+    }
+
+    .control-group li:first-child {
+        border-radius: 5px 5px 0 0;
+    }
+
+    .control-group li:last-child {
+        border-radius: 0 0 5px 5px;
+    }
+}
+
+/* 2 widths + 1 margin - 1px + padding-left + padding-right */
+@media only screen and (max-width: 509px) {
+    #grid .item {
+        width: 100%;
+    }
+
+    #grid .item img {
+        text-align: center;
+        width: 100%;
+        height: auto;
+    }
+
+    #grid .item:before {
+        bottom: 14px;
+        top: auto;
+        right: 20px;
+        content: attr(data-date-created);
+    }
+
+    #grid .item-details {
+        text-align: left;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    header h1 {
+        font-size: 100px;
+    }
+}
+
+@media only screen and (max-width: 320px) {
+    header h1 {
+        font-size: 60px;
+    }
+}

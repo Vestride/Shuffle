@@ -3,13 +3,15 @@
     <head>
         <meta charset="utf-8" />
         <title>Shuffle</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         
+        <link rel="stylesheet" href="css/prism.css" />
         <link rel="stylesheet" href="css/style.css" />
-        <link rel="stylesheet" href="css/prettify.css" />
         <link href='http://fonts.googleapis.com/css?family=Poly:400,400italic' rel='stylesheet' type='text/css' />
     </head>
     <body>
-        <div id="main">
+        <div class="container container-main">
             <header>
                 <h1>Shuffle</h1>
                 <p>Shuffle and categorize a grid of items</p>
@@ -26,85 +28,92 @@
                 <h2>Example</h2>
                 
                 <div class="filter clearfix">
-                    <ul class="filter-options">
-                        <li class="active" data-key="all">Most Recent</li>
-                        <li data-key="wallpaper">Wallpapers</li>
-                        <li data-key="graphics">Graphic Design</li>
-                        <li data-key="photography">Photography</li>
-                        <li data-key="3d">3D Renders</li>
-                        <li data-key="motion">Motion Graphics</li>
+                    <p class="lfloat label">Filter:</p>
+                    <ul class="filter-options control-group lfloat">
+                        <li data-group="all" class="active">Most Recent</li>
+                        <li data-group="wallpaper">Wallpapers</li>
+                        <li data-group="graphics">Graphic Design</li>
+                        <li data-group="photography">Photography</li>
+                        <li data-group="3d">3D Renders</li>
+                    </ul>
+
+                    <p class="lfloat label">Sort:</p>
+                    <ul class="sort-options control-group lfloat">
+                        <li data-sort class="active">Default</li>
+                        <li data-sort="title">Title</li>
+                        <li data-sort="date-created">Date Created</li>
                     </ul>
                 </div>
 
                 <div id="grid" class="clearfix">
-                    <div class="item" data-key='["photography"]'>
+                    <div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball">
                         <img src="img/baseball.png" alt="" height="145" width="230" />
                         <div class="item-details">
                             <a href="img/originals/baseball.jpg">Photography</a>
                         </div>
                     </div>
-                    <div class="item" data-key='["wallpaper", "3d"]'>
-                        <img src="img/tennis-ball.png" alt="" height="145" width="230"  />
+                    <div class="item" data-groups='["wallpaper", "3d"]' data-date-created="2011-08-14" data-title="Tennis">
+                        <img src="img/tennis-ball.png" alt="" height="145" width="230" />
                         <div class="item-details">
                             <a href="#">3D Render, Wallpaper</a>
                         </div>
                     </div>
-                    <div class="item" data-key='["3d", "wallpaper"]'>
-                        <img src="img/imac.png" alt="" height="145" width="230"  />
+                    <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2009-05-27" data-title="iMac">
+                        <img src="img/imac.png" alt="" height="145" width="230" />
                         <div class="item-details">
                             <a href="#">3D Render, Wallpaper</a>
                         </div>
                     </div>
-                    <div class="item" data-key='["graphics"]'>
-                        <img src="img/master-chief.png" alt="" height="145" width="230"  />
+                    <div class="item" data-groups='["graphics"]' data-date-created="2012-05-14" data-title="Master Chief">
+                        <img src="img/master-chief.png" alt="" height="145" width="230" />
                         <div class="item-details">
                             <a href="#">Graphic Design</a>
                         </div>
                     </div>
-                    <div class="item" data-key='["3d", "wallpaper"]'>
-                        <img src="img/es-blue.png" alt="" height="145" width="230"  />
+                    <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Eightfold">
+                        <img src="img/es-blue.png" alt="" height="145" width="230" />
                         <div class="item-details">
                             <a href="#">3D Render, Wallpaper</a>
                         </div>
                     </div>
-                    <div class="item" data-key='["photography"]'>
-                        <img src="img/pumpkin.png" alt="" height="145" width="230"  />
+                    <div class="item" data-groups='["photography"]' data-date-created="2012-03-14" data-title="Pumpkin">
+                        <img src="img/pumpkin.png" alt="" height="145" width="230" />
                         <div class="item-details">
                             <a href="#">Photography</a>
                         </div>
                     </div>
-                    <div class="item" data-key='["3d", "wallpaper"]'>
-                        <img src="img/vestride-red.png" alt="" height="145" width="230"  />
+                    <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Vestride">
+                        <img src="img/vestride-red.png" alt="" height="145" width="230" />
                         <div class="item-details">
                             <a href="#">3D Render, Wallpaper</a>
                         </div>
                     </div>
-                    <div class="item" data-key='["motion"]'>
-                        <img src="img/newegg.png" alt="" height="145" width="230"  />
+                    <div class="item" data-groups='["graphics"]' data-date-created="2012-01-12" data-title="Newegg">
+                        <img src="img/newegg.png" alt="" height="145" width="230" />
                         <div class="item-details">
                             <a href="#">Motion Graphics</a>
                         </div>
                     </div>
-                    <div class="item" data-key='["wallpaper"]'>
-                        <img src="img/eightfoldarc.png" alt="" height="145" width="230"  />
+                    <div class="item" data-groups='["wallpaper"]' data-date-created="2012-01-14" data-title="Arc">
+                        <img src="img/eightfoldarc.png" alt="" height="145" width="230" />
                         <div class="item-details">
                             <a href="#">Wallpaper</a>
                         </div>
                     </div>
-                    <div class="item" data-key='["photography"]'>
-                        <img src="img/ground.png" alt="" height="145" width="230" />
+                    <div class="item" data-groups='["photography"]' data-date-created="2011-01-14" data-title="Ground">
+                        <img src="img/ground.png" alt="" height="145" width="230"/>
                         <div class="item-details">
                             <a href="img/originals/baseball.jpg">Photography</a>
                         </div>
                     </div>
-                    <div class="item" data-key='["wallpaper"]'>
-                        <img src="img/grassy-hills.png" alt="" height="145" width="230"  />
+                    <div class="item" data-groups='["wallpaper"]' data-date-created="2011-12-14" data-title="Grass">
+                        <img src="img/grassy-hills.png" alt="" height="145" width="230" />
                         <div class="item-details">
                             <a href="#">Wallpaper</a>
                         </div>
                     </div>
-                    <div class="item" data-key='["3d", "wallpaper"]'>
-                        <img src="img/vestride-classy.png" alt="" height="145" width="230"  />
+                    <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-04-14" data-title="Vestride">
+                        <img src="img/vestride-classy.png" alt="" height="145" width="230" />
                         <div class="item-details">
                             <a href="#">3D Render, Wallpaper</a>
                         </div>
@@ -127,12 +136,9 @@
                 
                 <div>
                     <p>Settings you can change (these are the defaults)</p>
-                    <pre rel="JavaScript" class="prettyprint">
-<code>
+                    <pre rel="JavaScript">
+<code class="language-javascript">
 var options = {
-    itemWidth : 230, // Width of the grid item
-    marginTop : 20, // Top margin
-    marginRight: 20, // Right margin
     key : 'all' // Which category to show
     speed : 800, // Speed of the transition (in milliseconds). 800 = .8 seconds
     easing : 'ease-out' // css easing function to use
@@ -140,48 +146,59 @@ var options = {
 </code>
                     </pre>
                     
-                    <p>The easing function is one of <code>default</code>, <code>linear</code>, <code>ease-in</code>, <code>ease-out</code>, <code>ease-in-out</code>, or <code>cubic-bezier</code>.</p>
+                    <p>The easing function is one of <code>'default'</code>, <code>'linear'</code>, <code>'ease-in'</code>, <code>'ease-out'</code>, <code>'ease-in-out'</code>, or <code>'cubic-bezier'</code>.</p>
                 </div>
             
             <section>
                 <h2>Usage</h2>
                 
                 <div>
-                    <p>The html structure. The only real important thing here is the 'data-key' attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
-                    <pre rel="HTML" class="prettyprint">
-<code>
-&lt;div id=&quot;grid&quot;&gt;
-    &lt;div class=&quot;item&quot; data-key='[&quot;photography&quot;]'&gt;
-        &lt;img src=&quot;img/baseball.png&quot; alt=&quot;&quot; height=&quot;145&quot; width=&quot;230&quot; /&gt;
-        &lt;div class=&quot;item-details&quot;&gt;
-            &lt;a href=&quot;img/originals/baseball.jpg&quot;&gt;Photography&lt;/a&gt;
+                    <p>The html structure. The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
+                    <pre rel="HTML">
+<code class="language-markup">
+&lt;div id="grid"&gt;
+    &lt;div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball"&gt;
+        &lt;img src="img/baseball.png" /&gt;
+        &lt;div class="item-details"&gt;
+            &lt;a href="#"&gt;Photography&lt;/a&gt;
         &lt;/div&gt;
     &lt;/div&gt;
-    &lt;div class=&quot;item&quot; data-key='[&quot;wallpaper&quot;, &quot;3d&quot;]'&gt;
-        &lt;img src=&quot;img/tennis-ball.png&quot; alt=&quot;&quot; height=&quot;145&quot; width=&quot;230&quot;  /&gt;
-        &lt;div class=&quot;item-details&quot;&gt;
-            &lt;a href=&quot;#&quot;&gt;3D Render, Wallpaper&lt;/a&gt;
+    &lt;div class="item" data-groups='["wallpaper", "3d"]' data-date-created="2011-08-14" data-title="Tennis"&gt;
+        &lt;img src="img/tennis-ball.png" /&gt;
+        &lt;div class="item-details"&gt;
+            &lt;a href="#"&gt;3D Render, Wallpaper&lt;/a&gt;
         &lt;/div&gt;
     &lt;/div&gt;
-    &lt;div class=&quot;item&quot; data-key='[&quot;3d&quot;, &quot;wallpaper&quot;]'&gt;
-        &lt;img src=&quot;img/imac.png&quot; alt=&quot;&quot; height=&quot;145&quot; width=&quot;230&quot;  /&gt;
-        &lt;div class=&quot;item-details&quot;&gt;
-            &lt;a href=&quot;#&quot;&gt;3D Render, Wallpaper&lt;/a&gt;
+    &lt;div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2009-05-27" data-title="iMac"&gt;
+        &lt;img src="img/imac.png" /&gt;
+        &lt;div class="item-details"&gt;
+            &lt;a href="#"&gt;3D Render, Wallpaper&lt;/a&gt;
         &lt;/div&gt;
     &lt;/div&gt;
-    &lt;div class=&quot;item&quot; data-key='[&quot;graphics&quot;]'&gt;
-        &lt;img src=&quot;img/master-chief.png&quot; alt=&quot;&quot; height=&quot;145&quot; width=&quot;230&quot;  /&gt;
-        &lt;div class=&quot;item-details&quot;&gt;
-            &lt;a href=&quot;#&quot;&gt;Graphic Design&lt;/a&gt;
+    &lt;div class="item" data-groups='["graphics"]' data-date-created="2012-05-14" data-title="Master Chief"&gt;
+        &lt;img src="img/master-chief.png" /&gt;
+        &lt;div class="item-details"&gt;
+            &lt;a href="#"&gt;Graphic Design&lt;/a&gt;
         &lt;/div&gt;
     &lt;/div&gt;
 &lt;/div&gt;
 </code>
                     </pre>
+
+                    <p>Shuffle takes the width, margin-top, and marigin-right from the <code class="language-css token selector">.item</code>.</p>
+                    <pre rel="CSS">
+<code class="language-css">
+#grid .item {
+    width: 230px;
+    margin-top: 20px;
+    margin-right: 20px;
+}
+</code>
+                    </pre>
                     
                     <p>Sets up the button clicks and runs shuffle</p>
-                    <pre rel="jQuery" class="prettyprint">
-<code>
+                    <pre rel="jQuery">
+<code class="language-javascript">
 $(document).ready(function(){
 
     // Set up button clicks
@@ -194,14 +211,11 @@ $(document).ready(function(){
         $this.addClass('active');
 
         // Filter elements
-        $grid.shuffle($this.attr('data-key'));
+        $grid.shuffle($this.data('group'));
     });
 
     // instantiate the plugin
     $('#grid').shuffle({
-        itemWidth : 230,
-        marginTop : 20,
-        marginRight: 20,
         key : 'all',
         speed : 800,
         easing : 'ease-out'
@@ -210,8 +224,63 @@ $(document).ready(function(){
 </code>
                     </pre>
                     
-                    <p>Events that get triggered: <code>shrink.shuffle</code>, <code>shrunk.shuffle</code>, <code>filter.shuffle</code>, and <code>filtered.shuffle</code>.</p>
+                    <p>These events will be triggered at their respective times: <code>'shrink.shuffle'</code>, <code>'shrunk.shuffle'</code>, <code>'filter.shuffle'</code>, <code>'filtered.shuffle'</code>, and <code>'sorted.shuffle'</code>.</p>
                 </div>
+            </section>
+
+            <section>
+                <h2>Sorting</h2>
+                
+                <p>You can order the elements based off a function you supply. In the example above, each item has a <code>data-date-created</code> and <code>data-title</code> attribute. The filter buttons have a data-sort attribute with the value of the item&rsquo;s attribute. Then, with some JavaScript, we can get the correct attribute and provide a function to sort by.</p>
+
+                <pre rel="HTML">
+<code class="language-markup">
+&lt;li data-sort="title"&gt;Title&lt;/li&gt;
+</code>
+                </pre>
+
+                <pre rel="HTML">
+<code class="language-markup">
+&lt;div class="item" data-title="Baseball"&gt;&hellip;&lt;/div&gt;
+</code>
+                </pre>
+                <pre rel="JavaScript">
+<code class="language-javascript">
+// Sorting options
+$('.sort-options li').on('click', function() {
+    var $this = $(this),
+        $grid = $('#grid'),
+        sort = $this.data('sort'),
+        opts = {};
+
+    // Hide current label, show current label in title
+    $('.sort-options .active').removeClass('active');
+    $this.addClass('active');
+
+    // We're given the element wrapped in jQuery
+    if (sort === 'date-created') {
+        opts = {
+            by: function($el) {
+                return $el.data('date-created');
+            }
+        }
+    } else if (sort === 'title') {
+        opts = {
+            by: function($el) {
+                return $el.data('title').toLowerCase();
+            }
+        }
+    }
+
+
+    // Filter elements
+    $grid.shuffle('sort', opts);
+});
+</code>
+                </pre>
+
+                <p>The <code>opts</code> parameter can contain two properties. <code>reverse</code>, a boolean which will reverse the array. <code>by</code> is a function that is passed the element wrapped in jQuery. In the case above, we&rsquo;re returning the value of the data-date-created or data-title attributes.</p>
+                <p>Calling sort with an empty object will reset the elements to DOM order.</p>
             </section>
             
             
@@ -220,7 +289,6 @@ $(document).ready(function(){
                 
                 <ul>
                     <li><a target="_blank" href="http://jquery.com">jQuery</a></li>
-                    
                     <li><a target="_blank" href="http://modernizr.com">Modernizr</a>
                     <ul>
                         <li>A custom Modernizr build has been included with the plugin.</li>
@@ -262,6 +330,7 @@ $(document).ready(function(){
             <section>
                 <h2>Changes</h2>
                 <ul>
+                    <li>9.17.12 - Added sorting ability and made plugin responsive. Updated to Modernizr 2.6.2</li>
                     <li>7.21.12 - Rewrote plugin in more object oriented structure. Added custom events. Updated to Modernizr 2.6.1</li>
                     <li>7.3.12 - Removed dependency on the css file and now apply the css with javascript</li>
                 </ul>
@@ -270,16 +339,11 @@ $(document).ready(function(){
         </div>
 
         
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
         <script defer src="js/jquery.shuffle.js"></script>
-        <script defer src="js/prettify.js"></script>
-        
+        <script defer src="js/prism.js"></script>
         <script>
             $(document).ready(function() {
-
-                // Make code pretty
-                prettyPrint();
-
                 
                 // Set up button clicks
                 $('.filter-options li').on('click', function() {
@@ -291,27 +355,53 @@ $(document).ready(function(){
                     $this.addClass('active');
 
                     // Filter elements
-                    $grid.shuffle($this.attr('data-key'));
+                    $grid.shuffle($this.data('group'));
+                });
+
+                // Sorting options
+                $('.sort-options li').on('click', function() {
+                    var $this = $(this),
+                        $grid = $('#grid'),
+                        sort = $this.data('sort'),
+                        opts = {};
+
+                    // Hide current label, show current label in title
+                    $('.sort-options .active').removeClass('active');
+                    $this.addClass('active');
+
+                    // We're given the element wrapped in jQuery
+                    if (sort === 'date-created') {
+                        opts = {
+                            by: function($el) {
+                                return $el.data('date-created');
+                            }
+                        }
+                    } else if (sort === 'title') {
+                        opts = {
+                            by: function($el) {
+                                return $el.data('title').toLowerCase();
+                            }
+                        }
+                    }
+
+                    // Filter elements
+                    $grid.shuffle('sort', opts);
                 });
                 
                 // instantiate the plugin
                 $('#grid').shuffle({
-                    itemWidth : 230,
-                    marginTop : 20,
-                    marginRight: 20,
                     key : 'all',
                     speed : 800,
                     easing : 'ease-out'
                 });
 
 
-                // You can subscribe to custom events: shrink, shrunk, filter, and filtered
-                // $('#grid').on('shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle', function(evt, shuffle) {
-                    
-                // });
+                // You can subscribe to custom events: shrink, shrunk, filter, filtered, and sorted
+                $('#grid').on('shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle sorted.shuffle', function(evt, shuffle) {
+                    console.log(evt.type);
+                });
 
             });
         </script>
-        
     </body>
 </html>
