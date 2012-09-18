@@ -94,12 +94,22 @@
             this.style.marginRight = 0;
         });
         
+        // http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer
+        self.windowHeight = $(window).height();
+        self.windowWidth = $(window).width();
         $(window).on('resize.shuffle', function () {
-            self.resized();
+            var height = $(window).height(),
+                width = $(window).width();
+
+            if (width !== self.windowWidth || height !== self.windowHeight) {
+                self.resized();
+                self.windowHeight = height;
+                self.windowWidth = width;
+            }
         });
 
         // Do it
-        self.shuffle(self.key);
+        self.shuffle(self.group);
     };
 
     Shuffle.prototype = {
@@ -112,7 +122,9 @@
         shuffle : function(category) {
             var self = this;
 
-            if (!category) category = 'all';
+            if (!category) {
+                category = 'all';
+            }
 
             // Default is to show all items
             self.$items.removeClass('concealed filtered');
@@ -121,29 +133,34 @@
             // whether to hide it or not.
             if ($.isFunction(category)) {
                 self.$items.each(function() {
-                    var $item = $(this),
-                        keep = category($item, self);
-
-                    $item.addClass(keep ? 'filtered' : 'concealed');
+                    var $item = $(this);
+                    $item.addClass(category($item, self) ? 'filtered' : 'concealed');
                 });
             }
 
             // Otherwise we've been passed a category to filter by
-            else if (category !== 'all') {
-                self.currentGroup = category;
-                self.$items.each(function() {
-                    var keys = $(this).data('groups');
-                    if ($.inArray(category, keys) === -1) {
-                        $(this).addClass('concealed');
-                        return;
-                    } else {
-                        $(this).addClass('filtered');
-                    }
-                });
+            else {
+                self.group = category;
+                if (category !== 'all') {
+                    self.$items.each(function() {
+                        var keys = $(this).data('groups');
+                        if ($.inArray(category, keys) === -1) {
+                            $(this).addClass('concealed');
+                            return;
+                        } else {
+                            $(this).addClass('filtered');
+                        }
+                    });
+                }
+
+                // category === all, add filtered class to everything
+                else {
+                    self.$items.addClass('filtered');
+                }
             }
             
             // How many filtered elements?
-            self.visibleItems = self.$items.not('.concealed').addClass('filtered').length;
+            self.visibleItems = self.$items.filter('.filtered').length;
 
             // Shrink each concealed item
             self.fire('shrink');
@@ -369,7 +386,7 @@
                 opts.$this.one(self.transitionEndName, complete);
             } else {
                 // Use jQuery to animate left/top
-                opts.$this.animate({
+                opts.$this.stop().animate({
                     left: opts.left,
                     top: opts.top,
                     opacity: opts.opacity,
@@ -384,12 +401,9 @@
          */
         resized: function() {
             var self = this;
-            self.itemWidth = self.$item.outerWidth();
-            self.itemHeight = self.$item.outerHeight();
+            self.itemWidth = self.$items.filter('.filtered').outerWidth();
+            self.itemHeight = self.$items.filter('.filtered').outerHeight();
             self.itemsPerRow = self.getItemsPerRow();
-            if (self.itemsPerRow > 4) {
-                console.log('wtf');
-            }
             self.filter();
             self.resizeContainer();
         },
@@ -410,7 +424,7 @@
 
             
     // Plugin definition
-    $.fn.shuffle = function(opts, key) {
+    $.fn.shuffle = function(opts, sortObj) {
         return this.each(function() {
             var $this = $(this),
                 shuffle = $this.data('shuffle');
@@ -427,14 +441,14 @@
                 
             // Key should be an object with propreties reversed and by.
             } else if (typeof opts === 'string' && opts === 'sort') {
-                shuffle.sort(key);
+                shuffle.sort(sortObj);
             }
         });
     };
 
     // Overrideable options
     $.fn.shuffle.options = {
-        key : 'all',
+        group : 'all',
         speed : 800,
         easing : 'ease-out',
         keepSorted: true

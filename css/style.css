@@ -280,8 +280,6 @@ header p {margin-top: 0;}
     content: ']';
 }
 
-
-
 #grid .item:before {
     content: 'Date: ' attr(data-date-created);
     position: absolute;
@@ -293,6 +291,12 @@ header p {margin-top: 0;}
         0 -1px rgba(0, 0, 0, .75),
         -1px 0 rgba(0, 0, 0, .75);
 }
+
+/* IE opacity fix */
+.lt-ie9 #grid .item.concealed:before {
+    content: none;
+}
+
 
 /* Contain floats: h5bp.com/q */ 
 .clearfix:before, .clearfix:after { content: ""; display: table; }
