@@ -1,10 +1,14 @@
 # [jQuery Shuffle Plugin](http://vestride.github.com/Shuffle)
+Categorize, sort, and filter a responsive grid of items
 
 ## Features
 
-* Uses CSS transitions!
-* Filter items by categories
-* Items can have multiple categories
+* Uses CSS Transitions!
+* Responsive
+* Filter items by groups
+* Items can have multiple groups
+* Sort elements
+* Advanced filtering method (like searching)
 
 ## How to Use
 
