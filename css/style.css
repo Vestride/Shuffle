@@ -186,12 +186,10 @@ header p {margin-top: 0;}
             filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#242424'); 
    
     
-  -webkit-transition: all 0.2s ease-out;  
-     -moz-transition: all 0.2s ease-out;  
-      -ms-transition: all 0.2s ease-out;  
-       -o-transition: all 0.2s ease-out;  
-          transition: all 0.2s ease-out;  
-
+    -webkit-transition: all 0.2s ease-out;
+       -moz-transition: all 0.2s ease-out;
+         -o-transition: all 0.2s ease-out;
+            transition: all 0.2s ease-out;
 
 }
 
@@ -230,6 +228,28 @@ header p {margin-top: 0;}
     background-color: rgba(10, 170, 200, .15);
 }
 
+.filter .search {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+    font-size: 16px;
+    margin-top: 0;
+    padding: 4px 0;
+    border-radius: 20px;
+    border: 1px solid gray;
+
+    -webkit-transition: all 0.2s ease-out;
+       -moz-transition: all 0.2s ease-out;
+         -o-transition: all 0.2s ease-out;
+            transition: all 0.2s ease-out;
+}
+
+.filter .search:focus {
+    border-color: rgba(82, 168, 236, 0.8);
+    outline: 0;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
 
 /*=============================================*\
  $Grid items
@@ -240,9 +260,27 @@ header p {margin-top: 0;}
 }
 
 #grid .item-details {
-    text-align: right;
-    padding: 14px 20px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+    padding: 14px;
 }
+
+#grid .item-details a {
+    margin-top: 2px;
+    font-size: 12px;
+    float: right;
+}
+
+#grid .item-details a:before {
+    content: '[';
+}
+
+#grid .item-details a:after {
+    content: ']';
+}
+
+
 
 #grid .item:before {
     content: 'Date: ' attr(data-date-created);
@@ -316,6 +354,11 @@ header p {margin-top: 0;}
     .control-group li:last-child {
         border-radius: 0 0 5px 5px;
     }
+
+    .filter .search {
+        display: block;
+        width: 100%;
+    }
 }
 
 /* 2 widths + 1 margin - 1px + padding-left + padding-right */
@@ -331,9 +374,8 @@ header p {margin-top: 0;}
     }
 
     #grid .item:before {
-        bottom: 14px;
-        top: auto;
-        right: 20px;
+        top: 14px;
+        right: 14px;
         content: attr(data-date-created);
     }
 

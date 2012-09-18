@@ -16,7 +16,7 @@
  * @date 9/17/12
  */
 ;(function($, Modernizr) {
-    "use strict";
+    'use strict';
 
 
     $.fn.sorted = function(options) {
@@ -81,7 +81,7 @@
 
         // Set up css for transitions
         self.$container.css('position', 'relative').get(0).style[self.transitionName] = 'height ' + self.speed + 'ms ' + self.easing;
-        self.$items.each(function(index) {
+        self.$items.each(function() {
             $(this).css(self.itemCss);
             
             // Set CSS transition for transforms and opacity
@@ -114,15 +114,30 @@
 
             if (!category) category = 'all';
 
-            // Hide/show appropriate items
-            if (category === 'all') {
-                self.$items.removeClass('concealed');
-            } else {
-                self.$items.removeClass('concealed filtered').each(function() {
+            // Default is to show all items
+            self.$items.removeClass('concealed filtered');
+
+            // Loop through each item and use provided function to determine
+            // whether to hide it or not.
+            if ($.isFunction(category)) {
+                self.$items.each(function() {
+                    var $item = $(this),
+                        keep = category($item, self);
+
+                    $item.addClass(keep ? 'filtered' : 'concealed');
+                });
+            }
+
+            // Otherwise we've been passed a category to filter by
+            else if (category !== 'all') {
+                self.currentGroup = category;
+                self.$items.each(function() {
                     var keys = $(this).data('groups');
                     if ($.inArray(category, keys) === -1) {
                         $(this).addClass('concealed');
                         return;
+                    } else {
+                        $(this).addClass('filtered');
                     }
                 });
             }
@@ -176,7 +191,7 @@
          */
         shrink : function() {
             var self = this,
-                $concealed = self.$container.find('.concealed');
+                $concealed = self.$items.filter('.concealed');
 
             // Abort if no items
             if ($concealed.length === 0) {
@@ -406,8 +421,8 @@
                 $this.data('shuffle', shuffle);
             }
 
-            // If passed a string, lets decide what to do with it
-            if (typeof opts === 'string' && opts !== 'sort') {
+            // If passed a string, lets decide what to do with it. Or they've provided a function to filter by
+            if ($.isFunction(opts) || (typeof opts === 'string' && opts !== 'sort')) {
                 shuffle.shuffle(opts);
                 
             // Key should be an object with propreties reversed and by.

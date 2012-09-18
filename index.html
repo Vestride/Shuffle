@@ -43,78 +43,92 @@
                         <li data-sort="title">Title</li>
                         <li data-sort="date-created">Date Created</li>
                     </ul>
+
+                    <input class="search label" type="search" placeholder="Search..." />
                 </div>
 
                 <div id="grid" class="clearfix">
                     <div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball">
                         <img src="img/baseball.png" alt="" height="145" width="230" />
                         <div class="item-details">
+                            <span class="title">Baseball</span>
                             <a href="img/originals/baseball.jpg">Photography</a>
                         </div>
                     </div>
                     <div class="item" data-groups='["wallpaper", "3d"]' data-date-created="2011-08-14" data-title="Tennis">
                         <img src="img/tennis-ball.png" alt="" height="145" width="230" />
                         <div class="item-details">
+                            <span class="title">Tennis</span>
                             <a href="#">3D Render, Wallpaper</a>
                         </div>
                     </div>
                     <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2009-05-27" data-title="iMac">
                         <img src="img/imac.png" alt="" height="145" width="230" />
                         <div class="item-details">
+                            <span class="title">iMac</span>
                             <a href="#">3D Render, Wallpaper</a>
                         </div>
                     </div>
                     <div class="item" data-groups='["graphics"]' data-date-created="2012-05-14" data-title="Master Chief">
                         <img src="img/master-chief.png" alt="" height="145" width="230" />
                         <div class="item-details">
+                            <span class="title">Master Chief</span>
                             <a href="#">Graphic Design</a>
                         </div>
                     </div>
                     <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Eightfold">
                         <img src="img/es-blue.png" alt="" height="145" width="230" />
                         <div class="item-details">
+                            <span class="title">Eightfold</span>
                             <a href="#">3D Render, Wallpaper</a>
                         </div>
                     </div>
                     <div class="item" data-groups='["photography"]' data-date-created="2012-03-14" data-title="Pumpkin">
                         <img src="img/pumpkin.png" alt="" height="145" width="230" />
                         <div class="item-details">
+                            <span class="title">Pumpkin</span>
                             <a href="#">Photography</a>
                         </div>
                     </div>
                     <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Vestride">
                         <img src="img/vestride-red.png" alt="" height="145" width="230" />
                         <div class="item-details">
+                            <span class="title">Vestride</span>
                             <a href="#">3D Render, Wallpaper</a>
                         </div>
                     </div>
                     <div class="item" data-groups='["graphics"]' data-date-created="2012-01-12" data-title="Newegg">
                         <img src="img/newegg.png" alt="" height="145" width="230" />
                         <div class="item-details">
+                            <span class="title">Newegg</span>
                             <a href="#">Motion Graphics</a>
                         </div>
                     </div>
                     <div class="item" data-groups='["wallpaper"]' data-date-created="2012-01-14" data-title="Arc">
                         <img src="img/eightfoldarc.png" alt="" height="145" width="230" />
                         <div class="item-details">
+                            <span class="title">Arc</span>
                             <a href="#">Wallpaper</a>
                         </div>
                     </div>
                     <div class="item" data-groups='["photography"]' data-date-created="2011-01-14" data-title="Ground">
                         <img src="img/ground.png" alt="" height="145" width="230"/>
                         <div class="item-details">
+                            <span class="title">Ground</span>
                             <a href="img/originals/baseball.jpg">Photography</a>
                         </div>
                     </div>
                     <div class="item" data-groups='["wallpaper"]' data-date-created="2011-12-14" data-title="Grass">
                         <img src="img/grassy-hills.png" alt="" height="145" width="230" />
                         <div class="item-details">
+                            <span class="title">Grass</span>
                             <a href="#">Wallpaper</a>
                         </div>
                     </div>
                     <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-04-14" data-title="Vestride">
                         <img src="img/vestride-classy.png" alt="" height="145" width="230" />
                         <div class="item-details">
+                            <span class="title">Vestride</span>
                             <a href="#">3D Render, Wallpaper</a>
                         </div>
                     </div>
@@ -386,6 +400,21 @@ $('.sort-options li').on('click', function() {
 
                     // Filter elements
                     $grid.shuffle('sort', opts);
+                });
+
+                // Advanced filtering
+                $('.filter .search').on('keyup change', function() {
+                    var val = this.value.toLowerCase();
+                    $('#grid').shuffle(function($el, shuffle) {
+
+                        // Only search elements in the current group
+                        if ($.inArray(shuffle.currentGroup, $el.data('groups')) === -1) {
+                            return false;
+                        }
+
+                        var text = $.trim($el.text()).toLowerCase();
+                        return text.indexOf(val) != -1;
+                    });
                 });
                 
                 // instantiate the plugin
