@@ -12,8 +12,8 @@
  * Inspired by Isotope http://isotope.metafizzy.co/
  * Use it for whatever you want!
  * @author Glen Cheney (http://glencheney.com)
- * @version 1.5
- * @date 9/18/12
+ * @version 1.5.1
+ * @date 9/20/12
  */
 ;(function($, Modernizr) {
     'use strict';
@@ -418,6 +418,14 @@
 
         sortEnd: function() {
             this.fire('sorted');
+        },
+
+        destroy: function() {
+            var self = this;
+
+            self.$container.removeAttr('style').removeData('shuffle');
+            $(window).off('.shuffle');
+            self.$items.removeAttr('style data-y data-x').removeClass('concealed filtered');
         }
 
     };
@@ -436,12 +444,18 @@
             }
 
             // If passed a string, lets decide what to do with it. Or they've provided a function to filter by
-            if ($.isFunction(opts) || (typeof opts === 'string' && opts !== 'sort')) {
+            if ($.isFunction(opts)) {
                 shuffle.shuffle(opts);
                 
             // Key should be an object with propreties reversed and by.
-            } else if (typeof opts === 'string' && opts === 'sort') {
-                shuffle.sort(sortObj);
+            } else if (typeof opts === 'string') {
+                if (opts === 'sort') {
+                    shuffle.sort(sortObj);
+                } else if (opts === 'destroy') {
+                    shuffle.destroy();
+                } else {
+                    shuffle.shuffle(opts);
+                }
             }
         });
     };
