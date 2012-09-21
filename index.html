@@ -390,17 +390,18 @@ $('.filter .search').on('keyup change', function() {
             <section>
                 <h2>Links</h2>
                 
-                <p>
-                    <a href="https://github.com/Vestride/Shuffle">Github Repo</a><br />
-                    <a href="http://isotope.metafizzy.co/">Inspired by Isotope</a><br />
-                    <a href="http://glencheney.com">Me</a>
-                </p>
+                <ul>
+                    <li><a href="https://github.com/Vestride/Shuffle">GitHub Repo</a></li>
+                    <li><a href="http://isotope.metafizzy.co/">Inspired by Isotope</a></li>
+                    <li><a href="http://glencheney.com">Me</a></li>
+                </ul>
             </section>
             
             
             <section>
                 <h2>Changes</h2>
                 <ul>
+                    <li>9.20.12 - Added <code>destroy</code> method</li>
                     <li>9.18.12 - Added sorting ability and made plugin responsive. Updated to Modernizr 2.6.2</li>
                     <li>7.21.12 - Rewrote plugin in more object oriented structure. Added custom events. Updated to Modernizr 2.6.1</li>
                     <li>7.3.12 - Removed dependency on the css file and now apply the css with javascript</li>
@@ -480,6 +481,9 @@ $('.filter .search').on('keyup change', function() {
                     speed : 800,
                     easing : 'ease-out'
                 });
+
+                // Destroy it! o_O
+                // $('#grid').shuffle('destroy');
 
 
                 // You can subscribe to custom events: shrink, shrunk, filter, filtered, and sorted
