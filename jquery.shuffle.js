@@ -12,8 +12,8 @@
  * Inspired by Isotope http://isotope.metafizzy.co/
  * Use it for whatever you want!
  * @author Glen Cheney (http://glencheney.com)
- * @version 1.5.1
- * @date 9/20/12
+ * @version 1.5.2
+ * @date 10/24/12
  */
 ;(function($, Modernizr) {
     'use strict';
@@ -53,11 +53,8 @@
         self.$container = $container;
         self.$items = self.$container.children();
         self.$item = self.$items.first();
-        self.itemWidth = self.$item.outerWidth();
-        self.itemHeight = self.$item.outerHeight();
         self.marginTop = parseInt(self.$item.css('marginTop'), 10);
         self.marginRight = parseInt(self.$item.css('marginRight'), 10);
-        self.itemsPerRow = self.getItemsPerRow();
         self.transitionName = self.prefixed('transition'),
         self.transform = self.getPrefixed('transform');
 
@@ -93,6 +90,11 @@
             this.style.marginTop = 0;
             this.style.marginRight = 0;
         });
+
+        // Get dimensions of the first item and items per row
+        self.itemWidth = self.$item.outerWidth();
+        self.itemHeight = self.$item.outerHeight();
+        self.itemsPerRow = self.getItemsPerRow();
         
         // http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer
         self.windowHeight = $(window).height();
@@ -108,8 +110,17 @@
             }
         });
 
-        // Do it
-        self.shuffle(self.group);
+        // If our calculated values are 0 (maybe images haven't loaded), wait until window load
+        if (self.itemWidth === 0 || self.itemHeight === 0) {
+            $(window).on('load.shuffle', function() {                
+                self.itemWidth = self.$item.outerWidth();
+                self.itemHeight = self.$item.outerHeight();
+                self.itemsPerRow = self.getItemsPerRow();
+                self.shuffle(self.group);
+            })
+        } else {
+            self.shuffle(self.group);
+        }
     };
 
     Shuffle.prototype = {

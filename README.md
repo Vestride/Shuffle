@@ -208,6 +208,7 @@ _Browsers that don't support CSS transitions and transforms *cough* IE <= 9 *cou
 
 ## Changes
 
+* 10.24.12 - Better handling of grid item dimensions. Added a minimal markup page.
 * 9.20.12 - Added `destroy` method.
 * 9.18.12 - Added sorting ability, made plugin responsive, added advanced filtering method. Updated to Modernizr 2.6.2.
 * 7.21.12 - Rewrote plugin in more object oriented structure. Added custom events. Updated to Modernizr 2.6.1.
