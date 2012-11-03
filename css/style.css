@@ -1,10 +1,25 @@
 /*=============================================*\
- $Shuffle grabs these values
+ $Some styles to show off masonry layout
 \*=============================================*/
-#grid .item {
+.item {
     width: 230px;
+    height: 200px;
+    overflow: hidden;
     margin-top: 20px;
     margin-right: 20px;
+}
+
+.item.w2 {
+    width: 480px;
+}
+
+.item.w2.h2 img {
+    width: 100%;
+    height: auto;
+}
+
+.item.h2 {
+    height: 420px;
 }
 
 /*=============================================*\
@@ -56,6 +71,10 @@ h3 {
 
 section {
     margin: 40px 0;
+}
+
+p strong {
+    color: #e6db74;
 }
 
 a {
@@ -266,6 +285,16 @@ header p {margin-top: 0;}
     padding: 14px;
 }
 
+#grid .item-details p {
+    white-space: normal;
+}
+
+#grid .item p.rfloat {
+    margin: 0;
+    padding: 5px;
+    width: 230px;
+}
+
 #grid .item-details a {
     margin-top: 2px;
     font-size: 12px;
@@ -290,6 +319,10 @@ header p {margin-top: 0;}
         0 1px rgba(0, 0, 0, .75),
         0 -1px rgba(0, 0, 0, .75),
         -1px 0 rgba(0, 0, 0, .75);
+}
+
+#grid .item.w2:not(.h2):before {
+    right: 250px;
 }
 
 /* IE opacity fix */
