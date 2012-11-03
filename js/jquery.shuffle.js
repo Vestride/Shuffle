@@ -12,8 +12,8 @@
  * Inspired by Isotope http://isotope.metafizzy.co/
  * Use it for whatever you want!
  * @author Glen Cheney (http://glencheney.com)
- * @version 1.5.2
- * @date 10/24/12
+ * @version 1.6
+ * @date 11/2/12
  */
 ;(function($, Modernizr) {
     'use strict';
@@ -52,11 +52,15 @@
 
         self.$container = $container;
         self.$items = self.$container.children();
-        self.$item = self.$items.first();
-        self.marginTop = parseInt(self.$item.css('marginTop'), 10);
-        self.marginRight = parseInt(self.$item.css('marginRight'), 10);
         self.transitionName = self.prefixed('transition'),
         self.transform = self.getPrefixed('transform');
+
+        // Get offset from container
+        self.offset = {
+            left: parseInt( ( self.$container.css('padding-left') || 0 ), 10 ),
+            top: parseInt( ( self.$container.css('padding-top') || 0 ), 10 )
+        };
+        self.isFluid = self.columnWidth && typeof self.columnWidth === 'function';
 
         // Get transitionend event name
         var transEndEventNames = {
@@ -85,16 +89,7 @@
             if (self.supported) {
                 this.style[self.transitionName] = self.transform + ' ' + self.speed + 'ms ' + self.easing + ', opacity ' + self.speed + 'ms ' + self.easing;
             }
-
-            // Remove margins, we don't need them anymore
-            this.style.marginTop = 0;
-            this.style.marginRight = 0;
         });
-
-        // Get dimensions of the first item and items per row
-        self.itemWidth = self.$item.outerWidth();
-        self.itemHeight = self.$item.outerHeight();
-        self.itemsPerRow = self.getItemsPerRow();
         
         // http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer
         self.windowHeight = $(window).height();
@@ -110,17 +105,9 @@
             }
         });
 
-        // If our calculated values are 0 (maybe images haven't loaded), wait until window load
-        if (self.itemWidth === 0 || self.itemHeight === 0) {
-            $(window).on('load.shuffle', function() {                
-                self.itemWidth = self.$item.outerWidth();
-                self.itemHeight = self.$item.outerHeight();
-                self.itemsPerRow = self.getItemsPerRow();
-                self.shuffle(self.group);
-            })
-        } else {
-            self.shuffle(self.group);
-        }
+        self._getColumns();
+        self._resetCols();
+        self.shuffle( self.group );
     };
 
     Shuffle.prototype = {
@@ -144,8 +131,9 @@
             // whether to hide it or not.
             if ($.isFunction(category)) {
                 self.$items.each(function() {
-                    var $item = $(this);
-                    $item.addClass(category($item, self) ? 'filtered' : 'concealed');
+                    var $item = $(this),
+                    passes = category.call($item[0], $item, self);
+                    $item.addClass(passes ? 'filtered' : 'concealed');
                 });
             }
 
@@ -164,14 +152,16 @@
                     });
                 }
 
-                // category === all, add filtered class to everything
+                // category === 'all', add filtered class to everything
                 else {
                     self.$items.addClass('filtered');
                 }
             }
             
             // How many filtered elements?
-            self.visibleItems = self.$items.filter('.filtered').length;
+            // self.visibleItems = self.$items.filter('.filtered').length;
+
+            self._resetCols();
 
             // Shrink each concealed item
             self.fire('shrink');
@@ -180,37 +170,49 @@
             // Update transforms on .filtered elements so they will animate to their new positions
             self.fire('filter');
             self.filter();
-
-            // Adjust the height of the container
-            self.resizeContainer();
         },
 
-        getItemsPerRow : function() {
+        // calculates number of columns
+        // i.e. this.colWidth = 200
+        _getColumns : function() {
             var self = this,
-                totalWidth = self.$container.width(),
-                num = Math.floor(totalWidth / self.itemWidth);
+                containerWidth = self.$container.width(),
+                gutter = typeof self.gutterWidth === 'function' ? self.gutterWidth( containerWidth ) :
+                    // Option explicitly set?
+                    self.gutterWidth || 0;
 
-            // Make sure the items will fit with margins too
-            if (num * (self.itemWidth + self.marginRight) - self.marginRight > totalWidth) {
-                num -= 1;
-            }
+            // console.log();
 
-            return num;
+            // use fluid columnWidth function if there
+            self.colWidth = self.isFluid ? self.columnWidth( containerWidth ) :
+                // if not, how about the explicitly set option?
+                self.columnWidth ||
+                // or use the size of the first item
+                self.$items.outerWidth(true) ||
+                // if there's no items, use size of container
+                containerWidth;
+
+            // console.log(self.colWidth, gutter, self.colWidth + gutter);
+            self.colWidth += gutter;
+
+
+            self.cols = Math.floor( ( containerWidth + gutter ) / self.colWidth );
+            self.cols = Math.max( self.cols, 1 );
         },
         
         /**
          * Adjust the height of the grid
          */
-        resizeContainer : function() {
+        setContainerSize : function() {
             var self = this,
-            gridHeight = (Math.ceil(self.visibleItems / self.itemsPerRow) * (self.itemHeight + self.marginTop)) - self.marginTop;
-            self.$container.css('height', gridHeight + 'px');
+            gridHeight = Math.max.apply( Math, self.colYs );
+            self.$container.css( 'height', gridHeight + 'px' );
         },
 
         /**
          * Fire events with .shuffle namespace
          */
-        fire : function(name) {
+        fire : function( name ) {
             this.$container.trigger(name + '.shuffle', [this]);
         },
         
@@ -229,8 +231,8 @@
             self.shrinkTransitionEnded = false;
             $concealed.each(function() {
                 var $this = $(this),
-                    x = parseInt($this.attr('data-x'), 10),
-                    y = parseInt($this.attr('data-y'), 10);
+                    x = parseInt($this.data('x'), 10),
+                    y = parseInt($this.data('y'), 10);
 
                 if (!x) x = 0;
                 if (!y) y = 0;
@@ -240,12 +242,12 @@
                     $this: $this,
                     x: x,
                     y: y,
-                    left: (x + (self.itemWidth / 2)) + 'px',
-                    top: (y + (self.itemHeight / 2)) + 'px',
+                    left: (x + ($this.outerWidth(true) / 2)) + 'px',
+                    top: (y + ($this.outerHeight(true) / 2)) + 'px',
                     scale : 0.001,
                     opacity: 0,
-                    height: '0px',
-                    width: '0px',
+                    height: 0,
+                    width: 0,
                     callback: self.shrinkEnd
                 });
             });
@@ -259,9 +261,8 @@
          *     Because jQuery collection are always ordered in DOM order, we can't pass a jq collection
          * @param {function} complete callback function
          */
-        layout: function(items, fn) {
-            var self = this,
-                y = 0;
+        layout: function( items, fn ) {
+            var self = this;
 
             // Abort if no items
             if (items.length === 0) {
@@ -271,30 +272,102 @@
             self.layoutTransitionEnded = false;
             $.each(items, function(index) {
                 var $this = $(items[index]),
-                    x = (index % self.itemsPerRow) * (self.itemWidth + self.marginRight),
-                    row = Math.floor(index / self.itemsPerRow);
+                //how many columns does this brick span
+                colSpan = Math.ceil( $this.outerWidth(true) / self.colWidth );
+                colSpan = Math.min( colSpan, self.cols );
 
-                if (index % self.itemsPerRow === 0) {
-                    y = row * (self.itemHeight + self.marginTop);
+                // console.log('colSpan: ', colSpan);
+
+                if ( colSpan === 1 ) {
+                  // if brick spans only one column, just like singleMode
+                  self._placeItem( $this, self.colYs, fn );
+                } else {
+                  // brick spans more than one column
+                  // how many different places could this brick fit horizontally
+                  var groupCount = self.cols + 1 - colSpan,
+                      groupY = [],
+                      groupColY,
+                      i;
+
+                  // for each group potential horizontal position
+                  for ( i = 0; i < groupCount; i++ ) {
+                    // make an array of colY values for that one group
+                    groupColY = self.colYs.slice( i, i + colSpan );
+                    // and get the max value of the array
+                    groupY[i] = Math.max.apply( Math, groupColY );
+                  }
+
+                  self._placeItem( $this, groupY, fn );
                 }
-
-                // Save data for shrink
-                $this.attr({'data-x' : x, 'data-y' : y});
-
-                self.transition({
-                    from: 'layout',
-                    $this: $this,
-                    x: x,
-                    y: y,
-                    left: x + 'px',
-                    top: y + 'px',
-                    scale : 1,
-                    opacity: 1,
-                    height: self.itemHeight + 'px',
-                    width: self.itemWidth + 'px',
-                    callback: fn
-                });
             });
+
+            // Adjust the height of the container
+            self.setContainerSize();
+        },
+
+        _resetCols : function() {
+            // reset columns
+            var i = this.cols;
+            this.colYs = [];
+            while (i--) {
+                this.colYs.push( 0 );
+            }
+        },
+
+        _reLayout : function( callback ) {
+            callback = callback || this.filterEnd;
+            this._resetCols();
+            // apply layout logic to all bricks
+            this.layout( this.$items.get(), callback );
+        },
+
+        // worker method that places brick in the columnSet with the the minY
+        _placeItem : function( $item, setY, callback ) {
+            // get the minimum Y value from the columns
+            var self = this,
+                minimumY = Math.min.apply( Math, setY ),
+                shortCol = 0;
+
+            // Find index of short column, the first from the left where this item will go
+            for (var i = 0, len = setY.length; i < len; i++) {
+                if ( setY[i] === minimumY ) {
+                    shortCol = i;
+                    break;
+                }
+            }
+
+            // console.log('shortCol: ', shortCol, 'minimumY: ', minimumY);
+
+            // Position the item
+            var x = self.colWidth * shortCol,
+            y = minimumY;
+            x = Math.round( x + self.offset.left );
+            y = Math.round( y + self.offset.top );
+
+            // Save data for shrink
+            $item.data( {x: x, y: y} );
+
+            // Apply setHeight to necessary columns
+            var setHeight = minimumY + $item.outerHeight(true),
+            setSpan = self.cols + 1 - len;
+            for ( i = 0; i < setSpan; i++ ) {
+                self.colYs[ shortCol + i ] = setHeight;
+            }
+
+            self.transition({
+                from: 'layout',
+                $this: $item,
+                x: x,
+                y: y,
+                left: x + 'px',
+                top: y + 'px',
+                scale : 1,
+                opacity: 1,
+                height: $item.outerHeight(true) + 'px',
+                width: $item.outerWidth(true) + 'px',
+                callback: callback
+            });
+
         },
 
         /**
@@ -320,6 +393,7 @@
         sort: function(opts, fromFilter) {
             var self = this,
                 items = self.$items.filter('.filtered').sorted(opts);
+            self._resetCols();
             self.layout(items, function() {
                 if (fromFilter) {
                     self.filterEnd();
@@ -370,7 +444,6 @@
         transition: function(opts) {
             var self = this,
             transform,
-
             // Only fire callback once per collection's transition
             complete = function() {
                 if (!self.layoutTransitionEnded && opts.from === 'layout') {
@@ -381,7 +454,6 @@
                     self.shrinkTransitionEnded = true;
                 }
             };
-
 
             // Use CSS Transforms if we have them
             if (self.supported) {
@@ -408,15 +480,12 @@
         },
 
         /**
-         * On window resize, recalculate the width, height, and items per row.
+         * Relayout everthing
          */
         resized: function() {
-            var self = this;
-            self.itemWidth = self.$items.filter('.filtered').outerWidth();
-            self.itemHeight = self.$items.filter('.filtered').outerHeight();
-            self.itemsPerRow = self.getItemsPerRow();
-            self.filter();
-            self.resizeContainer();
+            // get updated colCount
+            this._getColumns();
+            this._reLayout();
         },
 
         shrinkEnd: function() {
@@ -436,7 +505,14 @@
 
             self.$container.removeAttr('style').removeData('shuffle');
             $(window).off('.shuffle');
-            self.$items.removeAttr('style data-y data-x').removeClass('concealed filtered');
+            self.$items.removeAttr('style').removeClass('concealed filtered');
+        },
+
+        update: function() {
+            var self = this;
+
+            self.$items = self.$container.children();
+            self.resized();
         }
 
     };
@@ -464,6 +540,8 @@
                     shuffle.sort(sortObj);
                 } else if (opts === 'destroy') {
                     shuffle.destroy();
+                } else if (opts === 'update') {
+                    shuffle.update();
                 } else {
                     shuffle.shuffle(opts);
                 }
@@ -474,7 +552,7 @@
     // Overrideable options
     $.fn.shuffle.options = {
         group : 'all',
-        speed : 800,
+        speed : 600,
         easing : 'ease-out',
         keepSorted: true
     };

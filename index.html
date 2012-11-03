@@ -182,7 +182,7 @@
 <code class="language-javascript">
 var options = {
     group : 'all' // Which category to show
-    speed : 800, // Speed of the transition (in milliseconds). 800 = .8 seconds
+    speed : 600, // Speed of the transition (in milliseconds). 800 = .8 seconds
     easing : 'ease-out' // css easing function to use
 };
 </code>
@@ -227,16 +227,8 @@ var options = {
 </code>
                     </pre>
 
-                    <p>Shuffle takes the width, margin-top, and marigin-right from the <code class="language-css token selector">.item</code>.</p>
-                    <pre rel="CSS">
-<code class="language-css">
-#grid .item {
-    width: 230px;
-    margin-top: 20px;
-    margin-right: 20px;
-}
-</code>
-                    </pre>
+                    <p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong style="text-decoration:underline;">can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
+                    
                     
                     <p>Sets up the button clicks and runs shuffle</p>
                     <pre rel="jQuery">
@@ -257,11 +249,7 @@ $(document).ready(function(){
     });
 
     // instantiate the plugin
-    $('#grid').shuffle({
-        group : 'all',
-        speed : 800,
-        easing : 'ease-out'
-    });
+    $('#grid').shuffle();
 });
 </code>
                     </pre>
@@ -484,11 +472,7 @@ $('.filter .search').on('keyup change', function() {
                 });
                 
                 // instantiate the plugin
-                $('#grid').shuffle({
-                    group : 'all',
-                    speed : 800,
-                    easing : 'ease-out'
-                });
+                $('#grid').shuffle();
 
                 // Destroy it! o_O
                 // $('#grid').shuffle('destroy');
