@@ -180,10 +180,13 @@
                     <p>Settings you can change (these are the defaults)</p>
                     <pre rel="JavaScript">
 <code class="language-javascript">
-var options = {
-    group : 'all' // Which category to show
-    speed : 600, // Speed of the transition (in milliseconds). 800 = .8 seconds
-    easing : 'ease-out' // css easing function to use
+// Overrideable options
+$.fn.shuffle.options = {
+    group : 'all', // Which category to show
+    speed : 600, // Speed of the transition (in milliseconds). 600 = .6 seconds
+    easing : 'ease-out', // css easing function to use
+    gutterWidth : 0, // space between columns. Can be a function or number
+    columnWidth : 0 // can be a function or number or calculated by plugin
 };
 </code>
                     </pre>
@@ -195,7 +198,8 @@ var options = {
                 <h2>Usage</h2>
                 
                 <div>
-                    <p>The html structure. The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
+                    <h3>The HTML Structure</h3>
+                    <p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
                     <pre rel="HTML">
 <code class="language-markup">
 &lt;div id="grid"&gt;
@@ -227,9 +231,10 @@ var options = {
 </code>
                     </pre>
 
-                    <p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong style="text-decoration:underline;">can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
+                    <h3>How column widths work</h3>
+                    <p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong>can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
                     
-                    
+                    <h3>A basic setup example</h3>
                     <p>Sets up the button clicks and runs shuffle</p>
                     <pre rel="jQuery">
 <code class="language-javascript">
@@ -254,6 +259,7 @@ $(document).ready(function(){
 </code>
                     </pre>
                     
+                    <h3>Events</h3>
                     <p>These events will be triggered at their respective times: <code>'shrink.shuffle'</code>, <code>'shrunk.shuffle'</code>, <code>'filter.shuffle'</code>, <code>'filtered.shuffle'</code>, and <code>'sorted.shuffle'</code>.</p>
                 </div>
             </section>

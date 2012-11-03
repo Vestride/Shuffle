@@ -45,13 +45,13 @@
         by: null
     };
 
-    var Shuffle = function($container, options) {
+    var Shuffle = function( $container, options ) {
         var self = this;
 
         $.extend(self, $.fn.shuffle.options, options, $.fn.shuffle.settings);
 
         self.$container = $container;
-        self.$items = self.$container.children();
+        self.$items = self._getItems();
         self.transitionName = self.prefixed('transition'),
         self.transform = self.getPrefixed('transform');
 
@@ -81,7 +81,7 @@
         };
 
         // Set up css for transitions
-        self.$container.css('position', 'relative').get(0).style[self.transitionName] = 'height ' + self.speed + 'ms ' + self.easing;
+        self.$container.css('position', 'relative')[0].style[ self.transitionName ] = 'height ' + self.speed + 'ms ' + self.easing;
         self.$items.each(function() {
             $(this).css(self.itemCss);
             
@@ -105,7 +105,7 @@
             }
         });
 
-        self._getColumns();
+        self._setColumns();
         self._resetCols();
         self.shuffle( self.group );
     };
@@ -172,16 +172,16 @@
             self.filter();
         },
 
+        _getItems : function() {
+            return this.$container.children( this.itemSelector );
+        },
+
         // calculates number of columns
         // i.e. this.colWidth = 200
-        _getColumns : function() {
+        _setColumns : function() {
             var self = this,
                 containerWidth = self.$container.width(),
-                gutter = typeof self.gutterWidth === 'function' ? self.gutterWidth( containerWidth ) :
-                    // Option explicitly set?
-                    self.gutterWidth || 0;
-
-            // console.log();
+                gutter = typeof self.gutterWidth === 'function' ? self.gutterWidth( containerWidth ) : self.gutterWidth;
 
             // use fluid columnWidth function if there
             self.colWidth = self.isFluid ? self.columnWidth( containerWidth ) :
@@ -192,9 +192,7 @@
                 // if there's no items, use size of container
                 containerWidth;
 
-            // console.log(self.colWidth, gutter, self.colWidth + gutter);
             self.colWidth += gutter;
-
 
             self.cols = Math.floor( ( containerWidth + gutter ) / self.colWidth );
             self.cols = Math.max( self.cols, 1 );
@@ -215,43 +213,6 @@
         fire : function( name ) {
             this.$container.trigger(name + '.shuffle', [this]);
         },
-        
-        /**
-         * Hides the elements that don't match our filter
-         */
-        shrink : function() {
-            var self = this,
-                $concealed = self.$items.filter('.concealed');
-
-            // Abort if no items
-            if ($concealed.length === 0) {
-                return;
-            }
-
-            self.shrinkTransitionEnded = false;
-            $concealed.each(function() {
-                var $this = $(this),
-                    x = parseInt($this.data('x'), 10),
-                    y = parseInt($this.data('y'), 10);
-
-                if (!x) x = 0;
-                if (!y) y = 0;
-
-                self.transition({
-                    from: 'shrink',
-                    $this: $this,
-                    x: x,
-                    y: y,
-                    left: (x + ($this.outerWidth(true) / 2)) + 'px',
-                    top: (y + ($this.outerHeight(true) / 2)) + 'px',
-                    scale : 0.001,
-                    opacity: 0,
-                    height: 0,
-                    width: 0,
-                    callback: self.shrinkEnd
-                });
-            });
-        },
 
 
         /**
@@ -265,7 +226,7 @@
             var self = this;
 
             // Abort if no items
-            if (items.length === 0) {
+            if ( items.length === 0 ) {
                 return;
             }
             
@@ -275,8 +236,6 @@
                 //how many columns does this brick span
                 colSpan = Math.ceil( $this.outerWidth(true) / self.colWidth );
                 colSpan = Math.min( colSpan, self.cols );
-
-                // console.log('colSpan: ', colSpan);
 
                 if ( colSpan === 1 ) {
                   // if brick spans only one column, just like singleMode
@@ -336,8 +295,6 @@
                 }
             }
 
-            // console.log('shortCol: ', shortCol, 'minimumY: ', minimumY);
-
             // Position the item
             var x = self.colWidth * shortCol,
             y = minimumY;
@@ -348,7 +305,7 @@
             $item.data( {x: x, y: y} );
 
             // Apply setHeight to necessary columns
-            var setHeight = minimumY + $item.outerHeight(true),
+            var setHeight = minimumY + ( $item.outerHeight(true) || $item.data('height') ),
             setSpan = self.cols + 1 - len;
             for ( i = 0; i < setSpan; i++ ) {
                 self.colYs[ shortCol + i ] = setHeight;
@@ -359,15 +316,45 @@
                 $this: $item,
                 x: x,
                 y: y,
-                left: x + 'px',
-                top: y + 'px',
                 scale : 1,
                 opacity: 1,
-                height: $item.outerHeight(true) + 'px',
-                width: $item.outerWidth(true) + 'px',
                 callback: callback
             });
 
+        },
+        
+        /**
+         * Hides the elements that don't match our filter
+         */
+        shrink : function() {
+            var self = this,
+                $concealed = self.$items.filter('.concealed');
+
+            // Abort if no items
+            if ($concealed.length === 0) {
+                return;
+            }
+
+            self.shrinkTransitionEnded = false;
+            $concealed.each(function() {
+                var $this = $(this),
+                    data = $this.data(),
+                    x = parseInt( data.x, 10 ),
+                    y = parseInt( data.y, 10 );
+
+                if (!x) x = 0;
+                if (!y) y = 0;
+
+                self.transition({
+                    from: 'shrink',
+                    $this: $this,
+                    x: x,
+                    y: y,
+                    scale : 0.001,
+                    opacity: 0,
+                    callback: self.shrinkEnd
+                });
+            });
         },
 
         /**
@@ -470,11 +457,9 @@
             } else {
                 // Use jQuery to animate left/top
                 opts.$this.stop().animate({
-                    left: opts.left,
-                    top: opts.top,
-                    opacity: opts.opacity,
-                    height: opts.height,
-                    width: opts.width
+                    left: opts.x,
+                    top: opts.y,
+                    opacity: opts.opacity
                 }, self.speed, 'swing', complete);
             }
         },
@@ -484,7 +469,7 @@
          */
         resized: function() {
             // get updated colCount
-            this._getColumns();
+            this._setColumns();
             this._reLayout();
         },
 
@@ -510,8 +495,7 @@
 
         update: function() {
             var self = this;
-
-            self.$items = self.$container.children();
+            self.$items = self._getItems();
             self.resized();
         }
 
@@ -554,7 +538,10 @@
         group : 'all',
         speed : 600,
         easing : 'ease-out',
-        keepSorted: true
+        itemSelector: '',
+        gutterWidth : 0,
+        columnWidth : 0,
+        keepSorted : true
     };
 
     // Not overrideable
