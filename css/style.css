@@ -48,7 +48,7 @@ body {
 
 h1 {
     font-weight: 400;
-    font-size: 200px;
+    font-size: 60px;
     margin: 0 0 20px;
     text-shadow: 0 1px #000;
     color: #0aaacb;
@@ -57,6 +57,10 @@ h1 {
        -moz-transition: all 0.2s ease-out;
          -o-transition: all 0.2s ease-out;
             transition: all 0.2s ease-out;
+}
+
+h1.special {
+    font-size: 200px;
 }
 
 h2 {
@@ -340,59 +344,59 @@ header p {margin-top: 0;}
 
 
 @media only screen and (max-width: 860px) {
-    header h1 {
+    .home header h1.special {
         font-size: 150px;
     }
 
-    .container {
+    .home .container {
         width: auto;
         margin: auto;
     }
 
-    .container-main {
+    .home .container-main {
         padding: 15px;
     }
 
-    .downloads a {
+    .home .downloads a {
         display: block;
         margin: 0;
     }
     
-    .filter .label {
+    .home .filter .label {
         float: none;
         margin: 10px 0 0 0;
     }
 
-    .filter .label:first-child {
+    .home .filter .label:first-child {
         margin: 0;
     }
 
-    .control-group,
-    .control-group li {
+    .home .control-group,
+    .home .control-group li {
         float: none;
         margin: 0;
         display: block;
     }
 
-    .control-group li {
+    .home .control-group li {
         font-size: initial;
         padding-top: 10px;
         padding-bottom: 10px;
     }
     
-    .control-group + .control-group {
+    .home .control-group + .control-group {
         margin: 10px 0;
     }
 
-    .control-group li:first-child {
+    .home .control-group li:first-child {
         border-radius: 5px 5px 0 0;
     }
 
-    .control-group li:last-child {
+    .home .control-group li:last-child {
         border-radius: 0 0 5px 5px;
     }
 
-    .filter .search {
+    .home .filter .search {
         display: block;
         width: 100%;
     }
@@ -400,35 +404,35 @@ header p {margin-top: 0;}
 
 /* 2 widths + 1 margin - 1px + padding-left + padding-right */
 @media only screen and (max-width: 509px) {
-    #grid .item {
+    .home #grid .item {
         width: 100%;
     }
 
-    #grid .item img {
+    .home #grid .item img {
         text-align: center;
         width: 100%;
         height: auto;
     }
 
-    #grid .item:before {
+    .home #grid .item:before {
         top: 14px;
         right: 14px;
         content: attr(data-date-created);
     }
 
-    #grid .item-details {
+    .home #grid .item-details {
         text-align: left;
     }
 }
 
 @media only screen and (max-width: 480px) {
-    header h1 {
+    .home header h1.special {
         font-size: 100px;
     }
 }
 
 @media only screen and (max-width: 320px) {
-    header h1 {
+    .home header h1.special {
         font-size: 60px;
     }
 }

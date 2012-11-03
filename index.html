@@ -28,10 +28,10 @@
         <script src="js/html5shiv.js"></script>
         <![endif]-->
     </head>
-    <body>
+    <body class="home">
         <div class="container container-main">
             <header>
-                <h1>Shuffle</h1>
+                <h1 class="special">Shuffle</h1>
                 <p>Categorize, sort, and filter a responsive grid of items</p>
             </header>
             
@@ -168,6 +168,7 @@
                 <h2>Other Examples</h2>
                 <ul>
                     <li><a href="minimal.html">The minimal markup</a></li>
+                    <li><a href="responsive.html">Twitter bootstrap responsive masonry with compounded filters</a></li>
                 </ul>
             </section>
             
@@ -178,7 +179,7 @@
                     <li>Uses CSS Transitions!</li>
                     <li>Responsive (try resizing the window!)</li>
                     <li>Filter items by groups</li>
-                    <li>Items can have multiple groups</li>
+                    <li>Items can have multiple groups and be different sizes</li>
                     <li>Sort items</li>
                     <li>Advanced filtering method (like searching)</li>
                 </ul>
@@ -365,6 +366,8 @@ $('.filter .search').on('keyup change', function() {
 });
 </code>
                 </pre>
+
+                <p>For another example of advanced filters, check out the <a href="responsive.html">compounded filters demo</a>.</p>
             </section>
             
             <section>
@@ -413,6 +416,7 @@ $('.filter .search').on('keyup change', function() {
             <section>
                 <h2>Changes</h2>
                 <ul>
+                    <li>11.3.12 - Replaced layout system with <a href="http://masonry.desandro.com/">masonry</a>. Items can now be different sizes! Added addtional examples.</li>
                     <li>10.24.12 - Better handling of grid item dimensions. Added a minimal markup page.</li>
                     <li>9.20.12 - Added <code>destroy</code> method</li>
                     <li>9.18.12 - Added sorting ability and made plugin responsive. Updated to Modernizr 2.6.2</li>
