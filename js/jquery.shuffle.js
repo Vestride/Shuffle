@@ -50,7 +50,7 @@
 
         $.extend(self, $.fn.shuffle.options, options, $.fn.shuffle.settings);
 
-        self.$container = $container;
+        self.$container = $container.addClass('shuffle');
         self.$items = self._getItems();
         self.transitionName = self.prefixed('transition'),
         self.transform = self.getPrefixed('transform');
@@ -196,6 +196,13 @@
 
             self.cols = Math.floor( ( containerWidth + gutter ) / self.colWidth );
             self.cols = Math.max( self.cols, 1 );
+
+            // This can happen when .shuffle is called on something hidden (e.g. display:none for tabs)
+            if ( !self.colWidth || isNaN( self.cols ) || !containerWidth ) {
+                self.needsUpdate = true;
+            } else {
+                self.needsUpdate = false;
+            }
         },
         
         /**
@@ -526,6 +533,8 @@
                     shuffle.destroy();
                 } else if (opts === 'update') {
                     shuffle.update();
+                } else if (opts === 'layout') {
+                    shuffle._reLayout();
                 } else {
                     shuffle.shuffle(opts);
                 }
