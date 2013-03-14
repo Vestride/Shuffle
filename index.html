@@ -167,8 +167,9 @@
             <section>
                 <h2>Other Examples</h2>
                 <ul>
-                    <li><a href="minimal.html">The minimal markup</a></li>
-                    <li><a href="responsive.html">Twitter bootstrap responsive masonry with compounded filters</a></li>
+                    <li><a href="basic.html">Basic masonry layout</a></li>
+                    <li><a href="minimal.html">The minimal markup with filters</a></li>
+                    <li><a href="adaptive.html">Twitter bootstrap adaptive masonry with compounded filters</a></li>
                 </ul>
             </section>
             
@@ -428,7 +429,7 @@ $('.filter .search').on('keyup change', function() {
         </div>
 
         
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script defer src="js/jquery.shuffle.js"></script>
         <script defer src="js/prism.js"></script>
         <script>
@@ -500,8 +501,10 @@ $('.filter .search').on('keyup change', function() {
 
 
                 // You can subscribe to custom events: shrink, shrunk, filter, filtered, and sorted
-                $('#grid').on('shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle sorted.shuffle', function(evt, shuffle) {
-                    // console.log(evt.type);
+                $('#grid').on('shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle sorted.shuffle layout.shuffle', function(evt, shuffle) {
+                    if ( window.console ) {
+                        console.log(evt.type, shuffle, this);
+                    }
                 });
 
             });

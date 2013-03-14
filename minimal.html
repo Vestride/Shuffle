@@ -15,12 +15,44 @@
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <![endif]-->
+
+        <style>
+            #grid {
+                outline: 1px solid rgb(255, 255, 255);
+                outline: 1px solid rgba(255, 255, 255, .7);
+            }
+
+            .simple-item {
+                width: 33.33333%; /* 3 per row */
+            }
+
+            .simple-item img {
+                max-width: 100%;
+            }
+
+
+            /* Spacing Exmaple */
+            .spacing #grid {
+                padding: 10px;
+            }
+            .spacing .simple-item {
+                width: 306px;
+                margin: 10px;
+            }
+
+            /* add some space to the bottom of the document */
+            .spacer {
+                padding-bottom: 150px;
+            }
+        </style>
     </head>
     <body>
         <div class="container container-main">
             
             <section>
                 <h2>Minimal</h2>
+
+                <button class="js-spacing">Add some space</button>
                 
                 <div class="filter clearfix">
                     <p class="lfloat label">Filter:</p>
@@ -33,61 +65,63 @@
                     </ul>
                 </div>
 
-                <div id="grid" class="clearfix">
-                    <div data-groups='["photography"]'>
+                <div id="grid">
+                    <div class="simple-item" data-groups='["photography"]'>
                         <img src="img/baseball.png" alt="" />
                         <div><a href="img/originals/baseball.jpg">Photography</a></div>
                     </div>
-                    <div data-groups='["wallpaper", "3d"]'>
+                    <div class="simple-item" data-groups='["wallpaper", "3d"]'>
                         <img src="img/tennis-ball.png" alt="" />
                         <div><a href="#">3D Render, Wallpaper</a></div>
                     </div>
-                    <div data-groups='["3d", "wallpaper"]'>
+                    <div class="simple-item" data-groups='["3d", "wallpaper"]'>
                         <img src="img/imac.png" alt="" />
                         <div><a href="#">3D Render, Wallpaper</a></div>
                     </div>
-                    <div data-groups='["graphics"]'>
+                    <div class="simple-item" data-groups='["graphics"]'>
                         <img src="img/master-chief.png" alt="" />
                         <div><a href="#">Graphic Design</a></div>
                     </div>
-                    <div data-groups='["3d", "wallpaper"]'>
+                    <div class="simple-item" data-groups='["3d", "wallpaper"]'>
                         <img src="img/es-blue.png" alt="" />
                         <div><a href="#">3D Render, Wallpaper</a></div>
                     </div>
-                    <div data-groups='["photography"]'>
+                    <div class="simple-item" data-groups='["photography"]'>
                         <img src="img/pumpkin.png" alt="" />
                         <div><a href="#">Photography</a></div>
                     </div>
-                    <div data-groups='["3d", "wallpaper"]'>
+                    <div class="simple-item" data-groups='["3d", "wallpaper"]'>
                         <img src="img/vestride-red.png" alt="" />
                         <div><a href="#">3D Render, Wallpaper</a></div>
                     </div>
-                    <div data-groups='["graphics"]'>
+                    <div class="simple-item" data-groups='["graphics"]'>
                         <img src="img/newegg.png" alt="" />
                         <div><a href="#">Motion Graphics</a></div>
                     </div>
-                    <div data-groups='["wallpaper"]'>
+                    <div class="simple-item" data-groups='["wallpaper"]'>
                         <img src="img/eightfoldarc.png" alt="" />
                         <div><a href="#">Wallpaper</a></div>
                     </div>
-                    <div data-groups='["photography"]'>
+                    <div class="simple-item" data-groups='["photography"]'>
                         <img src="img/ground.png" alt=""/>
                         <div><a href="img/originals/baseball.jpg">Photography</a></div>
                     </div>
-                    <div data-groups='["wallpaper"]'>
+                    <div class="simple-item" data-groups='["wallpaper"]'>
                         <img src="img/grassy-hills.png" alt="" />
                         <div><a href="#">Wallpaper</a></div>
                     </div>
-                    <div data-groups='["3d", "wallpaper"]'>
+                    <div class="simple-item" data-groups='["3d", "wallpaper"]'>
                         <img src="img/vestride-classy.png" alt="" />
                         <div><a href="#">3D Render, Wallpaper</a></div>
                     </div>
                 </div>
+
             </section>
         </div>
 
+        <div class="spacer"></div>
         
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script src="js/jquery.shuffle.js"></script>
         <script>
             $(document).ready(function() {
@@ -107,6 +141,28 @@
                 
                 // instantiate the plugin
                 $('#grid').shuffle();
+
+
+                // Add space button
+                $('.js-spacing').on('click', function() {
+                    var $body = $(document.body);
+                    $body.toggleClass('spacing');
+                    if ( $body.hasClass('spacing') ) {
+                        $(this).text('Remove the spacing');
+                        $('#grid')
+                            .shuffle('destroy')
+                            // you can hide the initial transition if you want
+                            .shuffle({
+                                showInitialTransition: false
+                            });
+
+                    } else {
+                        $(this).text('Add some space');
+                        $('#grid')
+                            .shuffle('destroy')
+                            .shuffle();
+                    }
+                });
 
             });
         </script>
