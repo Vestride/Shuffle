@@ -10,14 +10,13 @@
  * jQuery Shuffle Plugin
  * Uses CSS Transforms to filter down a grid of items (degrades to jQuery's animate).
  * Inspired by Isotope http://isotope.metafizzy.co/
- * Use it for whatever you want!
+ * Use it for whatever you want! Requires jQuery 1.9+
  * @author Glen Cheney (http://glencheney.com)
- * @version 1.6.2
- * @date 03/06/13
+ * @version 1.6.3
+ * @date 03/13/13
  */
 (function($, Modernizr, undefined) {
     'use strict';
-
 
     // You can return `undefined` from the `by` function to revert to DOM order
     // This plugin does NOT return a jQuery object. It returns a plain array because
@@ -73,9 +72,9 @@
     };
 
     $.fn.sorted.defaults = {
-        reverse: false,
-        by: null,
-        randomize: false
+        reverse: false, // Use array.reverse() to reverse the results
+        by: null, // Sorting function
+        randomize: false // If true, this will skip the sorting and return a randomized order in the array
     };
 
 
@@ -120,28 +119,18 @@
 
         _init : function() {
             var self = this,
+                containerCSS,
                 transEndEventNames,
-                resizeFunc = $.proxy( self._onResize, self ),
-                afterResizeFunc = $.proxy( self._afterResize, self ),
-                beforeResizeFunc;
-
-            if ( self.hideLayoutWithFade ) {
-                beforeResizeFunc = $.proxy( self._beforeResize, self );
-                self._debouncedBeforeResize = self.throttle ? self.throttle( self.throttleTime, true, beforeResizeFunc ) : beforeResizeFunc;
-            }
-
-            // Get debounced versions of our resize methods
-            self._debouncedResize = self.throttle ? self.throttle( self.throttleTime, afterResizeFunc ) : afterResizeFunc;
+                afterResizeFunc,
+                debouncedAfterResize,
+                beforeResizeFunc,
+                debouncedBeforeResize;
 
             self.$items = self._getItems().addClass('shuffle-item');
             self.transitionName = self.prefixed('transition'),
+            self.transitionDelayName = self.prefixed('transitionDelay');
             self.transform = self.getPrefixed('transform');
 
-            // Get offset from container
-            self.offset = {
-                left: parseInt( ( self.$container.css('padding-left') || 0 ), 10 ),
-                top: parseInt( ( self.$container.css('padding-top') || 0 ), 10 )
-            };
             self.isFluid = self.columnWidth && typeof self.columnWidth === 'function';
 
             // Get transitionend event name
@@ -152,35 +141,46 @@
                 'msTransition'     : 'MSTransitionEnd',
                 'transition'       : 'transitionend'
             };
-            self.transitionEndName = transEndEventNames[ self.transitionName ];
-
-            // CSS for each item
-            self.itemCss = {
-                position: 'absolute',
-                top: 0,
-                left: 0
-            };
-
-            if ( self.$container.css('position') === 'static' ) {
-                self.$container.css('position', 'relative');
-            }
+            self.transitionend = transEndEventNames[ self.transitionName ];
 
             // Set up css for transitions
             self.$container[0].style[ self.transitionName ] = 'height ' + self.speed + 'ms ' + self.easing;
-            self._initItems( !self.showInitialTransition );
+            self._initItems( self.showInitialTransition );
 
-            // http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer
-            // self.windowHeight = self.$window.height();
-            // self.windowWidth = self.$window.width();
-            self.$window.on('resize.shuffle', resizeFunc);
+            // Bind resize events (http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer)
+            // Get debounced versions of our resize methods
+            afterResizeFunc = $.proxy( self._afterResize, self );
+            debouncedAfterResize = self.throttle ? self.throttle( self.throttleTime, afterResizeFunc ) : afterResizeFunc;
+            self.$window.on('resize.shuffle', debouncedAfterResize);
 
-            self._setColumns();
+            // If we need to hide layouts with a fade instead, we need another event on window resize
+            // which is only fired the first time window resize is triggered
+            if ( self.hideLayoutWithFade ) {
+                beforeResizeFunc = $.proxy( self._beforeResize, self );
+                debouncedBeforeResize = self.throttle ? self.throttle( self.throttleTime, true, beforeResizeFunc ) : beforeResizeFunc;
+                self.$window.on('resize.shuffle', debouncedBeforeResize);
+            }
+
+            // Position cannot be static
+            containerCSS = self.$container.css(['paddingLeft', 'paddingRight', 'position', 'width']);
+            if ( containerCSS.position === 'static' ) {
+                self.$container.css('position', 'relative');
+            }
+
+            // Get offset from container
+            self.offset = {
+                left: parseInt( containerCSS.paddingLeft, 10 ) || 0,
+                top: parseInt( containerCSS.paddingTop, 10 ) || 0
+            };
             self._resetCols();
+            // We already got the container's width above, no need to cause another reflow getting it again...
+            self._setColumns( parseInt( containerCSS.width, 10 ) );
             self.shuffle( self.group );
 
-
             if ( !self.showInitialTransition ) {
-                self._initItems();
+                setTimeout(function() {
+                    self._initItems( true );
+                }, 0);
             }
         },
 
@@ -195,15 +195,15 @@
             self.fire('filter');
 
             // Default is to show all items
-            $items.removeClass('concealed filtered');
+            // $items.removeClass('concealed filtered');
 
             // Loop through each item and use provided function to determine
             // whether to hide it or not.
-            if ($.isFunction(category)) {
+            if ( $.isFunction(category) ) {
                 $items.each(function() {
                     var $item = $(this),
                     passes = category.call($item[0], $item, self);
-                    $item.addClass(passes ? 'filtered' : 'concealed');
+                    // $item.addClass(passes ? 'filtered' : 'concealed');
 
                     if ( passes ) {
                         $filtered = $filtered.add($item);
@@ -219,10 +219,10 @@
                         var $this = $(this),
                         groups = $this.data('groups'),
                         keys = self.delimeter && !$.isArray( groups ) ? groups.split( self.delimeter ) : groups,
-                        passes = $.inArray(category, keys) > -1,
-                        theClass = passes ? 'concealed' : 'filtered';
+                        passes = $.inArray(category, keys) > -1;
+                        // theClass = passes ? 'concealed' : 'filtered';
 
-                        $this.addClass( theClass );
+                        // $this.addClass( theClass );
 
                         if ( passes ) {
                             $filtered = $filtered.add($this);
@@ -232,23 +232,53 @@
 
                 // category === 'all', add filtered class to everything
                 else {
-                    $filtered = $items.addClass('filtered');
+                    $filtered = $items;
+                    // $filtered = $items.addClass('filtered');
                 }
             }
+
+            // Individually add/remove concealed/filtered classes
+            $items.filter( $filtered ).each(function() {
+                var $filteredItem = $(this);
+                // Remove concealed if it's there
+                if ( $filteredItem.hasClass('concealed') ) {
+                    $filteredItem.removeClass('concealed');
+                }
+                // Add filtered class if it's not there
+                if ( !$filteredItem.hasClass('filtered') ) {
+                    $filteredItem.addClass('filtered');
+                }
+            });
+            $items.not( $filtered ).each(function() {
+                var $filteredItem = $(this);
+                // Add concealed if it's not there
+                if ( !$filteredItem.hasClass('concealed') ) {
+                    $filteredItem.addClass('concealed');
+                }
+                // Remove filtered class if it's there
+                if ( $filteredItem.hasClass('filtered') ) {
+                    $filteredItem.removeClass('filtered');
+                }
+            });
+
+            $items = null;
+            $collection = null;
 
             return $filtered;
         },
 
-        _initItems : function( withoutTransition, $items ) {
+        _initItems : function( withTransition, $items ) {
             var self = this;
 
+            // Default to true if unspecified
+            withTransition = withTransition === false ? false : true;
             $items = $items || self.$items;
 
             $items.each(function() {
                 $(this).css(self.itemCss);
 
                 // Set CSS transition for transforms and opacity
-                if ( self.supported && !withoutTransition && self.useTransition ) {
+                if ( self.supported && self.useTransition && withTransition ) {
                     self._setTransition(this);
                 }
             });
@@ -270,11 +300,11 @@
             // $collection can be an array of dom elements or jquery object
             $.each( $collection, function(i) {
                 // This works because the transition-property: transform, opacity;
-                this.style[self.transitionName + 'Delay'] = '0ms,' + ((i + 1) * self.sequentialFadeDelay) + 'ms';
+                this.style[ self.transitionDelayName ] = '0ms,' + ((i + 1) * self.sequentialFadeDelay) + 'ms';
 
                 // Set the delay back to zero after one transition
-                $(this).one(self.transitionEndName, function() {
-                    this.style[self.transitionName + 'Delay'] = '0ms';
+                $(this).one(self.transitionend, function() {
+                    this.style[ self.transitionDelayName ] = '0ms';
                 });
             });
         },
@@ -287,8 +317,8 @@
             }
 
             $.each( $collection, function() {
-                $(this).off( self.transitionEndName );
-                this.style[ self.transitionName + 'Delay' ] = '0ms';
+                $(this).off( self.transitionend );
+                this.style[ self.transitionDelayName ] = '0ms';
             });
         },
 
@@ -340,9 +370,9 @@
 
         // calculates number of columns
         // i.e. this.colWidth = 200
-        _setColumns : function() {
+        _setColumns : function( theContainerWidth ) {
             var self = this,
-                containerWidth = self.$container.width(),
+                containerWidth = theContainerWidth || self.$container.width(),
                 gutter = typeof self.gutterWidth === 'function' ? self.gutterWidth( containerWidth ) : self.gutterWidth;
 
             // use fluid columnWidth function if there
@@ -557,36 +587,31 @@
             });
         },
 
-        _onResize : function() {
+        _afterResize : function() {
             var self = this,
-                containerWidth = self.$container.width();
+                containerWidth;
 
-            // If shuffle is disabled, destroyed, or containerWidth hasn't changed, don't do anything
-            if ( !self.enabled || self.destroyed || containerWidth === self.containerWidth ) {
+            // If shuffle is disabled, destroyed, don't do anything
+            if ( !self.enabled || self.destroyed ) {
                 return;
             }
 
-            // This should execute the first time _onResize is called
-            if ( self.hideLayoutWithFade ) {
-                self._debouncedBeforeResize();
+            // Will need to check height in the future if it's layed out horizontaly
+            containerWidth = self.$container.width();
+
+            // containerWidth hasn't changed, don't do anything
+            if ( containerWidth === self.containerWidth ) {
+                return;
             }
-
-            // This should execute the last time _onResize is called
-            self._debouncedResize();
-
-        },
-
-        _afterResize : function() {
-            var self = this;
 
             // If we're hiding the layout with a fade,
             if ( self.hideLayoutWithFade && self.supported ) {
                 // recaculate column and gutter values
-                self._setColumns();
+                self._setColumns( containerWidth );
                 // Layout the items with only a position
                 self._reLayout( false, true );
                 // Change the transition-delay value accordingly
-                self._setSequentialDelay( self.itemsOrderedByDelay );
+                self._setSequentialDelay( self.itemsOrderedByDelay || self.$items.get() );
                 self.fire('done');
                 self.$items.css('opacity', 1);
             } else {
@@ -595,9 +620,19 @@
         },
 
         _beforeResize : function() {
-            var self = this;
+            var self = this,
+                containerWidth;
 
-            if ( !self.supported ) {
+            // If shuffle is disabled, destroyed, don't do anything
+            if ( !self.hideLayoutWithFade || !self.supported || !self.enabled || self.destroyed ) {
+                return;
+            }
+
+            // Will need to check height in the future if it's layed out horizontaly
+            containerWidth = self.$container.width();
+
+            // containerWidth hasn't changed, don't do anything
+            if ( containerWidth === self.containerWidth ) {
                 return;
             }
 
@@ -621,7 +656,7 @@
 
 
         /**
-         * Returns things like webkitTransition or boxSizing
+         * Returns things like `-webkit-transition` or `box-sizing` from `transition` or `boxSizing`, respectively
          *
          * @param {string} property to be prefixed.
          * @return {string} the prefixed css property
@@ -677,17 +712,17 @@
                     transform = 'translate(' + opts.x + 'px, ' + opts.y + 'px) scale(' + opts.scale + ', ' + opts.scale + ')';
                 }
 
+                if ( opts.x !== undefined ) {
+                    self.setPrefixedCss(opts.$this, 'transform', transform);
+                }
+
                 if ( opts.opacity !== undefined && self.useTransition ) {
                     // Update css to trigger CSS Animation
                     opts.$this.css('opacity' , opts.opacity);
                 }
 
-                if ( opts.x !== undefined ) {
-                    self.setPrefixedCss(opts.$this, 'transform', transform);
-                }
-
                 if ( self.useTransition ) {
-                    opts.$this.one(self.transitionEndName, complete);
+                    opts.$this.one(self.transitionend, complete);
                 } else {
                     complete();
                 }
@@ -994,8 +1029,14 @@
 
     // Not overrideable
     $.fn.shuffle.settings = {
+        itemCss : { // default CSS for each item
+            position: 'absolute',
+            top: 0,
+            left: 0
+        },
         revealAppendedDelay: 300,
         enabled: true,
+        destroyed: false,
         styleQueue: [],
         supported: Modernizr.csstransforms && Modernizr.csstransitions, // supports transitions and transforms
         prefixed: Modernizr.prefixed,
