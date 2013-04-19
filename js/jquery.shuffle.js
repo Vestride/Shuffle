@@ -53,6 +53,14 @@
                     return 0;
                 }
 
+                if ( valA === 'sortFirst' || valB === 'sortLast' ) {
+                    return -1;
+                }
+
+                if ( valA === 'sortLast' || valB === 'sortFirst' ) {
+                    return 1;
+                }
+
                 return (valA < valB) ? -1 :
                     (valA > valB) ? 1 : 0;
             });
@@ -151,7 +159,7 @@
             // Get debounced versions of our resize methods
             afterResizeFunc = $.proxy( self._afterResize, self );
             debouncedAfterResize = self.throttle ? self.throttle( self.throttleTime, afterResizeFunc ) : afterResizeFunc;
-            self.$window.on('resize.shuffle', debouncedAfterResize);
+            self.$window.on('resize.' + self.unique, debouncedAfterResize);
 
             // If we need to hide layouts with a fade instead, we need another event on window resize
             // which is only fired the first time window resize is triggered
@@ -553,10 +561,11 @@
         /**
          * Hides the elements that don't match our filter
          */
-        shrink : function() {
+        shrink : function( $collection, fn ) {
             var self = this,
-                $concealed = self.$items.filter('.concealed'),
-                transitionObj = {};
+                $concealed = $collection || self.$items.filter('.concealed'),
+                transitionObj = {},
+                callback = fn || self.shrinkEnd;
 
             // Abort if no items
             if ($concealed.length === 0) {
@@ -582,7 +591,7 @@
                     y: y,
                     scale : 0.001,
                     opacity: 0,
-                    callback: self.shrinkEnd
+                    callback: callback
                 };
 
                 self.styleQueue.push( transitionObj );
@@ -965,12 +974,39 @@
             }
         },
 
+        remove : function( $collection ) {
+
+            // If this isn't a jquery object, exit
+            if ( !$collection.length || !$collection.jquery ) {
+                return;
+            }
+
+            var self = this,
+            remove = function() {
+                var shuffle = this;
+                $collection.remove();
+                $collection = null;
+                setTimeout(function() {
+                    shuffle.$items = shuffle._getItems();
+                    shuffle.layout();
+                }, 0);
+            };
+
+            self.shrink( $collection, remove );
+            self._processStyleQueue();
+        },
+
         destroy: function() {
             var self = this;
 
-            self.$container.removeAttr('style').removeData('shuffle');
-            self.$window.off('.shuffle');
-            self.$items.removeAttr('style').removeClass('concealed filtered shuffle-item');
+            self.$window.off('.' + self.unique);
+            self.$container
+                .removeClass('shuffle')
+                .removeAttr('style')
+                .removeData('shuffle');
+            self.$items
+                .removeAttr('style')
+                .removeClass('concealed filtered shuffle-item');
             self.destroyed = true;
         }
 
@@ -1006,6 +1042,7 @@
                     case 'enable':
                     case 'disable':
                     case 'layout':
+                    case 'remove':
                         shuffle[ opts ].apply( shuffle, args );
                         break;
                     default:
