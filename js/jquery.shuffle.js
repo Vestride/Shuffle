@@ -8,12 +8,12 @@
 
 /*!
  * jQuery Shuffle Plugin
- * Uses CSS Transforms to filter down a grid of items (degrades to jQuery's animate).
+ * Uses CSS Transforms to filter down a grid of items. Requires jQuery 1.9+.
  * Inspired by Isotope http://isotope.metafizzy.co/
- * Use it for whatever you want! Requires jQuery 1.9+
+ * Licensed under the MIT license.
  * @author Glen Cheney (http://glencheney.com)
- * @version 1.6.4
- * @date 04/01/13
+ * @version 1.6.5
+ * @date 05/05/13
  */
 (function($, Modernizr, undefined) {
     'use strict';
@@ -868,8 +868,9 @@
         /**
          * The magic. This is what makes the plugin 'shuffle'
          * @param  {String|Function} category category to filter by. Can be a function
+         * @param {Object} [sortObj] A sort object which can sort the filtered set
          */
-        shuffle : function( category ) {
+        shuffle : function( category, sortObj ) {
             var self = this;
 
             if ( !self.enabled ) {
@@ -892,6 +893,10 @@
             // Shrink each concealed item
             self.shrink();
 
+            // If given a valid sort object, save it so that _reLayout() will sort the items
+            if ( sortObj ) {
+                self.lastSort = sortObj;
+            }
             // Update transforms on .filtered elements so they will animate to their new positions
             self._reLayout();
         },
@@ -1014,7 +1019,7 @@
 
 
     // Plugin definition
-    $.fn.shuffle = function(opts, sortObj) {
+    $.fn.shuffle = function( opts ) {
         var args = Array.prototype.slice.call( arguments, 1 );
         return this.each(function() {
             var $this = $(this),
@@ -1028,14 +1033,12 @@
 
             // If passed a string, lets decide what to do with it. Or they've provided a function to filter by
             if ( $.isFunction(opts) ) {
-                shuffle.shuffle( opts );
+                shuffle.shuffle.apply( shuffle, args );
 
             // Key should be an object with propreties reversed and by.
             } else if (typeof opts === 'string') {
                 switch( opts ) {
                     case 'sort':
-                        shuffle.sort(sortObj);
-                        break;
                     case 'destroy':
                     case 'update':
                     case 'appended':
