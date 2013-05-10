@@ -1,197 +1,172 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8" />
-        <title>Shuffle</title>
+---
+layout: default
+title: jQuery Shuffle Plugin
+bodyClass: home
+extraJS: [ "homepage.js" ]
+---
+<div class="container container-main">
+    <header>
+        <h1 class="special">Shuffle</h1>
+        <p>Categorize, sort, and filter a responsive grid of items</p>
+    </header>
 
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <section class="downloads">
+        <h2>Downloads</h2>
+        <a href="js/jquery.shuffle.js">jquery.shuffle.js</a>
+        <a href="js/jquery.shuffle.min.js">jquery.shuffle.min.js</a>
+    </section>
 
-        <meta property="og:title" content="jQuery Shuffle Plugin" />
-        <meta property="og:description" content="Shuffle, categorize, sort, and filter a grid of items" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="http://vestride.github.com/Shuffle/" />
-        <meta property="og:image" content="http://vestride.github.com/Shuffle/img/hero.png" />
-        <meta property="og:site_name" content="jQuery Shuffle Plugin" />
-        <meta property="fb:admins" content="771347349" />
-        <meta name="author" content="https://plus.google.com/u/0/100210640453700033824" />
 
-        <link href="https://plus.google.com/u/0/100210640453700033824" rel="author" />
-        
-        <link rel="stylesheet" href="css/prism.css" />
-        <link rel="stylesheet" href="css/style.css" />
-        <link href='http://fonts.googleapis.com/css?family=Poly:400,400italic' rel='stylesheet' type='text/css' />
+    <section>
+        <h2>Example</h2>
 
-        <!--[if lt IE 9]>
-        <script src="js/html5shiv.js"></script>
-        <![endif]-->
-    </head>
-    <body class="home">
-        <div class="container container-main">
-            <header>
-                <h1 class="special">Shuffle</h1>
-                <p>Categorize, sort, and filter a responsive grid of items</p>
-            </header>
-            
-            <section class="downloads">
-                <h2>Downloads</h2>
-                <a href="js/jquery.shuffle.js">jquery.shuffle.js</a>
-                <a href="js/jquery.shuffle.min.js">jquery.shuffle.min.js</a>
-            </section>
-            
-            
-            <section>
-                <h2>Example</h2>
-                
-                <div class="filter clearfix">
-                    <p class="lfloat label">Filter:</p>
-                    <ul class="filter-options control-group lfloat">
-                        <li data-group="all" class="active">Most Recent</li>
-                        <li data-group="wallpaper">Wallpapers</li>
-                        <li data-group="graphics">Graphic Design</li>
-                        <li data-group="photography">Photography</li>
-                        <li data-group="3d">3D Renders</li>
-                    </ul>
+        <div class="filter clearfix">
+            <p class="lfloat label">Filter:</p>
+            <ul class="filter-options control-group lfloat">
+                <li data-group="all" class="active">Most Recent</li>
+                <li data-group="wallpaper">Wallpapers</li>
+                <li data-group="graphics">Graphic Design</li>
+                <li data-group="photography">Photography</li>
+                <li data-group="3d">3D Renders</li>
+            </ul>
 
-                    <p class="lfloat label">Sort:</p>
-                    <ul class="sort-options control-group lfloat">
-                        <li data-sort class="active">Default</li>
-                        <li data-sort="title">Title</li>
-                        <li data-sort="date-created">Date Created</li>
-                    </ul>
+            <p class="lfloat label">Sort:</p>
+            <ul class="sort-options control-group lfloat">
+                <li data-sort class="active">Default</li>
+                <li data-sort="title">Title</li>
+                <li data-sort="date-created">Date Created</li>
+            </ul>
 
-                    <input class="search label" type="search" placeholder="Search..." />
+            <input class="search label" type="search" placeholder="Search..." />
+        </div>
+
+        <div id="grid" class="clearfix">
+            <div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball">
+                <img src="img/baseball.png" alt="" height="145" width="230" />
+                <div class="item-details">
+                    <span class="title">Baseball</span>
+                    <a href="img/originals/baseball.jpg">Photography</a>
                 </div>
-
-                <div id="grid" class="clearfix">
-                    <div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball">
-                        <img src="img/baseball.png" alt="" height="145" width="230" />
-                        <div class="item-details">
-                            <span class="title">Baseball</span>
-                            <a href="img/originals/baseball.jpg">Photography</a>
-                        </div>
-                    </div>
-                    <div class="item w2" data-groups='["wallpaper", "3d"]' data-date-created="2011-08-14" data-title="Tennis">
-                        <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                        <img src="img/tennis-ball.png" alt="" height="145" width="230" />
-                        <div class="item-details">
-                            <span class="title">Tennis</span>
-                            <a href="#">3D Render, Wallpaper</a>
-                        </div>
-                    </div>
-                    <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2009-05-27" data-title="iMac">
-                        <img src="img/imac.png" alt="" height="145" width="230" />
-                        <div class="item-details">
-                            <span class="title">iMac</span>
-                            <a href="#">3D Render, Wallpaper</a>
-                        </div>
-                    </div>
-                    <div class="item h2" data-groups='["graphics"]' data-date-created="2012-05-14" data-title="Master Chief">
-                        <img src="img/master-chief.png" alt="" height="145" width="230" />
-                        <div class="item-details">
-                            <span class="title">Master Chief</span>
-                            <a href="#">Graphic Design</a>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                            consequat.</p>
-                        </div>
-                    </div>
-                    <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Eightfold">
-                        <img src="img/es-blue.png" alt="" height="145" width="230" />
-                        <div class="item-details">
-                            <span class="title">Eightfold</span>
-                            <a href="#">3D Render, Wallpaper</a>
-                        </div>
-                    </div>
-                    <div class="item w2" data-groups='["photography"]' data-date-created="2012-03-14" data-title="Pumpkin">
-                        <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                        <img src="img/pumpkin.png" alt="" height="145" width="230" />
-                        <div class="item-details">
-                            <span class="title">Pumpkin</span>
-                            <a href="#">Photography</a>
-                        </div>
-                    </div>
-                    <div class="item w2 h2" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Vestride">
-                        <img src="img/vestride-red.png" alt="" height="145" width="230" />
-                        <div class="item-details">
-                            <span class="title">Vestride</span>
-                            <a href="#">3D Render, Wallpaper</a>
-                        </div>
-                    </div>
-                    <div class="item h2" data-groups='["graphics"]' data-date-created="2012-01-12" data-title="Newegg">
-                        <img src="img/newegg.png" alt="" height="145" width="230" />
-                        <div class="item-details">
-                            <span class="title">Newegg</span>
-                            <a href="#">Motion Graphics</a>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                            consequat.</p>
-                        </div>
-                    </div>
-                    <div class="item" data-groups='["wallpaper"]' data-date-created="2012-01-14" data-title="Arc">
-                        <img src="img/eightfoldarc.png" alt="" height="145" width="230" />
-                        <div class="item-details">
-                            <span class="title">Arc</span>
-                            <a href="#">Wallpaper</a>
-                        </div>
-                    </div>
-                    <div class="item" data-groups='["photography"]' data-date-created="2011-01-14" data-title="Ground">
-                        <img src="img/ground.png" alt="" height="145" width="230"/>
-                        <div class="item-details">
-                            <span class="title">Ground</span>
-                            <a href="img/originals/baseball.jpg">Photography</a>
-                        </div>
-                    </div>
-                    <div class="item w2" data-groups='["wallpaper"]' data-date-created="2011-12-14" data-title="Grass">
-                        <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                        <img src="img/grassy-hills.png" alt="" height="145" width="230" />
-                        <div class="item-details">
-                            <span class="title">Grass</span>
-                            <a href="#">Wallpaper</a>
-                        </div>
-                    </div>
-                    <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-04-14" data-title="Vestride">
-                        <img src="img/vestride-classy.png" alt="" height="145" width="230" />
-                        <div class="item-details">
-                            <span class="title">Vestride</span>
-                            <a href="#">3D Render, Wallpaper</a>
-                        </div>
-                    </div>
+            </div>
+            <div class="item w2" data-groups='["wallpaper", "3d"]' data-date-created="2011-08-14" data-title="Tennis">
+                <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <img src="img/tennis-ball.png" alt="" height="145" width="230" />
+                <div class="item-details">
+                    <span class="title">Tennis</span>
+                    <a href="#">3D Render, Wallpaper</a>
                 </div>
-            </section>
+            </div>
+            <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2009-05-27" data-title="iMac">
+                <img src="img/imac.png" alt="" height="145" width="230" />
+                <div class="item-details">
+                    <span class="title">iMac</span>
+                    <a href="#">3D Render, Wallpaper</a>
+                </div>
+            </div>
+            <div class="item h2" data-groups='["graphics"]' data-date-created="2012-05-14" data-title="Master Chief">
+                <img src="img/master-chief.png" alt="" height="145" width="230" />
+                <div class="item-details">
+                    <span class="title">Master Chief</span>
+                    <a href="#">Graphic Design</a>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.</p>
+                </div>
+            </div>
+            <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Eightfold">
+                <img src="img/es-blue.png" alt="" height="145" width="230" />
+                <div class="item-details">
+                    <span class="title">Eightfold</span>
+                    <a href="#">3D Render, Wallpaper</a>
+                </div>
+            </div>
+            <div class="item w2" data-groups='["photography"]' data-date-created="2012-03-14" data-title="Pumpkin">
+                <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <img src="img/pumpkin.png" alt="" height="145" width="230" />
+                <div class="item-details">
+                    <span class="title">Pumpkin</span>
+                    <a href="#">Photography</a>
+                </div>
+            </div>
+            <div class="item w2 h2" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Vestride">
+                <img src="img/vestride-red.png" alt="" height="145" width="230" />
+                <div class="item-details">
+                    <span class="title">Vestride</span>
+                    <a href="#">3D Render, Wallpaper</a>
+                </div>
+            </div>
+            <div class="item h2" data-groups='["graphics"]' data-date-created="2012-01-12" data-title="Newegg">
+                <img src="img/newegg.png" alt="" height="145" width="230" />
+                <div class="item-details">
+                    <span class="title">Newegg</span>
+                    <a href="#">Motion Graphics</a>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.</p>
+                </div>
+            </div>
+            <div class="item" data-groups='["wallpaper"]' data-date-created="2012-01-14" data-title="Arc">
+                <img src="img/eightfoldarc.png" alt="" height="145" width="230" />
+                <div class="item-details">
+                    <span class="title">Arc</span>
+                    <a href="#">Wallpaper</a>
+                </div>
+            </div>
+            <div class="item" data-groups='["photography"]' data-date-created="2011-01-14" data-title="Ground">
+                <img src="img/ground.png" alt="" height="145" width="230"/>
+                <div class="item-details">
+                    <span class="title">Ground</span>
+                    <a href="img/originals/baseball.jpg">Photography</a>
+                </div>
+            </div>
+            <div class="item w2" data-groups='["wallpaper"]' data-date-created="2011-12-14" data-title="Grass">
+                <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <img src="img/grassy-hills.png" alt="" height="145" width="230" />
+                <div class="item-details">
+                    <span class="title">Grass</span>
+                    <a href="#">Wallpaper</a>
+                </div>
+            </div>
+            <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-04-14" data-title="Vestride">
+                <img src="img/vestride-classy.png" alt="" height="145" width="230" />
+                <div class="item-details">
+                    <span class="title">Vestride</span>
+                    <a href="#">3D Render, Wallpaper</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <section>
-                <h2>Other Examples</h2>
-                <ul>
-                    <li><a href="basic.html">Basic masonry layout</a></li>
-                    <li><a href="minimal.html">The minimal markup with filters</a></li>
-                    <li><a href="adaptive.html">Twitter bootstrap adaptive masonry with compounded filters</a></li>
-                </ul>
-            </section>
-            
-            <section>
-                <h2>Features</h2>
-                
-                <ul>
-                    <li>Uses CSS Transitions!</li>
-                    <li>Responsive (try resizing the window!)</li>
-                    <li>Filter items by groups</li>
-                    <li>Items can have multiple groups and be different sizes</li>
-                    <li>Sort items</li>
-                    <li>Advanced filtering method (like searching)</li>
-                </ul>
-            </section>
-            
-            <section>
-                <h2>Options</h2>
-                
-                <div>
-                    <p>Settings you can change (these are the defaults)</p>
-                    <pre rel="JavaScript">
+    <section>
+        <h2>Other Examples</h2>
+        <ul>
+            <li><a href="{% post_url demos/2013-05-01-basic %}">Basic masonry layout</a></li>
+            <li><a href="{% post_url demos/2013-05-03-minimal %}">The minimal markup with filters</a></li>
+            <li><a href="{% post_url demos/2013-05-02-adaptive %}">Twitter bootstrap adaptive masonry with compounded filters</a></li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Features</h2>
+
+        <ul>
+            <li>Uses CSS Transitions!</li>
+            <li>Responsive (try resizing the window!)</li>
+            <li>Filter items by groups</li>
+            <li>Items can have multiple groups and be different sizes</li>
+            <li>Sort items</li>
+            <li>Advanced filtering method (like searching)</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Options</h2>
+
+        <div>
+            <p>Settings you can change (these are the defaults)</p>
+            <pre rel="JavaScript">
 <code class="language-javascript">
 // Overrideable options
 $.fn.shuffle.options = {
@@ -202,18 +177,18 @@ $.fn.shuffle.options = {
     columnWidth : 0 // can be a function or number or calculated by plugin
 };
 </code>
-                    </pre>
-                    
-                    <p>The easing function is one of <code>'default'</code>, <code>'linear'</code>, <code>'ease-in'</code>, <code>'ease-out'</code>, <code>'ease-in-out'</code>, or <code>'cubic-bezier'</code>.</p>
-                </div>
-            
-            <section>
-                <h2>Usage</h2>
-                
-                <div>
-                    <h3>The HTML Structure</h3>
-                    <p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
-                    <pre rel="HTML">
+            </pre>
+
+            <p>The easing function is one of <code>'default'</code>, <code>'linear'</code>, <code>'ease-in'</code>, <code>'ease-out'</code>, <code>'ease-in-out'</code>, or <code>'cubic-bezier'</code>.</p>
+        </div>
+
+    <section>
+        <h2>Usage</h2>
+
+        <div>
+            <h3>The HTML Structure</h3>
+            <p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
+            <pre rel="HTML">
 <code class="language-markup">
 &lt;div id="grid"&gt;
     &lt;div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball"&gt;
@@ -242,14 +217,14 @@ $.fn.shuffle.options = {
     &lt;/div&gt;
 &lt;/div&gt;
 </code>
-                    </pre>
+            </pre>
 
-                    <h3>How column widths work</h3>
-                    <p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong>can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
-                    
-                    <h3>A basic setup example</h3>
-                    <p>Sets up the button clicks and runs shuffle</p>
-                    <pre rel="jQuery">
+            <h3>How column widths work</h3>
+            <p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong>can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
+
+            <h3>A basic setup example</h3>
+            <p>Sets up the button clicks and runs shuffle</p>
+            <pre rel="jQuery">
 <code class="language-javascript">
 $(document).ready(function(){
 
@@ -270,30 +245,30 @@ $(document).ready(function(){
     $('#grid').shuffle();
 });
 </code>
-                    </pre>
-                    
-                    <h3>Events</h3>
-                    <p>These events will be triggered at their respective times: <code>'shrink.shuffle'</code>, <code>'shrunk.shuffle'</code>, <code>'filter.shuffle'</code>, <code>'filtered.shuffle'</code>, and <code>'sorted.shuffle'</code>.</p>
-                </div>
-            </section>
+            </pre>
 
-            <section>
-                <h2>Sorting</h2>
-                
-                <p>You can order the elements based off a function you supply. In the example above, each item has a <code>data-date-created</code> and <code>data-title</code> attribute. The filter buttons have a <code>data-sort</code> attribute with the value of the item&rsquo;s attribute. Then, with some JavaScript, we can get the correct attribute and provide a function to sort by.</p>
+            <h3>Events</h3>
+            <p>These events will be triggered at their respective times: <code>'shrink.shuffle'</code>, <code>'shrunk.shuffle'</code>, <code>'filter.shuffle'</code>, <code>'filtered.shuffle'</code>, and <code>'sorted.shuffle'</code>.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Sorting</h2>
+
+        <p>You can order the elements based off a function you supply. In the example above, each item has a <code>data-date-created</code> and <code>data-title</code> attribute. The filter buttons have a <code>data-sort</code> attribute with the value of the item&rsquo;s attribute. Then, with some JavaScript, we can get the correct attribute and provide a function to sort by.</p>
 
                 <pre rel="HTML">
 <code class="language-markup">
 &lt;li data-sort="title"&gt;Title&lt;/li&gt;
 </code>
-                </pre>
+        </pre>
 
-                <pre rel="HTML">
+        <pre rel="HTML">
 <code class="language-markup">
 &lt;div class="item" data-title="Baseball"&gt;&hellip;&lt;/div&gt;
 </code>
-                </pre>
-                <pre rel="JavaScript">
+        </pre>
+        <pre rel="JavaScript">
 <code class="language-javascript">
 // Sorting options
 $('.sort-options li').on('click', function() {
@@ -326,29 +301,29 @@ $('.sort-options li').on('click', function() {
     $grid.shuffle('sort', opts);
 });
 </code>
-                </pre>
+        </pre>
 
-                <p>The <code>opts</code> parameter can contain two properties. <code>reverse</code>, a boolean which will reverse the array. <code>by</code> is a function that is passed the element wrapped in jQuery. In the case above, we&rsquo;re returning the value of the data-date-created or data-title attributes.</p>
-                <p>Calling sort with an empty object will reset the elements to DOM order.</p>
-            </section>
-            
-            <section>
-                <h2>Advanced Filtering</h2>
+        <p>The <code>opts</code> parameter can contain two properties. <code>reverse</code>, a boolean which will reverse the array. <code>by</code> is a function that is passed the element wrapped in jQuery. In the case above, we&rsquo;re returning the value of the data-date-created or data-title attributes.</p>
+        <p>Calling sort with an empty object will reset the elements to DOM order.</p>
+    </section>
 
-                <p>By passing a function to shuffle, you can customize the filtering to your hearts content. Shuffle will iterate over each item in the container and give your function the element wrapped in jQuery and the shuffle instance. Return <code>true</code> to keep the element or <code>false</code> to hide it.</p>
+    <section>
+        <h2>Advanced Filtering</h2>
 
-                <h3>Example</h3>
-                <pre rel="JavaScript">
+        <p>By passing a function to shuffle, you can customize the filtering to your hearts content. Shuffle will iterate over each item in the container and give your function the element wrapped in jQuery and the shuffle instance. Return <code>true</code> to keep the element or <code>false</code> to hide it.</p>
+
+        <h3>Example</h3>
+        <pre rel="JavaScript">
 <code class="language-javascript">
 // Filters elements with a data-title attribute with less than 10 characters
 $('#grid').shuffle(function($el, shuffle) {
     return $el.data('title').length &lt; 10;
 });
 </code>
-                </pre>
+        </pre>
 
-                <h3>Searching</h3>
-                <pre rel="JavaScript">
+        <h3>Searching</h3>
+        <pre rel="JavaScript">
 <code class="language-javascript">
 // Advanced filtering
 $('.filter .search').on('keyup change', function() {
@@ -366,148 +341,64 @@ $('.filter .search').on('keyup change', function() {
     });
 });
 </code>
-                </pre>
+        </pre>
 
-                <p>For another example of advanced filters, check out the <a href="responsive.html">compounded filters demo</a>.</p>
-            </section>
-            
-            <section>
-                <h2>Dependencies</h2>
-                
-                <ul>
-                    <li><a target="_blank" href="http://jquery.com">jQuery</a></li>
-                    <li><a target="_blank" href="http://modernizr.com">Modernizr</a>
-                    <ul>
-                        <li>A custom Modernizr build has been included with the plugin.</li>
-                        <li>If you already have Modernizr on your site, you may delete it.</li>
-                        <li>If you don't know what Modernizr is, leave it!</li>
-                    </ul>
-                    </li>
-                </ul>
-            </section>
-            
-            
-            <section>
-                <h2>Supported Browsers</h2>
-                
-                <ul>
-                    <li>Chrome</li>
-                    <li>Firefox</li>
-                    <li>IE 7+</li>
-                    <li>Opera</li>
-                    <li>Safari</li>
-                </ul>
-                
-                <p>
-                    Browsers that don't support CSS transitions and transforms <strong>*cough*</strong> IE &lt;= 9 <strong>*cough*</strong> will see a less cool, javascript based version of the effect.
-                </p>
-            </section>
-                
-            <section>
-                <h2>Links</h2>
-                
-                <ul>
-                    <li><a href="https://github.com/Vestride/Shuffle">GitHub Repo</a></li>
-                    <li><a href="http://isotope.metafizzy.co/">Inspired by Isotope</a></li>
-                    <li><a href="http://glencheney.com">Me</a></li>
-                </ul>
-            </section>
-            
-            
-            <section>
-                <h2>Changes</h2>
-                <ul>
-                    <li>11.3.12 - Replaced layout system with <a href="http://masonry.desandro.com/">masonry</a>. Items can now be different sizes! Added addtional examples.</li>
-                    <li>10.24.12 - Better handling of grid item dimensions. Added a minimal markup page.</li>
-                    <li>9.20.12 - Added <code>destroy</code> method</li>
-                    <li>9.18.12 - Added sorting ability and made plugin responsive. Updated to Modernizr 2.6.2</li>
-                    <li>7.21.12 - Rewrote plugin in more object oriented structure. Added custom events. Updated to Modernizr 2.6.1</li>
-                    <li>7.3.12 - Removed dependency on the css file and now apply the css with javascript</li>
-                </ul>
-                
-            </section>
-        </div>
+        <p>For another example of advanced filters, check out the <a href="responsive.html">compounded filters demo</a>.</p>
+    </section>
 
-        
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script defer src="js/jquery.shuffle.js"></script>
-        <script defer src="js/prism.js"></script>
-        <script>
-            $(document).ready(function() {
-                
-                // Set up button clicks
-                $('.filter-options li').on('click', function() {
-                    var $this = $(this),
-                        $grid = $('#grid');
+    <section>
+        <h2>Dependencies</h2>
 
-                    // Hide current label, show current label in title
-                    $('.filter-options .active').removeClass('active');
-                    $this.addClass('active');
-
-                    // Filter elements
-                    $grid.shuffle($this.data('group'));
-                });
-
-                // Sorting options
-                $('.sort-options li').on('click', function() {
-                    var $this = $(this),
-                        $grid = $('#grid'),
-                        sort = $this.data('sort'),
-                        opts = {};
-
-                    // Hide current label, show current label in title
-                    $('.sort-options .active').removeClass('active');
-                    $this.addClass('active');
-
-                    // We're given the element wrapped in jQuery
-                    if (sort === 'date-created') {
-                        opts = {
-                            by: function($el) {
-                                return $el.data('date-created');
-                            }
-                        }
-                    } else if (sort === 'title') {
-                        opts = {
-                            by: function($el) {
-                                return $el.data('title').toLowerCase();
-                            }
-                        }
-                    }
-
-                    // Filter elements
-                    $grid.shuffle('sort', opts);
-                });
-
-                // Advanced filtering
-                $('.filter .search').on('keyup change', function() {
-                    var val = this.value.toLowerCase();
-                    $('#grid').shuffle(function($el, shuffle) {
-
-                        // Only search elements in the current group
-                        if (shuffle.group !== 'all' && $.inArray(shuffle.group, $el.data('groups')) === -1) {
-                            return false;
-                        }
-
-                        var text = $.trim($el.text()).toLowerCase();
-                        return text.indexOf(val) != -1;
-                    });
-                });
-                
-                // instantiate the plugin
-                $('#grid').shuffle();
-
-                // Destroy it! o_O
-                // $('#grid').shuffle('destroy');
+        <ul>
+            <li><a target="_blank" href="http://jquery.com">jQuery</a></li>
+            <li><a target="_blank" href="http://modernizr.com">Modernizr</a>
+            <ul>
+                <li>A custom Modernizr build has been included with the plugin.</li>
+                <li>If you already have Modernizr on your site, you may delete it.</li>
+                <li>If you don't know what Modernizr is, leave it!</li>
+            </ul>
+            </li>
+        </ul>
+    </section>
 
 
-                // You can subscribe to custom events: shrink, shrunk, filter, filtered, and sorted
-                $('#grid').on('shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle sorted.shuffle layout.shuffle', function(evt, shuffle) {
-                    if ( window.console ) {
-                        console.log(evt.type, shuffle, this);
-                    }
-                });
+    <section>
+        <h2>Supported Browsers</h2>
 
-            });
-        </script>
-    </body>
-</html>
+        <ul>
+            <li>Chrome</li>
+            <li>Firefox</li>
+            <li>IE 7+</li>
+            <li>Opera</li>
+            <li>Safari</li>
+        </ul>
+
+        <p>
+            Browsers that don't support CSS transitions and transforms <strong>*cough*</strong> IE &lt;= 9 <strong>*cough*</strong> will see a less cool, javascript based version of the effect.
+        </p>
+    </section>
+
+    <section>
+        <h2>Links</h2>
+
+        <ul>
+            <li><a href="https://github.com/Vestride/Shuffle">GitHub Repo</a></li>
+            <li><a href="http://isotope.metafizzy.co/">Inspired by Isotope</a></li>
+            <li><a href="http://glencheney.com">Me</a></li>
+        </ul>
+    </section>
+
+
+    <section>
+        <h2>Changes</h2>
+        <ul>
+            <li>11.3.12 - Replaced layout system with <a href="http://masonry.desandro.com/">masonry</a>. Items can now be different sizes! Added addtional examples.</li>
+            <li>10.24.12 - Better handling of grid item dimensions. Added a minimal markup page.</li>
+            <li>9.20.12 - Added <code>destroy</code> method</li>
+            <li>9.18.12 - Added sorting ability and made plugin responsive. Updated to Modernizr 2.6.2</li>
+            <li>7.21.12 - Rewrote plugin in more object oriented structure. Added custom events. Updated to Modernizr 2.6.1</li>
+            <li>7.3.12 - Removed dependency on the css file and now apply the css with javascript</li>
+        </ul>
+
+    </section>
+</div>

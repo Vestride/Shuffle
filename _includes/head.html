@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <title>{{ page.title }}</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta property="og:title" content="{{ page.title }}" />
+  <meta property="og:description" content="Shuffle, categorize, sort, and filter a grid of items" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="http://vestride.github.com/Shuffle/" />
+  <meta property="og:image" content="http://vestride.github.com/Shuffle/img/hero.png" />
+  <meta property="og:site_name" content="jQuery Shuffle Plugin" />
+  <meta property="fb:admins" content="771347349" />
+  <meta name="author" content="https://plus.google.com/u/0/100210640453700033824" />
+
+  <link href="https://plus.google.com/u/0/100210640453700033824" rel="author" />
+
+  <link rel="stylesheet" href="{{ site.url }}/css/prism.css" />
+  <link rel="stylesheet" href="{{ site.url }}/css/style.css" />
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Poly:400,400italic" />
+  {% if page.extraCSS %}
+  {% for href in page.extraCSS %}
+  <link rel="stylesheet" href="{{ href }}" />
+  {% endfor %}
+  {% endif %}
+
+  <!--[if lt IE 9]>
+  <script src="js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body class="{{ page.bodyClass }}">

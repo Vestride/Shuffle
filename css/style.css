@@ -38,6 +38,10 @@ body {
     margin: 0 auto;
 }
 
+main {
+    display: block;
+}
+
 
 /*=============================================*\
  $General Styles
@@ -84,7 +88,7 @@ p strong {
 a {
     color: #0AAAC8;
     text-decoration: none;
-    
+
   -webkit-transition: all 0.2s ease-out;
      -moz-transition: all 0.2s ease-out;
        -o-transition: all 0.2s ease-out;
@@ -120,22 +124,22 @@ header p {margin-top: 0;}
     color: #F0F0F0;
     padding: 5px 15px;
     border: 1px solid #454545;
-    
-    
+
+
     background-color: #333333;
-    background-image: -webkit-linear-gradient(top, #333333, #242424); 
-    background-image:    -moz-linear-gradient(top, #333333, #242424); 
-    background-image:     -ms-linear-gradient(top, #333333, #242424); 
-    background-image:      -o-linear-gradient(top, #333333, #242424); 
+    background-image: -webkit-linear-gradient(top, #333333, #242424);
+    background-image:    -moz-linear-gradient(top, #333333, #242424);
+    background-image:     -ms-linear-gradient(top, #333333, #242424);
+    background-image:      -o-linear-gradient(top, #333333, #242424);
     background-image:         linear-gradient(top, #333333, #242424);
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#242424'); 
-   
-    
-  -webkit-transition: all 0.2s ease-out;  
-     -moz-transition: all 0.2s ease-out;  
-      -ms-transition: all 0.2s ease-out;  
-       -o-transition: all 0.2s ease-out;  
-          transition: all 0.2s ease-out;  
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#242424');
+
+
+  -webkit-transition: all 0.2s ease-out;
+     -moz-transition: all 0.2s ease-out;
+      -ms-transition: all 0.2s ease-out;
+       -o-transition: all 0.2s ease-out;
+          transition: all 0.2s ease-out;
 
 
 }
@@ -199,16 +203,16 @@ header p {margin-top: 0;}
     padding: 5px;
     border: 1px solid #454545;
     font-size: 12px;
-    
+
     background-color: #333333;
-    background-image: -webkit-linear-gradient(top, #333333, #242424); 
-    background-image:    -moz-linear-gradient(top, #333333, #242424); 
-    background-image:     -ms-linear-gradient(top, #333333, #242424); 
-    background-image:      -o-linear-gradient(top, #333333, #242424); 
+    background-image: -webkit-linear-gradient(top, #333333, #242424);
+    background-image:    -moz-linear-gradient(top, #333333, #242424);
+    background-image:     -ms-linear-gradient(top, #333333, #242424);
+    background-image:      -o-linear-gradient(top, #333333, #242424);
     background-image:         linear-gradient(to bottom, #333333, #242424);
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#242424'); 
-   
-    
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#242424');
+
+
     -webkit-transition: all 0.2s ease-out;
        -moz-transition: all 0.2s ease-out;
          -o-transition: all 0.2s ease-out;
@@ -233,12 +237,12 @@ header p {margin-top: 0;}
 
 .control-group .active {
     background-color: #242424;
-    background-image: -webkit-linear-gradient(top, #242424, #333333); 
-    background-image:    -moz-linear-gradient(top, #242424, #333333); 
-    background-image:     -ms-linear-gradient(top, #242424, #333333); 
-    background-image:      -o-linear-gradient(top, #242424, #333333); 
+    background-image: -webkit-linear-gradient(top, #242424, #333333);
+    background-image:    -moz-linear-gradient(top, #242424, #333333);
+    background-image:     -ms-linear-gradient(top, #242424, #333333);
+    background-image:      -o-linear-gradient(top, #242424, #333333);
     background-image:         linear-gradient(to bottom, #242424, #333333);
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#242424', EndColorStr='#333333'); 
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#242424', EndColorStr='#333333');
 }
 
 .control-group li:hover::before {
@@ -335,7 +339,7 @@ header p {margin-top: 0;}
 }
 
 
-/* Contain floats: h5bp.com/q */ 
+/* Contain floats: h5bp.com/q */
 .clearfix:before, .clearfix:after { content: ""; display: table; }
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
@@ -361,7 +365,7 @@ header p {margin-top: 0;}
         display: block;
         margin: 0;
     }
-    
+
     .home .filter .label {
         float: none;
         margin: 10px 0 0 0;
@@ -383,7 +387,7 @@ header p {margin-top: 0;}
         padding-top: 10px;
         padding-bottom: 10px;
     }
-    
+
     .home .control-group + .control-group {
         margin: 10px 0;
     }
