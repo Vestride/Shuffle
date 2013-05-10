@@ -19,7 +19,7 @@
         <meta name="author" content="https://plus.google.com/u/0/100210640453700033824" />
 
         <link href="https://plus.google.com/u/0/100210640453700033824" rel="author" />
-        
+
         <link rel="stylesheet" href="css/prism.css" />
         <link rel="stylesheet" href="css/style.css" />
         <link href='http://fonts.googleapis.com/css?family=Poly:400,400italic' rel='stylesheet' type='text/css' />
@@ -34,17 +34,17 @@
                 <h1>Shuffle</h1>
                 <p>Categorize, sort, and filter a responsive grid of items</p>
             </header>
-            
+
             <section class="downloads">
                 <h2>Downloads</h2>
                 <a href="js/jquery.shuffle.js">jquery.shuffle.js</a>
                 <a href="js/jquery.shuffle.min.js">jquery.shuffle.min.js</a>
             </section>
-            
-            
+
+
             <section>
                 <h2>Example</h2>
-                
+
                 <div class="filter clearfix">
                     <p class="lfloat label">Filter:</p>
                     <ul class="filter-options control-group lfloat">
@@ -159,10 +159,10 @@
                     <li><a href="minimal.html">The minimal markup</a></li>
                 </ul>
             </section>
-            
+
             <section>
                 <h2>Features</h2>
-                
+
                 <ul>
                     <li>Uses CSS Transitions!</li>
                     <li>Responsive (try resizing the window!)</li>
@@ -172,10 +172,10 @@
                     <li>Advanced filtering method (like searching)</li>
                 </ul>
             </section>
-            
+
             <section>
                 <h2>Options</h2>
-                
+
                 <div>
                     <p>Settings you can change (these are the defaults)</p>
                     <pre rel="JavaScript">
@@ -187,13 +187,13 @@ var options = {
 };
 </code>
                     </pre>
-                    
+
                     <p>The easing function is one of <code>'default'</code>, <code>'linear'</code>, <code>'ease-in'</code>, <code>'ease-out'</code>, <code>'ease-in-out'</code>, or <code>'cubic-bezier'</code>.</p>
                 </div>
-            
+
             <section>
                 <h2>Usage</h2>
-                
+
                 <div>
                     <p>The html structure. The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
                     <pre rel="HTML">
@@ -237,7 +237,7 @@ var options = {
 }
 </code>
                     </pre>
-                    
+
                     <p>Sets up the button clicks and runs shuffle</p>
                     <pre rel="jQuery">
 <code class="language-javascript">
@@ -265,14 +265,14 @@ $(document).ready(function(){
 });
 </code>
                     </pre>
-                    
+
                     <p>These events will be triggered at their respective times: <code>'shrink.shuffle'</code>, <code>'shrunk.shuffle'</code>, <code>'filter.shuffle'</code>, <code>'filtered.shuffle'</code>, and <code>'sorted.shuffle'</code>.</p>
                 </div>
             </section>
 
             <section>
                 <h2>Sorting</h2>
-                
+
                 <p>You can order the elements based off a function you supply. In the example above, each item has a <code>data-date-created</code> and <code>data-title</code> attribute. The filter buttons have a <code>data-sort</code> attribute with the value of the item&rsquo;s attribute. Then, with some JavaScript, we can get the correct attribute and provide a function to sort by.</p>
 
                 <pre rel="HTML">
@@ -324,7 +324,7 @@ $('.sort-options li').on('click', function() {
                 <p>The <code>opts</code> parameter can contain two properties. <code>reverse</code>, a boolean which will reverse the array. <code>by</code> is a function that is passed the element wrapped in jQuery. In the case above, we&rsquo;re returning the value of the data-date-created or data-title attributes.</p>
                 <p>Calling sort with an empty object will reset the elements to DOM order.</p>
             </section>
-            
+
             <section>
                 <h2>Advanced Filtering</h2>
 
@@ -361,10 +361,10 @@ $('.filter .search').on('keyup change', function() {
 </code>
                 </pre>
             </section>
-            
+
             <section>
                 <h2>Dependencies</h2>
-                
+
                 <ul>
                     <li><a target="_blank" href="http://jquery.com">jQuery</a></li>
                     <li><a target="_blank" href="http://modernizr.com">Modernizr</a>
@@ -376,11 +376,11 @@ $('.filter .search').on('keyup change', function() {
                     </li>
                 </ul>
             </section>
-            
-            
+
+
             <section>
                 <h2>Supported Browsers</h2>
-                
+
                 <ul>
                     <li>Chrome</li>
                     <li>Firefox</li>
@@ -388,23 +388,23 @@ $('.filter .search').on('keyup change', function() {
                     <li>Opera</li>
                     <li>Safari</li>
                 </ul>
-                
+
                 <p>
                     Browsers that don't support CSS transitions and transforms <strong>*cough*</strong> IE &lt;= 9 <strong>*cough*</strong> will see a less cool, javascript based version of the effect.
                 </p>
             </section>
-                
+
             <section>
                 <h2>Links</h2>
-                
+
                 <ul>
                     <li><a href="https://github.com/Vestride/Shuffle">GitHub Repo</a></li>
                     <li><a href="http://isotope.metafizzy.co/">Inspired by Isotope</a></li>
                     <li><a href="http://glencheney.com">Me</a></li>
                 </ul>
             </section>
-            
-            
+
+
             <section>
                 <h2>Changes</h2>
                 <ul>
@@ -414,17 +414,17 @@ $('.filter .search').on('keyup change', function() {
                     <li>7.21.12 - Rewrote plugin in more object oriented structure. Added custom events. Updated to Modernizr 2.6.1</li>
                     <li>7.3.12 - Removed dependency on the css file and now apply the css with javascript</li>
                 </ul>
-                
+
             </section>
         </div>
 
-        
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script defer src="js/jquery.shuffle.js"></script>
-        <script defer src="js/prism.js"></script>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="js/jquery.shuffle.js"></script>
+        <script src="js/prism.js"></script>
         <script>
             $(document).ready(function() {
-                
+
                 // Set up button clicks
                 $('.filter-options li').on('click', function() {
                     var $this = $(this),
@@ -482,7 +482,7 @@ $('.filter .search').on('keyup change', function() {
                         return text.indexOf(val) != -1;
                     });
                 });
-                
+
                 // instantiate the plugin
                 $('#grid').shuffle({
                     group : 'all',
