@@ -3,6 +3,63 @@ destination: ./_site
 plugins:     ./_plugins
 layouts:     ./_layouts
 include:     ['.htaccess']
-exclude:     []
+exclude:     ['./css/*']
 
 permalink: /:title
+
+items:
+  - groups: [ photography ]
+    date: 2010-09-14
+    title: Baseball
+    img: img/baseball.png
+  - groups: [ wallpaper, 3d ]
+    date: 2011-08-14
+    title: Tennis
+    img: img/tennis-ball.png
+    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+  - groups: [ wallpaper, 3d ]
+    date: 2009-05-27
+    title: iMac
+    img: img/imac.png
+  - groups: [ graphics ]
+    date: 2012-05-14
+    title: Master Chief
+    img: img/master-chief.png
+    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+  - groups: [ wallpaper, 3d ]
+    date: 2009-09-14
+    title: Eightfold
+    img: img/es-blue.png
+  - groups: [ photography ]
+    date: 2012-03-14
+    title: Pumpkin
+    img: img/pumpkin.png
+    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+  - groups: [ wallpaper, 3d ]
+    date: 2013-05-19
+    title: Vestride
+    img: img/vestride-red.png
+  - groups: [ graphics ]
+    date: 2013-02-01
+    title: Newegg
+    img: img/newegg.png
+    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+  - groups: [ wallpaper ]
+    date: 2000-01-01
+    title: Arc
+    img: img/eightfoldarc.png
+  - groups: [ photography ]
+    date: 2012-07-04
+    title: Ground
+    img: img/ground.png
+  - groups: [ wallpaper ]
+    date: 2011-08-12
+    title: Grass
+    img: img/grassy-hills.png
+    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+  - groups: [ wallpaper, 3d ]
+    date: 2013-05-19
+    title: Vestride
+    img: img/vestride-classy.png
+
+

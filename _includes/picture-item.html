@@ -1,0 +1,10 @@
+{% comment %} Ghetto conversion to JSON {% endcomment %}
+{% capture groups %}["{{ item.groups | join: "," }}"]{% endcapture %}
+<div class="item item--h2" data-groups='{{ groups }}' data-date-created="{{ item.date }}" data-title="{{ item.title }}">
+    <img src="{{ item.img }}" alt="" height="145" width="230" />
+    <div class="item__details">
+        <span class="item__title">{{ item.title }}</span>
+        <a href="#">Graphic Design</a>
+        {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+    </div>
+</div>
