@@ -1,0 +1,82 @@
+body {
+  font-family: 'Ubuntu', sans-serif;
+}
+
+/* lets have some constraints shall we */
+.container-fluid {
+  max-width: 93%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.row.row--full {
+  margin-left: 0;
+}
+
+// Links
+a {
+
+  &,
+  &:visited {
+    color: $river;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:active {
+    color: $emerald;
+  }
+}
+
+
+h1 {
+  margin: 20px 0;
+  font-weight: 300;
+  font-size: 4em;
+  line-height: 1;
+  color: $emerald;
+}
+
+h2 {
+  position: relative;
+  color: $wetAsphalt;
+  font-size: 2.5em;
+  // border-bottom: 2px solid $emerald;
+  margin-bottom: 18px;
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 2px;
+    background-color: $emerald;
+  }
+}
+
+
+nav > a {
+  display: block;
+  margin: 5px 0;
+}
+
+
+// Filters
+.filter__label {
+  margin: 0 0 3px;
+}
+
+
+
+
+
+
+
+
+
+
+

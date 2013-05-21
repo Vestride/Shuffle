@@ -4,173 +4,192 @@ title: jQuery Shuffle Plugin
 bodyClass: home
 extraJS: [ "homepage.js" ]
 ---
-<div>
-    <header>
-        <h1 class="special">Shuffle</h1>
-        <p>Categorize, sort, and filter a responsive grid of items</p>
-    </header>
+<header class="container-fluid">
+  <div class="row-fluid">
+    <div class="span7">
+      <h1>Shuffle</h1>
+      <p>Categorize, sort, and filter a responsive grid of items</p>
+    </div>
+  </div>
+</header>
 
-    <section class="downloads">
-        <h2>Downloads</h2>
-        <a href="js/jquery.shuffle.js">jquery.shuffle.js</a>
-        <a href="js/jquery.shuffle.min.js">jquery.shuffle.min.js</a>
-    </section>
+<section>
+  <div class="container-fluid">
+    <h2>Downloads</h2>
+    <nav role="secondary">
+      <a href="js/jquery.shuffle.js">jquery.shuffle.js</a>
+      <a href="js/jquery.shuffle.min.js">jquery.shuffle.min.js</a>
+    </nav>
+  </div>
+</section>
 
 
-    <section>
-        <h2>Example</h2>
+<section>
+  <div class="container-fluid">
+    <h2>Example</h2>
+  </div>
 
-        <div class="filter clearfix">
-            <p class="lfloat label">Filter:</p>
-            <ul class="filter-options control-group lfloat">
-                <li data-group="all" class="active">Most Recent</li>
-                <li data-group="wallpaper">Wallpapers</li>
-                <li data-group="graphics">Graphic Design</li>
-                <li data-group="photography">Photography</li>
-                <li data-group="3d">3D Renders</li>
-            </ul>
+  <div class="container-fluid filter">
+    <div class="row-fluid">
+      <p class="filter__label">Filter:</p>
+      <div class="filter-options btn-group">
+        <button class="btn btn--filter" data-group="wallpaper">Wallpapers</button>
+        <button class="btn btn--filter" data-group="graphics">Graphic Design</button>
+        <button class="btn btn--filter" data-group="photography">Photography</button>
+        <button class="btn btn--filter" data-group="3d">3D Renders</button>
+      </div>
+    </div>
 
-            <p class="lfloat label">Sort:</p>
-            <ul class="sort-options control-group lfloat">
-                <li data-sort class="active">Default</li>
-                <li data-sort="title">Title</li>
-                <li data-sort="date-created">Date Created</li>
-            </ul>
+    <div class="row-fluid">
+      <p class="filter__label">Sort:</p>
+      <div class="sort-options btn-group">
+        <button class="btn btn--sort" data-sort class="active">Default</button>
+        <button class="btn btn--sort" data-sort="title">Title</button>
+        <button class="btn btn--sort" data-sort="date-created">Date Created</button>
+      </div>
 
-            <input class="search label" type="search" placeholder="Search..." />
-        </div>
+      <input class="search label" type="search" placeholder="Search..." />
+    </div>
 
-        <div id="grid" class="container">
-          {% for item in site.items %}
-              {% assign item = item %}
-              {% include picture-item.html %}
-          {% endfor %}
-            <!-- <div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball">
-                <img src="img/baseball.png" alt="" height="145" width="230" />
-                <div class="item-details">
-                    <span class="title">Baseball</span>
-                    <a href="img/originals/baseball.jpg">Photography</a>
-                </div>
-            </div>
-            <div class="item w2" data-groups='["wallpaper", "3d"]' data-date-created="2011-08-14" data-title="Tennis">
-                <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                <img src="img/tennis-ball.png" alt="" height="145" width="230" />
-                <div class="item-details">
-                    <span class="title">Tennis</span>
-                    <a href="#">3D Render, Wallpaper</a>
-                </div>
-            </div>
-            <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2009-05-27" data-title="iMac">
-                <img src="img/imac.png" alt="" height="145" width="230" />
-                <div class="item-details">
-                    <span class="title">iMac</span>
-                    <a href="#">3D Render, Wallpaper</a>
-                </div>
-            </div>
-            <div class="item h2" data-groups='["graphics"]' data-date-created="2012-05-14" data-title="Master Chief">
-                <img src="img/master-chief.png" alt="" height="145" width="230" />
-                <div class="item-details">
-                    <span class="title">Master Chief</span>
-                    <a href="#">Graphic Design</a>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.</p>
-                </div>
-            </div>
-            <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Eightfold">
-                <img src="img/es-blue.png" alt="" height="145" width="230" />
-                <div class="item-details">
-                    <span class="title">Eightfold</span>
-                    <a href="#">3D Render, Wallpaper</a>
-                </div>
-            </div>
-            <div class="item w2" data-groups='["photography"]' data-date-created="2012-03-14" data-title="Pumpkin">
-                <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                <img src="img/pumpkin.png" alt="" height="145" width="230" />
-                <div class="item-details">
-                    <span class="title">Pumpkin</span>
-                    <a href="#">Photography</a>
-                </div>
-            </div>
-            <div class="item w2 h2" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Vestride">
-                <img src="img/vestride-red.png" alt="" height="145" width="230" />
-                <div class="item-details">
-                    <span class="title">Vestride</span>
-                    <a href="#">3D Render, Wallpaper</a>
-                </div>
-            </div>
-            <div class="item h2" data-groups='["graphics"]' data-date-created="2012-01-12" data-title="Newegg">
-                <img src="img/newegg.png" alt="" height="145" width="230" />
-                <div class="item-details">
-                    <span class="title">Newegg</span>
-                    <a href="#">Motion Graphics</a>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.</p>
-                </div>
-            </div>
-            <div class="item" data-groups='["wallpaper"]' data-date-created="2012-01-14" data-title="Arc">
-                <img src="img/eightfoldarc.png" alt="" height="145" width="230" />
-                <div class="item-details">
-                    <span class="title">Arc</span>
-                    <a href="#">Wallpaper</a>
-                </div>
-            </div>
-            <div class="item" data-groups='["photography"]' data-date-created="2011-01-14" data-title="Ground">
-                <img src="img/ground.png" alt="" height="145" width="230"/>
-                <div class="item-details">
-                    <span class="title">Ground</span>
-                    <a href="img/originals/baseball.jpg">Photography</a>
-                </div>
-            </div>
-            <div class="item w2" data-groups='["wallpaper"]' data-date-created="2011-12-14" data-title="Grass">
-                <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                <img src="img/grassy-hills.png" alt="" height="145" width="230" />
-                <div class="item-details">
-                    <span class="title">Grass</span>
-                    <a href="#">Wallpaper</a>
-                </div>
-            </div>
-            <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-04-14" data-title="Vestride">
-                <img src="img/vestride-classy.png" alt="" height="145" width="230" />
-                <div class="item-details">
-                    <span class="title">Vestride</span>
-                    <a href="#">3D Render, Wallpaper</a>
-                </div>
-            </div> -->
-        </div>
-    </section>
+  </div>
 
-    <section>
-        <h2>Other Examples</h2>
-        <ul>
-            <li><a href="{% post_url demos/2013-05-01-basic %}">Basic masonry layout</a></li>
-            <li><a href="{% post_url demos/2013-05-03-minimal %}">The minimal markup with filters</a></li>
-            <li><a href="{% post_url demos/2013-05-02-adaptive %}">Twitter bootstrap adaptive masonry with compounded filters</a></li>
-        </ul>
-    </section>
+  <div id="grid" class="container-fluid">
+      {% for item in site.items %}
+          {% assign item = item %}
+          {% include picture-item.html %}
+      {% endfor %}
 
-    <section>
-        <h2>Features</h2>
+          <!-- <div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball">
+              <img src="img/baseball.png" alt="" height="145" width="230" />
+              <div class="item-details">
+                  <span class="title">Baseball</span>
+                  <a href="img/originals/baseball.jpg">Photography</a>
+              </div>
+          </div>
+          <div class="item w2" data-groups='["wallpaper", "3d"]' data-date-created="2011-08-14" data-title="Tennis">
+              <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              <img src="img/tennis-ball.png" alt="" height="145" width="230" />
+              <div class="item-details">
+                  <span class="title">Tennis</span>
+                  <a href="#">3D Render, Wallpaper</a>
+              </div>
+          </div>
+          <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2009-05-27" data-title="iMac">
+              <img src="img/imac.png" alt="" height="145" width="230" />
+              <div class="item-details">
+                  <span class="title">iMac</span>
+                  <a href="#">3D Render, Wallpaper</a>
+              </div>
+          </div>
+          <div class="item h2" data-groups='["graphics"]' data-date-created="2012-05-14" data-title="Master Chief">
+              <img src="img/master-chief.png" alt="" height="145" width="230" />
+              <div class="item-details">
+                  <span class="title">Master Chief</span>
+                  <a href="#">Graphic Design</a>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                  consequat.</p>
+              </div>
+          </div>
+          <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Eightfold">
+              <img src="img/es-blue.png" alt="" height="145" width="230" />
+              <div class="item-details">
+                  <span class="title">Eightfold</span>
+                  <a href="#">3D Render, Wallpaper</a>
+              </div>
+          </div>
+          <div class="item w2" data-groups='["photography"]' data-date-created="2012-03-14" data-title="Pumpkin">
+              <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              <img src="img/pumpkin.png" alt="" height="145" width="230" />
+              <div class="item-details">
+                  <span class="title">Pumpkin</span>
+                  <a href="#">Photography</a>
+              </div>
+          </div>
+          <div class="item w2 h2" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Vestride">
+              <img src="img/vestride-red.png" alt="" height="145" width="230" />
+              <div class="item-details">
+                  <span class="title">Vestride</span>
+                  <a href="#">3D Render, Wallpaper</a>
+              </div>
+          </div>
+          <div class="item h2" data-groups='["graphics"]' data-date-created="2012-01-12" data-title="Newegg">
+              <img src="img/newegg.png" alt="" height="145" width="230" />
+              <div class="item-details">
+                  <span class="title">Newegg</span>
+                  <a href="#">Motion Graphics</a>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                  consequat.</p>
+              </div>
+          </div>
+          <div class="item" data-groups='["wallpaper"]' data-date-created="2012-01-14" data-title="Arc">
+              <img src="img/eightfoldarc.png" alt="" height="145" width="230" />
+              <div class="item-details">
+                  <span class="title">Arc</span>
+                  <a href="#">Wallpaper</a>
+              </div>
+          </div>
+          <div class="item" data-groups='["photography"]' data-date-created="2011-01-14" data-title="Ground">
+              <img src="img/ground.png" alt="" height="145" width="230"/>
+              <div class="item-details">
+                  <span class="title">Ground</span>
+                  <a href="img/originals/baseball.jpg">Photography</a>
+              </div>
+          </div>
+          <div class="item w2" data-groups='["wallpaper"]' data-date-created="2011-12-14" data-title="Grass">
+              <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              <img src="img/grassy-hills.png" alt="" height="145" width="230" />
+              <div class="item-details">
+                  <span class="title">Grass</span>
+                  <a href="#">Wallpaper</a>
+              </div>
+          </div>
+          <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-04-14" data-title="Vestride">
+              <img src="img/vestride-classy.png" alt="" height="145" width="230" />
+              <div class="item-details">
+                  <span class="title">Vestride</span>
+                  <a href="#">3D Render, Wallpaper</a>
+              </div>
+          </div> -->
+  </div>
+</section>
 
-        <ul>
-            <li>Uses CSS Transitions!</li>
-            <li>Responsive (try resizing the window!)</li>
-            <li>Filter items by groups</li>
-            <li>Items can have multiple groups and be different sizes</li>
-            <li>Sort items</li>
-            <li>Advanced filtering method (like searching)</li>
-        </ul>
-    </section>
+<section>
+  <div class="container-fluid">
+    <h2>Other Examples</h2>
+    <nav role="primary">
+        <a href="{% post_url demos/2013-05-01-basic %}">Basic masonry layout</a>
+        <a href="{% post_url demos/2013-05-03-minimal %}">The minimal markup with filters</a>
+        <a href="{% post_url demos/2013-05-02-adaptive %}">Twitter bootstrap adaptive masonry with compounded filters</a>
+    </nav>
+  </div>
+</section>
 
-    <section>
-        <h2>Options</h2>
+<section>
+  <div class="container-fluid">
+    <h2>Features</h2>
 
-        <div>
-            <p>Settings you can change (these are the defaults)</p>
-            <pre rel="JavaScript">
+    <ul>
+        <li>Uses CSS Transitions!</li>
+        <li>Responsive (try resizing the window!)</li>
+        <li>Filter items by groups</li>
+        <li>Items can have multiple groups and be different sizes</li>
+        <li>Sort items</li>
+        <li>Advanced filtering method (like searching)</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="container-fluid">
+    <h2>Options</h2>
+
+    <div>
+        <p>Settings you can change (these are the defaults)</p>
+        <pre rel="JavaScript">
 <code class="language-javascript">
 // Overrideable options
 $.fn.shuffle.options = {
@@ -181,18 +200,21 @@ $.fn.shuffle.options = {
     columnWidth : 0 // can be a function or number or calculated by plugin
 };
 </code>
-            </pre>
+        </pre>
 
-            <p>The easing function is one of <code>'default'</code>, <code>'linear'</code>, <code>'ease-in'</code>, <code>'ease-out'</code>, <code>'ease-in-out'</code>, or <code>'cubic-bezier'</code>.</p>
-        </div>
+        <p>The easing function is one of <code>'default'</code>, <code>'linear'</code>, <code>'ease-in'</code>, <code>'ease-out'</code>, <code>'ease-in-out'</code>, or <code>'cubic-bezier'</code>.</p>
+    </div>
+  </div>
+</section>
 
-    <section>
-        <h2>Usage</h2>
+<section>
+  <div class="container-fluid">
+    <h2>Usage</h2>
 
-        <div>
-            <h3>The HTML Structure</h3>
-            <p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
-            <pre rel="HTML">
+    <div>
+        <h3>The HTML Structure</h3>
+        <p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
+        <pre rel="HTML">
 <code class="language-markup">
 &lt;div id="grid"&gt;
     &lt;div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball"&gt;
@@ -221,14 +243,14 @@ $.fn.shuffle.options = {
     &lt;/div&gt;
 &lt;/div&gt;
 </code>
-            </pre>
+        </pre>
 
-            <h3>How column widths work</h3>
-            <p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong>can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
+        <h3>How column widths work</h3>
+        <p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong>can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
 
-            <h3>A basic setup example</h3>
-            <p>Sets up the button clicks and runs shuffle</p>
-            <pre rel="jQuery">
+        <h3>A basic setup example</h3>
+        <p>Sets up the button clicks and runs shuffle</p>
+        <pre rel="jQuery">
 <code class="language-javascript">
 $(document).ready(function(){
 
@@ -249,30 +271,32 @@ $(document).ready(function(){
     $('#grid').shuffle();
 });
 </code>
-            </pre>
+        </pre>
 
-            <h3>Events</h3>
-            <p>These events will be triggered at their respective times: <code>'shrink.shuffle'</code>, <code>'shrunk.shuffle'</code>, <code>'filter.shuffle'</code>, <code>'filtered.shuffle'</code>, and <code>'sorted.shuffle'</code>.</p>
-        </div>
-    </section>
+        <h3>Events</h3>
+        <p>These events will be triggered at their respective times: <code>'shrink.shuffle'</code>, <code>'shrunk.shuffle'</code>, <code>'filter.shuffle'</code>, <code>'filtered.shuffle'</code>, and <code>'sorted.shuffle'</code>.</p>
+    </div>
+  </div>
+</section>
 
-    <section>
-        <h2>Sorting</h2>
+<section>
+  <div class="container-fluid">
+    <h2>Sorting</h2>
 
-        <p>You can order the elements based off a function you supply. In the example above, each item has a <code>data-date-created</code> and <code>data-title</code> attribute. The filter buttons have a <code>data-sort</code> attribute with the value of the item&rsquo;s attribute. Then, with some JavaScript, we can get the correct attribute and provide a function to sort by.</p>
+    <p>You can order the elements based off a function you supply. In the example above, each item has a <code>data-date-created</code> and <code>data-title</code> attribute. The filter buttons have a <code>data-sort</code> attribute with the value of the item&rsquo;s attribute. Then, with some JavaScript, we can get the correct attribute and provide a function to sort by.</p>
 
-                <pre rel="HTML">
+            <pre rel="HTML">
 <code class="language-markup">
 &lt;li data-sort="title"&gt;Title&lt;/li&gt;
 </code>
-        </pre>
+    </pre>
 
-        <pre rel="HTML">
+    <pre rel="HTML">
 <code class="language-markup">
 &lt;div class="item" data-title="Baseball"&gt;&hellip;&lt;/div&gt;
 </code>
-        </pre>
-        <pre rel="JavaScript">
+    </pre>
+    <pre rel="JavaScript">
 <code class="language-javascript">
 // Sorting options
 $('.sort-options li').on('click', function() {
@@ -305,29 +329,31 @@ $('.sort-options li').on('click', function() {
     $grid.shuffle('sort', opts);
 });
 </code>
-        </pre>
+    </pre>
 
-        <p>The <code>opts</code> parameter can contain two properties. <code>reverse</code>, a boolean which will reverse the array. <code>by</code> is a function that is passed the element wrapped in jQuery. In the case above, we&rsquo;re returning the value of the data-date-created or data-title attributes.</p>
-        <p>Calling sort with an empty object will reset the elements to DOM order.</p>
-    </section>
+    <p>The <code>opts</code> parameter can contain two properties. <code>reverse</code>, a boolean which will reverse the array. <code>by</code> is a function that is passed the element wrapped in jQuery. In the case above, we&rsquo;re returning the value of the data-date-created or data-title attributes.</p>
+    <p>Calling sort with an empty object will reset the elements to DOM order.</p>
+  </div>
+</section>
 
-    <section>
-        <h2>Advanced Filtering</h2>
+<section>
+  <div class="container-fluid">
+    <h2>Advanced Filtering</h2>
 
-        <p>By passing a function to shuffle, you can customize the filtering to your hearts content. Shuffle will iterate over each item in the container and give your function the element wrapped in jQuery and the shuffle instance. Return <code>true</code> to keep the element or <code>false</code> to hide it.</p>
+    <p>By passing a function to shuffle, you can customize the filtering to your hearts content. Shuffle will iterate over each item in the container and give your function the element wrapped in jQuery and the shuffle instance. Return <code>true</code> to keep the element or <code>false</code> to hide it.</p>
 
-        <h3>Example</h3>
-        <pre rel="JavaScript">
+    <h3>Example</h3>
+    <pre rel="JavaScript">
 <code class="language-javascript">
 // Filters elements with a data-title attribute with less than 10 characters
 $('#grid').shuffle(function($el, shuffle) {
     return $el.data('title').length &lt; 10;
 });
 </code>
-        </pre>
+    </pre>
 
-        <h3>Searching</h3>
-        <pre rel="JavaScript">
+    <h3>Searching</h3>
+    <pre rel="JavaScript">
 <code class="language-javascript">
 // Advanced filtering
 $('.filter .search').on('keyup change', function() {
@@ -347,54 +373,62 @@ $('.filter .search').on('keyup change', function() {
 </code>
         </pre>
 
-        <p>For another example of advanced filters, check out the <a href="responsive.html">compounded filters demo</a>.</p>
-    </section>
+    <p>For another example of advanced filters, check out the <a href="responsive.html">compounded filters demo</a>.</p>
+  </div>
+</section>
 
-    <section>
-        <h2>Dependencies</h2>
+<section>
+  <div class="container-fluid">
+    <h2>Dependencies</h2>
 
+    <ul>
+        <li><a target="_blank" href="http://jquery.com">jQuery</a></li>
+        <li><a target="_blank" href="http://modernizr.com">Modernizr</a>
         <ul>
-            <li><a target="_blank" href="http://jquery.com">jQuery</a></li>
-            <li><a target="_blank" href="http://modernizr.com">Modernizr</a>
-            <ul>
-                <li>A custom Modernizr build has been included with the plugin.</li>
-                <li>If you already have Modernizr on your site, you may delete it.</li>
-                <li>If you don't know what Modernizr is, leave it!</li>
-            </ul>
-            </li>
+            <li>A custom Modernizr build has been included with the plugin.</li>
+            <li>If you already have Modernizr on your site, you may delete it.</li>
+            <li>If you don't know what Modernizr is, leave it!</li>
         </ul>
-    </section>
+        </li>
+    </ul>
+  </div>
+</section>
 
 
-    <section>
-        <h2>Supported Browsers</h2>
+<section>
+  <div class="container-fluid">
+    <h2>Supported Browsers</h2>
 
-        <ul>
-            <li>Chrome</li>
-            <li>Firefox</li>
-            <li>IE 7+</li>
-            <li>Opera</li>
-            <li>Safari</li>
-        </ul>
+    <ul>
+        <li>Chrome</li>
+        <li>Firefox</li>
+        <li>IE 7+</li>
+        <li>Opera</li>
+        <li>Safari</li>
+    </ul>
 
-        <p>
-            Browsers that don't support CSS transitions and transforms <strong>*cough*</strong> IE &lt;= 9 <strong>*cough*</strong> will see a less cool, javascript based version of the effect.
-        </p>
-    </section>
+    <p>
+        Browsers that don't support CSS transitions and transforms <strong>*cough*</strong> IE &lt;= 9 <strong>*cough*</strong> will see a less cool, javascript based version of the effect.
+    </p>
+  </div>
+</section>
 
-    <section>
-        <h2>Links</h2>
+<section>
+  <div class="container-fluid">
+    <h2>Links</h2>
 
-        <ul>
-            <li><a href="https://github.com/Vestride/Shuffle">GitHub Repo</a></li>
-            <li><a href="http://isotope.metafizzy.co/">Inspired by Isotope</a></li>
-            <li><a href="http://glencheney.com">Me</a></li>
-        </ul>
-    </section>
+    <ul>
+        <li><a href="https://github.com/Vestride/Shuffle">GitHub Repo</a></li>
+        <li><a href="http://isotope.metafizzy.co/">Inspired by Isotope</a></li>
+        <li><a href="http://glencheney.com">Me</a></li>
+    </ul>
+  </div>
+</section>
 
 
-    <section>
-        <h2>Changes</h2>
-        {% include changelog.html %}
-    </section>
-</div>
+<section>
+  <div class="container-fluid">
+    <h2>Changes</h2>
+    {% include changelog.html %}
+  </div>
+</section>

@@ -1,0 +1,30 @@
+/*=============================================*\
+ Some styles to show off masonry layout
+\*=============================================*/
+
+$pictureGutter: 24px;
+.picture-item {
+  height: 210px;
+  margin-top: $pictureGutter;
+  overflow: hidden;
+
+  &.picture-item--h2 {
+    height: 420px;
+  }
+
+  .picture-item__details {
+
+  }
+  .picture-item__title {
+
+  }
+}
+
+// .item.w2 {
+//   width: 480px;
+// }
+
+.item.w2.h2 img {
+  width: 100%;
+  height: auto;
+}

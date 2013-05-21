@@ -3,7 +3,7 @@ destination: ./_site
 plugins:     ./_plugins
 layouts:     ./_layouts
 include:     ['.htaccess']
-exclude:     ['./css/*']
+exclude:     ['./_scss/*.*']
 
 permalink: /:title
 

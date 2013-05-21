@@ -1,0 +1,63 @@
+/*
+  Some colors from Flat UI
+  Firm/Turquiose: #1ABC9C;
+  Success/Emerald: #2ECC71;
+  Info/River: #3498DB;
+  Amethyst: #9B59B6;
+  Night/Wet Asphalt: #34495E;
+  Bright/Sunflower: #F1C40F;
+  Bright/Organge: #F39C12;
+  Carrot: #E67E22;
+  Alizarin: #E74C3C;
+  Clouds: #ECF0F1;
+  Concrete: #95A5A6;
+*/
+
+$turqoise: #1ABC9C;
+$greenSea: #16A085;
+
+$emerald: #2ECC71;
+$nephritis: #27AE60;
+
+$river: #3498DB;
+$belizeHole: #2980B9;
+
+$amethyst: #9B59B6;
+$wisteria: #8E44AD;
+
+$wetAsphalt: #34495E;
+$midnightBlue: #2C3E50;
+
+$sunflower: #F1C40F;
+$orange: #F39C12;
+
+$carrot: #E67E22;
+$pumpkin: #D35400;
+
+$alizarin: #E74C3C;
+$pomegranate: #C0392B;
+
+$clouds: #ECF0F1;
+$silver: #BDC3C7;
+
+$concrete: #95A5A6;
+$asbestos: #7F8C8D;
+
+
+@mixin clearfix() {
+
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+
+  &:after {
+    clear: both;
+  }
+
+
+  & {
+    *zoom: 1;
+  }
+}

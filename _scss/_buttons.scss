@@ -1,0 +1,64 @@
+
+
+.btn-group {
+  @include clearfix();
+
+  .btn {
+    float: left;
+    border-radius: 0;
+
+    &:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+
+    &:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+  }
+}
+
+.btn,
+button {
+  display: inline-block;
+  padding-top: .75em;
+  padding-bottom: .75em;
+  -webkit-appearance: none;
+  text-align: center;
+  color: white;
+  border-radius: .0625em;
+  border: 0;
+  background-color: $wetAsphalt;
+  transition: .2s ease-out;
+
+  &:hover {
+    background-color: lighten($wetAsphalt, 10);
+    box-shadow: 0 2px 0 0 darken($wetAsphalt, 5);
+  }
+
+  &.active,
+  &:active {
+    background-color: $midnightBlue;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.3);
+  }
+
+  &:active {
+    transition: none;
+  }
+}
+
+.btn--filter {
+  background-color: $carrot;
+
+  &:hover {
+    background-color: lighten($carrot, 5);
+    box-shadow: 0 2px 0 0 darken($carrot, 5);
+  }
+
+  &.active,
+  &:active  {
+    background-color: $pumpkin;
+  }
+}
+
+.btn--sort {
+}

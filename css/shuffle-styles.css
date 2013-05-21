@@ -1,23 +1,13 @@
 /*=============================================*\
  Some styles to show off masonry layout
 \*=============================================*/
-.item {
-    width: 230px;
-    height: 200px;
-    overflow: hidden;
-    margin-top: 20px;
-    margin-right: 20px;
-}
-
-.item.w2 {
-    width: 480px;
-}
+.picture-item {
+  height: 210px;
+  margin-top: 24px;
+  overflow: hidden; }
+  .picture-item.picture-item--h2 {
+    height: 420px; }
 
 .item.w2.h2 img {
-    width: 100%;
-    height: auto;
-}
-
-.item.h2 {
-    height: 420px;
-}
+  width: 100%;
+  height: auto; }
