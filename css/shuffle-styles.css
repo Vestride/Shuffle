@@ -5,9 +5,16 @@
   height: 210px;
   margin-top: 24px;
   overflow: hidden; }
+  .picture-item.shuffle-item {
+    margin-left: 0;
+    /* shuffle items shouldn't have a left margin*/ }
   .picture-item.picture-item--h2 {
     height: 420px; }
+  .picture-item img {
+    width: 100%;
+    height: auto; }
 
-.item.w2.h2 img {
-  width: 100%;
-  height: auto; }
+.shuffle--fluid .shuffle__sizer {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden; }

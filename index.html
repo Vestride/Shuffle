@@ -48,16 +48,18 @@ extraJS: [ "homepage.js" ]
         <button class="btn btn--sort" data-sort="date-created">Date Created</button>
       </div>
 
-      <input class="search label" type="search" placeholder="Search..." />
+      <input class="filter__search js-shuffle-search" type="search" placeholder="Search..." />
     </div>
 
   </div>
 
-  <div id="grid" class="container-fluid">
+  <div class="container-fluid">
+    <div id="grid" class="row-fluid shuffle--fluid">
       {% for item in site.items %}
           {% assign item = item %}
           {% include picture-item.html %}
       {% endfor %}
+      <div class="span3 shuffle__sizer"></div>
 
           <!-- <div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball">
               <img src="img/baseball.png" alt="" height="145" width="230" />
@@ -154,6 +156,7 @@ extraJS: [ "homepage.js" ]
                   <a href="#">3D Render, Wallpaper</a>
               </div>
           </div> -->
+    </div>
   </div>
 </section>
 

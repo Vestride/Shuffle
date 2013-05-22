@@ -8,8 +8,17 @@ $pictureGutter: 24px;
   margin-top: $pictureGutter;
   overflow: hidden;
 
+  &.shuffle-item {
+    margin-left: 0; /* shuffle items shouldn't have a left margin*/
+  }
+
   &.picture-item--h2 {
     height: 420px;
+  }
+
+  img {
+    width: 100%;
+    height: auto;
   }
 
   .picture-item__details {
@@ -20,11 +29,8 @@ $pictureGutter: 24px;
   }
 }
 
-// .item.w2 {
-//   width: 480px;
-// }
-
-.item.w2.h2 img {
-  width: 100%;
-  height: auto;
+.shuffle--fluid .shuffle__sizer {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
 }

@@ -124,6 +124,7 @@
 
         constructor: Shuffle,
 
+        // Needs refactoring!
         _init : function() {
             var self = this,
                 containerCSS,
@@ -140,6 +141,23 @@
             self.transform = self.getPrefixed('transform');
 
             self.isFluid = self.columnWidth && typeof self.columnWidth === 'function';
+            if ( typeof self.columnWidth === 'string' ) {
+                self.$sizer = self.$container.find( self.columnWidth );
+
+            // Check for an element
+            } else if ( self.columnWidth && self.columnWidth.nodeType && self.columnWidth.nodeType === 1 ) {
+                // Wrap it in jQuery
+                self.$sizer = $( self.columnWidth );
+
+            // Check for jQuery object
+            } else if ( self.columnWidth && self.columnWidth.jquery ) {
+                self.$sizer = self.columnWidth;
+            }
+
+            if ( self.$sizer && self.$sizer.length ) {
+                self.useSizer = true;
+                self.sizer = self.$sizer[0];
+            }
 
             // Get transitionend event name
             transEndEventNames = {
@@ -378,15 +396,32 @@
             return this.$container.children( this.itemSelector );
         },
 
+        getPreciseDimension : function( element, style ) {
+          var dimension;
+          if ( window.getComputedStyle ) {
+            dimension = window.getComputedStyle( element, null )[ style ];
+          } else {
+            dimension = $( element ).css( dimension );
+          }
+          return parseFloat( dimension );
+        },
+
         // calculates number of columns
         // i.e. this.colWidth = 200
         _setColumns : function( theContainerWidth ) {
             var self = this,
                 containerWidth = theContainerWidth || self.$container.width(),
-                gutter = typeof self.gutterWidth === 'function' ? self.gutterWidth( containerWidth ) : self.gutterWidth;
+                gutter = typeof self.gutterWidth === 'function' ?
+                    self.gutterWidth( containerWidth ) :
+                    self.useSizer ?
+                        self.getPreciseDimension( self.sizer, 'marginLeft' ) :
+                        self.gutterWidth,
+                calculatedColumns;
 
             // use fluid columnWidth function if there
             self.colWidth = self.isFluid ? self.columnWidth( containerWidth ) :
+                // columnWidth option isn't a function, are they using a sizing element?
+                self.useSizer ? self.getPreciseDimension( self.sizer, 'width' ) :
                 // if not, how about the explicitly set option?
                 self.columnWidth ||
                 // or use the size of the first item
@@ -400,7 +435,13 @@
             self.colWidth += gutter;
 
             // Was flooring 4.999999999999999 to 4 :(
-            self.cols = Math.floor( ( containerWidth + gutter + 0.000000000001 ) / self.colWidth );
+            calculatedColumns = (containerWidth + gutter) / self.colWidth;
+            // Widths given from getComputedStyle are not precise enough...
+            if ( Math.ceil(calculatedColumns) - calculatedColumns < 0.01 ) {
+                // e.g. calculatedColumns = 11.998876
+                calculatedColumns = Math.ceil( calculatedColumns );
+            }
+            self.cols = Math.floor( calculatedColumns );
             self.cols = Math.max( self.cols, 1 );
 
             // This can happen when .shuffle is called on something hidden (e.g. display:none for tabs)
@@ -1033,7 +1074,7 @@
 
             // If passed a string, lets decide what to do with it. Or they've provided a function to filter by
             if ( $.isFunction(opts) ) {
-                shuffle.shuffle.apply( shuffle, args );
+                shuffle.shuffle.apply( shuffle, [opts] );
 
             // Key should be an object with propreties reversed and by.
             } else if (typeof opts === 'string') {
@@ -1077,6 +1118,9 @@
 
     // Not overrideable
     $.fn.shuffle.settings = {
+        sizer: null,
+        $sizer: null,
+        useSizer: false,
         itemCss : { // default CSS for each item
             position: 'absolute',
             top: 0,

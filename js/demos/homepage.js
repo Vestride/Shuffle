@@ -10,17 +10,20 @@ var DEMO = (function($, window) {
     setupSearching();
 
     // instantiate the plugin
-    $('#grid').shuffle();
+    $grid.shuffle({
+      itemSelector: '.picture-item',
+      columnWidth: $grid.find('.shuffle__sizer')
+    });
 
     // Destroy it! o_O
-    // $('#grid').shuffle('destroy');
+    // $grid.shuffle('destroy');
 
     // You can subscribe to custom events: shrink, shrunk, filter, filtered, and sorted
-    $('#grid').on('shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle sorted.shuffle layout.shuffle', function(evt, shuffle) {
-      if ( window.console ) {
-        console.log(evt.type, shuffle, this);
-      }
-    });
+    // $grid.on('shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle sorted.shuffle layout.shuffle', function(evt, shuffle) {
+    //   if ( window.console ) {
+    //     console.log(evt.type, shuffle, this);
+    //   }
+    // });
   },
 
   // Set up button clicks
@@ -78,16 +81,17 @@ var DEMO = (function($, window) {
 
   setupSearching = function() {
     // Advanced filtering
-    $('.filter .search').on('keyup change', function() {
+    $('.js-shuffle-search').on('keyup change', function() {
       var val = this.value.toLowerCase();
       $grid.shuffle(function($el, shuffle) {
 
         // Only search elements in the current group
-        if (shuffle.group !== 'all' && $.inArray(shuffle.group, $el.data('groups')) === -1) {
-          return false;
-        }
+        // if (shuffle.group !== 'all' && $.inArray(shuffle.group, $el.data('groups')) === -1) {
+        //   return false;
+        // }
 
         var text = $.trim($el.text()).toLowerCase();
+        console.log(text);
         return text.indexOf(val) != -1;
       });
     });
