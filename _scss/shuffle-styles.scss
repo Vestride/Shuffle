@@ -1,29 +1,44 @@
+@import "variables";
 /*=============================================*\
  Some styles to show off masonry layout
 \*=============================================*/
 
 $pictureGutter: 24px;
+$itemHeight: 220px;
 .picture-item {
-  height: 210px;
+  height: 220px;
   margin-top: $pictureGutter;
   overflow: hidden;
+  background: $clouds;
 
   &.shuffle-item {
     margin-left: 0; /* shuffle items shouldn't have a left margin*/
   }
 
   &.picture-item--h2 {
-    height: 420px;
+    height: ($itemHeight * 2) + $pictureGutter; /* 2x the height + 1 gutter */
   }
 
   img {
+    display: block;
     width: 100%;
     height: auto;
   }
 
-  .picture-item__details {
-
+  .picture-item__details,
+  .picture-item__description {
+    padding: 1em;
   }
+  .picture-item__description {
+    margin: 0;
+    padding-top: 0;
+    padding-right: 2em;
+  }
+
+  .picture-item__tags {
+    margin: 0;
+  }
+
   .picture-item__title {
 
   }

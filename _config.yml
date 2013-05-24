@@ -11,55 +11,82 @@ items:
   - groups: [ photography ]
     date: 2010-09-14
     title: Baseball
-    img: img/baseball.png
+    img: baseball.png
+    original: baseball.jpg
+    cols: 3
   - groups: [ wallpaper, 3d ]
     date: 2011-08-14
     title: Tennis
-    img: img/tennis-ball.png
+    img: tennis-ball.png
+    original: tennis-ball.jpg
     description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+    cols: 6
   - groups: [ wallpaper, 3d ]
     date: 2009-05-27
     title: iMac
-    img: img/imac.png
+    img: imac.png
+    original: imac.jpg
+    cols: 3
   - groups: [ graphics ]
     date: 2012-05-14
     title: Master Chief
-    img: img/master-chief.png
+    img: master-chief.png
+    original: Master_Chief_Portrait_by_Eightfold_Studios.jpg
     description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    extras: [ h2 ]
+    cols: 3
   - groups: [ wallpaper, 3d ]
     date: 2009-09-14
     title: Eightfold
-    img: img/es-blue.png
+    img: es-blue.png
+    original: es-blue.jpg
+    cols: 3
   - groups: [ photography ]
     date: 2012-03-14
     title: Pumpkin
-    img: img/pumpkin.png
+    img: pumpkin.png
+    original: pumpkin.jpg
     description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+    cols: 6
   - groups: [ wallpaper, 3d ]
     date: 2013-05-19
     title: Vestride
-    img: img/vestride-red.png
+    img: vestride-red.png
+    original: vestride-red.jpg
+    extras: [ h2 ]
+    cols: 6
   - groups: [ graphics ]
     date: 2013-02-01
     title: Newegg
-    img: img/newegg.png
+    img: newegg.png
+    original: newegg.jpg
     description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    extras: [ h2 ]
+    cols: 3
   - groups: [ wallpaper ]
     date: 2000-01-01
     title: Arc
-    img: img/eightfoldarc.png
+    img: eightfoldarc.png
+    original: eightfoldarc.jpg
+    cols: 3
   - groups: [ photography ]
     date: 2012-07-04
     title: Ground
-    img: img/ground.png
+    img: ground.png
+    original: ground!.jpg
+    cols: 3
   - groups: [ wallpaper ]
     date: 2011-08-12
     title: Grass
-    img: img/grassy-hills.png
+    img: grassy-hills.png
+    original: grassy-hills.tif
     description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+    cols: 6
   - groups: [ wallpaper, 3d ]
     date: 2013-05-19
     title: Vestride
-    img: img/vestride-classy.png
+    img: vestride-classy.png
+    original: vestride-classy.jpg
+    cols: 3
 
 

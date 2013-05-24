@@ -2,17 +2,29 @@
  Some styles to show off masonry layout
 \*=============================================*/
 .picture-item {
-  height: 210px;
+  height: 220px;
   margin-top: 24px;
-  overflow: hidden; }
+  overflow: hidden;
+  background: #ecf0f1; }
   .picture-item.shuffle-item {
     margin-left: 0;
     /* shuffle items shouldn't have a left margin*/ }
   .picture-item.picture-item--h2 {
-    height: 420px; }
+    height: 464px;
+    /* 2x the height + 1 gutter */ }
   .picture-item img {
+    display: block;
     width: 100%;
     height: auto; }
+  .picture-item .picture-item__details,
+  .picture-item .picture-item__description {
+    padding: 1em; }
+  .picture-item .picture-item__description {
+    margin: 0;
+    padding-top: 0;
+    padding-right: 2em; }
+  .picture-item .picture-item__tags {
+    margin: 0; }
 
 .shuffle--fluid .shuffle__sizer {
   position: absolute;

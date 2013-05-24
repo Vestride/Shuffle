@@ -13,7 +13,7 @@ extraJS: [ "homepage.js" ]
   </div>
 </header>
 
-<section>
+<section id="downloads">
   <div class="container-fluid">
     <h2>Downloads</h2>
     <nav role="secondary">
@@ -24,7 +24,7 @@ extraJS: [ "homepage.js" ]
 </section>
 
 
-<section>
+<section id="demo">
   <div class="container-fluid">
     <h2>Example</h2>
   </div>
@@ -60,107 +60,11 @@ extraJS: [ "homepage.js" ]
           {% include picture-item.html %}
       {% endfor %}
       <div class="span3 shuffle__sizer"></div>
-
-          <!-- <div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball">
-              <img src="img/baseball.png" alt="" height="145" width="230" />
-              <div class="item-details">
-                  <span class="title">Baseball</span>
-                  <a href="img/originals/baseball.jpg">Photography</a>
-              </div>
-          </div>
-          <div class="item w2" data-groups='["wallpaper", "3d"]' data-date-created="2011-08-14" data-title="Tennis">
-              <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-              <img src="img/tennis-ball.png" alt="" height="145" width="230" />
-              <div class="item-details">
-                  <span class="title">Tennis</span>
-                  <a href="#">3D Render, Wallpaper</a>
-              </div>
-          </div>
-          <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2009-05-27" data-title="iMac">
-              <img src="img/imac.png" alt="" height="145" width="230" />
-              <div class="item-details">
-                  <span class="title">iMac</span>
-                  <a href="#">3D Render, Wallpaper</a>
-              </div>
-          </div>
-          <div class="item h2" data-groups='["graphics"]' data-date-created="2012-05-14" data-title="Master Chief">
-              <img src="img/master-chief.png" alt="" height="145" width="230" />
-              <div class="item-details">
-                  <span class="title">Master Chief</span>
-                  <a href="#">Graphic Design</a>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                  consequat.</p>
-              </div>
-          </div>
-          <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Eightfold">
-              <img src="img/es-blue.png" alt="" height="145" width="230" />
-              <div class="item-details">
-                  <span class="title">Eightfold</span>
-                  <a href="#">3D Render, Wallpaper</a>
-              </div>
-          </div>
-          <div class="item w2" data-groups='["photography"]' data-date-created="2012-03-14" data-title="Pumpkin">
-              <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-              <img src="img/pumpkin.png" alt="" height="145" width="230" />
-              <div class="item-details">
-                  <span class="title">Pumpkin</span>
-                  <a href="#">Photography</a>
-              </div>
-          </div>
-          <div class="item w2 h2" data-groups='["3d", "wallpaper"]' data-date-created="2012-09-14" data-title="Vestride">
-              <img src="img/vestride-red.png" alt="" height="145" width="230" />
-              <div class="item-details">
-                  <span class="title">Vestride</span>
-                  <a href="#">3D Render, Wallpaper</a>
-              </div>
-          </div>
-          <div class="item h2" data-groups='["graphics"]' data-date-created="2012-01-12" data-title="Newegg">
-              <img src="img/newegg.png" alt="" height="145" width="230" />
-              <div class="item-details">
-                  <span class="title">Newegg</span>
-                  <a href="#">Motion Graphics</a>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                  consequat.</p>
-              </div>
-          </div>
-          <div class="item" data-groups='["wallpaper"]' data-date-created="2012-01-14" data-title="Arc">
-              <img src="img/eightfoldarc.png" alt="" height="145" width="230" />
-              <div class="item-details">
-                  <span class="title">Arc</span>
-                  <a href="#">Wallpaper</a>
-              </div>
-          </div>
-          <div class="item" data-groups='["photography"]' data-date-created="2011-01-14" data-title="Ground">
-              <img src="img/ground.png" alt="" height="145" width="230"/>
-              <div class="item-details">
-                  <span class="title">Ground</span>
-                  <a href="img/originals/baseball.jpg">Photography</a>
-              </div>
-          </div>
-          <div class="item w2" data-groups='["wallpaper"]' data-date-created="2011-12-14" data-title="Grass">
-              <p class="rfloat">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-              <img src="img/grassy-hills.png" alt="" height="145" width="230" />
-              <div class="item-details">
-                  <span class="title">Grass</span>
-                  <a href="#">Wallpaper</a>
-              </div>
-          </div>
-          <div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2012-04-14" data-title="Vestride">
-              <img src="img/vestride-classy.png" alt="" height="145" width="230" />
-              <div class="item-details">
-                  <span class="title">Vestride</span>
-                  <a href="#">3D Render, Wallpaper</a>
-              </div>
-          </div> -->
     </div>
   </div>
 </section>
 
-<section>
+<section id="demos">
   <div class="container-fluid">
     <h2>Other Examples</h2>
     <nav role="primary">
@@ -171,43 +75,43 @@ extraJS: [ "homepage.js" ]
   </div>
 </section>
 
-<section>
+<section id="features">
   <div class="container-fluid">
     {% include features.html %}
   </div>
 </section>
 
-<section>
+<section id="options">
   <div class="container-fluid">
     {% include options.html %}
   </div>
 </section>
 
-<section>
+<section id="usage">
   <div class="container-fluid">
     {% include usage.html %}
   </div>
 </section>
 
-<section>
+<section id="events">
   <div class="container-fluid">
     {% include events.html %}
   </div>
 </section>
 
-<section>
+<section id="sorting">
   <div class="container-fluid">
     {% include sorting.html %}
   </div>
 </section>
 
-<section>
+<section id="advanced-filters">
   <div class="container-fluid">
     {% include advanced-filters.html %}
   </div>
 </section>
 
-<section>
+<section id="dependencies">
   <div class="container-fluid">
     <h2>Dependencies</h2>
 
@@ -225,7 +129,7 @@ extraJS: [ "homepage.js" ]
 </section>
 
 
-<section>
+<section id="browsers">
   <div class="container-fluid">
     <h2>Supported Browsers</h2>
 
@@ -243,7 +147,7 @@ extraJS: [ "homepage.js" ]
   </div>
 </section>
 
-<section>
+<section id="links">
   <div class="container-fluid">
     <h2>Links</h2>
 
@@ -256,9 +160,8 @@ extraJS: [ "homepage.js" ]
 </section>
 
 
-<section>
+<section id="changelog">
   <div class="container-fluid">
-    <h2>Changes</h2>
     {% include changelog.html %}
   </div>
 </section>

@@ -6,3 +6,5 @@ This is a large improvement to shuffle. Most notably, the ability for [masonry](
 * Refactor `init()` function
 * Remove _beforeResize and _after Resize (possibly expose events instead?)
 * Make demos
+* Solve margin top issue
+* init with a sort

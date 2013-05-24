@@ -1,42 +1,49 @@
 <h2>Usage</h2>
 
-        <h3>The HTML Structure</h3>
-        <p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
-        <pre rel="HTML"><code class="language-markup">
-&lt;div id="grid"&gt;
-    &lt;div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball"&gt;
-        &lt;img src="img/baseball.png" /&gt;
-        &lt;div class="item-details"&gt;
-            &lt;a href="#"&gt;Photography&lt;/a&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class="item" data-groups='["wallpaper", "3d"]' data-date-created="2011-08-14" data-title="Tennis"&gt;
-        &lt;img src="img/tennis-ball.png" /&gt;
-        &lt;div class="item-details"&gt;
-            &lt;a href="#"&gt;3D Render, Wallpaper&lt;/a&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2009-05-27" data-title="iMac"&gt;
-        &lt;img src="img/imac.png" /&gt;
-        &lt;div class="item-details"&gt;
-            &lt;a href="#"&gt;3D Render, Wallpaper&lt;/a&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class="item" data-groups='["graphics"]' data-date-created="2012-05-14" data-title="Master Chief"&gt;
-        &lt;img src="img/master-chief.png" /&gt;
-        &lt;div class="item-details"&gt;
-            &lt;a href="#"&gt;Graphic Design&lt;/a&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
+<h3>The HTML Structure</h3>
+<p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings. Optionally, it can be a string delimeted by a value you provide. See <code>delimeter</code> in the <a href="#options">options</a>.</p>
 
-        <h3>How column widths work</h3>
-        <p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong>can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
+<p>In this example, shuffle is using the fluid grid from the <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap</a>. It's also making use of the <a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/"><abbr title="Block-Element-Modifier">BEM</abbr></a>.</p>
 
-        <h3>A basic setup example</h3>
-        <p>Sets up the button clicks and runs shuffle</p>
-        <pre rel="jQuery"><code class="language-javascript">
+<pre rel="HTML"><code class="language-markup">&lt;div id="grid" class="row-fluid"&gt;
+  &lt;figure class="span3 picture-item" data-groups='["photography"]'&gt;
+    &lt;img src="/img/baseball.png" height="145" width="230" /&gt;
+    &lt;div class="picture-item__details"&gt;
+      &lt;figcaption class="picture-item__title"&gt;Baseball&lt;/figcaption&gt;
+      &lt;p class="picture-item__tags"&gt;photography&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/figure&gt;
+  &lt;figure class="span6 picture-item" data-groups='["wallpaper","3d"]'&gt;
+    &lt;img src="/img/tennis-ball.png" height="145" width="230" /&gt;
+    &lt;div class="picture-item__details"&gt;
+      &lt;figcaption class="picture-item__title"&gt;Tennis&lt;/figcaption&gt;
+      &lt;p class="picture-item__tags"&gt;wallpaper, 3d&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;p class="picture-item__description"&gt;Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.&lt;/p&gt;
+  &lt;/figure&gt;
+  &lt;figure class="span3 picture-item" data-groups='["wallpaper","3d"]'&gt;
+    &lt;img src="/img/imac.png" height="145" width="230" /&gt;
+    &lt;div class="picture-item__details"&gt;
+      &lt;figcaption class="picture-item__title"&gt;iMac&lt;/figcaption&gt;
+      &lt;p class="picture-item__tags"&gt;wallpaper, 3d&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/figure&gt;
+  &lt;figure class="span3 picture-item picture-item--h2" data-groups='["graphics"]'&gt;
+    &lt;img src="/img/master-chief.png" height="145" width="230" /&gt;
+    &lt;div class="picture-item__details"&gt;
+      &lt;figcaption class="picture-item__title"&gt;Master Chief&lt;/figcaption&gt;
+      &lt;p class="picture-item__tags"&gt;graphics&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;p class="picture-item__description"&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.&lt;/p&gt;
+  &lt;/figure&gt;
+&lt;/div&gt;</code></pre>
+
+<h3 id="columns">How column widths work</h3>
+<p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong>can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
+
+<h3>A basic setup example</h3>
+<p>Sets up the button clicks and runs shuffle</p>
+<pre rel="jQuery"><code class="language-javascript">
 $(document).ready(function(){
 
     // Set up button clicks
@@ -54,5 +61,4 @@ $(document).ready(function(){
 
     // instantiate the plugin
     $('#grid').shuffle();
-});
-</code></pre>
+});</code></pre>
