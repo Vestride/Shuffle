@@ -1,0 +1,68 @@
+body {
+  font-family: 'Ubuntu', sans-serif;
+  color: $gray30;
+}
+
+// Links
+a {
+
+  &,
+  &:visited {
+    color: $river;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:active {
+    color: $emerald;
+  }
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: $wetAsphalt;
+}
+
+
+// Headers
+h1 {
+  margin: 20px 0;
+  font-weight: 300;
+  font-size: 4em;
+  line-height: 1;
+  color: $emerald;
+}
+
+h2 {
+  position: relative;
+  font-size: 2.5em;
+  margin-bottom: 18px;
+
+  // Bottom border BEHIND the descenders!
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 2px;
+    background-color: $emerald;
+  }
+}
+
+h3 {
+  margin: .6667em 0 0.5em;
+  font-size: 1.5em;
+}
+
+h4 {
+  font-size: 1.25em;
+}
+
+

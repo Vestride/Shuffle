@@ -1,17 +1,3 @@
-/*
-  Some colors from Flat UI
-  Firm/Turquiose: #1ABC9C;
-  Success/Emerald: #2ECC71;
-  Info/River: #3498DB;
-  Amethyst: #9B59B6;
-  Night/Wet Asphalt: #34495E;
-  Bright/Sunflower: #F1C40F;
-  Bright/Organge: #F39C12;
-  Carrot: #E67E22;
-  Alizarin: #E74C3C;
-  Clouds: #ECF0F1;
-  Concrete: #95A5A6;
-*/
 /* normalize.css v2.1.2 | MIT License | git.io/normalize */
 /* ==========================================================================
    HTML5 display definitions
@@ -96,14 +82,6 @@ a:hover {
 /* ==========================================================================
    Typography
    ========================================================================== */
-/**
- * Address variable `h1` font-size and margin within `section` and `article`
- * contexts in Firefox 4+, Safari 5, and Chrome.
- */
-h1 {
-  font-size: 2em;
-  margin: 0.67em 0; }
-
 /**
  * Address styling not present in IE 8/9, Safari 5, and Chrome.
  */
@@ -646,8 +624,6 @@ table {
   clear: both; }
 
 .container-fluid {
-  padding-right: 20px;
-  padding-left: 20px;
   *zoom: 1; }
 
 .container-fluid:before,
@@ -1489,16 +1465,8 @@ table {
   .row-fluid .thumbnails {
     margin-left: 0; } }
 body {
-  font-family: 'Ubuntu', sans-serif; }
-
-/* lets have some constraints shall we */
-.container-fluid {
-  max-width: 93%;
-  margin-left: auto;
-  margin-right: auto; }
-
-.row.row--full {
-  margin-left: 0; }
+  font-family: 'Ubuntu', sans-serif;
+  color: #5d6d77; }
 
 a, a:visited {
   color: #3498db; }
@@ -1506,6 +1474,13 @@ a:hover {
   text-decoration: none; }
 a:active {
   color: #2ecc71; }
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #34495e; }
 
 h1 {
   margin: 20px 0;
@@ -1516,10 +1491,9 @@ h1 {
 
 h2 {
   position: relative;
-  color: #34495e;
   font-size: 2.5em;
   margin-bottom: 18px; }
-  h2:after {
+  h2::after {
     content: '';
     position: absolute;
     bottom: 4px;
@@ -1528,6 +1502,26 @@ h2 {
     width: 100%;
     height: 2px;
     background-color: #2ecc71; }
+
+h3 {
+  margin: .6667em 0 0.5em;
+  font-size: 1.5em; }
+
+h4 {
+  font-size: 1.25em; }
+
+pre {
+  max-height: 30em; }
+
+/* lets have some constraints shall we */
+.container-fluid {
+  width: 93%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto; }
+
+.row.row--full {
+  margin-left: 0; }
 
 nav > a {
   display: block;

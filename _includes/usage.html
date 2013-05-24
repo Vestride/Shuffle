@@ -1,0 +1,58 @@
+<h2>Usage</h2>
+
+        <h3>The HTML Structure</h3>
+        <p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
+        <pre rel="HTML"><code class="language-markup">
+&lt;div id="grid"&gt;
+    &lt;div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball"&gt;
+        &lt;img src="img/baseball.png" /&gt;
+        &lt;div class="item-details"&gt;
+            &lt;a href="#"&gt;Photography&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="item" data-groups='["wallpaper", "3d"]' data-date-created="2011-08-14" data-title="Tennis"&gt;
+        &lt;img src="img/tennis-ball.png" /&gt;
+        &lt;div class="item-details"&gt;
+            &lt;a href="#"&gt;3D Render, Wallpaper&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2009-05-27" data-title="iMac"&gt;
+        &lt;img src="img/imac.png" /&gt;
+        &lt;div class="item-details"&gt;
+            &lt;a href="#"&gt;3D Render, Wallpaper&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="item" data-groups='["graphics"]' data-date-created="2012-05-14" data-title="Master Chief"&gt;
+        &lt;img src="img/master-chief.png" /&gt;
+        &lt;div class="item-details"&gt;
+            &lt;a href="#"&gt;Graphic Design&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+        <h3>How column widths work</h3>
+        <p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong>can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
+
+        <h3>A basic setup example</h3>
+        <p>Sets up the button clicks and runs shuffle</p>
+        <pre rel="jQuery"><code class="language-javascript">
+$(document).ready(function(){
+
+    // Set up button clicks
+    $('.filter-options li').on('click', function() {
+        var $this = $(this),
+            $grid = $('#grid');
+
+        // Hide current label, show current label in title
+        $('.filter-options .active').removeClass('active');
+        $this.addClass('active');
+
+        // Filter elements
+        $grid.shuffle($this.data('group'));
+    });
+
+    // instantiate the plugin
+    $('#grid').shuffle();
+});
+</code></pre>

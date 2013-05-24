@@ -1,0 +1,14 @@
+<h2>Options</h2>
+
+<p>Settings you can change (these are the defaults)</p>
+<pre rel="JavaScript"><code class="language-javascript">// Overrideable options
+$.fn.shuffle.options = {
+    group : 'all', // Which category to show
+    speed : 600, // Speed of the transition (in milliseconds). 600 = .6 seconds
+    easing : 'ease-out', // css easing function to use
+    gutterWidth : 0, // space between columns. Can be a function or number
+    columnWidth : 0 // can be a function or number or calculated by plugin
+};
+</code></pre>
+
+<p>The easing function is one of <code>'default'</code>, <code>'linear'</code>, <code>'ease-in'</code>, <code>'ease-out'</code>, <code>'ease-in-out'</code>, or <code>'cubic-bezier'</code>.</p>

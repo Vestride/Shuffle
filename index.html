@@ -173,210 +173,37 @@ extraJS: [ "homepage.js" ]
 
 <section>
   <div class="container-fluid">
-    <h2>Features</h2>
-
-    <ul>
-        <li>Uses CSS Transitions!</li>
-        <li>Responsive (try resizing the window!)</li>
-        <li>Filter items by groups</li>
-        <li>Items can have multiple groups and be different sizes</li>
-        <li>Sort items</li>
-        <li>Advanced filtering method (like searching)</li>
-    </ul>
+    {% include features.html %}
   </div>
 </section>
 
 <section>
   <div class="container-fluid">
-    <h2>Options</h2>
-
-    <div>
-        <p>Settings you can change (these are the defaults)</p>
-        <pre rel="JavaScript">
-<code class="language-javascript">
-// Overrideable options
-$.fn.shuffle.options = {
-    group : 'all', // Which category to show
-    speed : 600, // Speed of the transition (in milliseconds). 600 = .6 seconds
-    easing : 'ease-out', // css easing function to use
-    gutterWidth : 0, // space between columns. Can be a function or number
-    columnWidth : 0 // can be a function or number or calculated by plugin
-};
-</code>
-        </pre>
-
-        <p>The easing function is one of <code>'default'</code>, <code>'linear'</code>, <code>'ease-in'</code>, <code>'ease-out'</code>, <code>'ease-in-out'</code>, or <code>'cubic-bezier'</code>.</p>
-    </div>
+    {% include options.html %}
   </div>
 </section>
 
 <section>
   <div class="container-fluid">
-    <h2>Usage</h2>
-
-    <div>
-        <h3>The HTML Structure</h3>
-        <p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings.</p>
-        <pre rel="HTML">
-<code class="language-markup">
-&lt;div id="grid"&gt;
-    &lt;div class="item" data-groups='["photography"]' data-date-created="2010-09-14" data-title="Baseball"&gt;
-        &lt;img src="img/baseball.png" /&gt;
-        &lt;div class="item-details"&gt;
-            &lt;a href="#"&gt;Photography&lt;/a&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class="item" data-groups='["wallpaper", "3d"]' data-date-created="2011-08-14" data-title="Tennis"&gt;
-        &lt;img src="img/tennis-ball.png" /&gt;
-        &lt;div class="item-details"&gt;
-            &lt;a href="#"&gt;3D Render, Wallpaper&lt;/a&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class="item" data-groups='["3d", "wallpaper"]' data-date-created="2009-05-27" data-title="iMac"&gt;
-        &lt;img src="img/imac.png" /&gt;
-        &lt;div class="item-details"&gt;
-            &lt;a href="#"&gt;3D Render, Wallpaper&lt;/a&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class="item" data-groups='["graphics"]' data-date-created="2012-05-14" data-title="Master Chief"&gt;
-        &lt;img src="img/master-chief.png" /&gt;
-        &lt;div class="item-details"&gt;
-            &lt;a href="#"&gt;Graphic Design&lt;/a&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-</code>
-        </pre>
-
-        <h3>How column widths work</h3>
-        <p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong>can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
-
-        <h3>A basic setup example</h3>
-        <p>Sets up the button clicks and runs shuffle</p>
-        <pre rel="jQuery">
-<code class="language-javascript">
-$(document).ready(function(){
-
-    // Set up button clicks
-    $('.filter-options li').on('click', function() {
-        var $this = $(this),
-            $grid = $('#grid');
-
-        // Hide current label, show current label in title
-        $('.filter-options .active').removeClass('active');
-        $this.addClass('active');
-
-        // Filter elements
-        $grid.shuffle($this.data('group'));
-    });
-
-    // instantiate the plugin
-    $('#grid').shuffle();
-});
-</code>
-        </pre>
-
-        <h3>Events</h3>
-        <p>These events will be triggered at their respective times: <code>'shrink.shuffle'</code>, <code>'shrunk.shuffle'</code>, <code>'filter.shuffle'</code>, <code>'filtered.shuffle'</code>, and <code>'sorted.shuffle'</code>.</p>
-    </div>
+    {% include usage.html %}
   </div>
 </section>
 
 <section>
   <div class="container-fluid">
-    <h2>Sorting</h2>
-
-    <p>You can order the elements based off a function you supply. In the example above, each item has a <code>data-date-created</code> and <code>data-title</code> attribute. The filter buttons have a <code>data-sort</code> attribute with the value of the item&rsquo;s attribute. Then, with some JavaScript, we can get the correct attribute and provide a function to sort by.</p>
-
-            <pre rel="HTML">
-<code class="language-markup">
-&lt;li data-sort="title"&gt;Title&lt;/li&gt;
-</code>
-    </pre>
-
-    <pre rel="HTML">
-<code class="language-markup">
-&lt;div class="item" data-title="Baseball"&gt;&hellip;&lt;/div&gt;
-</code>
-    </pre>
-    <pre rel="JavaScript">
-<code class="language-javascript">
-// Sorting options
-$('.sort-options li').on('click', function() {
-    var $this = $(this),
-        $grid = $('#grid'),
-        sort = $this.data('sort'),
-        opts = {};
-
-    // Hide current label, show current label in title
-    $('.sort-options .active').removeClass('active');
-    $this.addClass('active');
-
-    // We're given the element wrapped in jQuery
-    if (sort === 'date-created') {
-        opts = {
-            by: function($el) {
-                return $el.data('date-created');
-            }
-        }
-    } else if (sort === 'title') {
-        opts = {
-            by: function($el) {
-                return $el.data('title').toLowerCase();
-            }
-        }
-    }
-
-
-    // Filter elements
-    $grid.shuffle('sort', opts);
-});
-</code>
-    </pre>
-
-    <p>The <code>opts</code> parameter can contain two properties. <code>reverse</code>, a boolean which will reverse the array. <code>by</code> is a function that is passed the element wrapped in jQuery. In the case above, we&rsquo;re returning the value of the data-date-created or data-title attributes.</p>
-    <p>Calling sort with an empty object will reset the elements to DOM order.</p>
+    {% include events.html %}
   </div>
 </section>
 
 <section>
   <div class="container-fluid">
-    <h2>Advanced Filtering</h2>
+    {% include sorting.html %}
+  </div>
+</section>
 
-    <p>By passing a function to shuffle, you can customize the filtering to your hearts content. Shuffle will iterate over each item in the container and give your function the element wrapped in jQuery and the shuffle instance. Return <code>true</code> to keep the element or <code>false</code> to hide it.</p>
-
-    <h3>Example</h3>
-    <pre rel="JavaScript">
-<code class="language-javascript">
-// Filters elements with a data-title attribute with less than 10 characters
-$('#grid').shuffle(function($el, shuffle) {
-    return $el.data('title').length &lt; 10;
-});
-</code>
-    </pre>
-
-    <h3>Searching</h3>
-    <pre rel="JavaScript">
-<code class="language-javascript">
-// Advanced filtering
-$('.filter .search').on('keyup change', function() {
-    var val = this.value.toLowerCase();
-    $('#grid').shuffle(function($el, shuffle) {
-
-        // Only search elements in the current group
-        if (shuffle.group !== 'all' &amp;&amp; $.inArray(shuffle.group, $el.data('groups')) === -1) {
-            return false;
-        }
-
-        // Get the text inside our element and search for the value in the input
-        var text = $.trim($el.text()).toLowerCase();
-        return text.indexOf(val) != -1;
-    });
-});
-</code>
-        </pre>
-
-    <p>For another example of advanced filters, check out the <a href="responsive.html">compounded filters demo</a>.</p>
+<section>
+  <div class="container-fluid">
+    {% include advanced-filters.html %}
   </div>
 </section>
 

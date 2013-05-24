@@ -1,0 +1,39 @@
+<h2>Sorting</h2>
+
+<p>You can order the elements based off a function you supply. In the example above, each item has a <code>data-date-created</code> and <code>data-title</code> attribute. The filter buttons have a <code>data-sort</code> attribute with the value of the item&rsquo;s attribute. Then, with some JavaScript, we can get the correct attribute and provide a function to sort by.</p>
+
+<pre rel="HTML"><code class="language-markup">&lt;li data-sort="title"&gt;Title&lt;/li&gt;</code></pre>
+
+<pre rel="HTML"><code class="language-markup">&lt;div class="item" data-title="Baseball"&gt;&hellip;&lt;/div&gt;</code></pre>
+
+<pre rel="JavaScript"><code class="language-javascript">// Sorting options
+$('.sort-options button').on('click', function() {
+  var $this = $(this),
+      sort = $this.data('sort'),
+      opts = {};
+
+  // Hide current label, show current label in title
+  $('.sort-options .active').removeClass('active');
+  $this.addClass('active');
+
+  // We're given the element wrapped in jQuery
+  if (sort === 'date-created') {
+    opts = {
+      by: function($el) {
+        return $el.data('date-created');
+      }
+    }
+  } else if (sort === 'title') {
+    opts = {
+      by: function($el) {
+        return $el.data('title').toLowerCase();
+      }
+    };
+  }
+
+  // Filter elements
+  $grid.shuffle('sort', opts);
+});</code></pre>
+
+<p>The <code class="language-javascript">opts</code> parameter can contain two properties. <code class="language-javascript">reverse</code>, a boolean which will reverse the array. <code class="language-javascript">by</code> is a function that is passed the element wrapped in jQuery. In the case above, we&rsquo;re returning the value of the data-date-created or data-title attributes.</p>
+<p>Calling sort with an empty object will reset the elements to DOM order.</p>

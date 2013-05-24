@@ -18,7 +18,8 @@ var DEMO = (function($, window) {
     // Destroy it! o_O
     // $grid.shuffle('destroy');
 
-    // You can subscribe to custom events: shrink, shrunk, filter, filtered, and sorted
+    // You can subscribe to custom events:
+    // shrink, shrunk, filter, filtered, sorted, load, done
     // $grid.on('shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle sorted.shuffle layout.shuffle', function(evt, shuffle) {
     //   if ( window.console ) {
     //     console.log(evt.type, shuffle, this);
@@ -86,12 +87,11 @@ var DEMO = (function($, window) {
       $grid.shuffle(function($el, shuffle) {
 
         // Only search elements in the current group
-        // if (shuffle.group !== 'all' && $.inArray(shuffle.group, $el.data('groups')) === -1) {
-        //   return false;
-        // }
+        if (shuffle.group !== 'all' && $.inArray(shuffle.group, $el.data('groups')) === -1) {
+          return false;
+        }
 
-        var text = $.trim($el.text()).toLowerCase();
-        console.log(text);
+        var text = $.trim( $el.find('.picture-item__title').text() ).toLowerCase();
         return text.indexOf(val) != -1;
       });
     });

@@ -1,0 +1,26 @@
+<h2>Advanced Filtering</h2>
+
+<p>By passing a function to shuffle, you can customize the filtering to your hearts content. Shuffle will iterate over each item and give your function the element wrapped in jQuery and the shuffle instance. Return <code>true</code> to keep the element or <code>false</code> to hide it.</p>
+
+<h3>Example</h3>
+<pre rel="JavaScript"><code class="language-javascript">// Filters elements with a data-title attribute with less than 10 characters
+$('#grid').shuffle(function($el, shuffle) {
+  return $el.data('title').length &lt; 10;
+});</code></pre>
+
+<h3>Searching</h3>
+<pre rel="JavaScript"><code class="language-javascript">// Advanced filtering
+$('.js-shuffle-search').on('keyup change', function() {
+  var val = this.value.toLowerCase();
+  $grid.shuffle(function($el, shuffle) {
+
+  // Only search elements in the current group
+  if (shuffle.group !== 'all' &amp;&amp; $.inArray(shuffle.group, $el.data('groups')) === -1) {
+    return false;
+  }
+
+  var text = $.trim( $el.find('.picture-item__title').text() ).toLowerCase();
+  return text.indexOf(val) != -1;
+});</code></pre>
+
+<p>For another example of advanced filters, check out the <a href="responsive.html">compounded filters demo</a>.</p>

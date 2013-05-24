@@ -1,17 +1,4 @@
-/*
-  Some colors from Flat UI
-  Firm/Turquiose: #1ABC9C;
-  Success/Emerald: #2ECC71;
-  Info/River: #3498DB;
-  Amethyst: #9B59B6;
-  Night/Wet Asphalt: #34495E;
-  Bright/Sunflower: #F1C40F;
-  Bright/Organge: #F39C12;
-  Carrot: #E67E22;
-  Alizarin: #E74C3C;
-  Clouds: #ECF0F1;
-  Concrete: #95A5A6;
-*/
+// Some colors from Flat UI
 
 $turqoise: #1ABC9C;
 $greenSea: #16A085;
@@ -42,6 +29,17 @@ $silver: #BDC3C7;
 
 $concrete: #95A5A6;
 $asbestos: #7F8C8D;
+
+
+//
+
+$black: #000;
+$gray10: $midnightBlue;
+$gray30: #5D6D77;
+$gray20: $wetAsphalt;
+$gray40: $concrete;
+$gray50: $asbestos;
+$white: #FFF;
 
 
 @mixin clearfix() {
