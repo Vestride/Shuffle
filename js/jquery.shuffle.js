@@ -311,6 +311,11 @@ Shuffle.prototype = {
         });
     },
 
+    _updateItemCount : function() {
+        this.visibleItems = this.$items.filter('.filtered').length;
+        return this;
+    },
+
     _setTransition : function( element ) {
         var self = this;
         element.style[self.transitionName] = self.transform + ' ' + self.speed + 'ms ' + self.easing + ', opacity ' + self.speed + 'ms ' + self.easing;
@@ -472,8 +477,8 @@ Shuffle.prototype = {
     /**
      * Fire events with .shuffle namespace
      */
-    fire : function( name ) {
-        this.$container.trigger(name + '.shuffle', [this]);
+    fire : function( name, args ) {
+        this.$container.trigger( name + '.shuffle', args && args.length ? args : [ this ] );
     },
 
 
@@ -879,7 +884,7 @@ Shuffle.prototype = {
         passed = $passed.get();
 
         // How many filtered elements?
-        self.visibleItems = self.$items.filter('.filtered').length;
+        self._updateItemCount();
 
         if ( animateIn ) {
             self._layout( passed, null, true, true );
@@ -933,7 +938,7 @@ Shuffle.prototype = {
         self.lastFilter = category;
 
         // How many filtered elements?
-        self.visibleItems = self.$items.filter('.filtered').length;
+        self._updateItemCount();
 
         self._resetCols();
 
@@ -1041,6 +1046,8 @@ Shuffle.prototype = {
             setTimeout(function() {
                 shuffle.$items = shuffle._getItems();
                 shuffle.layout();
+                shuffle._updateItemCount();
+                shuffle.fire( 'removed', [ $collection, shuffle ] );
             }, 0);
         };
 
@@ -1080,7 +1087,7 @@ $.fn.shuffle = function( opts ) {
 
         // If passed a string, lets decide what to do with it. Or they've provided a function to filter by
         if ( $.isFunction(opts) ) {
-            shuffle.shuffle.apply( shuffle, [opts] );
+            shuffle.shuffle.apply( shuffle, args );
 
         // Key should be an object with propreties reversed and by.
         } else if (typeof opts === 'string') {
@@ -1119,7 +1126,8 @@ $.fn.shuffle.options = {
     keepSorted : true, // Keep sorted when shuffling/layout
     hideLayoutWithFade: false,
     sequentialFadeDelay: 150,
-    useTransition: true // You don't want transitions on shuffle items? Fine, but you're weird
+    useTransition: true, // You don't want transitions on shuffle items? Fine, but you're weird
+    supported: Modernizr.csstransforms && Modernizr.csstransitions // supports transitions and transforms
 };
 
 // Not overrideable
@@ -1136,7 +1144,6 @@ $.fn.shuffle.settings = {
     enabled: true,
     destroyed: false,
     styleQueue: [],
-    supported: Modernizr.csstransforms && Modernizr.csstransitions, // supports transitions and transforms
     prefixed: Modernizr.prefixed,
     threeD: Modernizr.csstransforms3d // supports 3d transforms
 };
