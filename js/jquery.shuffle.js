@@ -12,10 +12,11 @@
  * Inspired by Isotope http://isotope.metafizzy.co/
  * Licensed under the MIT license.
  * @author Glen Cheney (http://glencheney.com)
- * @version 1.6.5
- * @date 05/05/13
+ * @version 1.6.6
+ * @date 06/14/13
  */
 (function($, Modernizr, undefined) {
+
 'use strict';
 
 // You can return `undefined` from the `by` function to revert to DOM order
@@ -105,56 +106,45 @@ $.fn.sorted.randomize = function( array ) {
     return array;
 };
 
-
+// Used for unique instance variables
+var id = 0;
 
 var Shuffle = function( $container, options ) {
+    console.time('shuffle initialized');
     var self = this;
-    $.extend(self, $.fn.shuffle.options, options, $.fn.shuffle.settings);
+    $.extend( self, Shuffle.options, options, Shuffle.settings );
 
     self.$container = $container.addClass('shuffle');
     self.$window = $(window);
-    self.unique = 'shuffle_' + $.now();
+    self.unique = 'shuffle_' + id++;
 
     self.fire('loading');
     self._init();
     self.fire('done');
+    console.timeEnd('shuffle initialized');
 };
 
 Shuffle.prototype = {
 
     constructor: Shuffle,
 
-    // Needs refactoring!
     _init : function() {
+        console.timeStamp('Get container CSS');
         var self = this,
-            containerCSS,
-            afterResizeFunc,
-            debouncedAfterResize,
-            beforeResizeFunc,
-            debouncedBeforeResize;
+            containerCSS = self.$container.css(['paddingLeft', 'paddingRight', 'position', 'width']),
+            resizeFunction = $.proxy( self._onResize, self ),
+            debouncedResize = self.throttle ? self.throttle( self.throttleTime, resizeFunction ) : resizeFunction;
 
         self._setVars();
 
+        // Bind resize events (http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer)
+        self.$window.on('resize.shuffle.' + self.unique, debouncedResize);
+
         // Set up css for transitions
         self.$container[0].style[ self.transitionName ] = 'height ' + self.speed + 'ms ' + self.easing;
-        self._initItems( self.showInitialTransition );
-
-        // Bind resize events (http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer)
-        // Get debounced versions of our resize methods
-        afterResizeFunc = $.proxy( self._afterResize, self );
-        debouncedAfterResize = self.throttle ? self.throttle( self.throttleTime, afterResizeFunc ) : afterResizeFunc;
-        self.$window.on('resize.' + self.unique, debouncedAfterResize);
-
-        // If we need to hide layouts with a fade instead, we need another event on window resize
-        // which is only fired the first time window resize is triggered
-        if ( self.hideLayoutWithFade ) {
-            beforeResizeFunc = $.proxy( self._beforeResize, self );
-            debouncedBeforeResize = self.throttle ? self.throttle( self.throttleTime, true, beforeResizeFunc ) : beforeResizeFunc;
-            self.$window.on('resize.shuffle', debouncedBeforeResize);
-        }
+        self._initItems();
 
         // Position cannot be static
-        containerCSS = self.$container.css(['paddingLeft', 'paddingRight', 'position', 'width']);
         if ( containerCSS.position === 'static' ) {
             self.$container.css('position', 'relative');
         }
@@ -164,28 +154,29 @@ Shuffle.prototype = {
             left: parseInt( containerCSS.paddingLeft, 10 ) || 0,
             top: parseInt( containerCSS.paddingTop, 10 ) || 0
         };
+
+        // Zero out all columns
         self._resetCols();
+
         // We already got the container's width above, no need to cause another reflow getting it again...
+        // Calculate the number of columns there will be
         self._setColumns( parseInt( containerCSS.width, 10 ) );
+
+        // Kick off!
         self.shuffle( self.group );
 
-        // If we've hidden the initial layout, we need to now add the transition to the elements
-        if ( !self.showInitialTransition && self.supported && self.useTransition ) {
+        // The shuffle items haven't had transitions set on them yet
+        // so the user doesn't see the first layout. Set them now that the first layout is done.
+        if ( self.supported ) {
             setTimeout(function() {
+                console.timeStamp('SET TRANSITIONS');
                 self._setTransitions();
             }, 0);
         }
     },
 
     _setVars : function() {
-        var self = this,
-        transEndEventNames = {
-            'WebkitTransition' : 'webkitTransitionEnd',
-            'MozTransition'    : 'transitionend',
-            'OTransition'      : 'oTransitionEnd',
-            'msTransition'     : 'MSTransitionEnd',
-            'transition'       : 'transitionend'
-        };
+        var self = this;
 
         self.$items = self._getItems().addClass('shuffle-item filtered');
         self.transitionName = self.prefixed('transition'),
@@ -193,7 +184,20 @@ Shuffle.prototype = {
         self.transitionDuration = self.prefixed('transitionDuration');
         self.transform = self.getPrefixed('transform');
 
+        // Get transitionend event name
+        self.transitionend = {
+            'WebkitTransition' : 'webkitTransitionEnd',
+            'MozTransition'    : 'transitionend',
+            'OTransition'      : 'oTransitionEnd',
+            'msTransition'     : 'MSTransitionEnd',
+            'transition'       : 'transitionend'
+        }[ self.transitionName ];
+
+        // If the columnWidth property is a function, then the grid is fluid
         self.isFluid = self.columnWidth && typeof self.columnWidth === 'function';
+
+        // If column width is a string, treat is as a selector and search for the
+        // sizer element within the outermost container
         if ( typeof self.columnWidth === 'string' ) {
             self.$sizer = self.$container.find( self.columnWidth );
 
@@ -211,13 +215,9 @@ Shuffle.prototype = {
             self.useSizer = true;
             self.sizer = self.$sizer[0];
         }
-
-        // Get transitionend event name
-        self.transitionend = transEndEventNames[ self.transitionName ];
-
     },
 
-    filter : function( category, $collection ) {
+    _filter : function( category, $collection ) {
         var self = this,
             isPartialSet = $collection !== undefined,
             $items = isPartialSet ? $collection : self.$items,
@@ -263,8 +263,19 @@ Shuffle.prototype = {
         }
 
         // Individually add/remove concealed/filtered classes
+        self._toggleFilterClasses( $items, $filtered );
+
+        $items = null;
+        $collection = null;
+
+        return $filtered;
+    },
+
+
+    _toggleFilterClasses : function( $items, $filtered ) {
         var concealed = 'concealed',
             filtered = 'filtered';
+
         $items.filter( $filtered ).each(function() {
             var $filteredItem = $(this);
             // Remove concealed if it's there
@@ -276,6 +287,7 @@ Shuffle.prototype = {
                 $filteredItem.addClass( filtered );
             }
         });
+
         $items.not( $filtered ).each(function() {
             var $filteredItem = $(this);
             // Add concealed if it's not there
@@ -287,28 +299,16 @@ Shuffle.prototype = {
                 $filteredItem.removeClass( filtered );
             }
         });
-
-        $items = null;
-        $collection = null;
-
-        return $filtered;
     },
 
-    _initItems : function( withTransition, $items ) {
-        var self = this;
-
-        // Default to true if unspecified
-        withTransition = withTransition === false ? false : true;
-        $items = $items || self.$items;
-
-        $items.each(function() {
-            $(this).css(self.itemCss);
-
-            // Set CSS transition for transforms and opacity
-            if ( self.supported && self.useTransition && withTransition ) {
-                self._setTransition(this);
-            }
-        });
+    /**
+     * Set the initial css for each item
+     * @param  {jQuery} $items optionally specifiy at set to initialize
+     * @return {jQuery}        the items which were just set
+     */
+    _initItems : function( $items ) {
+        $items = $items || this.$items;
+        return $items.css( this.itemCss );
     },
 
     _updateItemCount : function() {
@@ -318,7 +318,8 @@ Shuffle.prototype = {
 
     _setTransition : function( element ) {
         var self = this;
-        element.style[self.transitionName] = self.transform + ' ' + self.speed + 'ms ' + self.easing + ', opacity ' + self.speed + 'ms ' + self.easing;
+        element.style[ self.transitionName ] = self.transform + ' ' + self.speed + 'ms ' + self.easing + ', opacity ' + self.speed + 'ms ' + self.easing;
+        return element;
     },
 
     _setTransitions : function() {
@@ -326,8 +327,8 @@ Shuffle.prototype = {
         self.$items.each(function() {
             self._setTransition( this );
         });
+        return self;
     },
-
 
     _setSequentialDelay : function( $collection ) {
         var self = this;
@@ -348,61 +349,6 @@ Shuffle.prototype = {
         });
     },
 
-    _resetDelay : function( $collection ) {
-        var self = this;
-
-        if ( !self.supported ) {
-            return;
-        }
-
-        $.each( $collection, function() {
-            $(this).off( self.transitionend );
-            this.style[ self.transitionDelayName ] = '0ms';
-        });
-    },
-
-    _orderItemsByDelay : function( $items ) {
-        var self = this,
-            $ordered = $(),
-            $randomized = $(),
-            ordered, randomized, merged,
-
-        by = function( $el ) {
-            return $el.data('delayOrder');
-        };
-
-        if ( !self.$ordered ) {
-
-            $items.each(function() {
-                var delayOrder = $(this).data('delayOrder');
-
-                if ( delayOrder ) {
-                    $ordered = $ordered.add( this );
-                } else {
-                    $randomized = $randomized.add( this );
-                }
-            });
-
-            ordered = $ordered.sorted({ by: by });
-
-        } else {
-            $ordered = self.$ordered;
-            ordered = self.ordered;
-            $randomized = $items.not( $ordered );
-        }
-
-        // Sort randomly
-        randomized = $randomized.sorted({ randomize: true });
-
-        // Merge with the ordered array
-        merged = ordered.concat( randomized );
-
-        // Save values
-        self.$ordered = $ordered;
-        self.ordered = ordered;
-        self.itemsOrderedByDelay = merged;
-    },
-
     _getItems : function() {
         return this.$container.children( this.itemSelector );
     },
@@ -417,8 +363,7 @@ Shuffle.prototype = {
       return parseFloat( dimension );
     },
 
-    // calculates number of columns
-    // i.e. this.colWidth = 200
+    // Calculate number of columns
     _setColumns : function( theContainerWidth ) {
         var self = this,
             containerWidth = theContainerWidth || self.$container.width(),
@@ -468,7 +413,7 @@ Shuffle.prototype = {
     /**
      * Adjust the height of the grid
      */
-    setContainerSize : function() {
+    _setContainerSize : function() {
         var self = this,
         gridHeight = Math.max.apply( Math, self.colYs );
         self.$container.css( 'height', gridHeight + 'px' );
@@ -530,7 +475,7 @@ Shuffle.prototype = {
         self._processStyleQueue();
 
         // Adjust the height of the container
-        self.setContainerSize();
+        self._setContainerSize();
     },
 
     _resetCols : function() {
@@ -650,7 +595,7 @@ Shuffle.prototype = {
         });
     },
 
-    _afterResize : function() {
+    _onResize : function() {
         var self = this,
             containerWidth;
 
@@ -667,44 +612,9 @@ Shuffle.prototype = {
             return;
         }
 
-        // If we're hiding the layout with a fade,
-        if ( self.hideLayoutWithFade && self.supported ) {
-            // recaculate column and gutter values
-            self._setColumns( containerWidth );
-            // Layout the items with only a position
-            self._reLayout( false, true );
-            // Change the transition-delay value accordingly
-            self._setSequentialDelay( self.itemsOrderedByDelay || self.$items.get() );
-            self.fire('done');
-            self.$items.css('opacity', 1);
-        } else {
-            self.resized();
-        }
+        self.resized();
     },
 
-    _beforeResize : function() {
-        var self = this,
-            containerWidth;
-
-        // If shuffle is disabled, destroyed, don't do anything
-        if ( !self.hideLayoutWithFade || !self.supported || !self.enabled || self.destroyed ) {
-            return;
-        }
-
-        // Will need to check height in the future if it's layed out horizontaly
-        containerWidth = self.$container.width();
-
-        // containerWidth hasn't changed, don't do anything
-        if ( containerWidth === self.containerWidth ) {
-            return;
-        }
-
-        self.$items.css('opacity', 0);
-
-        self.fire('loading');
-        self._resetDelay( self.$items );
-        self._orderItemsByDelay( self.$items );
-    },
 
     /**
      * Uses Modernizr's prefixed() to get the correct vendor property name and sets it using jQuery .css()
@@ -779,16 +689,12 @@ Shuffle.prototype = {
                 self.setPrefixedCss(opts.$this, 'transform', transform);
             }
 
-            if ( opts.opacity !== undefined && self.useTransition ) {
+            if ( opts.opacity !== undefined ) {
                 // Update css to trigger CSS Animation
                 opts.$this.css('opacity' , opts.opacity);
             }
 
-            if ( self.useTransition ) {
-                opts.$this.one(self.transitionend, complete);
-            } else {
-                complete();
-            }
+            opts.$this.one(self.transitionend, complete);
         } else {
 
             var cssObj = {
@@ -797,13 +703,8 @@ Shuffle.prototype = {
                 opacity: opts.opacity
             };
 
-            if ( self.useTransition ) {
-                // Use jQuery to animate left/top
-                opts.$this.stop(true, true).animate( cssObj, self.speed, 'swing', complete);
-            } else {
-                opts.$this.css( cssObj );
-                complete();
-            }
+            // Use jQuery to animate left/top
+            opts.$this.stop( true, true ).animate( cssObj, self.speed, 'swing', complete);
         }
     },
 
@@ -880,7 +781,7 @@ Shuffle.prototype = {
         self.$items = self._getItems();
         $newItems.not($passed).css('opacity', 0);
 
-        $passed = self.filter( undefined, $newItems );
+        $passed = self._filter( undefined, $newItems );
         passed = $passed.get();
 
         // How many filtered elements?
@@ -933,7 +834,7 @@ Shuffle.prototype = {
             category = 'all';
         }
 
-        self.filter( category );
+        self._filter( category );
         // Save the last filter in case elements are appended.
         self.lastFilter = category;
 
@@ -1038,18 +939,20 @@ Shuffle.prototype = {
             return;
         }
 
-        var self = this,
-        remove = function() {
+        var self = this;
+
+        function remove() {
             var shuffle = this;
             $collection.remove();
             $collection = null;
+
             setTimeout(function() {
                 shuffle.$items = shuffle._getItems();
                 shuffle.layout();
                 shuffle._updateItemCount();
                 shuffle.fire( 'removed', [ $collection, shuffle ] );
             }, 0);
-        };
+        }
 
         self.shrink( $collection, remove );
         self._processStyleQueue();
@@ -1069,6 +972,42 @@ Shuffle.prototype = {
         self.destroyed = true;
     }
 
+};
+
+// Overrideable options
+Shuffle.options = {
+    group : 'all', // Filter group
+    speed : 300, // Transition/animation speed (milliseconds)
+    easing : 'ease-out', // css easing function to use
+    itemSelector: '', // e.g. '.gallery-item'
+    gutterWidth : 0, // a static number or function that tells the plugin how wide the gutters between columns are (in pixels)
+    columnWidth : 0,// a static number or function that returns a number which tells the plugin how wide the columns are (in pixels)
+    showInitialTransition : false, // If set to false, the shuffle-items will only have a transition applied to them after the first layout
+    delimeter : null, // if your group is not json, and is comma delimeted, you could set delimeter to ','
+    buffer: 0, // useful for percentage based heights when they might not always be exactly the same (in pixels)
+    throttle: $.debounce || null,
+    throttleTime: 300,
+    sequentialFadeDelay: 150,
+    supported: Modernizr.csstransforms && Modernizr.csstransitions // supports transitions and transforms
+};
+
+// Not overrideable
+Shuffle.settings = {
+    sizer: null,
+    $sizer: null,
+    useSizer: false,
+    itemCss : { // default CSS for each item
+        position: 'absolute',
+        top: 0,
+        left: 0
+    },
+    revealAppendedDelay: 300,
+    keepSorted : true, // Keep sorted when shuffling/layout
+    enabled: true,
+    destroyed: false,
+    styleQueue: [],
+    prefixed: Modernizr.prefixed,
+    threeD: Modernizr.csstransforms3d // supports 3d transforms
 };
 
 
@@ -1108,44 +1047,6 @@ $.fn.shuffle = function( opts ) {
             }
         }
     });
-};
-
-// Overrideable options
-$.fn.shuffle.options = {
-    group : 'all', // Filter group
-    speed : 400, // Transition/animation speed (milliseconds)
-    easing : 'ease-out', // css easing function to use
-    itemSelector: '', // e.g. '.gallery-item'
-    gutterWidth : 0, // a static number or function that tells the plugin how wide the gutters between columns are (in pixels)
-    columnWidth : 0,// a static number or function that returns a number which tells the plugin how wide the columns are (in pixels)
-    showInitialTransition : true, // If set to false, the shuffle-items will only have a transition applied to them after the first layout
-    delimeter : null, // if your group is not json, and is comma delimeted, you could set delimeter to ','
-    buffer: 0, // useful for percentage based heights when they might not always be exactly the same (in pixels)
-    throttle: $.debounce || null,
-    throttleTime: 300,
-    keepSorted : true, // Keep sorted when shuffling/layout
-    hideLayoutWithFade: false,
-    sequentialFadeDelay: 150,
-    useTransition: true, // You don't want transitions on shuffle items? Fine, but you're weird
-    supported: Modernizr.csstransforms && Modernizr.csstransitions // supports transitions and transforms
-};
-
-// Not overrideable
-$.fn.shuffle.settings = {
-    sizer: null,
-    $sizer: null,
-    useSizer: false,
-    itemCss : { // default CSS for each item
-        position: 'absolute',
-        top: 0,
-        left: 0
-    },
-    revealAppendedDelay: 300,
-    enabled: true,
-    destroyed: false,
-    styleQueue: [],
-    prefixed: Modernizr.prefixed,
-    threeD: Modernizr.csstransforms3d // supports 3d transforms
 };
 
 })(jQuery, Modernizr);

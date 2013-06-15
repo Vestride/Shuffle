@@ -1,4 +1,4 @@
-var DEMO = (function($, window) {
+var DEMO = (function( $ ) {
   'use strict';
 
   var $grid = $('#grid'),
@@ -66,7 +66,7 @@ var DEMO = (function($, window) {
           by: function($el) {
             return $el.data('date-created');
           }
-        }
+        };
       } else if (sort === 'title') {
         opts = {
           by: function($el) {
@@ -92,7 +92,7 @@ var DEMO = (function($, window) {
         }
 
         var text = $.trim( $el.find('.picture-item__title').text() ).toLowerCase();
-        return text.indexOf(val) != -1;
+        return text.indexOf(val) !== -1;
       });
     });
   };
@@ -100,7 +100,7 @@ var DEMO = (function($, window) {
   return {
     init: init
   };
-}(jQuery, window));
+}( jQuery ));
 
 
 
