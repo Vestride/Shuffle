@@ -26,6 +26,14 @@
   .picture-item .picture-item__tags {
     margin: 0; }
 
+/*
+  Shuffle needs either relative or absolute positioning on the container
+  It will set it for you, but it'll cause another style recalculation and layout.
+  AKA worse performance - so just set it here
+ */
+.shuffle--container {
+  position: relative; }
+
 .shuffle--fluid .shuffle__sizer {
   position: absolute;
   opacity: 0;
