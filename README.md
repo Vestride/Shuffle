@@ -1,7 +1,7 @@
 # [jQuery Shuffle Plugin](http://vestride.github.com/Shuffle)
 Categorize, sort, and filter a responsive grid of items
 
-Hey there! I'm working on a new version of shuffle. It uses [masonry layouts](http://masonry.desandro.com/) (so you can have different sized tiles), it can add/remove elements, and more. Check it out [on the masonry branch](https://github.com/Vestride/Shuffle/blob/masonry/js/jquery.shuffle.js).
+Hey there! I'm working on a new version of shuffle. It uses [masonry layouts](http://masonry.desandro.com/) (so you can have different sized tiles), it can add/remove elements, and more. Check it out [on the masonry branch](https://github.com/Vestride/Shuffle/tree/masonry).
 
 ## Features
 
