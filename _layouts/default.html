@@ -1,4 +1,14 @@
 {% include head.html %}
+{% if page.includeHeader %}
+<header class="container-fluid">
+  <div class="row-fluid">
+    <div class="span7">
+      <h1>Shuffle</h1>
+      <p>Categorize, sort, and filter a responsive grid of items</p>
+    </div>
+  </div>
+</header>
+{% endif %}
 <main role="main" id="main" class="language-markup">
   {{ content }}
 </main>

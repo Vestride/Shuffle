@@ -155,8 +155,7 @@ Shuffle.prototype = {
         // Add classes and invalidate styles
         self._addClasses();
 
-        // Set up css for transitions and set initial css for each item
-        self.$container[0].style[ self.transitionName ] = 'height ' + self.speed + 'ms ' + self.easing;
+        // Set initial css for each item
         self._initItems();
 
         // Bind resize events (http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer)
@@ -189,6 +188,7 @@ Shuffle.prototype = {
         if ( self.supported ) {
             setTimeout(function() {
                 self._setTransitions();
+                self.$container[0].style[ self.transitionName ] = 'height ' + self.speed + 'ms ' + self.easing;
             }, 0);
         }
     },
@@ -352,9 +352,11 @@ Shuffle.prototype = {
         return element;
     },
 
-    _setTransitions : function() {
+    _setTransitions : function( $items ) {
         var self = this;
-        self.$items.each(function() {
+
+        $items = $items || self.$items;
+        $items.each(function() {
             self._setTransition( this );
         });
         return self;
@@ -803,6 +805,7 @@ Shuffle.prototype = {
 
         $newItems.addClass('shuffle-item');
         self._initItems( $newItems );
+        self._setTransitions( $newItems );
         self.$items = self._getItems();
 
         // Hide all items
@@ -1065,27 +1068,8 @@ $.fn.shuffle = function( opts ) {
             $this.data('shuffle', shuffle);
         }
 
-        // If passed a string, lets decide what to do with it. Or they've provided a function to filter by
-        if ( $.isFunction(opts) ) {
-            shuffle.shuffle.apply( shuffle, args );
-
-        // Key should be an object with propreties reversed and by.
-        } else if (typeof opts === 'string') {
-            switch( opts ) {
-                case 'sort':
-                case 'destroy':
-                case 'update':
-                case 'appended':
-                case 'enable':
-                case 'disable':
-                case 'layout':
-                case 'remove':
-                    shuffle[ opts ].apply( shuffle, args );
-                    break;
-                default:
-                    shuffle.shuffle( opts );
-                    break;
-            }
+        if ( typeof opts === 'string' && shuffle[ opts ] ) {
+            shuffle[ opts ].apply( shuffle, args );
         }
     });
 };

@@ -43,7 +43,7 @@ var DEMO = (function( $ ) {
       $this.toggleClass('active');
 
       // Filter elements
-      $grid.shuffle( group );
+      $grid.shuffle( 'shuffle', group );
     });
 
     $btns = null;
@@ -51,14 +51,10 @@ var DEMO = (function( $ ) {
 
   setupSorting = function() {
     // Sorting options
-    $('.sort-options button').on('click', function() {
+    $('.sort-options').on('change', function() {
       var $this = $(this),
-          sort = $this.data('sort'),
+          sort = this.value,
           opts = {};
-
-      // Hide current label, show current label in title
-      $('.sort-options .active').removeClass('active');
-      $this.addClass('active');
 
       // We're given the element wrapped in jQuery
       if (sort === 'date-created') {
@@ -84,7 +80,7 @@ var DEMO = (function( $ ) {
     // Advanced filtering
     $('.js-shuffle-search').on('keyup change', function() {
       var val = this.value.toLowerCase();
-      $grid.shuffle(function($el, shuffle) {
+      $grid.shuffle('shuffle', function($el, shuffle) {
 
         // Only search elements in the current group
         if (shuffle.group !== 'all' && $.inArray(shuffle.group, $el.data('groups')) === -1) {
