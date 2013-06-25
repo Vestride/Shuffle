@@ -1,0 +1,26 @@
+
+<nav class="site-nav collapsed" id="nav" role="primary">
+  <div class="js-tray site-nav__tray">
+    <div class="container-fluid">
+      <div class="row-fluid">
+        {% for post in site.demos %}
+          <div class="span3 figure-wrap">
+            <a href="/{{ post.slug }}">
+              <figure>
+                <div class="keep-ratio four-three">
+                  <img src="{{ site.url }}/img/demos/{{ post.slug }}.webp" alt="{{ post.label }}" />
+                </div>
+                <figcaption>{{ post.label }}</figcaption>
+              </figure>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="site-nav__band">
+    <div class="container-fluid">
+      <button class="js-nav-toggle pull-right" data-close-label="Close Nav">Open Nav</button>
+    </div>
+  </div>
+</nav>

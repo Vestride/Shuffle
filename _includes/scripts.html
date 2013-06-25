@@ -4,8 +4,15 @@
 <!--[if gte IE 9]><!-->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 <!--<![endif]-->
+
+<!-- Shuffle! -->
 <script src="{{ site.url }}/js/jquery.shuffle.js"></script>
+
+<!-- Syntax highlighting via Prism -->
 <script src="{{ site.url }}/js/prism.js"></script>
+
+<!-- Make the nav work -->
+<script src="{{ site.url }}/js/page.js"></script>
 
 {% if page.extraJS && page.extraJS.length %}
 {% for src in page.extraJS %}

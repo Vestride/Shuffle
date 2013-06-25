@@ -1513,6 +1513,10 @@ h4 {
 pre {
   max-height: 30em; }
 
+img {
+  max-width: 100%;
+  height: auto; }
+
 /* lets have some constraints shall we */
 .container-fluid {
   width: 93%;
@@ -1528,6 +1532,16 @@ ul ul {
   margin: 0;
   list-style-type: circle; }
 
+.site-nav .site-nav__tray {
+  transition: .2s;
+  overflow: hidden;
+  height: 300px;
+  background-color: #34495e; }
+.site-nav.collapsed .site-nav__tray {
+  height: 0; }
+.site-nav .figure-wrap:nth-child(4n + 1) {
+  margin-left: 0; }
+
 nav > a {
   display: block;
   margin: 5px 0; }
@@ -1540,6 +1554,15 @@ nav > a {
 
 .sort-options {
   margin-top: 10px; }
+
+.keep-ratio {
+  position: relative;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%; }
+  .keep-ratio.four-three {
+    padding-bottom: 75%; }
 
 .btn-group:before, .btn-group:after {
   content: " ";

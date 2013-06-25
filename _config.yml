@@ -7,6 +7,24 @@ exclude:     ['./_scss/*.*']
 
 permalink: /:title
 
+demos:
+  - url: 'demos/2013-05-01-basic'
+    slug: basic
+    label: Basic masonry layout
+    screenshot: basic.webp
+  - url: 'demos/2013-06-19-adding-removing'
+    slug: adding-removing
+    label: Adding and removing items
+    screenshot: removing.webp
+  - url: 'demos/2013-05-02-adaptive'
+    slug: adaptive
+    label: Twitter bootstrap adaptive masonry with compounded filters
+    screenshot: adaptive.webp
+  - url: 'demos/2013-05-03-responsive'
+    slug: responsive
+    label: Responsive?
+    screenshot: responsive.webp
+
 items:
   - groups: [ photography ]
     date: 2010-09-14

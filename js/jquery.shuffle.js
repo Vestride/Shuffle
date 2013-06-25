@@ -390,7 +390,7 @@ Shuffle.prototype = {
         if ( window.getComputedStyle ) {
             dimension = window.getComputedStyle( element, null )[ style ];
         } else {
-            dimension = $( element ).css( dimension );
+            dimension = $( element ).css( style );
         }
         return parseFloat( dimension );
     },

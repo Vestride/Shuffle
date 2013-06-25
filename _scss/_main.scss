@@ -1,5 +1,12 @@
+@import "variables";
+
 pre {
   max-height: 30em;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 /* lets have some constraints shall we */
@@ -21,6 +28,25 @@ ul ul {
 }
 
 
+.site-nav {
+
+  .site-nav__tray {
+    transition: .2s;
+    overflow: hidden;
+    height: 300px;
+    background-color: $wetAsphalt;
+  }
+
+  &.collapsed .site-nav__tray {
+    height: 0;
+  }
+
+  .figure-wrap:nth-child(4n + 1) {
+    margin-left: 0;
+  }
+
+}
+
 nav > a {
   display: block;
   margin: 5px 0;
@@ -39,6 +65,19 @@ nav > a {
 
 .sort-options {
   margin-top: 10px;
+}
+
+
+.keep-ratio {
+  position: relative;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%;
+
+  &.four-three {
+    padding-bottom: 75%;
+  }
 }
 
 
