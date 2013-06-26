@@ -5,10 +5,12 @@ var Exports = {
 
 Exports.Modules.Gallery = (function($, undefined) {
   var $grid,
-  $features,
-  $megapixels,
-  features = [],
-  megapixels = [],
+  $shapes,
+  $colors,
+  shapes = [],
+  colors = [],
+
+  // Using shuffle with specific column widths
   columnWidths = {
     1170: 70,
     940: 60,
@@ -27,9 +29,9 @@ Exports.Modules.Gallery = (function($, undefined) {
   },
 
   setVars = function() {
-    $grid = $('.products');
-    $features = $('.filter-options .features');
-    $megapixels = $('.filter-options .megapixels');
+    $grid = $('.js-shuffle');
+    $shapes = $('.js-shapes');
+    $colors = $('.js-colors');
   },
 
   initShuffle = function() {
@@ -59,9 +61,9 @@ Exports.Modules.Gallery = (function($, undefined) {
   },
 
   initFilters = function() {
-    // Features
-    $features.find('input').on('change', function() {
-      var $checked = $features.find('input:checked'),
+    // shapes
+    $shapes.find('input').on('change', function() {
+      var $checked = $shapes.find('input:checked'),
       groups = [];
 
       // At least one checkbox is checked, clear the array and loop through the checked checkboxes
@@ -71,25 +73,36 @@ Exports.Modules.Gallery = (function($, undefined) {
             groups.push(this.value);
         });
       }
-      features = groups;
+      shapes = groups;
 
       filter();
     });
 
-    // Megapixels
-    $megapixels.children().on('click', function() {
-      $(this).button('toggle');
+    // colors
+    $colors.find('button').on('click', function() {
+      var $this = $(this),
+          $alreadyChecked,
+          checked = [],
+          active = 'active',
+          isActive;
 
-      var $checked = $megapixels.find('.active'),
-      groups = [];
+      // Already checked buttons which are not this one
+      $alreadyChecked = $this.siblings('.' + active);
 
-      // Get all megapixel filters
-      if ( $checked.length !== 0 ) {
-        $checked.each(function() {
-            groups.push(this.getAttribute('data-megapixels'));
-        });
+      $this.toggleClass( active );
+
+      // Remove active on already checked buttons to act like radio buttons
+      if ( $alreadyChecked.length ) {
+        $alreadyChecked.removeClass( active );
       }
-      megapixels = groups;
+
+      isActive = $this.hasClass( active );
+
+      if ( isActive ) {
+        checked.push( $this.data( 'filterValue' ) );
+      }
+
+      colors = checked;
 
       filter();
     });
@@ -107,13 +120,13 @@ Exports.Modules.Gallery = (function($, undefined) {
 
   itemPassesFilters = function(data) {
 
-    // If a features filter is active
-    if ( features.length > 0 && !arrayContainsArray(data.groups, features) ) {
+    // If a shapes filter is active
+    if ( shapes.length > 0 && !valueInArray(data.shape, shapes) ) {
       return false;
     }
 
-    // If a megapixels filter is active
-    if ( megapixels.length > 0 && !valueInArray(data.megapixels, megapixels) ) {
+    // If a colors filter is active
+    if ( colors.length > 0 && !valueInArray(data.color, colors) ) {
       return false;
     }
 
@@ -121,31 +134,31 @@ Exports.Modules.Gallery = (function($, undefined) {
   },
 
   hasActiveFilters = function() {
-    return megapixels.length > 0 || features.length > 0;
+    return colors.length > 0 || shapes.length > 0;
   },
 
   valueInArray = function(value, arr) {
     return $.inArray(value, arr) !== -1;
-  },
-
-  arrayContainsArray = function(arrToTest, requiredArr) {
-    var i = 0,
-    dictionary = {},
-    j;
-
-    // Convert groups into object which we can test the keys
-    for (j = 0; j < arrToTest.length; j++) {
-      dictionary[ arrToTest[j] ] = true;
-    }
-
-    // Loop through selected features, if that feature is not in this elements groups, return false
-    for (; i < requiredArr.length; i++) {
-      if ( dictionary[ requiredArr[i] ] === undefined ) {
-        return false;
-      }
-    }
-    return true;
   };
+
+  // arrayContainsArray = function(arrToTest, requiredArr) {
+  //   var i = 0,
+  //   dictionary = {},
+  //   j;
+
+  //   // Convert groups into object which we can test the keys
+  //   for (j = 0; j < arrToTest.length; j++) {
+  //     dictionary[ arrToTest[j] ] = true;
+  //   }
+
+  //   // Loop through selected shapes, if that feature is not in this elements groups, return false
+  //   for (; i < requiredArr.length; i++) {
+  //     if ( dictionary[ requiredArr[i] ] === undefined ) {
+  //       return false;
+  //     }
+  //   }
+  //   return true;
+  // };
 
   return {
     init: init

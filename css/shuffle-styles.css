@@ -5,26 +5,33 @@
   height: 220px;
   margin-top: 24px;
   overflow: hidden;
-  background: #ecf0f1; }
-  .picture-item.shuffle-item {
-    margin-left: 0;
-    /* shuffle items shouldn't have a left margin*/ }
-  .picture-item.picture-item--h2 {
-    height: 464px;
-    /* 2x the height + 1 gutter */ }
-  .picture-item img {
-    display: block;
-    width: 100%;
-    height: auto; }
-  .picture-item .picture-item__details,
-  .picture-item .picture-item__description {
-    padding: 1em; }
-  .picture-item .picture-item__description {
-    margin: 0;
-    padding-top: 0;
-    padding-right: 2em; }
-  .picture-item .picture-item__tags {
-    margin: 0; }
+  background: #ecf0f1;
+}
+.picture-item.shuffle-item {
+  margin-left: 0;
+  /* shuffle items shouldn't have a left margin*/
+}
+.picture-item.picture-item--h2 {
+  height: 464px;
+  /* 2x the height + 1 gutter */
+}
+.picture-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.picture-item .picture-item__details,
+.picture-item .picture-item__description {
+  padding: 1em;
+}
+.picture-item .picture-item__description {
+  margin: 0;
+  padding-top: 0;
+  padding-right: 2em;
+}
+.picture-item .picture-item__tags {
+  margin: 0;
+}
 
 /*
   Shuffle needs either relative or absolute positioning on the container
@@ -32,9 +39,11 @@
   AKA worse performance - so just set it here
  */
 .shuffle--container {
-  position: relative; }
+  position: relative;
+}
 
 .shuffle--fluid .shuffle__sizer {
   position: absolute;
   opacity: 0;
-  visibility: hidden; }
+  visibility: hidden;
+}

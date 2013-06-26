@@ -68,40 +68,6 @@ nav > a {
 }
 
 
-.keep-ratio {
-  position: relative;
-  width: 100%;
-  height: 0;
-  overflow: hidden;
-  padding-bottom: 100%;
-
-  &.four-three {
-    padding-bottom: 75%;
-  }
-}
-
-
-
-
-// Hide from both screenreaders and browsers: h5bp.com/u
-.hidden {
-  display: none !important;
-  visibility: hidden;
-}
-
-// Hide only visually, but have it available for screenreaders: h5bp.com/v
-.visuallyhidden {
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  width: 1px;
-}
-
-
 
 
 

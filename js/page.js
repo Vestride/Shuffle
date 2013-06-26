@@ -113,7 +113,12 @@ var NAV = (function( $ ) {
   NavTray.prototype.onResize = function() {
     var self = this;
 
+    self.$tray.css( 'height', '' );
     self.saveHeight();
+
+    if ( self.isOpen ) {
+      self.$tray.css( 'height', self.collapseHeight );
+    }
   };
 
   NavTray.prototype.toggle = function() {

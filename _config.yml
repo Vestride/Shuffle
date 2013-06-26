@@ -42,6 +42,14 @@ shapes:
     color: red
   - shape: square
     color: green
+  - shape: circle
+    color: orange
+  - shape: diamond
+    color: blue
+  - shape: square
+    color: orange
+  - shape: square
+    color: blue
 
 items:
   - groups: [ photography ]
