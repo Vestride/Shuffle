@@ -1,404 +1,72 @@
 ---
 layout: default
 title: Shuffle Adaptive Demo
-bodyClass: masonry
+bodyClass: null
 extraJS: [ "gallery.js" ]
-extraCSS: [ "http://twitter.github.io/bootstrap/assets/css/bootstrap.css", "http://twitter.github.io/bootstrap/assets/css/bootstrap-responsive.css", "/css/gallery.css" ]
+extraCSS: [ "/css/gallery.css" ]
 ---
+
+<section class="container">
+  <div class="row">
+    <h2 class="span12">Adaptive Layout with Compound Filters</h2>
+  </div>
+</section>
+
 <section class="gallery container">
-    <div class="hero">
-        <img src="http://placekitten.com/1170/400" alt="">
-        <div class="ghost-center-wrap full">
-        <div class="hero-text ghost-center">
-            <div>Example</div>
-            <h1>Responsive bootstrap</h1>
-            <h2>With compounded filters</h2>
-        </div>
-        </div>
+
+  <div class="filter-options row">
+
+    <div class="span6">
+      <div class="filter-group filter--colors js-colors">
+        <button data-filter-value="green"><span class="visuallyhidden">Green</span></button>
+        <button data-filter-value="blue"><span class="visuallyhidden">Blue</span></button>
+        <button data-filter-value="red"><span class="visuallyhidden">Red</span></button>
+        <button data-filter-value="orange"><span class="visuallyhidden">Orange</span></button>
+      </div>
     </div>
 
-    <h2>Filters</h2>
-    <div class="product-filter">
-        <div class="filter-options row">
-
-            <ul class="span6 unstyled megapixels">
-                <li data-megapixels="14-16" class="btn">14-16MP</li>
-                <li data-megapixels="16-18" class="btn">16-18MP</li>
-                <li data-megapixels="18-20" class="btn">18-20MP</li>
-                <li data-megapixels="20+" class="btn">20MP+</li>
-            </ul>
-
-            <ul class="span6 unstyled features">
-                <li>
-                    <label><input type="checkbox" value="lcd"> LCD</label>
-                </li>
-                <li>
-                    <label><input type="checkbox" value="touchscreen"> Touchscreen LCD</label>
-                </li>
-                <li>
-                    <label><input type="checkbox" value="panorama"> Intelligent Sweep Panorama</label>
-                </li>
-                <li>
-                    <label><input type="checkbox" value="lightweight"> Lightweight</label>
-                </li>
-            </ul>
-
-        </div>
+    <div class="span6">
+      <ul class="filter-group unstyled filter--shapes js-shapes">
+        <li>
+          <input type="checkbox" value="circle" id="cb-circle"> <label for="cb-circle">Circle</label>
+        </li>
+        <li>
+          <input type="checkbox" value="diamond" id="cb-diamond"> <label for="cb-diamond">Diamond</label>
+        </li>
+        <li>
+          <input type="checkbox" value="square" id="cb-square"> <label for="cb-square">Square</label>
+        </li>
+        <li>
+          <input type="checkbox" value="triangle" id="cb-triangle"> <label for="cb-triangle">Triangle</label>
+        </li>
+      </ul>
     </div>
 
-    <div class="products">
+  </div>
 
-        <div class="span6 h2 product box" data-groups='["lcd", "lightweight"]' data-megapixels="20+" data-price="649">
-            <div class="product-img">
-                <img src="/img/baseball.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (41)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>20.2 <span class="product-meta-name">megapixels</span></li>
-                        <li>3" <span class="product-meta-name">lcd</span></li>
-                        <li>Explore <span class="product-meta-name">sensor</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$649.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
+  <div class="shape-up js-shuffle">
+    {% for shape in site.shapes %}
+    <div class="span3 shape shape--{{ shape.shape }} shape--{{ shape.color }}" data-shape="{{ shape.shape }}" data-color="{{ shape.color }}">
+      <div class="keep-ratio">
+        <div class="shape__inner">
+          <div class="shape__space">
+          </div>
         </div>
-
-        <div class="span6 product link box" data-groups='["lcd", "touchscreen", "panorama", "lightweight"]' data-megapixels="16-18" data-price="1199">
-            <p>Massive Sensor Loruem Ipsum</p>
-            <a href="#" class="btn">Explore Sensor</a>
-        </div>
-
-        <div class="span3 product box" data-groups='["panorama", "lightweight"]' data-megapixels="16-18" data-price="329">
-            <div class="product-img">
-                <img src="/img/pumpkin.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (10)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>16.2 <span class="product-meta-name">megapixels</span></li>
-                        <li>Waterproof <span class="product-meta-name">body</span></li>
-                        <li>Cool <span class="product-meta-name">sensor</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$329.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="span3 product box" data-groups='["lcd",  "lightweight"]' data-megapixels="18-20" data-price="369">
-            <div class="product-img">
-                <img src="/img/tennis-ball.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (41)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>20.2 <span class="product-meta-name">megapixels</span></li>
-                        <li>3" <span class="product-meta-name">lcd</span></li>
-                        <li>Cool <span class="product-meta-name">sensor</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$649.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="span3 product box" data-groups='["lcd", "touchscreen"]' data-megapixels="18-20" data-price="269">
-            <div class="product-img">
-                <img src="/img/imac.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (6)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>16.1 <span class="product-meta-name">megapixels</span></li>
-                        <li>5x <span class="product-meta-name">optical zoom</span></li>
-                        <li>720p <span class="product-meta-name">hd video</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$1199.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-        <div class="span3 product box" data-groups='["lcd", "panorama"]' data-megapixels="14-16" data-price="109">
-            <div class="product-img">
-                <img src="/img/master-chief.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (10)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>16.2 <span class="product-meta-name">megapixels</span></li>
-                        <li>Waterproof <span class="product-meta-name">body</span></li>
-                        <li>Cool <span class="product-meta-name">sensor</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$329.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="span6 h2 product box" data-groups='["lcd", "panorama", "lightweight"]' data-megapixels="18-20" data-price="479">
-            <div class="product-img">
-                <img src="/img/es-blue.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (41)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>20.2 <span class="product-meta-name">megapixels</span></li>
-                        <li>3" <span class="product-meta-name">lcd</span></li>
-                        <li>Cool <span class="product-meta-name">sensor</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$649.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-        <div class="span3 product box" data-groups='["lcd", "touchscreen", "lightweight"]' data-megapixels="18-20" data-price="209">
-            <div class="product-img">
-                <img src="/img/vestride-red.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (6)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>16.1 <span class="product-meta-name">megapixels</span></li>
-                        <li>5x <span class="product-meta-name">optical zoom</span></li>
-                        <li>720p <span class="product-meta-name">hd video</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$1199.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-        <div class="span3 product box" data-groups='["touchscreen", "panorama", "lightweight"]' data-megapixels="20+" data-price="2799">
-            <div class="product-img">
-                <img src="/img/newegg.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (10)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>16.2 <span class="product-meta-name">megapixels</span></li>
-                        <li>Waterproof <span class="product-meta-name">body</span></li>
-                        <li>Cool <span class="product-meta-name">sensor</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$329.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="span6 link product box" data-groups='["panorama", "lightweight"]' data-megapixels="20+" data-price="329">
-            <p>Great Summer Travel Loruem Ipsum</p>
-            <a href="#" class="btn">Products for Summer Vacation</a>
-        </div>
-
-        <div class="span3 product box" data-groups='["lightweight"]' data-megapixels="14-16" data-price="199">
-            <div class="product-img">
-                <img src="/img/eightfoldarc.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (6)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>16.1 <span class="product-meta-name">megapixels</span></li>
-                        <li>5x <span class="product-meta-name">optical zoom</span></li>
-                        <li>720p <span class="product-meta-name">hd video</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$1199.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="span3 product box" data-groups='["panorama"]' data-megapixels="14-16" data-price="149">
-            <div class="product-img">
-                <img src="/img/ground.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (10)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>16.2 <span class="product-meta-name">megapixels</span></li>
-                        <li>Waterproof <span class="product-meta-name">body</span></li>
-                        <li>Cool <span class="product-meta-name">sensor</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$149.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="span3 product box" data-groups='["lcd"]' data-megapixels="16-18" data-price="789">
-            <div class="product-img">
-                <img src="/img/grassy-hills.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (10)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>16.2 <span class="product-meta-name">megapixels</span></li>
-                        <li>Waterproof <span class="product-meta-name">body</span></li>
-                        <li>Cool <span class="product-meta-name">sensor</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$789.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="span3 product box" data-groups='["lcd", "touchscreen"]' data-megapixels="16-18" data-price="529">
-            <div class="product-img">
-                <img src="/img/tennis-ball.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (10)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>16.2 <span class="product-meta-name">megapixels</span></li>
-                        <li>Waterproof <span class="product-meta-name">body</span></li>
-                        <li>Cool <span class="product-meta-name">sensor</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$529.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="span3 product box" data-groups='["lcd", "touchscreen"]' data-megapixels="18-20" data-price="999">
-            <div class="product-img">
-                <img src="/img/pumpkin.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (10)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>16.2 <span class="product-meta-name">megapixels</span></li>
-                        <li>Waterproof <span class="product-meta-name">body</span></li>
-                        <li>Cool <span class="product-meta-name">sensor</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$529.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="span3 product box" data-groups='["lcd", "touchscreen"]' data-megapixels="20+" data-price="1599">
-            <div class="product-img">
-                <img src="/img/imac.png" alt="" />
-            </div>
-            <div class="product-content">
-                <div class="product-model">ASDF-1</div>
-                <div class="product-name">Camera JKLP</div>
-                <div class="product-rating">***** (10)</div>
-                <div class="product-meta">
-                    <ul>
-                        <li>16.2 <span class="product-meta-name">megapixels</span></li>
-                        <li>Waterproof <span class="product-meta-name">body</span></li>
-                        <li>Cool <span class="product-meta-name">sensor</span></li>
-                    </ul>
-                </div>
-                <div class="product-price">
-                    <span class="muted">Starting at</span>
-                    <br>
-                    <b>$529.99</b> <span class="muted">MSRP</span>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
+
 </section>
 
 <section>
-    <div class="container">
-        <h1>Another section</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    </div>
+  <div class="container">
+    <h2>Another section</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  </div>
 </section>

@@ -25,6 +25,24 @@ demos:
     label: Responsive?
     screenshot: responsive.webp
 
+shapes:
+  - shape: circle
+    color: blue
+  - shape: diamond
+    color: red
+  - shape: triangle
+    color: green
+  - shape: triangle
+    color: orange
+  - shape: square
+    color: red
+  - shape: diamond
+    color: green
+  - shape: circle
+    color: red
+  - shape: square
+    color: green
+
 items:
   - groups: [ photography ]
     date: 2010-09-14

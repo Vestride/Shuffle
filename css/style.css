@@ -1510,6 +1510,11 @@ h3 {
 h4 {
   font-size: 1.25em; }
 
+.unstyled {
+  list-style-type: none;
+  padding: 0;
+  margin: 0; }
+
 pre {
   max-height: 30em; }
 
@@ -1563,6 +1568,20 @@ nav > a {
   padding-bottom: 100%; }
   .keep-ratio.four-three {
     padding-bottom: 75%; }
+
+.hidden {
+  display: none !important;
+  visibility: hidden; }
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px; }
 
 .btn-group:before, .btn-group:after {
   content: " ";

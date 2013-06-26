@@ -14,12 +14,51 @@ Exports.Modules.Gallery = (function($, undefined) {
     940: 60,
     724: 42
   },
+  gutterWidths = {
+    1170: 30,
+    940: 20,
+    724: 20
+  },
 
-  _init = function() {
+  init = function() {
+    setVars();
+    initFilters();
+    initShuffle();
+  },
+
+  setVars = function() {
     $grid = $('.products');
     $features = $('.filter-options .features');
     $megapixels = $('.filter-options .megapixels');
+  },
 
+  initShuffle = function() {
+    // instantiate the plugin
+    $grid.shuffle({
+      speed : 250,
+      easing : 'cubic-bezier(0.165, 0.840, 0.440, 1.000)', // easeOutQuart
+      columnWidth: function( containerWidth ) {
+        var colW = columnWidths[ containerWidth ];
+
+        // Default to container width
+        if ( colW === undefined ) {
+          colW = containerWidth;
+        }
+        return colW;
+      },
+      gutterWidth: function( containerWidth ) {
+        var gutter = gutterWidths[ containerWidth ];
+
+        // Default to zero
+        if ( gutter === undefined ) {
+          gutter = 0;
+        }
+        return gutter;
+      }
+    });
+  },
+
+  initFilters = function() {
     // Features
     $features.find('input').on('change', function() {
       var $checked = $features.find('input:checked'),
@@ -34,7 +73,7 @@ Exports.Modules.Gallery = (function($, undefined) {
       }
       features = groups;
 
-      _filter();
+      filter();
     });
 
     // Megapixels
@@ -52,74 +91,44 @@ Exports.Modules.Gallery = (function($, undefined) {
       }
       megapixels = groups;
 
-      _filter();
-    });
-
-        
-    // instantiate the plugin
-    $grid.shuffle({
-      group : 'all',
-      speed : 400,
-      easing : 'cubic-bezier(0.165, 0.840, 0.440, 1.000)', // easeOutQuart
-      columnWidth: function( containerWidth ) {
-        var colW = columnWidths[ containerWidth ];
-        if ( colW === undefined ) {
-          colW = containerWidth;
-        }
-        return colW;
-      },
-      gutterWidth: function( containerWidth ) {
-        var gutter = 0;
-        switch ( containerWidth ) {
-          case 1170:
-            gutter = 30;
-            break;
-          case 940: // Falls through
-          case 724:
-            gutter = 20;
-            break;
-          default:
-            gutter = 0;
-        }
-        return gutter;
-      }
+      filter();
     });
   },
 
-  _filter = function() {
-    if ( _hasActiveFilters() ) {
-      $grid.shuffle(function($el) {
-        return _itemPassesFilters( $el.data() );
+  filter = function() {
+    if ( hasActiveFilters() ) {
+      $grid.shuffle('shuffle', function($el) {
+        return itemPassesFilters( $el.data() );
       });
     } else {
-      $grid.shuffle('all');
+      $grid.shuffle( 'shuffle', 'all' );
     }
   },
 
-  _itemPassesFilters = function(data) {
+  itemPassesFilters = function(data) {
 
     // If a features filter is active
-    if ( features.length > 0 && !_arrayContainsArray(data.groups, features) ) {
+    if ( features.length > 0 && !arrayContainsArray(data.groups, features) ) {
       return false;
     }
 
     // If a megapixels filter is active
-    if ( megapixels.length > 0 && !_valueInArray(data.megapixels, megapixels) ) {
+    if ( megapixels.length > 0 && !valueInArray(data.megapixels, megapixels) ) {
       return false;
     }
 
     return true;
   },
 
-  _hasActiveFilters = function() {
+  hasActiveFilters = function() {
     return megapixels.length > 0 || features.length > 0;
   },
 
-  _valueInArray = function(value, arr) {
+  valueInArray = function(value, arr) {
     return $.inArray(value, arr) !== -1;
   },
 
-  _arrayContainsArray = function(arrToTest, requiredArr) {
+  arrayContainsArray = function(arrToTest, requiredArr) {
     var i = 0,
     dictionary = {},
     j;
@@ -128,7 +137,7 @@ Exports.Modules.Gallery = (function($, undefined) {
     for (j = 0; j < arrToTest.length; j++) {
       dictionary[ arrToTest[j] ] = true;
     }
-    
+
     // Loop through selected features, if that feature is not in this elements groups, return false
     for (; i < requiredArr.length; i++) {
       if ( dictionary[ requiredArr[i] ] === undefined ) {
@@ -139,9 +148,11 @@ Exports.Modules.Gallery = (function($, undefined) {
   };
 
   return {
-    init: _init
+    init: init
   };
 }(jQuery));
+
+
 
 $(document).ready(function() {
   Exports.Modules.Gallery.init();
