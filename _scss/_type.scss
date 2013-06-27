@@ -65,6 +65,17 @@ h4 {
   font-size: 1.25em;
 }
 
+@media ( max-width: 47.9375em ) {
+  h1 {
+    font-size: 8vw;
+    margin: 3vw 0;
+  }
+  h2 {
+    font-size: 6vw;
+    margin: 2vw 0;
+  }
+}
+
 
 
 .unstyled {

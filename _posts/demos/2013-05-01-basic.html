@@ -12,12 +12,12 @@ extraJS: [ "homepage.js" ]
 
 
 <div class="container-fluid">
-  <div id="grid" class="row-fluid shuffle--container shuffle--fluid">
+  <div id="grid" class="row-fluid m-row shuffle--container shuffle--fluid">
     {% for item in site.items %}
         {% assign item = item %}
         {% include picture-item.html %}
     {% endfor %}
-    <div class="span3 shuffle__sizer"></div>
+    <div class="span3 m-span3 shuffle__sizer"></div>
   </div>
 </div>
 

@@ -3,12 +3,10 @@
 This is a large improvement to shuffle. Most notably, the ability for [masonry](http://masonry.desandro.com) layouts. Other additions include adding/removing items, enabling/disabling, multiple instances on a page, and more!
 
 ## Todos
-[ ] Button states
-[ ] Make demo with images loaded plugin
-[x] Make compound filters demo
-[ ] Solve margin top issue
-[ ] init with a sort
-[ ] Horizontal layout
-[ ] Custom animations
-[ ] Consistent naming of public vs private functions
-[ ] Use Deferred objects for callbacks
+* Make demo with images loaded plugin
+* Solve margin top issue
+* init with a sort
+* Horizontal layout
+* Custom animations
+* Consistent naming of public vs private functions
+* Use Deferred objects for callbacks

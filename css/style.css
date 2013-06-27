@@ -358,6 +358,79 @@ table {
   border-spacing: 0;
 }
 
+body {
+  font-family: 'Ubuntu', sans-serif;
+  color: #5d6d77;
+}
+
+a, a:visited {
+  color: #3498db;
+}
+a:hover {
+  text-decoration: none;
+}
+a:active {
+  color: #2ecc71;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #34495e;
+}
+
+h1 {
+  margin: 20px 0;
+  font-weight: 300;
+  font-size: 4em;
+  line-height: 1;
+  color: #2ecc71;
+}
+
+h2 {
+  position: relative;
+  font-size: 2.5em;
+  margin-bottom: 18px;
+}
+h2::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  height: 2px;
+  background-color: #2ecc71;
+}
+
+h3 {
+  margin: .6667em 0 0.5em;
+  font-size: 1.5em;
+}
+
+h4 {
+  font-size: 1.25em;
+}
+
+@media (max-width: 47.9375em) {
+  h1 {
+    font-size: 8vw;
+    margin: 3vw 0;
+  }
+
+  h2 {
+    font-size: 6vw;
+    margin: 2vw 0;
+  }
+}
+.unstyled {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
 /*
  * Bootstrap v2.3.2
  *
@@ -1786,68 +1859,33 @@ table {
     margin-left: 0;
   }
 }
-body {
-  font-family: 'Ubuntu', sans-serif;
-  color: #5d6d77;
+@media (max-width: 47.9375em) {
+  .m-row [class*="m-span"] {
+    float: left;
+    margin-left: 2%;
+  }
+  .m-row [class*="m-span"]:first-child {
+    margin-left: 0;
+  }
+  .m-row .m-span1 {
+    width: 15%;
+  }
+  .m-row .m-span2 {
+    width: 32%;
+  }
+  .m-row .m-span3 {
+    width: 49%;
+  }
+  .m-row .m-span4 {
+    width: 66%;
+  }
+  .m-row .m-span5 {
+    width: 83%;
+  }
+  .m-row .m-span6 {
+    width: 100%;
+  }
 }
-
-a, a:visited {
-  color: #3498db;
-}
-a:hover {
-  text-decoration: none;
-}
-a:active {
-  color: #2ecc71;
-}
-
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: #34495e;
-}
-
-h1 {
-  margin: 20px 0;
-  font-weight: 300;
-  font-size: 4em;
-  line-height: 1;
-  color: #2ecc71;
-}
-
-h2 {
-  position: relative;
-  font-size: 2.5em;
-  margin-bottom: 18px;
-}
-h2::after {
-  content: '';
-  position: absolute;
-  bottom: 4px;
-  left: 0;
-  z-index: -1;
-  width: 100%;
-  height: 2px;
-  background-color: #2ecc71;
-}
-
-h3 {
-  margin: .6667em 0 0.5em;
-  font-size: 1.5em;
-}
-
-h4 {
-  font-size: 1.25em;
-}
-
-.unstyled {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
 pre {
   max-height: 30em;
 }

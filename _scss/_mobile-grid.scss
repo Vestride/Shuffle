@@ -1,0 +1,24 @@
+
+$columns: 6;
+$gutterWidth: 2; // 2% gutter width
+$columnWidth: (100 - ( $gutterWidth * ( $columns - 1 ))) / $columns;
+
+@media ( max-width: 47.9375em ) {
+  .m-row {
+
+    [class*="m-span"] {
+      float: left;
+      margin-left: $gutterWidth + 0%;
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+
+    @for $i from 1 through 6 {
+      .m-span#{$i} {
+        width: ($i * $columnWidth) + (($i - 1) * $gutterWidth) + 0%;
+      }
+    }
+  }
+}
