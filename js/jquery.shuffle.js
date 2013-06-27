@@ -1021,7 +1021,7 @@ Shuffle.prototype = {
 // Overrideable options
 Shuffle.options = {
     group : 'all', // Filter group
-    speed : 300, // Transition/animation speed (milliseconds)
+    speed : 250, // Transition/animation speed (milliseconds)
     easing : 'ease-out', // css easing function to use
     itemSelector: '', // e.g. '.gallery-item'
     gutterWidth : 0, // a static number or function that tells the plugin how wide the gutters between columns are (in pixels)

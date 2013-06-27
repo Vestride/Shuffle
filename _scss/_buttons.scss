@@ -31,8 +31,8 @@ button {
   transition: .2s ease-out;
 
   &:hover {
-    background-color: lighten($wetAsphalt, 10);
-    box-shadow: 0 2px 0 0 darken($wetAsphalt, 5);
+    background-color: lighten($wetAsphalt, 12);
+    // box-shadow: 0 2px 0 0 darken($wetAsphalt, 5);
   }
 
   &.active,
@@ -46,19 +46,115 @@ button {
   }
 }
 
-.btn--filter {
+.btn--warning {
   background-color: $carrot;
 
   &:hover {
-    background-color: lighten($carrot, 5);
-    box-shadow: 0 2px 0 0 darken($carrot, 5);
+    background-color: lighten($carrot, 8);
   }
 
   &.active,
   &:active  {
-    background-color: $pumpkin;
+    // background-color: $pumpkin;
+    background-color: $carrot;
   }
 }
 
-.btn--sort {
+.btn--primary {
+  background-color: $river;
+
+  &:hover {
+    background-color: lighten($river, 8);
+  }
+
+  &.active,
+  &:active  {
+    // background-color: $belizeHole;
+    background-color: $river;
+  }
 }
+
+.btn--danger {
+  background-color: $alizarin;
+
+  &:hover {
+    background-color: lighten($alizarin, 8);
+  }
+
+  &.active,
+  &:active  {
+    // background-color: $pomegranate;
+    background-color: $alizarin;
+  }
+}
+
+.btn--go {
+  background-color: $emerald;
+
+  &:hover {
+    background-color: lighten($emerald, 8);
+  }
+
+  &.active,
+  &:active  {
+    // background-color: $nephritis;
+    background-color: $emerald;
+  }
+}
+
+
+.filter-group .btn {
+  position: relative;
+
+  $size: 20px;
+  // Circle and check
+  &.active::before,
+  &.active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: $size;
+    height: $size;
+    margin-left: -$size / 2;
+    margin-top: -$size / 2;
+    opacity: 0;
+    transition: .2s;
+  }
+
+  // Circle
+  &::before {
+    background-color: $gray10;
+    border-radius: 50%;
+  }
+
+  // Check
+  &::after {
+    background-size: 60%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-image: url(../img/check.svg);
+  }
+
+  &.active::before,
+  &.active::after {
+    opacity: 1;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

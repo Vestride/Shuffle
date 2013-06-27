@@ -1941,8 +1941,7 @@ button {
 }
 .btn:hover,
 button:hover {
-  background-color: #46627f;
-  box-shadow: 0 2px 0 0 #2b3c4e;
+  background-color: #4a6885;
 }
 .btn.active, .btn:active,
 button.active,
@@ -1955,15 +1954,73 @@ button:active {
   transition: none;
 }
 
-.btn--filter {
+.btn--warning {
   background-color: #e67e22;
 }
-.btn--filter:hover {
-  background-color: #e98b39;
-  box-shadow: 0 2px 0 0 #d67118;
+.btn--warning:hover {
+  background-color: #ea9347;
 }
-.btn--filter.active, .btn--filter:active {
-  background-color: #d35400;
+.btn--warning.active, .btn--warning:active {
+  background-color: #e67e22;
+}
+
+.btn--primary {
+  background-color: #3498db;
+}
+.btn--primary:hover {
+  background-color: #57aae1;
+}
+.btn--primary.active, .btn--primary:active {
+  background-color: #3498db;
+}
+
+.btn--danger {
+  background-color: #e74c3c;
+}
+.btn--danger:hover {
+  background-color: #eb6d60;
+}
+.btn--danger.active, .btn--danger:active {
+  background-color: #e74c3c;
+}
+
+.btn--go {
+  background-color: #2ecc71;
+}
+.btn--go:hover {
+  background-color: #4cd787;
+}
+.btn--go.active, .btn--go:active {
+  background-color: #2ecc71;
+}
+
+.filter-group .btn {
+  position: relative;
+}
+.filter-group .btn.active::before, .filter-group .btn.active::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
+  opacity: 0;
+  transition: .2s;
+}
+.filter-group .btn::before {
+  background-color: #2c3e50;
+  border-radius: 50%;
+}
+.filter-group .btn::after {
+  background-size: 60%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-image: url(../img/check.svg);
+}
+.filter-group .btn.active::before, .filter-group .btn.active::after {
+  opacity: 1;
 }
 
 .ib {

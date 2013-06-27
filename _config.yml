@@ -18,12 +18,12 @@ demos:
     screenshot: removing.webp
   - url: 'demos/2013-05-02-adaptive'
     slug: adaptive
-    label: Twitter bootstrap adaptive masonry with compounded filters
+    label: Adaptive bootstrap grid with compound filters
     screenshot: adaptive.webp
-  - url: 'demos/2013-05-03-responsive'
-    slug: responsive
-    label: Responsive?
-    screenshot: responsive.webp
+  - url: 'demos/2013-05-03-images'
+    slug: images
+    label: Using images
+    screenshot: images.webp
 
 shapes:
   - shape: circle

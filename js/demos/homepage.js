@@ -3,6 +3,7 @@ var DEMO = (function( $ ) {
 
   var $grid = $('#grid'),
       $filterOptions = $('.filter-options'),
+      $sizer = $grid.find('.shuffle__sizer'),
 
   init = function() {
     setupFilters();
@@ -12,7 +13,7 @@ var DEMO = (function( $ ) {
     // instantiate the plugin
     $grid.shuffle({
       itemSelector: '.picture-item',
-      columnWidth: $grid.find('.shuffle__sizer')
+      columnWidth: $sizer
     });
 
     // Destroy it! o_O
@@ -52,8 +53,7 @@ var DEMO = (function( $ ) {
   setupSorting = function() {
     // Sorting options
     $('.sort-options').on('change', function() {
-      var $this = $(this),
-          sort = this.value,
+      var sort = this.value,
           opts = {};
 
       // We're given the element wrapped in jQuery
