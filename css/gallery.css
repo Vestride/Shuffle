@@ -11,6 +11,13 @@
   height: 40px;
   padding: 0;
 }
+.filter-group label {
+  cursor: pointer;
+}
+
+.shape-up {
+  position: relative;
+}
 
 .shape {
   margin-left: 0;

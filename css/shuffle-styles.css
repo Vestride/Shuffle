@@ -15,6 +15,18 @@
   height: 464px;
   /* 2x the height + 1 gutter */
 }
+.picture-item.span6:not(.picture-item--h2) .picture-item__details {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+}
+.picture-item.span6:not(.picture-item--h2) .picture-item__description {
+  display: none;
+}
 .picture-item img {
   display: block;
   width: 100%;

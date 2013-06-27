@@ -224,6 +224,12 @@ Shuffle.prototype = {
         // If the columnWidth property is a function, then the grid is fluid
         self.isFluid = self.columnWidth && typeof self.columnWidth === 'function';
 
+        // Column width is the default setting and sizer is not (meaning passed in)
+        // Assume they meant column width to be the sizer
+        if ( self.columnWidth === 0 && self.sizer !== null ) {
+            self.columnWidth = self.sizer;
+        }
+
         // If column width is a string, treat is as a selector and search for the
         // sizer element within the outermost container
         if ( typeof self.columnWidth === 'string' ) {
@@ -1024,6 +1030,7 @@ Shuffle.options = {
     speed : 250, // Transition/animation speed (milliseconds)
     easing : 'ease-out', // css easing function to use
     itemSelector: '', // e.g. '.gallery-item'
+    sizer: null,
     gutterWidth : 0, // a static number or function that tells the plugin how wide the gutters between columns are (in pixels)
     columnWidth : 0,// a static number or function that returns a number which tells the plugin how wide the columns are (in pixels)
     showInitialTransition : false, // If set to false, the shuffle-items will only have a transition applied to them after the first layout
@@ -1037,7 +1044,6 @@ Shuffle.options = {
 
 // Not overrideable
 Shuffle.settings = {
-    sizer: null,
     $sizer: null,
     useSizer: false,
     itemCss : { // default CSS for each item

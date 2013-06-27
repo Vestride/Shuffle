@@ -17,6 +17,14 @@
     height: 40px;
     padding: 0;
   }
+
+  label {
+    cursor: pointer;
+  }
+}
+
+.shape-up {
+  position: relative;
 }
 
 .shape {

@@ -1,7 +1,23 @@
 
 <nav class="site-nav collapsed" id="nav" role="primary">
+
   <div class="js-tray site-nav__tray">
-    <div class="container-fluid">
+    <div class="container-fluid site-nav__tray-inner">
+
+      <h3 class="site-nav__title">Shuffle.js</h3>
+      <div class="row-fluid">
+        <div class="">
+          <a href="/">Home</a>
+        </div>
+        <div class="">
+          <a href="https://github.com/Vestride/Shuffle">GitHub Repo</a>
+        </div>
+        <div class="">
+          <a href="https://twitter.com/Vestride">@Vestride</a>
+        </div>
+      </div>
+
+      <h3 class="site-nav__title">Demos</h3>
       <div class="row-fluid">
         {% for post in site.demos %}
           <div class="span3 figure-wrap">
@@ -18,6 +34,7 @@
       </div>
     </div>
   </div>
+
   <div class="site-nav__band">
     <div class="container-fluid">
       <button class="js-nav-toggle pull-right" data-close-label="Close Nav">Open Nav</button>

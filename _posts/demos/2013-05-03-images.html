@@ -1,9 +1,76 @@
 ---
 layout: default
-title: Shuffle Responsive Demo
-bodyClass: null
-extraJS: []
+title: Using images with imagesloaded.js
+extraJS: [ "imagesloaded.pkgd.js", "demos/images.js"]
+prism: true
 ---
-<ul>
-    <li>Will be <strong><em>fully responsive</em></strong></li>
-</ul>
+
+<div class="container-fluid">
+  <h2>Images!</h2>
+  <p>You can encounter problems when shuffle item dimensions depend on images. <a href="{% post_url demos/2013-06-29-image-problems %}">Like this demo</a>. There are three good solutions to this.</p>
+  <ol>
+    <li>Set an explicit height on <code>.shuffle-item</code>s like the <a href="{% post_url demos/2013-05-01-basic %}">basic demo</a>.</li>
+    <li>Similar to number 1, make the height of the image container a percentage of the width. This can be seen in the nav above with the <code>div.keep-ratio</code>. Note: if you want to support IE, you'll need another element inside that <code>div.keep-ratio</code> which is positioned absolute with top/right/bottom/left all zero.</li>
+    <li>Get notified when images load (this page). In this case, I'm using <a href="http://desandro.github.io/imagesloaded/">Desandro's images loaded plugin</a></li>
+  </ol>
+</div>
+
+
+<style>
+  .shuffle-wrap {
+    position: relative;
+  }
+
+  .shuffle--images {
+    position: relative;
+    visibility: hidden;
+  }
+
+  .shuffle--images.images-loaded {
+    visibility: visible;
+  }
+
+  .shuffle--images .img-item {
+    margin-top: 10px;
+    margin-left: 0;
+  }
+
+  .shuffle--images .img-item img {
+    width: 100%;
+  }
+
+  .loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -16px;
+    margin-left: -16px;
+  }
+
+</style>
+
+<div class="container-fluid shuffle-wrap">
+  <img id="loader" class="loader" alt="Loading..." src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAzMDAgMzAwIgogICAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmVyc2lvbj0iMS4xIj4KICA8cGF0aCBkPSJNIDE1MCwwCiAgICAgICAgICAgYSAxNTAsMTUwIDAgMCwxIDEwNi4wNjYsMjU2LjA2NgogICAgICAgICAgIGwgLTM1LjM1NSwtMzUuMzU1CiAgICAgICAgICAgYSAtMTAwLC0xMDAgMCAwLDAgLTcwLjcxMSwtMTcwLjcxMSB6IgogICAgICAgIGZpbGw9IiMzZDdmZTYiPgogICAgPGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiBhdHRyaWJ1dGVUeXBlPSJYTUwiCiAgICAgICAgICAgdHlwZT0icm90YXRlIiBmcm9tPSIwIDE1MCAxNTAiIHRvPSIzNjAgMTUwIDE1MCIKICAgICAgICAgICBiZWdpbj0iMHMiIGR1cj0iMXMiIGZpbGw9ImZyZWV6ZSIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+CiAgPC9wYXRoPgo8L3N2Zz4K" />
+  <div class="shuffle--images row-fluid">
+    {% for item in site.items %}
+    <figure class="js-item img-item span3 m-span3">
+      <img src="{{ site.url }}/img/{{ item.img }}" alt="{{item.title}}"/>
+      <figcaption>{{ item.groups }}</figcaption>
+    </figure>
+    {% endfor %}
+    <div class="span3 m-span3" id="js-sizer"></div>
+  </div>
+</div>
+
+
+<section>
+  <div class="container">
+    <h2>Another section</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  </div>
+</section>

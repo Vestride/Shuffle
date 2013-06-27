@@ -19,6 +19,25 @@ $itemHeight: 220px;
     height: ($itemHeight * 2) + $pictureGutter; /* 2x the height + 1 gutter */
   }
 
+  // Ehh, i should really use something other than span6 to target this...
+  &.span6:not(.picture-item--h2) {
+
+    .picture-item__details {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      background-color: rgba(black, .6);
+      color: white;
+    }
+
+    .picture-item__description {
+      display: none;
+    }
+
+  }
+
   img {
     display: block;
     width: 100%;
