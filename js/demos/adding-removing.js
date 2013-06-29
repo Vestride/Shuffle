@@ -1,6 +1,8 @@
 window.Manipulator = (function($) {
   'use strict';
 
+  var hasConsole = window.console && typeof window.console.log === 'function';
+
   var Manipulator = function( element ) {
     var self = this;
 
@@ -42,6 +44,17 @@ window.Manipulator = (function($) {
     $('#add').on('click', $.proxy( self.onAddClick, self ));
     $('#randomize').on('click', $.proxy( self.onRandomize, self ));
     $('#remove').on('click', $.proxy( self.onRemoveClick, self ));
+
+    // Show off some shuffle events
+    self.$el.on('removed.shuffle', function( evt, $collection, shuffle ) {
+
+      // Make sure logs work
+      if ( !hasConsole ) {
+        return;
+      }
+
+      console.log( this, evt, $collection, shuffle );
+    });
   };
 
   Manipulator.prototype.onAddClick = function() {

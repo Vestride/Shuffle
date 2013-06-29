@@ -7,6 +7,12 @@ exclude:     ['./_scss/*.*']
 
 permalink: /:title
 
+url: http://localhost:4000
+
+defaultTitle: 'Shuffle.js'
+defaultDescription: 'Categorize, sort, and filter a responsive grid of items'
+defaultImage: '/img/hero.png'
+
 demos:
   - url: 'demos/2013-05-01-basic'
     slug: basic

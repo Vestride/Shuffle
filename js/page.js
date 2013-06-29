@@ -3,7 +3,9 @@
  * Debounce plugin is included in shuffle
  */
 
-var Support = (function() {
+var Modules = {};
+
+Modules.Support = (function() {
   'use strict';
 
   var self = {},
@@ -42,7 +44,7 @@ var Support = (function() {
 }());
 
 
-var Polyfill = (function( $, Support ) {
+Modules.Polyfill = (function( $, Support ) {
   'use strict';
 
   var init = function() {
@@ -60,10 +62,10 @@ var Polyfill = (function( $, Support ) {
   return {
     init: init
   };
-}( jQuery, Support ));
+}( jQuery, Modules.Support ));
 
 
-var NAV = (function( $ ) {
+Modules.Nav = (function( $ ) {
   'use strict';
 
   function NavTray( element ) {
@@ -172,7 +174,38 @@ var NAV = (function( $ ) {
 }( jQuery ));
 
 
+
+// Analytics
+var _gaq = [ ['_setAccount', 'UA-39355642-1'], ['_trackPageview'] ];
+
+(function(doc, script) {
+  'use strict';
+
+  var js,
+      fjs = doc.scripts[0],
+      frag = doc.createDocumentFragment(),
+      add = function(url, id) {
+          if (doc.getElementById(id)) {return;}
+          js = doc.createElement(script);
+          js.src = url;
+          if ( id ) { js.id = id; }
+          frag.appendChild( js );
+      };
+
+    // Twitter SDK
+    // add('//platform.twitter.com/widgets.js', 'twitter-wjs');
+
+    // Load GA over http, we know it won't be over ssl
+    add('//www.google-analytics.com/ga.js');
+
+    fjs.parentNode.insertBefore(frag, fjs);
+
+}(document, 'script'));
+
+
 $(document).ready(function() {
-  NAV.init();
-  Polyfill.init();
+  'use strict';
+
+  Modules.Nav.init();
+  Modules.Polyfill.init();
 });

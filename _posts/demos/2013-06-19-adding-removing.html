@@ -1,7 +1,8 @@
 ---
 layout: default
 title: Shuffle Adding and Removing Elements Demo
-bodyClass: null
+description: This demo of shuffle shows how to add and removing items.
+image: /demos/adding-removing.jpg
 extraJS: [ "demos/adding-removing.js" ]
 ---
 <style>
@@ -23,7 +24,7 @@ extraJS: [ "demos/adding-removing.js" ]
   }
 
   .box::before {
-    content: counter(boxes);
+    content: 'DOM order: ' counter(boxes);
     position: absolute;
     color: white;
     top: .5em;

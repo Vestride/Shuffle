@@ -27,7 +27,7 @@
  * Licensed under the MIT license.
  * @author Glen Cheney (http://glencheney.com)
  * @version 1.6.6
- * @date 06/14/13
+ * @date 06/28/13
  */
 (function($, Modernizr, undefined) {
 
@@ -131,9 +131,9 @@ var Shuffle = function( $container, options ) {
     self.$window = $(window);
     self.unique = 'shuffle_' + id++;
 
-    self.fire('loading');
+    self._fire('loading');
     self._init();
-    self.fire('done');
+    self._fire('done');
 };
 
 Shuffle.prototype = {
@@ -261,7 +261,7 @@ Shuffle.prototype = {
 
         category = category || self.lastFilter;
 
-        self.fire('filter');
+        self._fire('filter');
 
         // Loop through each item and use provided function to determine
         // whether to hide it or not.
@@ -391,7 +391,7 @@ Shuffle.prototype = {
         return this.$container.children( this.itemSelector );
     },
 
-    getPreciseDimension : function( element, style ) {
+    _getPreciseDimension : function( element, style ) {
         var dimension;
         if ( window.getComputedStyle ) {
             dimension = window.getComputedStyle( element, null )[ style ];
@@ -409,14 +409,14 @@ Shuffle.prototype = {
             gutter = typeof self.gutterWidth === 'function' ?
                 self.gutterWidth( containerWidth ) :
                 self.useSizer ?
-                    self.getPreciseDimension( self.sizer, 'marginLeft' ) :
+                    self._getPreciseDimension( self.sizer, 'marginLeft' ) :
                     self.gutterWidth,
             calculatedColumns;
 
         // use fluid columnWidth function if there
         self.colWidth = self.isFluid ? self.columnWidth( containerWidth ) :
             // columnWidth option isn't a function, are they using a sizing element?
-            self.useSizer ? self.getPreciseDimension( self.sizer, 'width' ) :
+            self.useSizer ? self._getPreciseDimension( self.sizer, 'width' ) :
             // if not, how about the explicitly set option?
             self.columnWidth ||
             // or use the size of the first item
@@ -460,7 +460,7 @@ Shuffle.prototype = {
     /**
      * Fire events with .shuffle namespace
      */
-    fire : function( name, args ) {
+    _fire : function( name, args ) {
         this.$container.trigger( name + '.shuffle', args && args.length ? args : [ this ] );
     },
 
@@ -508,7 +508,7 @@ Shuffle.prototype = {
             }
         });
 
-        // `_layout` always happens after `shrink`, so it's safe to process the style
+        // `_layout` always happens after `_shrink`, so it's safe to process the style
         // queue here with styles from the shrink method
         self._processStyleQueue();
 
@@ -596,7 +596,7 @@ Shuffle.prototype = {
     /**
      * Hides the elements that don't match our filter
      */
-    shrink : function( $collection, fn ) {
+    _shrink : function( $collection, fn ) {
         var self = this,
             $concealed = $collection || self.$items.filter('.concealed'),
             transitionObj = {},
@@ -607,7 +607,7 @@ Shuffle.prototype = {
             return;
         }
 
-        self.fire('shrink');
+        self._fire('shrink');
 
         self.shrinkTransitionEnded = false;
         $concealed.each(function() {
@@ -656,8 +656,8 @@ Shuffle.prototype = {
      * @param {string} prop the property to set (e.g. 'transition')
      * @param {string} value the value of the prop
      */
-    setPrefixedCss : function($el, prop, value) {
-        $el.css(this.prefixed(prop), value);
+    setPrefixedCss : function( $el, prop, value ) {
+        $el.css( this.prefixed( prop ), value );
     },
 
 
@@ -667,8 +667,8 @@ Shuffle.prototype = {
      * @param {string} property to be prefixed.
      * @return {string} the prefixed css property
      */
-    getPrefixed : function(prop) {
-        var styleName = this.prefixed(prop);
+    getPrefixed : function( prop ) {
+        var styleName = this.prefixed( prop );
         return styleName ? styleName.replace(/([A-Z])/g, function(str,m1){ return '-' + m1.toLowerCase(); }).replace(/^ms-/,'-ms-') : styleName;
     },
 
@@ -692,12 +692,12 @@ Shuffle.prototype = {
         transform,
         // Only fire callback once per collection's transition
         complete = function() {
-            if (!self.layoutTransitionEnded && opts.from === 'layout') {
-                self.fire('layout');
-                opts.callback.call(self);
+            if ( !self.layoutTransitionEnded && opts.from === 'layout' ) {
+                self._fire('layout');
+                opts.callback.call( self );
                 self.layoutTransitionEnded = true;
-            } else if (!self.shrinkTransitionEnded && opts.from === 'shrink') {
-                opts.callback.call(self);
+            } else if ( !self.shrinkTransitionEnded && opts.from === 'shrink' ) {
+                opts.callback.call( self );
                 self.shrinkTransitionEnded = true;
             }
         };
@@ -737,7 +737,7 @@ Shuffle.prototype = {
             };
 
             // Use jQuery to animate left/top
-            opts.$this.stop( true, true ).animate( cssObj, self.speed, 'swing', complete);
+            opts.$this.stop( true ).animate( cssObj, self.speed, 'swing', complete);
         }
     },
 
@@ -761,15 +761,15 @@ Shuffle.prototype = {
     },
 
     shrinkEnd: function() {
-        this.fire('shrunk');
+        this._fire('shrunk');
     },
 
     filterEnd: function() {
-        this.fire('filtered');
+        this._fire('filtered');
     },
 
     sortEnd: function() {
-        this.fire('sorted');
+        this._fire('sorted');
     },
 
     /**
@@ -881,7 +881,7 @@ Shuffle.prototype = {
         self._resetCols();
 
         // Shrink each concealed item
-        self.shrink();
+        self._shrink();
 
         // If given a valid sort object, save it so that _reLayout() will sort the items
         if ( sortObj ) {
@@ -990,21 +990,28 @@ Shuffle.prototype = {
 
         var self = this;
 
-        function remove() {
+        // Hide collection first
+        self._shrink( $collection, function() {
             var shuffle = this;
-            $collection.remove();
-            $collection = null;
 
+            // Remove the collection in the callback
+            $collection.remove();
+
+            // Update the items, layout, count and fire off `removed` event
             setTimeout(function() {
                 shuffle.$items = shuffle._getItems();
                 shuffle.layout();
                 shuffle._updateItemCount();
-                shuffle.fire( 'removed', [ $collection, shuffle ] );
-            }, 0);
-        }
+                shuffle._fire( 'removed', [ $collection, shuffle ] );
 
-        self.shrink( $collection, remove );
+                // Let it get garbage collected
+                $collection = null;
+            }, 0);
+        });
+
+        // Process changes
         self._processStyleQueue();
+
         return self;
     },
 
@@ -1030,7 +1037,7 @@ Shuffle.options = {
     speed : 250, // Transition/animation speed (milliseconds)
     easing : 'ease-out', // css easing function to use
     itemSelector: '', // e.g. '.gallery-item'
-    sizer: null,
+    sizer: null, // sizer element. Can be anything columnWidth is
     gutterWidth : 0, // a static number or function that tells the plugin how wide the gutters between columns are (in pixels)
     columnWidth : 0,// a static number or function that returns a number which tells the plugin how wide the columns are (in pixels)
     showInitialTransition : false, // If set to false, the shuffle-items will only have a transition applied to them after the first layout
