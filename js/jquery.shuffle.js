@@ -565,7 +565,7 @@ Shuffle.prototype = {
         $item.data( {x: x, y: y} );
 
         // Apply setHeight to necessary columns
-        var setHeight = minimumY + $item.outerHeight(true),
+        var setHeight = minimumY + $item.outerHeight( true ),
         setSpan = self.cols + 1 - len;
         for ( i = 0; i < setSpan; i++ ) {
             self.colYs[ shortCol + i ] = setHeight;

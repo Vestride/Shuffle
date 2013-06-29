@@ -78,7 +78,12 @@ Modules.Nav = (function( $ ) {
       .setVars()
       .listen();
 
-    setTimeout( $.proxy( this.saveHeight, this ), 0);
+    // Google web font loading affects this.
+    // I could use their loader, but don't really want their js too
+    // I've changed the fallback font to Verdana, sans-serif to better
+    // represent Ubuntu's wideness.
+    // Also this isn't needed on load and could be done on window load
+    setTimeout( $.proxy( this.saveHeight, this ), 100 );
   };
 
   NavTray.prototype.setVars = function() {

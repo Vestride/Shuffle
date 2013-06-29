@@ -4,7 +4,6 @@ This is a large improvement to shuffle. Most notably, the ability for [masonry](
 
 ## Todo before launch
 * Update index code examples
-* Credit Jake with photos
 * Solve margin top issue
 * init with a sort
 * Consistent naming of public vs private functions

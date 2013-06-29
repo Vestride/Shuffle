@@ -1,5 +1,5 @@
 body {
-  font-family: 'Ubuntu', sans-serif;
+  font-family: 'Ubuntu', Verdana, sans-serif;
   color: $gray30;
 }
 
@@ -85,3 +85,17 @@ h4 {
 }
 
 
+.light-text-dark-box {
+
+  p {
+    color: $clouds;
+  }
+
+  a {
+    color: $clouds;
+
+    &:hover {
+      color: white;
+    }
+  }
+}

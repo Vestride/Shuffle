@@ -359,7 +359,7 @@ table {
 }
 
 body {
-  font-family: 'Ubuntu', sans-serif;
+  font-family: 'Ubuntu', Verdana, sans-serif;
   color: #5d6d77;
 }
 
@@ -429,6 +429,16 @@ h4 {
   list-style-type: none;
   padding: 0;
   margin: 0;
+}
+
+.light-text-dark-box p {
+  color: #ecf0f1;
+}
+.light-text-dark-box a {
+  color: #ecf0f1;
+}
+.light-text-dark-box a:hover {
+  color: white;
 }
 
 /*
@@ -1914,7 +1924,7 @@ ul ul {
 }
 
 .site-nav .site-nav__title {
-  color: white;
+  color: #ecf0f1;
 }
 .site-nav .site-nav__title:first-child {
   margin-top: 0;
@@ -1939,6 +1949,29 @@ ul ul {
 }
 .site-nav .figure-wrap figcaption {
   margin-top: .5em;
+}
+.site-nav .site-nav__band {
+  position: relative;
+}
+.site-nav .site-nav__band::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #34495e;
+}
+
+.site-footer {
+  margin-top: 2em;
+  padding: 1em 0;
+  background-color: #34495e;
+}
+
+.site-footer__credit {
+  margin: 0;
+  text-align: right;
 }
 
 nav > a {
