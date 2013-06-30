@@ -13,7 +13,7 @@ var DEMO = (function( $ ) {
     // instantiate the plugin
     $grid.shuffle({
       itemSelector: '.picture-item',
-      columnWidth: $sizer
+      sizer: $sizer
     });
 
     // Destroy it! o_O
@@ -57,13 +57,14 @@ var DEMO = (function( $ ) {
           opts = {};
 
       // We're given the element wrapped in jQuery
-      if (sort === 'date-created') {
+      if ( sort === 'date-created' ) {
         opts = {
+          reverse: true,
           by: function($el) {
             return $el.data('date-created');
           }
         };
-      } else if (sort === 'title') {
+      } else if ( sort === 'title' ) {
         opts = {
           by: function($el) {
             return $el.data('title').toLowerCase();

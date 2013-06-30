@@ -2,13 +2,21 @@
 
 <p>Settings you can change (these are the defaults)</p>
 <pre rel="JavaScript"><code class="language-javascript">// Overrideable options
-$.fn.shuffle.options = {
-    group : 'all', // Which category to show
-    speed : 600, // Speed of the transition (in milliseconds). 600 = .6 seconds
-    easing : 'ease-out', // css easing function to use
-    gutterWidth : 0, // space between columns. Can be a function or number
-    columnWidth : 0 // can be a function or number or calculated by plugin
-};
-</code></pre>
+Shuffle.options = {
+    group: 'all', // Filter group
+    speed: 250, // Transition/animation speed (milliseconds)
+    easing: 'ease-out', // css easing function to use
+    itemSelector: '', // e.g. '.picture-item'
+    sizer: null, // sizer element. Can be anything columnWidth is
+    gutterWidth: 0, // a static number or function that tells the plugin how wide the gutters between columns are (in pixels)
+    columnWidth: 0, // a static number or function that returns a number which tells the plugin how wide the columns are (in pixels)
+    delimeter: null, // if your group is not json, and is comma delimeted, you could set delimeter to ','
+    buffer: 0, // useful for percentage based heights when they might not always be exactly the same (in pixels)
+    initialSort: null, // Shuffle can be initialized with a sort object. It is the same object given to the sort method
+    throttle: $.throttle || null, // By default, shuffle will try to throttle the resize event. This option will change the method it uses
+    throttleTime: 300, // How often shuffle can be called on resize (in milliseconds)
+    sequentialFadeDelay: 150, // Delay between each item that fades in when adding items
+    supported: Modernizr.csstransforms &amp;&amp; Modernizr.csstransitions // supports transitions and transforms
+};</code></pre>
 
-<p>The easing function is one of <code>'default'</code>, <code>'linear'</code>, <code>'ease-in'</code>, <code>'ease-out'</code>, <code>'ease-in-out'</code>, or <code>'cubic-bezier'</code>.</p>
+<p>No options <em>need</em> to be specified, but <code>itemSelector</code> should be used. Other common options to change are <code>speed</code>, <code>easing</code>, <code>gutterWidth</code>, and <code>columnWidth</code> (or <code>sizer</code>).</p>

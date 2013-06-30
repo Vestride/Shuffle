@@ -39,26 +39,22 @@
 &lt;/div&gt;</code></pre>
 
 <h3 id="columns">How column widths work</h3>
-<p>The <code>columnWidth</code> option is used to calculate the column width. This option <strong>can be a function</strong> for responsive layouts. If it's not a function, it uses jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width (this includes margins). If the <code>columnWidth</code> option isn't specified, the width will be the width of the first item.</p>
+<p>The <code>columnWidth</code> option is used to calculate the column width. You have several options:</p>
+<ol>
+  <li>Use a <strong>sizer</strong> element. This is the easest way to specify column and gutter widths. You can use an element or an element wrapped in jQuery. The column and gutter widths will be measured using this element. The <code>sizer</code> option is an alias for <code>columnWidth</code>. See <a href="{% post_url demos/2013-05-01-basic %}">a demo</a> using a sizer element or <a href="{{ site.url }}/js/demos/homepage.js">look at js file</a> for the sizer demo</a>.</li>
+  <li>Use a <strong>function</strong>. When a function is used, its first parameter will be the width of the shuffle element. You need to return the column width for shuffle to use (in pixels).</li>
+  <li>A <strong>number</strong>. This will explicitly set the column width to your number (in pixels).</li>
+  <li>By default, shuffle will use jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width of the first item and use that value.</li>
+</ol>
 
 <h3>A basic setup example</h3>
 <p>Sets up the button clicks and runs shuffle</p>
-<pre rel="jQuery"><code class="language-javascript">
-$(document).ready(function(){
+<pre rel="JavaScript"><code class="language-javascript">$(document).ready(function() {
+  var $grid = $('#grid'),
+      $sizer = $grid.find('.shuffle__sizer');
 
-    // Set up button clicks
-    $('.filter-options li').on('click', function() {
-        var $this = $(this),
-            $grid = $('#grid');
-
-        // Hide current label, show current label in title
-        $('.filter-options .active').removeClass('active');
-        $this.addClass('active');
-
-        // Filter elements
-        $grid.shuffle($this.data('group'));
-    });
-
-    // instantiate the plugin
-    $('#grid').shuffle();
+  $grid.shuffle({
+    itemSelector: '.picture-item',
+    sizer: $sizer
+  });
 });</code></pre>

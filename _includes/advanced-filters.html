@@ -4,7 +4,7 @@
 
 <h3>Example</h3>
 <pre rel="JavaScript"><code class="language-javascript">// Filters elements with a data-title attribute with less than 10 characters
-$('#grid').shuffle(function($el, shuffle) {
+$('#grid').shuffle('shuffle', function($el, shuffle) {
   return $el.data('title').length &lt; 10;
 });</code></pre>
 
@@ -12,15 +12,16 @@ $('#grid').shuffle(function($el, shuffle) {
 <pre rel="JavaScript"><code class="language-javascript">// Advanced filtering
 $('.js-shuffle-search').on('keyup change', function() {
   var val = this.value.toLowerCase();
-  $grid.shuffle(function($el, shuffle) {
+  $grid.shuffle('shuffle', function($el, shuffle) {
 
-  // Only search elements in the current group
-  if (shuffle.group !== 'all' &amp;&amp; $.inArray(shuffle.group, $el.data('groups')) === -1) {
-    return false;
-  }
+    // Only search elements in the current group
+    if (shuffle.group !== 'all' &amp;&amp; $.inArray(shuffle.group, $el.data('groups')) === -1) {
+      return false;
+    }
 
-  var text = $.trim( $el.find('.picture-item__title').text() ).toLowerCase();
-  return text.indexOf(val) != -1;
+    var text = $.trim( $el.find('.picture-item__title').text() ).toLowerCase();
+    return text.indexOf(val) !== -1;
+  });
 });</code></pre>
 
-<p>For another example of advanced filters, check out the <a href="responsive.html">compounded filters demo</a>.</p>
+<p>For another example of advanced filters, check out the <a href="{% post_url demos/2013-05-02-adaptive %}">compounded filters demo</a>.</p>

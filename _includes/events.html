@@ -1,2 +1,23 @@
 <h2>Events</h2>
-<p>These events will be triggered at their respective times: <code>'shrink.shuffle'</code>, <code>'shrunk.shuffle'</code>, <code>'filter.shuffle'</code>, <code>'filtered.shuffle'</code>, and <code>'sorted.shuffle'</code>.</p>
+<p>A list of events shuffle triggers:</p>
+<ul>
+  <li><code class="language-javascript">'loading.shuffle'</code></li>
+  <li><code class="language-javascript">'done.shuffle'</code></li>
+  <li><code class="language-javascript">'shrink.shuffle'</code></li>
+  <li><code class="language-javascript">'shrunk.shuffle'</code></li>
+  <li><code class="language-javascript">'filter.shuffle'</code></li>
+  <li><code class="language-javascript">'filtered.shuffle'</code></li>
+  <li><code class="language-javascript">'layout.shuffle'</code></li>
+  <li><code class="language-javascript">'removed.shuffle'</code></li>
+</ul>
+
+<h3>Get notified when shuffle is done with setup</h3>
+<pre rel="JavaScript"><code class="language-javascript">$grid.on('done.shuffle', function() {
+  console.log('Finished initializing shuffle!');
+});</code></pre>
+
+
+<h3>Do something when an item is removed</h3>
+<pre rel="JavaScript"><code class="language-javascript">$grid.on('removed.shuffle', function( evt, $collection, shuffle ) {
+  console.log( this, evt, $collection, shuffle );
+});</code></pre>

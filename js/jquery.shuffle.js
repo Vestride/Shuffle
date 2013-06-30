@@ -144,7 +144,8 @@ Shuffle.prototype = {
         var self = this,
             containerCSS,
             resizeFunction = $.proxy( self._onResize, self ),
-            debouncedResize = self.throttle ? self.throttle( self.throttleTime, resizeFunction ) : resizeFunction;
+            debouncedResize = self.throttle ? self.throttle( self.throttleTime, resizeFunction ) : resizeFunction,
+            sort = self.initialSort ? self.initialSort : null;
 
         // Save variables needed later then add some classes
         self._setVars();
@@ -161,7 +162,7 @@ Shuffle.prototype = {
         // Bind resize events (http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer)
         self.$window.on('resize.shuffle.' + self.unique, debouncedResize);
 
-        // Get container css all in one request
+        // Get container css all in one request. Causes reflow
         containerCSS = self.$container.css(['paddingLeft', 'paddingRight', 'position', 'width']);
 
         // Position cannot be static.
@@ -181,7 +182,7 @@ Shuffle.prototype = {
         self._setColumns( parseInt( containerCSS.width, 10 ) );
 
         // Kick off!
-        self.shuffle( self.group );
+        self.shuffle( self.group, sort );
 
         // The shuffle items haven't had transitions set on them yet
         // so the user doesn't see the first layout. Set them now that the first layout is done.
@@ -438,13 +439,6 @@ Shuffle.prototype = {
         self.cols = Math.floor( calculatedColumns );
         self.cols = Math.max( self.cols, 1 );
 
-        // This can happen when .shuffle is called on something hidden (e.g. display:none for tabs)
-        if ( !self.colWidth || isNaN( self.cols ) || !containerWidth ) {
-            self.needsUpdate = true;
-        } else {
-            self.needsUpdate = false;
-        }
-
         self.containerWidth = containerWidth;
     },
 
@@ -579,11 +573,11 @@ Shuffle.prototype = {
             scale: 1
         };
 
-        if ( !isOnlyPosition ) {
+        if ( isOnlyPosition ) {
+            transitionObj.skipTransition = true;
+        } else {
             transitionObj.opacity = 1;
             transitionObj.callback = callback;
-        } else {
-            transitionObj.skipTransition = true;
         }
 
         if ( isHide ) {
@@ -603,7 +597,7 @@ Shuffle.prototype = {
             callback = fn || self.shrinkEnd;
 
         // Abort if no items
-        if ($concealed.length === 0) {
+        if ( !$concealed.length ) {
             return;
         }
 
@@ -851,6 +845,7 @@ Shuffle.prototype = {
         }, self.revealAppendedDelay);
     },
 
+
     /**
      * Public Methods
      */
@@ -1015,17 +1010,30 @@ Shuffle.prototype = {
         return self;
     },
 
+    /**
+     * Destroys shuffle, removes events, styles, and classes
+     */
     destroy: function() {
         var self = this;
 
+        // If there is more than one shuffle instance on the page,
+        // removing the resize handler from the window would remove them
+        // all. This is why a unique value is needed.
         self.$window.off('.' + self.unique);
+
+        // Reset container styles
         self.$container
             .removeClass('shuffle')
             .removeAttr('style')
             .removeData('shuffle');
+
+        // Reset individual item styles
         self.$items
             .removeAttr('style')
             .removeClass('concealed filtered shuffle-item');
+
+        // Set a flag so if a debounced resize has been triggered,
+        // it can first check if it is actually destroyed and not doing anything
         self.destroyed = true;
     }
 
@@ -1033,19 +1041,19 @@ Shuffle.prototype = {
 
 // Overrideable options
 Shuffle.options = {
-    group : 'all', // Filter group
-    speed : 250, // Transition/animation speed (milliseconds)
-    easing : 'ease-out', // css easing function to use
-    itemSelector: '', // e.g. '.gallery-item'
+    group: 'all', // Filter group
+    speed: 250, // Transition/animation speed (milliseconds)
+    easing: 'ease-out', // css easing function to use
+    itemSelector: '', // e.g. '.picture-item'
     sizer: null, // sizer element. Can be anything columnWidth is
-    gutterWidth : 0, // a static number or function that tells the plugin how wide the gutters between columns are (in pixels)
-    columnWidth : 0,// a static number or function that returns a number which tells the plugin how wide the columns are (in pixels)
-    showInitialTransition : false, // If set to false, the shuffle-items will only have a transition applied to them after the first layout
-    delimeter : null, // if your group is not json, and is comma delimeted, you could set delimeter to ','
+    gutterWidth: 0, // a static number or function that tells the plugin how wide the gutters between columns are (in pixels)
+    columnWidth: 0, // a static number or function that returns a number which tells the plugin how wide the columns are (in pixels)
+    delimeter: null, // if your group is not json, and is comma delimeted, you could set delimeter to ','
     buffer: 0, // useful for percentage based heights when they might not always be exactly the same (in pixels)
-    throttle: $.throttle || null,
-    throttleTime: 300,
-    sequentialFadeDelay: 150,
+    initialSort: null, // Shuffle can be initialized with a sort object. It is the same object given to the sort method
+    throttle: $.throttle || null, // By default, shuffle will try to throttle the resize event. This option will change the method it uses
+    throttleTime: 300, // How often shuffle can be called on resize (in milliseconds)
+    sequentialFadeDelay: 150, // Delay between each item that fades in when adding items
     supported: Modernizr.csstransforms && Modernizr.csstransitions // supports transitions and transforms
 };
 
@@ -1072,13 +1080,13 @@ Shuffle.settings = {
 $.fn.shuffle = function( opts ) {
     var args = Array.prototype.slice.call( arguments, 1 );
     return this.each(function() {
-        var $this = $(this),
-            shuffle = $this.data('shuffle');
+        var $this = $( this ),
+            shuffle = $this.data( 'shuffle' );
 
         // If we don't have a stored shuffle, make a new one and save it
         if ( !shuffle ) {
-            shuffle = new Shuffle($this, opts);
-            $this.data('shuffle', shuffle);
+            shuffle = new Shuffle( $this, opts );
+            $this.data( 'shuffle', shuffle );
         }
 
         if ( typeof opts === 'string' && shuffle[ opts ] ) {

@@ -1,29 +1,30 @@
 <h2>Sorting</h2>
 
-<p>You can order the elements based off a function you supply. In the example above, each item has a <code>data-date-created</code> and <code>data-title</code> attribute. The filter buttons have a <code>data-sort</code> attribute with the value of the item&rsquo;s attribute. Then, with some JavaScript, we can get the correct attribute and provide a function to sort by.</p>
+<p>You can order the elements based off a function you supply. In the demo above, each item has a <code>data-date-created</code> and <code>data-title</code> attribute. When the select option menu changes, a sort object is passed to shuffle.</p>
 
-<pre rel="HTML"><code class="language-markup">&lt;li data-sort="title"&gt;Title&lt;/li&gt;</code></pre>
 
-<pre rel="HTML"><code class="language-markup">&lt;div class="item" data-title="Baseball"&gt;&hellip;&lt;/div&gt;</code></pre>
+<pre rel="HTML"><code class="language-markup">&lt;select class="sort-options"&gt;
+  &lt;option value=""&gt;Default&lt;/option&gt;
+  &lt;option value="title"&gt;Title&lt;/option&gt;
+  &lt;option value="date-created"&gt;Date Created&lt;/option&gt;
+&lt;/select&gt;</code></pre>
+
+<pre rel="HTML"><code class="language-markup">&lt;figure class="picture-item" data-groups='[&quot;photography&quot;]' data-date-created="2010-09-14" data-title="Baseball"&gt;&hellip;&lt;/figure&gt;</code></pre>
 
 <pre rel="JavaScript"><code class="language-javascript">// Sorting options
-$('.sort-options button').on('click', function() {
-  var $this = $(this),
-      sort = $this.data('sort'),
+$('.sort-options').on('change', function() {
+  var sort = this.value,
       opts = {};
 
-  // Hide current label, show current label in title
-  $('.sort-options .active').removeClass('active');
-  $this.addClass('active');
-
   // We're given the element wrapped in jQuery
-  if (sort === 'date-created') {
+  if ( sort === 'date-created' ) {
     opts = {
+      reverse: true,
       by: function($el) {
         return $el.data('date-created');
       }
-    }
-  } else if (sort === 'title') {
+    };
+  } else if ( sort === 'title' ) {
     opts = {
       by: function($el) {
         return $el.data('title').toLowerCase();
