@@ -114,6 +114,15 @@ Modules.Nav = (function( $ ) {
     self.$trigger.on( 'click', $.proxy( self.toggle, self ) );
     self.$window.on( 'resize', $.debounce( 250, $.proxy( self.onResize, self ) ) );
 
+    // This is a case for selectors level 4!
+    self.$el.find('.js-demos').on('mouseenter', '.js-demo', function( evt ) {
+      $( evt.currentTarget ).addClass('hovered');
+    });
+
+    self.$el.find('.js-demos').on('mouseleave', '.js-demo', function( evt ) {
+      $( evt.currentTarget ).removeClass('hovered');
+    });
+
     return self;
   };
 

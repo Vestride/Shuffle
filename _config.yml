@@ -7,7 +7,7 @@ exclude:     ['./_scss/*.*']
 
 permalink: /:title
 
-url: http://localhost:4000
+url: http://glen.local:4000
 
 defaultTitle: 'Shuffle.js'
 defaultDescription: 'Categorize, sort, and filter a responsive grid of items'

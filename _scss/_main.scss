@@ -58,6 +58,35 @@ ul ul {
     height: 0;
   }
 
+  .figure-wrap,
+  .figure-wrap img {
+    // Promote to its own layer. makes filters look ok on retina with images
+    -webkit-transform: translateZ(0);
+    -webkit-transition: .1s ease;
+            transition: .1s ease;
+  }
+
+  .site-nav__demos:hover .figure-wrap {
+    -webkit-transform: scale3d( 1, 1, 1 );
+            transform: scale3d( 1, 1, 1 );
+
+    img {
+
+      -webkit-filter: grayscale(1);
+              filter: grayscale(1);
+    }
+  }
+
+  .site-nav__demos:hover .figure-wrap.hovered {
+    -webkit-transform: scale3d( 1.05, 1.05, 1 );
+            transform: scale3d( 1.05, 1.05, 1 );
+
+    img {
+      -webkit-filter: none;
+              filter: none;
+    }
+  }
+
   .figure-wrap:nth-child(4n + 1) {
     margin-left: 0;
   }

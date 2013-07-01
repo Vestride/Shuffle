@@ -1941,6 +1941,28 @@ ul ul {
 .site-nav.collapsed .site-nav__tray {
   height: 0;
 }
+.site-nav .figure-wrap,
+.site-nav .figure-wrap img {
+  -webkit-transform: translateZ(0);
+  -webkit-transition: .1s ease;
+  transition: .1s ease;
+}
+.site-nav .site-nav__demos:hover .figure-wrap {
+  -webkit-transform: scale3d(1, 1, 1);
+  transform: scale3d(1, 1, 1);
+}
+.site-nav .site-nav__demos:hover .figure-wrap img {
+  -webkit-filter: grayscale(1);
+  filter: grayscale(1);
+}
+.site-nav .site-nav__demos:hover .figure-wrap.hovered {
+  -webkit-transform: scale3d(1.05, 1.05, 1);
+  transform: scale3d(1.05, 1.05, 1);
+}
+.site-nav .site-nav__demos:hover .figure-wrap.hovered img {
+  -webkit-filter: none;
+  filter: none;
+}
 .site-nav .figure-wrap:nth-child(4n + 1) {
   margin-left: 0;
 }

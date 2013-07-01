@@ -18,9 +18,9 @@
       </div>
 
       <h3 class="site-nav__title">Demos</h3>
-      <div class="row-fluid">
+      <div class="row-fluid js-demos site-nav__demos">
         {% for post in site.demos %}
-          <div class="span3 figure-wrap">
+          <div class="span3 figure-wrap js-demo">
             <a href="/{{ post.slug }}">
               <figure>
                 <div class="keep-ratio four-three">
