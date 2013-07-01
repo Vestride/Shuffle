@@ -6,6 +6,7 @@ var DEMO = (function( $ ) {
       $sizer = $grid.find('.shuffle__sizer'),
 
   init = function() {
+    listen();
     setupFilters();
     setupSorting();
     setupSearching();
@@ -91,6 +92,28 @@ var DEMO = (function( $ ) {
         var text = $.trim( $el.find('.picture-item__title').text() ).toLowerCase();
         return text.indexOf(val) !== -1;
       });
+    });
+  },
+
+  listen = function() {
+    var debouncedLayout = $.throttle( 100, function() {
+      $grid.shuffle('layout');
+    });
+
+    // Re layout shuffle when images load. This is only needed
+    // below 768 pixels because the .picture-item height is auto and therefore
+    // the height of the picture-item is dependent on the image
+    // I recommend using imagesloaded to determine when an image is loaded
+    // but that doesn't support IE7
+    $grid.find('img').each(function() {
+      var $img = $( this );
+
+      // Image already loaded
+      if ( this.complete && this.naturalWidth > 0 ) {
+        return;
+      }
+
+      $img.on('load', debouncedLayout);
     });
   };
 

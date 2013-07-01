@@ -56,6 +56,11 @@ ul ul {
 
   &.collapsed .site-nav__tray {
     height: 0;
+
+    // IE7 wtf
+    .lt-ie8 & {
+      display: none;
+    }
   }
 
   .figure-wrap,
@@ -149,6 +154,17 @@ nav > a {
 
 
 
+
+@media ( max-width: 47.9375em ) {
+
+  .figure-wrap:nth-child(odd) {
+    margin-left: 0;
+  }
+
+  .figure-wrap:nth-child(n + 3) {
+    margin-top: 1em;
+  }
+}
 
 
 

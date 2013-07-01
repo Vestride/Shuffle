@@ -12,8 +12,8 @@ prism: true
   <p>You can encounter problems when shuffle item dimensions depend on images. <a href="{% post_url demos/2013-06-29-image-problems %}">Like this demo</a>. There are three good solutions to this.</p>
   <ol>
     <li>Set an explicit height on <code>.shuffle-item</code>s like the <a href="{% post_url demos/2013-05-01-basic %}">basic demo</a>.</li>
-    <li>Similar to number 1, make the height of the image container a percentage of the width. This can be seen in the nav above with the <code>div.keep-ratio</code>. Note: if you want to support IE, you'll need another element inside that <code>div.keep-ratio</code> which is positioned absolute with top/right/bottom/left all zero.</li>
-    <li>Get notified when images load (this page). In this case, I'm using <a href="http://desandro.github.io/imagesloaded/">Desandro's images loaded plugin</a></li>
+    <li>Similar to number 1, make the height of the image container a percentage of the width. This can be seen in the nav images above with the <code>div.keep-ratio</code>.</li>
+    <li>Get notified when images load (this page). In this case, I'm using <a href="http://desandro.github.io/imagesloaded/">Desandro's images loaded plugin</a>. Please note that imagesloaded does not support IE7.</li>
   </ol>
 </div>
 
@@ -66,7 +66,7 @@ prism: true
 
 
 <section>
-  <div class="container">
+  <div class="container-fluid">
     <h2>Another section</h2>
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
     tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,

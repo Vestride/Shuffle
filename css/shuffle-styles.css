@@ -59,3 +59,31 @@
   opacity: 0;
   visibility: hidden;
 }
+
+@media (max-width: 47.9375em) {
+  .picture-item {
+    height: auto;
+    margin-top: 20px;
+  }
+  .picture-item.picture-item--h2 {
+    height: auto;
+  }
+  .picture-item .picture-item__details,
+  .picture-item .picture-item__description {
+    font-size: .875em;
+    padding: .625em;
+  }
+  .picture-item .picture-item__description {
+    padding-right: .875em;
+    padding-bottom: 1.25em;
+  }
+
+  .filter > .row-fluid,
+  .filter > .row-fluid > div {
+    margin: 10px 0;
+  }
+
+  .m-nofloat {
+    float: none;
+  }
+}

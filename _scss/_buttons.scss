@@ -20,8 +20,7 @@
 .btn,
 button {
   display: inline-block;
-  padding-top: .75em;
-  padding-bottom: .75em;
+  padding: .75em .375em;
   -webkit-appearance: none;
   text-align: center;
   color: white;
@@ -32,7 +31,6 @@ button {
 
   &:hover {
     background-color: lighten($wetAsphalt, 12);
-    // box-shadow: 0 2px 0 0 darken($wetAsphalt, 5);
   }
 
   &.active,
@@ -143,7 +141,21 @@ button {
 }
 
 
+@media ( max-width: 47.9375em ) {
 
+  .btn,
+  button {
+    font-size: .875em;
+  }
+}
+
+@media ( max-width: 30em ) {
+
+  .btn,
+  button {
+    font-size: .75em;
+  }
+}
 
 
 
