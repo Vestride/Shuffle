@@ -40,6 +40,14 @@ Modules.Support = (function() {
     return dfd.promise();
   };
 
+  // Fill rAF
+  var rAF = window.requestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.msRequestAnimationFrame;
+
+  window.requestAnimationFrame = rAF;
+
   return self;
 }());
 
@@ -188,6 +196,176 @@ Modules.Nav = (function( $ ) {
 }( jQuery ));
 
 
+Modules.Favicon = (function( doc ) {
+  'use strict';
+
+  var Favicon = function( src, numFrames, framesPerAnimation, animationDelay ) {
+    var self = this;
+
+    // Variables based on params
+    self.src = src;
+    self.numFrames = numFrames;
+    self.framesPerAnimation = framesPerAnimation;
+    self.animationDelay = animationDelay;
+
+    // Elements
+    self.canvas = doc.createElement('canvas');
+    self.img = doc.createElement('img');
+    self.html = doc.documentElement;
+
+    // Calculations
+    self.size = window.devicePixelRatio > 1 ? 32 : 16;
+
+    // If it's not a data url, pick apart the filename and add @2x for retina
+    if ( !self.src.match(/data:/) && window.devicePixelRatio > 1 ) {
+      var dot = self.src.lastIndexOf('.');
+      self.src = self.src.substring( 0, dot ) + '@2x' + self.src.substring( dot );
+    }
+
+    self.currentFrame = 0;
+    self.thirtyFPS = 1000 / 30;
+
+    self.init();
+  };
+
+  Favicon.prototype.init = function() {
+    var self = this;
+
+    // No #favicon element or browser doesn't support canvas or < IE9, stop
+    if ( !doc.getElementById('favicon') || !self.canvas.getContext || self.html.className.indexOf('lt-ie9') > -1 ) {
+      return;
+    }
+
+    // Save context
+    self.ctx = self.canvas.getContext('2d');
+
+    // Set canvas dimensions based on device DPI
+    self.canvas.height = self.canvas.width = self.size;
+
+    // Create a new sprite 32x32 size with 32x32 sprites
+    self.sprite = new Sprite( self.ctx, self.img, self.size );
+
+    // Bind the image load handler
+    self.img.onload = self.onSpriteLoaded.bind( self );
+
+    // Trigger image to load
+    self.img.src = self.src;
+  };
+
+  Favicon.prototype.getData = function() {
+    return this.canvas.toDataURL('image/png');
+  };
+
+  // Clone the current #favicon and replace it with a new element
+  // which has the updated data URI href
+  Favicon.prototype.setFavicon = function() {
+    var self = this,
+        data = self.getData(),
+        originalFavicon = doc.getElementById('favicon'),
+        clone = originalFavicon.cloneNode( true );
+
+    clone.setAttribute( 'href', data );
+    originalFavicon.parentNode.replaceChild( clone, originalFavicon );
+  };
+
+  // Request Animation Frame Loop
+  Favicon.prototype.loop = function( timestamp ) {
+    var self = this,
+        lastCall = self.lastTimestamp;
+
+    // If not enough time has elapse since the last call
+    // immediately call the next rAF
+    if ( timestamp - lastCall < self.timeToElapse ) {
+      return requestAnimationFrame( self.loop.bind( self ) );
+    }
+
+    // Increment current frame
+    self.currentFrame += 1;
+    if ( self.currentFrame === self.numFrames ) {
+      self.currentFrame = 0;
+    }
+
+    // Completed an animation state
+    self.timeToElapse = self.currentFrame % self.framesPerAnimation === 0 ?
+      self.animationDelay :
+      self.thirtyFPS;
+
+    // Draw current frame from sprite
+    self.sprite.drawFrame( self.currentFrame );
+
+    // Swap <link>
+    self.setFavicon();
+
+    // Set a timeout to draw again
+    self.lastTimestamp = timestamp;
+
+    // Continue loop
+    return requestAnimationFrame( self.loop.bind( self ) );
+  };
+
+  // Sprite loaded
+  Favicon.prototype.onSpriteLoaded = function() {
+    var self = this;
+
+    // Draw the first frame when the image loads
+    self.sprite.drawFrame( self.currentFrame );
+
+    // Swap <link>
+    self.setFavicon();
+
+    // Start loop
+    requestAnimationFrame( self.loop.bind( self ) );
+  };
+
+
+  var Sprite = function( context, img, size ) {
+    var self = this;
+    self.ctx = context;
+    self.img = img;
+    self.width = size;
+    self.height = size;
+    self.frameWidth = size;
+    self.frameHeight = size;
+  };
+
+  // Assuming horizontal sprite
+  Sprite.prototype.getFrame = function( frame ) {
+    return {
+      x: frame * this.frameWidth,
+      y: 0
+    };
+  };
+
+  Sprite.prototype.clearCanvas = function() {
+    this.ctx.clearRect( 0, 0, this.width, this.height );
+  };
+
+  Sprite.prototype.drawFrame = function( frameNumber ) {
+    var self = this;
+
+    var frame = self.getFrame( frameNumber );
+
+    // Clear out the last frame
+    self.clearCanvas();
+
+    // Draw to the context. This method is really confusing...
+    self.ctx.drawImage(
+      self.img,
+      frame.x,
+      frame.y,
+      self.width,
+      self.height,
+      0,
+      0,
+      self.width,
+      self.height
+    );
+  };
+
+  return Favicon;
+}( document ));
+
+
 
 // Analytics
 var _gaq = [ ['_setAccount', 'UA-39355642-1'], ['_trackPageview'] ];
@@ -222,4 +400,15 @@ $(document).ready(function() {
 
   Modules.Nav.init();
   Modules.Polyfill.init();
+
+  var src = '/img/favicon-sprite.png';
+  new Modules.Favicon( src, 21, 7, 3000 * 1 );
 });
+
+
+
+
+
+
+
+
