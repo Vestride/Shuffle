@@ -1,0 +1,75 @@
+---
+layout: default
+title: Shuffle Adaptive Demo
+description: A responsive demo using the adaptive Twitter Bootstrap grid with compound filtering
+image: /demos/adaptive.jpg
+extraJS: [ "demos/gallery.js" ]
+extraCSS: [ "/css/gallery.css" ]
+---
+
+<section class="container">
+  <div class="row">
+    <h2 class="span12">Adaptive Layout with Compound Filters</h2>
+  </div>
+</section>
+
+<section class="gallery container">
+
+  <div class="filter-options row">
+
+    <div class="span6">
+      <div class="filter-group filter--colors js-colors">
+        <h5 class="filter__label">Colors</h5>
+        <button class="btn btn--go" data-filter-value="green"><span class="visuallyhidden">Green</span></button>
+        <button class="btn btn--primary" data-filter-value="blue"><span class="visuallyhidden">Blue</span></button>
+        <button class="btn btn--danger" data-filter-value="red"><span class="visuallyhidden">Red</span></button>
+        <button class="btn btn--warning" data-filter-value="orange"><span class="visuallyhidden">Orange</span></button>
+      </div>
+    </div>
+
+    <div class="span6">
+      <div class="filter-group filter--shapes js-shapes">
+        <h5 class="filter-group__label">Shapes</h5>
+        <span class="ib">
+          <input type="checkbox" value="circle" id="cb-circle"> <label for="cb-circle">Circle</label>
+        </span>
+        <span class="ib">
+          <input type="checkbox" value="diamond" id="cb-diamond"> <label for="cb-diamond">Diamond</label>
+        </span>
+        <span class="ib">
+          <input type="checkbox" value="square" id="cb-square"> <label for="cb-square">Square</label>
+        </span>
+        <span class="ib">
+          <input type="checkbox" value="triangle" id="cb-triangle"> <label for="cb-triangle">Triangle</label>
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="shape-up js-shuffle">
+    {% for shape in site.shapes %}
+    <div class="span3 shape shape--{{ shape.shape }} shape--{{ shape.color }}" data-shape="{{ shape.shape }}" data-color="{{ shape.color }}">
+      <div class="keep-ratio">
+        <div class="shape__inner">
+          <div class="shape__space">
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</section>
+
+<section>
+  <div class="container">
+    <h2>Another section</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  </div>
+</section>

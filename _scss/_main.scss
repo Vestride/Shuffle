@@ -1,0 +1,174 @@
+@import "variables";
+
+* {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+pre {
+  max-height: 30em;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* lets have some constraints shall we */
+.container-fluid {
+  width: 93%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.row.row--full {
+  margin-left: 0;
+}
+
+ul ul {
+  padding-left: 1.25em;
+  margin: 0;
+  list-style-type: circle;
+}
+
+
+.site-nav {
+
+  .site-nav__title {
+    color: $clouds;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .site-nav__tray {
+    transition: .2s;
+    overflow: hidden;
+    height: 300px;
+    background-color: $wetAsphalt;
+  }
+
+  .site-nav__tray-inner {
+    padding: 30px 0;
+  }
+
+  &.collapsed .site-nav__tray {
+    height: 0;
+
+    // IE7 wtf
+    .lt-ie8 & {
+      display: none;
+    }
+  }
+
+  .figure-wrap,
+  .figure-wrap img {
+    // Promote to its own layer. makes filters look ok on retina with images
+    -webkit-transform: translateZ(0);
+    -webkit-transition: .1s ease;
+            transition: .1s ease;
+  }
+
+  .site-nav__demos:hover .figure-wrap {
+    -webkit-transform: scale3d( 1, 1, 1 );
+            transform: scale3d( 1, 1, 1 );
+
+    img {
+
+      -webkit-filter: grayscale(1);
+              filter: grayscale(1);
+    }
+  }
+
+  .site-nav__demos:hover .figure-wrap.hovered {
+    -webkit-transform: scale3d( 1.05, 1.05, 1 );
+            transform: scale3d( 1.05, 1.05, 1 );
+
+    img {
+      -webkit-filter: none;
+              filter: none;
+    }
+  }
+
+  .figure-wrap:nth-child(4n + 1) {
+    margin-left: 0;
+  }
+
+  .figure-wrap > a {
+    display: block;
+  }
+
+  .figure-wrap figcaption {
+    margin-top: .5em;
+  }
+
+
+  .site-nav__band {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: $wetAsphalt;
+    }
+  }
+
+}
+
+.site-footer {
+  margin-top: 2em;
+  padding: 1em 0;
+  background-color: $wetAsphalt;
+}
+
+.site-footer__credit {
+  margin: 0;
+  text-align: right;
+}
+
+nav > a {
+  display: block;
+  margin: 5px 0;
+}
+
+
+// Filters
+.filter__label {
+  margin: 0 0 3px;
+}
+
+.filter__search {
+  margin: 5px 0;
+}
+
+
+.sort-options {
+  margin-top: 10px;
+}
+
+
+
+
+@media ( max-width: 47.9375em ) {
+
+  .figure-wrap:nth-child(odd) {
+    margin-left: 0;
+  }
+
+  .figure-wrap:nth-child(n + 3) {
+    margin-top: 1em;
+  }
+}
+
+
+

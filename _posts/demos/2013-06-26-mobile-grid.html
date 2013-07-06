@@ -1,0 +1,52 @@
+---
+layout: default
+title: Mobile Grid Layout Test
+description: Testing out the mobile grid for this site
+---
+
+<div class="container-fluid">
+  <h2>Mobile Grid Demo</h2>
+</div>
+
+<style scoped>
+
+  article {
+    height: 30px;
+    background-color: gray;
+    color: white;
+  }
+
+</style>
+
+<div class="container-fluid">
+  <div class="row-fluid m-row">
+    <article class="span7 m-span3">
+      span7 | m-span3
+    </article>
+    <article class="span4 m-span1">
+      span4 | m-span1
+    </article>
+    <article class="span1 m-span2">
+      span1 | m-span2
+    </article>
+  </div>
+
+  <hr>
+
+  <div class="row-fluid m-row">
+    <article class="span6 m-span6"></article>
+  </div>
+
+  <hr>
+
+  <div class="row-fluid m-row">
+    <article class="span5 m-span3"></article>
+    <article class="span7 m-span3"></article>
+  </div>
+
+  <hr>
+
+  <article style="width:100%;text-align:center;">
+    100%
+  </article>
+</div>

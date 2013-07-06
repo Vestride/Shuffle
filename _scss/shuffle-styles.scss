@@ -1,0 +1,119 @@
+@import "variables";
+/*=============================================*\
+ Some styles to show off masonry layout
+\*=============================================*/
+
+$pictureGutter: 24px;
+$itemHeight: 220px;
+.picture-item {
+  height: 220px;
+  margin-top: $pictureGutter;
+  overflow: hidden;
+  background: $clouds;
+
+  &.shuffle-item {
+    margin-left: 0; /* shuffle items shouldn't have a left margin*/
+  }
+
+  &.picture-item--h2 {
+    height: ($itemHeight * 2) + $pictureGutter; /* 2x the height + 1 gutter */
+  }
+
+  // Ehh, i should really use something other than span6 to target this...
+  &.span6:not(.picture-item--h2) {
+
+    .picture-item__details {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      background-color: rgba(black, .6);
+      color: white;
+    }
+
+    .picture-item__description {
+      display: none;
+    }
+
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .picture-item__details,
+  .picture-item__description {
+    padding: 1em;
+  }
+  .picture-item__description {
+    margin: 0;
+    padding-top: 0;
+    padding-right: 2em;
+  }
+
+  .picture-item__tags {
+    margin: 0;
+  }
+
+  .picture-item__title {
+
+  }
+}
+
+/*
+  Shuffle needs either relative or absolute positioning on the container
+  It will set it for you, but it'll cause another style recalculation and layout.
+  AKA worse performance - so just set it here
+ */
+.shuffle--container {
+  position: relative;
+  overflow: hidden;
+}
+
+.shuffle--fluid .shuffle__sizer {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+}
+
+
+
+@media ( max-width: 47.9375em ) {
+
+  .picture-item {
+    height: auto;
+    margin-top: 20px;
+
+    &.picture-item--h2 {
+      height: auto;
+    }
+
+    .picture-item__details,
+    .picture-item__description {
+      font-size: .875em;
+      padding: .625em;
+    }
+
+    .picture-item__description {
+      padding-right: .875em;
+      padding-bottom: 1.25em;
+    }
+  }
+
+  .filter > .row-fluid,
+  .filter > .row-fluid > div {
+    margin: 10px 0;
+  }
+
+  .m-nofloat {
+    float: none;
+  }
+}
+
+
+
+
+

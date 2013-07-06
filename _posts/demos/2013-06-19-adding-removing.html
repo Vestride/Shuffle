@@ -1,0 +1,87 @@
+---
+layout: default
+title: Shuffle Adding and Removing Elements Demo
+description: This demo of shuffle shows how to add and removing items.
+image: /demos/adding-removing.jpg
+extraJS: [ "demos/adding-removing.js" ]
+---
+<style>
+
+  /* Styles for shuffle */
+  .container {
+    counter-reset: boxes;
+  }
+
+  .box {
+    position: relative;
+    width: 18%;
+    margin-left: 2.5%;
+    height: 100px;
+    margin-top: 20px;
+    float: left;
+    background: #E74C3C;
+    counter-increment: boxes;
+  }
+
+  .box::before {
+    content: 'DOM order: ' counter(boxes);
+    position: absolute;
+    color: white;
+    top: .5em;
+    left: .5em;
+  }
+
+  .box.shuffle-item,
+  .box:first-child {
+    margin-left: 0;
+  }
+
+  .w2 {
+    width: 38.5%;
+  }
+
+  .w3 {
+    width: 59%;
+  }
+
+  .h2 {
+    height: 220px;
+  }
+</style>
+
+<section class="container">
+    <div class="row">
+        <h2 class="span12">Adding and Removing Items</h2>
+    </div>
+</section>
+
+<section class="container">
+    <button id="randomize">Randomize</button>
+    <button id="add">Add 5 Boxes</button>
+    <button id="remove">Remove Some Boxes</button>
+</section>
+
+<section class="container">
+    <div id="my-shuffle" class="items">
+        <div class="box"></div>
+        <div class="box h2 w2"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box w2"></div>
+        <div class="box"></div>
+    </div>
+</section>
+
+<section class="container">
+  <div class="row">
+    <div class="span12">
+      <h2>Another Section</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+      quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+      cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+      proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </div>
+  </div>
+</section>

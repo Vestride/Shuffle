@@ -1,0 +1,18 @@
+{% include head.html %}
+{% include nav.html %}
+{% if page.includeHeader %}
+<header class="container-fluid">
+  <div class="row-fluid">
+    <div class="span7">
+      <h1>Shuffle</h1>
+      <p>{{ site.defaultDescription }}</p>
+      <p>By <a href="https://twitter.com/Vestride" target="_blank">@Vestride</a></p>
+    </div>
+  </div>
+</header>
+{% endif %}
+<main role="main" id="main" class="language-markup">
+  {{ content }}
+</main>
+{% include scripts.html %}
+{% include foot.html %}
