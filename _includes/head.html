@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:300,400,700">
   {% if page.extraCSS %}
   {% for href in page.extraCSS %}
-  <link rel="stylesheet" href="{{ href }}" />
+  <link rel="stylesheet" href="{{ site.url }}{{ href }}" />
   {% endfor %}
   {% endif %}
 
