@@ -9,10 +9,11 @@ a {
   &,
   &:visited {
     color: $river;
+    text-decoration: none;
   }
 
   &:hover {
-    text-decoration: none;
+    text-decoration: underline;
   }
 
   &:active {

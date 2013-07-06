@@ -365,9 +365,10 @@ body {
 
 a, a:visited {
   color: #3498db;
+  text-decoration: none;
 }
 a:hover {
-  text-decoration: none;
+  text-decoration: underline;
 }
 a:active {
   color: #2ecc71;
@@ -1929,6 +1930,9 @@ ul ul {
 .site-nav .site-nav__title:first-child {
   margin-top: 0;
 }
+.site-nav .btn {
+  width: 100%;
+}
 .site-nav .site-nav__tray {
   transition: .2s;
   overflow: hidden;
@@ -2061,6 +2065,7 @@ button {
 .btn:hover,
 button:hover {
   background-color: #4a6885;
+  text-decoration: none;
 }
 .btn.active, .btn:active,
 button.active,
@@ -2080,7 +2085,7 @@ button:active {
   background-color: #ea9347;
 }
 .btn--warning.active, .btn--warning:active {
-  background-color: #e67e22;
+  background-color: #d35400;
 }
 
 .btn--primary {

@@ -5,7 +5,7 @@
 
 var Modules = {};
 
-Modules.Support = (function() {
+Modules.Support = (function( $ ) {
   'use strict';
 
   var self = {},
@@ -49,7 +49,7 @@ Modules.Support = (function() {
   window.requestAnimationFrame = rAF;
 
   return self;
-}());
+}( jQuery ));
 
 
 Modules.Polyfill = (function( $, Support ) {
@@ -223,7 +223,8 @@ Modules.Favicon = (function( doc ) {
     }
 
     self.currentFrame = 0;
-    self.thirtyFPS = 1000 / 30;
+    // Chrome chokes on this. It looks like it can handle 4 frames per second
+    self.fps = 24;
 
     self.init();
   };
@@ -270,12 +271,11 @@ Modules.Favicon = (function( doc ) {
 
   // Request Animation Frame Loop
   Favicon.prototype.loop = function( timestamp ) {
-    var self = this,
-        lastCall = self.lastTimestamp;
+    var self = this;
 
     // If not enough time has elapse since the last call
     // immediately call the next rAF
-    if ( timestamp - lastCall < self.timeToElapse ) {
+    if ( timestamp - self.lastExecuted < self.timeToElapse ) {
       return requestAnimationFrame( self.loop.bind( self ) );
     }
 
@@ -288,7 +288,7 @@ Modules.Favicon = (function( doc ) {
     // Completed an animation state
     self.timeToElapse = self.currentFrame % self.framesPerAnimation === 0 ?
       self.animationDelay :
-      self.thirtyFPS;
+      1000 / self.fps;
 
     // Draw current frame from sprite
     self.sprite.drawFrame( self.currentFrame );
@@ -297,7 +297,7 @@ Modules.Favicon = (function( doc ) {
     self.setFavicon();
 
     // Set a timeout to draw again
-    self.lastTimestamp = timestamp;
+    self.lastExecuted = timestamp;
 
     // Continue loop
     return requestAnimationFrame( self.loop.bind( self ) );

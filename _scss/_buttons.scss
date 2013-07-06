@@ -31,6 +31,7 @@ button {
 
   &:hover {
     background-color: lighten($wetAsphalt, 12);
+    text-decoration: none;
   }
 
   &.active,
@@ -53,8 +54,8 @@ button {
 
   &.active,
   &:active  {
-    // background-color: $pumpkin;
-    background-color: $carrot;
+    background-color: $pumpkin;
+    // background-color: $carrot;
   }
 }
 

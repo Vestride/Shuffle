@@ -26,8 +26,8 @@
  * Inspired by Isotope http://isotope.metafizzy.co/
  * Licensed under the MIT license.
  * @author Glen Cheney (http://glencheney.com)
- * @version 1.6.6
- * @date 06/28/13
+ * @version 2.0
+ * @date 07/05/13
  */
 (function($, Modernizr, undefined) {
 
