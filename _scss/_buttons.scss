@@ -1,0 +1,173 @@
+
+
+.btn-group {
+  @include clearfix();
+
+  .btn {
+    float: left;
+    border-radius: 0;
+
+    &:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+
+    &:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+  }
+}
+
+.btn,
+button {
+  display: inline-block;
+  padding: .75em .375em;
+  -webkit-appearance: none;
+  text-align: center;
+  color: white;
+  border-radius: .0625em;
+  border: 0;
+  background-color: $wetAsphalt;
+  transition: .2s ease-out;
+
+  &:hover {
+    background-color: lighten($wetAsphalt, 12);
+    text-decoration: none;
+  }
+
+  &.active,
+  &:active {
+    background-color: $midnightBlue;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.3);
+  }
+
+  &:active {
+    transition: none;
+  }
+}
+
+.btn--warning {
+  background-color: $carrot;
+
+  &:hover {
+    background-color: lighten($carrot, 8);
+  }
+
+  &.active,
+  &:active  {
+    background-color: $pumpkin;
+    // background-color: $carrot;
+  }
+}
+
+.btn--primary {
+  background-color: $river;
+
+  &:hover {
+    background-color: lighten($river, 8);
+  }
+
+  &.active,
+  &:active  {
+    // background-color: $belizeHole;
+    background-color: $river;
+  }
+}
+
+.btn--danger {
+  background-color: $alizarin;
+
+  &:hover {
+    background-color: lighten($alizarin, 8);
+  }
+
+  &.active,
+  &:active  {
+    // background-color: $pomegranate;
+    background-color: $alizarin;
+  }
+}
+
+.btn--go {
+  background-color: $emerald;
+
+  &:hover {
+    background-color: lighten($emerald, 8);
+  }
+
+  &.active,
+  &:active  {
+    // background-color: $nephritis;
+    background-color: $emerald;
+  }
+}
+
+
+.filter-group .btn {
+  position: relative;
+
+  $size: 20px;
+  // Circle and check
+  &.active:before,
+  &.active:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: $size;
+    height: $size;
+    margin-left: -$size / 2;
+    margin-top: -$size / 2;
+    opacity: 0;
+    transition: .2s;
+  }
+
+  // Circle
+  &:before {
+    background-color: $gray10;
+    border-radius: 50%;
+  }
+
+  // Check
+  &:after {
+    background-size: 60%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-image: url(../img/check.svg);
+  }
+
+  &.active:before,
+  &.active:after {
+    opacity: 1;
+  }
+}
+
+
+@media ( max-width: 47.9375em ) {
+
+  .btn,
+  button {
+    font-size: .875em;
+  }
+}
+
+@media ( max-width: 30em ) {
+
+  .btn,
+  button {
+    font-size: .75em;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,60 @@
+<h2>Usage</h2>
+
+<h3>The HTML Structure</h3>
+<p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings. Optionally, it can be a string delimeted by a value you provide. See <code>delimeter</code> in the <a href="#options">options</a>.</p>
+
+<p>In this example, shuffle is using the fluid grid from the <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap</a>. It's also making use of the <a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/"><abbr title="Block-Element-Modifier">BEM</abbr></a>.</p>
+
+<pre rel="HTML"><code class="language-markup">&lt;div id="grid" class="row-fluid"&gt;
+  &lt;figure class="span3 picture-item" data-groups='["photography"]'&gt;
+    &lt;img src="/img/baseball.png" height="145" width="230" /&gt;
+    &lt;div class="picture-item__details"&gt;
+      &lt;figcaption class="picture-item__title"&gt;Baseball&lt;/figcaption&gt;
+      &lt;p class="picture-item__tags"&gt;photography&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/figure&gt;
+  &lt;figure class="span6 picture-item" data-groups='["wallpaper","3d"]'&gt;
+    &lt;img src="/img/tennis-ball.png" height="145" width="230" /&gt;
+    &lt;div class="picture-item__details"&gt;
+      &lt;figcaption class="picture-item__title"&gt;Tennis&lt;/figcaption&gt;
+      &lt;p class="picture-item__tags"&gt;wallpaper, 3d&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;p class="picture-item__description"&gt;Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.&lt;/p&gt;
+  &lt;/figure&gt;
+  &lt;figure class="span3 picture-item" data-groups='["wallpaper","3d"]'&gt;
+    &lt;img src="/img/imac.png" height="145" width="230" /&gt;
+    &lt;div class="picture-item__details"&gt;
+      &lt;figcaption class="picture-item__title"&gt;iMac&lt;/figcaption&gt;
+      &lt;p class="picture-item__tags"&gt;wallpaper, 3d&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/figure&gt;
+  &lt;figure class="span3 picture-item picture-item--h2" data-groups='["graphics"]'&gt;
+    &lt;img src="/img/master-chief.png" height="145" width="230" /&gt;
+    &lt;div class="picture-item__details"&gt;
+      &lt;figcaption class="picture-item__title"&gt;Master Chief&lt;/figcaption&gt;
+      &lt;p class="picture-item__tags"&gt;graphics&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;p class="picture-item__description"&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.&lt;/p&gt;
+  &lt;/figure&gt;
+&lt;/div&gt;</code></pre>
+
+<h3 id="columns">How column widths work</h3>
+<p>The <code>columnWidth</code> option is used to calculate the column width. You have several options:</p>
+<ol>
+  <li>Use a <strong>sizer</strong> element. This is the easest way to specify column and gutter widths. You can use an element or an element wrapped in jQuery. The column and gutter widths will be measured using this element. The <code>sizer</code> option is an alias for <code>columnWidth</code>. See <a href="{% post_url demos/2013-05-01-basic %}">a demo</a> using a sizer element or <a href="{{ site.url }}/js/demos/homepage.js">look at the js file</a> for the sizer demo.</li>
+  <li>Use a <strong>function</strong>. When a function is used, its first parameter will be the width of the shuffle element. You need to return the column width for shuffle to use (in pixels).</li>
+  <li>A <strong>number</strong>. This will explicitly set the column width to your number (in pixels).</li>
+  <li>By default, shuffle will use jQuery's <code class="language-javascript">outerWidth(true)</code> to calculate the column width of the first item and use that value.</li>
+</ol>
+
+<h3>A basic setup example</h3>
+<p>Sets up the button clicks and runs shuffle</p>
+<pre rel="JavaScript"><code class="language-javascript">$(document).ready(function() {
+  var $grid = $('#grid'),
+      $sizer = $grid.find('.shuffle__sizer');
+
+  $grid.shuffle({
+    itemSelector: '.picture-item',
+    sizer: $sizer
+  });
+});</code></pre>

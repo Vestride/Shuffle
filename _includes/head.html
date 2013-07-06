@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js modern" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <title>{{ page.title }}</title>
+  {% capture description %}{% if page.description %}{{ page.description }}{% else %}{{ site.defaultDescription }}{% endif %}{% endcapture %}
+  {% capture image %}{% if page.image %}{{ page.image }}{% else %}{{ site.defaultImage }}{% endif %}{% endcapture %}
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta property="og:title" content="{{ page.title }}" />
+  <meta property="og:description" content="{{ description }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}" />
+  <meta property="og:image" content="{{ site.url }}{{ image }}" />
+  <meta property="og:site_name" content="" />
+  <meta property="fb:admins" content="771347349" />
+  <meta name="author" content="https://plus.google.com/u/0/100210640453700033824" />
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:creator" content="@Vestride">
+  <meta name="twitter:title" content="{{ page.title }}">
+  <meta name="twitter:description" content="{{ description }}">
+  <meta name="twitter:image" content="{{ site.url }}{{ image }}">
+
+  <link href="https://plus.google.com/u/0/100210640453700033824" rel="author" />
+
+
+  <link id="favicon" rel="icon" type="image/png" href="favicon.png" >
+
+  <!-- Prefetch DNS for external assets -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//themes.googleusercontent.com">
+  <link rel="dns-prefetch" href="//www.google-analytics.com">
+  <link rel="dns-prefetch" href="//ajax.googleapis.com">
+
+  {% if page.prism %}<link rel="stylesheet" href="{{ site.url }}/css/prism.css" />{% endif %}
+  <link rel="stylesheet" href="{{ site.url }}/css/style.css" />
+  <link rel="stylesheet" href="{{ site.url }}/css/shuffle-styles.css" />
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:300,400,700">
+  {% if page.extraCSS %}
+  {% for href in page.extraCSS %}
+  <link rel="stylesheet" href="{{ href }}" />
+  {% endfor %}
+  {% endif %}
+
+  <!--[if lt IE 9]>
+  <script src="{{ site.url }}/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body class="{{ page.bodyClass }}">

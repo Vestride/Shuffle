@@ -1,0 +1,23 @@
+<!--[if lt IE 9]>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<![endif]-->
+<!--[if gte IE 9]><!-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<!--<![endif]-->
+
+<!-- Shuffle! -->
+<script src="{{ site.url }}/jquery.shuffle.js"></script>
+
+{% if page.prism %}
+<!-- Syntax highlighting via Prism -->
+<script src="{{ site.url }}/js/prism.js"></script>
+{% endif %}
+
+<!-- Make the nav work -->
+<script src="{{ site.url }}/js/page.js"></script>
+
+{% if page.extraJS && page.extraJS.length %}
+{% for src in page.extraJS %}
+<script src="{{ site.url }}/js/{{ src }}"></script>
+{% endfor %}
+{% endif %}
