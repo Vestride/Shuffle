@@ -8,7 +8,7 @@ Categorize, sort, and filter a responsive grid of items
 This is a large improvement to shuffle. Most notably, the ability for [masonry](http://masonry.desandro.com) layouts. Other additions include adding/removing items, enabling/disabling, multiple instances on a page, and more!
 
 ## Running locally
-This project uses [Jekyll](http://jekyllrb.com/), so head over to [their quickstart guide](http://jekyllrb.com/docs/quickstart/) to get set up.
+This project uses [Jekyll](http://jekyllrb.com/), so head over to [their quickstart guide](http://jekyllrb.com/docs/quickstart/) to get set up. Then open `_config.yml` and change the `url:` variable to your localhost.
 
 ## Improvements still to make
 * FAQ page
