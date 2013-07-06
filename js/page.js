@@ -384,9 +384,6 @@ var _gaq = [ ['_setAccount', 'UA-39355642-1'], ['_trackPageview'] ];
           frag.appendChild( js );
       };
 
-    // Twitter SDK
-    // add('//platform.twitter.com/widgets.js', 'twitter-wjs');
-
     // Load GA over http, we know it won't be over ssl
     add('//www.google-analytics.com/ga.js');
 
@@ -401,7 +398,7 @@ $(document).ready(function() {
   Modules.Nav.init();
   Modules.Polyfill.init();
 
-  var src = '/img/favicon-sprite.png';
+  var src = site_url + '/img/favicon-sprite.png';
   new Modules.Favicon( src, 21, 7, 3000 * 1 );
 });
 
