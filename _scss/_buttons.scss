@@ -107,8 +107,8 @@ button {
 
   $size: 20px;
   // Circle and check
-  &.active::before,
-  &.active::after {
+  &.active:before,
+  &.active:after {
     content: '';
     position: absolute;
     top: 50%;
@@ -122,21 +122,21 @@ button {
   }
 
   // Circle
-  &::before {
+  &:before {
     background-color: $gray10;
     border-radius: 50%;
   }
 
   // Check
-  &::after {
+  &:after {
     background-size: 60%;
     background-position: center center;
     background-repeat: no-repeat;
     background-image: url(../img/check.svg);
   }
 
-  &.active::before,
-  &.active::after {
+  &.active:before,
+  &.active:after {
     opacity: 1;
   }
 }

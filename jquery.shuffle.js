@@ -138,8 +138,6 @@ var Shuffle = function( $container, options ) {
 
 Shuffle.prototype = {
 
-    constructor: Shuffle,
-
     _init : function() {
         var self = this,
             containerCSS,
@@ -1066,6 +1064,7 @@ Shuffle.settings = {
         top: 0,
         left: 0
     },
+    offset: { top: 0, left: 0 },
     revealAppendedDelay: 300,
     keepSorted : true, // Keep sorted when shuffling/layout
     enabled: true,

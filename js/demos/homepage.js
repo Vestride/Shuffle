@@ -6,10 +6,14 @@ var DEMO = (function( $ ) {
       $sizer = $grid.find('.shuffle__sizer'),
 
   init = function() {
-    listen();
-    setupFilters();
-    setupSorting();
-    setupSearching();
+
+    // None of these need to be executed synchronously
+    setTimeout(function() {
+      listen();
+      setupFilters();
+      setupSorting();
+      setupSearching();
+    }, 100);
 
     // instantiate the plugin
     $grid.shuffle({
@@ -95,25 +99,33 @@ var DEMO = (function( $ ) {
     });
   },
 
+  // Re layout shuffle when images load. This is only needed
+  // below 768 pixels because the .picture-item height is auto and therefore
+  // the height of the picture-item is dependent on the image
+  // I recommend using imagesloaded to determine when an image is loaded
+  // but that doesn't support IE7
   listen = function() {
-    var debouncedLayout = $.throttle( 100, function() {
-      $grid.shuffle('layout');
+    var debouncedLayout = $.throttle( 300, function() {
+      $grid.shuffle('update');
     });
 
-    // Re layout shuffle when images load. This is only needed
-    // below 768 pixels because the .picture-item height is auto and therefore
-    // the height of the picture-item is dependent on the image
-    // I recommend using imagesloaded to determine when an image is loaded
-    // but that doesn't support IE7
+    // Get all images inside shuffle
     $grid.find('img').each(function() {
-      var $img = $( this );
+      var proxyImage;
 
       // Image already loaded
-      if ( this.complete && this.naturalWidth > 0 ) {
+      if ( this.complete && this.naturalWidth !== undefined ) {
         return;
       }
 
-      $img.on('load', debouncedLayout);
+      // If none of the checks above matched, simulate loading on detached element.
+      proxyImage = new Image();
+      $( proxyImage ).on('load', function() {
+        $(this).off('load');
+        debouncedLayout();
+      });
+
+      proxyImage.src = this.src;
     });
   };
 

@@ -25,9 +25,11 @@
 
 .shape-up {
   position: relative;
+  overflow: hidden;
 }
 
 .shape {
+  position: relative;
   margin-left: 0;
   margin-top: 10px;
 
@@ -97,6 +99,22 @@ $leftOver: $triangleSize - $fullSideWidth;
 }
 
 
+// IE8 filter alpha wasn't working with the positioning stuff
+.lt-ie9 .shape {
+  .keep-ratio {
+    position: static;
+    width: 100%;
+    height: 250px;
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .shape__inner {
+    position: static;
+    width: 100%;
+    height: 100%;
+  }
+}
 
 @media (min-width: 1200px) {
 

@@ -5,11 +5,11 @@ body {
 
 // Links
 a {
+  text-decoration: none;
 
   &,
   &:visited {
     color: $river;
-    text-decoration: none;
   }
 
   &:hover {

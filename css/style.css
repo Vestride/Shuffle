@@ -363,9 +363,11 @@ body {
   color: #5d6d77;
 }
 
+a {
+  text-decoration: none;
+}
 a, a:visited {
   color: #3498db;
-  text-decoration: none;
 }
 a:hover {
   text-decoration: underline;
@@ -2121,7 +2123,7 @@ button:active {
 .filter-group .btn {
   position: relative;
 }
-.filter-group .btn.active::before, .filter-group .btn.active::after {
+.filter-group .btn.active:before, .filter-group .btn.active:after {
   content: '';
   position: absolute;
   top: 50%;
@@ -2133,17 +2135,17 @@ button:active {
   opacity: 0;
   transition: .2s;
 }
-.filter-group .btn::before {
+.filter-group .btn:before {
   background-color: #2c3e50;
   border-radius: 50%;
 }
-.filter-group .btn::after {
+.filter-group .btn:after {
   background-size: 60%;
   background-position: center center;
   background-repeat: no-repeat;
   background-image: url(../img/check.svg);
 }
-.filter-group .btn.active::before, .filter-group .btn.active::after {
+.filter-group .btn.active:before, .filter-group .btn.active:after {
   opacity: 1;
 }
 

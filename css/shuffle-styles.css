@@ -52,6 +52,7 @@
  */
 .shuffle--container {
   position: relative;
+  overflow: hidden;
 }
 
 .shuffle--fluid .shuffle__sizer {
