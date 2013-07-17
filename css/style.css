@@ -306,16 +306,10 @@ input[type="radio"] {
 
 /**
  * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
- * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
- *    (include `-moz` to future-proof).
  */
 input[type="search"] {
   -webkit-appearance: textfield;
   /* 1 */
-  -moz-box-sizing: content-box;
-  -webkit-box-sizing: content-box;
-  /* 2 */
-  box-sizing: content-box;
 }
 
 /**
@@ -2020,6 +2014,80 @@ nav > a {
 
 .sort-options {
   margin-top: 10px;
+}
+
+.search-section {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+input.faq-search {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  border: 2px solid #95a5a6;
+  border-radius: 4px;
+  padding: 0.5em;
+  font-size: 1.125em;
+  color: #95a5a6;
+  transition: .15s;
+}
+input.faq-search::-webkit-input-placeholder {
+  color: #95a5a6;
+  transition: .15s;
+}
+input.faq-search::-moz-input-placeholder {
+  color: #95a5a6;
+  transition: .15s;
+}
+input.faq-search:hover {
+  outline: 0;
+  color: #5d6d77;
+  border-color: #5d6d77;
+}
+input.faq-search:hover::-webkit-input-placeholder {
+  color: #5d6d77;
+}
+input.faq-search:hover::-moz-input-placeholder {
+  color: #5d6d77;
+}
+input.faq-search:focus {
+  outline: 0;
+  color: #27ae60;
+  border-color: #27ae60;
+}
+input.faq-search:focus::-webkit-input-placeholder {
+  color: #27ae60;
+}
+input.faq-search:focus::-moz-input-placeholder {
+  color: #27ae60;
+}
+
+.question {
+  margin: 2em 0;
+  overflow: hidden;
+  transition: .2s ease-out;
+}
+.question.collapsed {
+  height: 0 !important;
+  margin: 0;
+  border-width: 0;
+}
+.question.collapsed + .question {
+  margin-top: 0;
+}
+
+.question--unanswered {
+  padding-top: 1.25em;
+  border-top: 2px solid #2ecc71;
+}
+
+.question__text {
+  margin-top: 0;
+}
+
+.question__answer {
+  margin-bottom: 0;
 }
 
 @media (max-width: 47.9375em) {

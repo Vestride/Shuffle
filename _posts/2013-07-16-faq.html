@@ -1,0 +1,64 @@
+---
+layout: default
+title: Shuffle.js FAQ
+description: Frequently asked questions about Shuffle.js
+image: /hero.png
+extraJS: [ "faq.js" ]
+---
+<section class="container-fluid">
+  <div class="row-fluid">
+    <h2>FAQs</h2>
+  </div>
+</section>
+
+
+<section class="container-fluid search-section">
+  <div class="row-fluid">
+    <div class="span6">
+      <input type="search" placeholder="Search..." class="faq-search" id="search" />
+    </div>
+  </div>
+</section>
+
+
+<section class="container-fluid">
+  <div class="row-fluid">
+
+    <div class="question js-question">
+      <div class="question__inner">
+        <h3 class="question__text">Why Does Shuffle leave empty spaces?</h3>
+        <p class="question__answer">The algorithm used to place items does not keep track of empty space nor try to fill them. If you require this functionality, I suggest <a target="_blank" href="http://packery.metafizzy.co/">packery</a>.</p>
+      </div>
+    </div>
+
+    <div class="question js-question">
+      <div class="question__inner">
+        <h3 class="question__text">Why are images overlapping?</h3>
+        <p class="question__answer">If the size of your items are dependent on images, they can overlap if shuffle is initialized before all the images have loaded. Check out <a href="{{ site.url }}/{% post_url demos/2013-05-03-images %}">this demo</a> to see how to fix it.</p>
+      </div>
+    </div>
+
+    {% comment %}
+    <div class="question js-question">
+      <div class="question__inner">
+        <h3 class="question__text">Hi</h3>
+        <p class="question__answer">Check yo' self</p>
+      </div>
+    </div>
+    {% endcomment %}
+
+    <div class="question question--unanswered">
+      <div class="question__inner">
+        <h3 class="question__text">Didn't find an answer?</h3>
+        <p class="question__answer">Try looking at the javascript files for the demos or searching the issues <a href="https://github.com/Vestride/Shuffle/issues">on GitHub</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="container-fluid">
+  <div class="row-fluid">
+  </div>
+</section>
+

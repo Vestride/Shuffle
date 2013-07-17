@@ -11,7 +11,6 @@ This is a large improvement to shuffle. Most notably, the ability for [masonry](
 This project uses [Jekyll](http://jekyllrb.com/), so head over to [their quickstart guide](http://jekyllrb.com/docs/quickstart/) to get set up. Then open `_config.yml` and change the `url:` variable to your localhost.
 
 ## Improvements still to make
-* FAQ page
 * Use Deferred objects for callbacks
 * Horizontal layout
 
