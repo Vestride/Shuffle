@@ -7,8 +7,8 @@ exclude:     ['./_scss/*.*']
 
 permalink: /:title
 
-_url: http://glen.local:4000
-__url: http://localhost:4000
+# url: http://glen.local:4000
+# url: http://localhost:4000
 url: http://vestride.github.io/Shuffle
 
 defaultTitle: 'Shuffle.js'

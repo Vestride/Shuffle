@@ -35,8 +35,8 @@ $asbestos: #7F8C8D;
 
 $black: #000;
 $gray10: $midnightBlue;
-$gray30: #5D6D77;
 $gray20: $wetAsphalt;
+$gray30: #5D6D77;
 $gray40: $concrete;
 $gray50: $asbestos;
 $white: #FFF;
@@ -59,3 +59,13 @@ $white: #FFF;
     *zoom: 1;
   }
 }
+
+@mixin placeholder() {
+  &::-webkit-input-placeholder {
+    @content;
+  }
+  &::-moz-input-placeholder {
+    @content;
+  }
+}
+
