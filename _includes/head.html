@@ -13,8 +13,8 @@
   <meta property="og:title" content="{{ page.title }}" />
   <meta property="og:description" content="{{ description }}" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="{{ site.url }}{{ page.url }}" />
-  <meta property="og:image" content="{{ site.url }}{{ image }}" />
+  <meta property="og:url" content="{{ site.baseurl }}{{ page.url }}" />
+  <meta property="og:image" content="{{ site.baseurl }}{{ image }}" />
   <meta property="og:site_name" content="" />
   <meta property="fb:admins" content="771347349" />
   <meta name="author" content="https://plus.google.com/u/0/100210640453700033824" />
@@ -22,7 +22,7 @@
   <meta name="twitter:creator" content="@Vestride">
   <meta name="twitter:title" content="{{ page.title }}">
   <meta name="twitter:description" content="{{ description }}">
-  <meta name="twitter:image" content="{{ site.url }}{{ image }}">
+  <meta name="twitter:image" content="{{ site.baseurl }}{{ image }}">
 
   <link href="https://plus.google.com/u/0/100210640453700033824" rel="author" />
 
@@ -35,18 +35,18 @@
   <link rel="dns-prefetch" href="//www.google-analytics.com">
   <link rel="dns-prefetch" href="//ajax.googleapis.com">
 
-  {% if page.prism %}<link rel="stylesheet" href="{{ site.url }}/css/prism.css" />{% endif %}
-  <link rel="stylesheet" href="{{ site.url }}/css/style.css" />
-  <link rel="stylesheet" href="{{ site.url }}/css/shuffle-styles.css" />
+  {% if page.prism %}<link rel="stylesheet" href="{{ site.baseurl }}/css/prism.css" />{% endif %}
+  <link rel="stylesheet" href="{{ site.baseurl }}/css/style.css" />
+  <link rel="stylesheet" href="{{ site.baseurl }}/css/shuffle-styles.css" />
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:300,400,700">
   {% if page.extraCSS %}
   {% for href in page.extraCSS %}
-  <link rel="stylesheet" href="{{ site.url }}{{ href }}" />
+  <link rel="stylesheet" href="{{ site.baseurl }}{{ href }}" />
   {% endfor %}
   {% endif %}
 
   <!--[if lt IE 9]>
-  <script src="{{ site.url }}/js/html5shiv.js"></script>
+  <script src="{{ site.baseurl }}/js/html5shiv.js"></script>
   <![endif]-->
 </head>
 <body class="{{ page.bodyClass }}">

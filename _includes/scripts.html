@@ -6,18 +6,18 @@
 <!--<![endif]-->
 
 <!-- Shuffle! -->
-<script src="{{ site.url }}/jquery.shuffle.js"></script>
+<script src="{{ site.baseurl }}/jquery.shuffle.js"></script>
 
 {% if page.prism %}
 <!-- Syntax highlighting via Prism -->
-<script src="{{ site.url }}/js/prism.js"></script>
+<script src="{{ site.baseurl }}/js/prism.js"></script>
 {% endif %}
 
-<script>var site_url = "{{ site.url }}";</script>
-<script src="{{ site.url }}/js/page.js"></script>
+<script>var site_url = "{{ site.baseurl }}";</script>
+<script src="{{ site.baseurl }}/js/page.js"></script>
 
 {% if page.extraJS && page.extraJS.length %}
 {% for src in page.extraJS %}
-<script src="{{ site.url }}/js/{{ src }}"></script>
+<script src="{{ site.baseurl }}/js/{{ src }}"></script>
 {% endfor %}
 {% endif %}
