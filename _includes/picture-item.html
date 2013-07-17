@@ -7,9 +7,9 @@
 {% endif %}
 {% if item.cols %}{% assign cols = item.cols %}{% else %}{% assign cols = 3 %}{% endif %}
 <figure class="span{{ cols }} m-span3 picture-item{{ extras }}" data-groups='{{ groups }}' data-date-created="{{ item.date }}" data-title="{{ item.title }}">
-  <img src="{{ site.url }}/img/{{ item.img }}" alt="" height="145" width="230" />
+  <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="" height="145" width="230" />
   <div class="picture-item__details clearfix">
-    <figcaption class="picture-item__title pull-left"><a href="{{ site.url }}/img/originals/{{ item.original }}" target="_blank">{{ item.title }}</a></figcaption>
+    <figcaption class="picture-item__title pull-left"><a href="{{ site.baseurl }}/img/originals/{{ item.original }}" target="_blank">{{ item.title }}</a></figcaption>
     <p class="picture-item__tags pull-right">{{ item.groups | join: ', ' }}</p>
   </div>
   {% if item.description %}<p class="picture-item__description">{{ item.description }}</p>{% endif %}

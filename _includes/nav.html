@@ -7,7 +7,7 @@
       <h3 class="site-nav__title">Shuffle.js</h3>
       <div class="row-fluid">
         <div class="span3">
-          <a class="btn btn--primary" href="{{ site.url }}/">Home</a>
+          <a class="btn btn--primary" href="{{ site.baseurl }}/">Home</a>
         </div>
         <div class="span3">
           <a class="btn btn--primary" href="https://github.com/Vestride/Shuffle">GitHub Repo</a>
@@ -16,7 +16,7 @@
           <a class="btn btn--primary" href="https://twitter.com/Vestride">By @Vestride</a>
         </div>
         <div class="span3">
-          <a class="btn btn--primary" href="{{ site.url }}/faq">FAQ</a>
+          <a class="btn btn--primary" href="{{ site.baseurl }}/faq">FAQ</a>
         </div>
       </div>
 
@@ -24,10 +24,10 @@
       <div class="row-fluid m-row js-demos site-nav__demos">
         {% for post in site.demos %}
           <div class="span3 m-span3 figure-wrap js-demo">
-            <a href="{{ site.url }}/{{ post.slug }}">
+            <a href="{{ site.baseurl }}/{{ post.slug }}">
               <figure>
                 <div class="keep-ratio four-three">
-                  <img src="{{ site.url }}/img/demos/{{ post.slug }}.webp" alt="{{ post.label }}" />
+                  <img src="{{ site.baseurl }}/img/demos/{{ post.slug }}.webp" alt="{{ post.label }}" />
                 </div>
                 <figcaption>{{ post.label }}</figcaption>
               </figure>

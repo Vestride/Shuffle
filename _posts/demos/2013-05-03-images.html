@@ -9,9 +9,9 @@ prism: true
 
 <div class="container-fluid">
   <h2>Images!</h2>
-  <p>You can encounter problems when shuffle item dimensions depend on images. <a href="{{ site.url }}/{% post_url demos/2013-06-29-image-problems %}">Like this demo</a>. There are three good solutions to this.</p>
+  <p>You can encounter problems when shuffle item dimensions depend on images. <a href="{{ site.baseurl }}{% post_url demos/2013-06-29-image-problems %}">Like this demo</a>. There are three good solutions to this.</p>
   <ol>
-    <li>Set an explicit height on <code>.shuffle-item</code>s like the <a href="{{ site.url }}/{% post_url demos/2013-05-01-basic %}">basic demo</a>.</li>
+    <li>Set an explicit height on <code>.shuffle-item</code>s like the <a href="{{ site.baseurl }}{% post_url demos/2013-05-01-basic %}">basic demo</a>.</li>
     <li>Similar to number 1, make the height of the image container a percentage of the width. This can be seen in the nav images above with the <code>div.keep-ratio</code>.</li>
     <li>Get notified when images load (this page). In this case, I'm using <a href="http://desandro.github.io/imagesloaded/">Desandro's images loaded plugin</a>. Please note that imagesloaded does not support IE7.</li>
   </ol>
@@ -56,7 +56,7 @@ prism: true
   <div class="shuffle--images row-fluid">
     {% for item in site.items %}
     <figure class="js-item img-item span3 m-span3">
-      <img src="{{ site.url }}/img/{{ item.img }}" alt="{{item.title}}"/>
+      <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="{{item.title}}"/>
       <figcaption>{{ item.groups }}</figcaption>
     </figure>
     {% endfor %}
