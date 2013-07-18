@@ -16,6 +16,8 @@ defaultTitle: 'Shuffle.js'
 defaultDescription: 'Categorize, sort, and filter a responsive grid of items'
 defaultImage: '/img/hero.png'
 
+longDescription: 'Shuffle.js is a jQuery plugin for sorting, filtering, and laying out a group of items. It&rsquo;s performant, responsive, and fast. Check out the demos!'
+
 demos:
   - url: 'demos/2013-05-01-basic'
     slug: basic
@@ -72,7 +74,7 @@ items:
     title: Tennis
     img: tennis-ball.png
     original: tennis-ball.jpg
-    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+    description: longDescription
     cols: 6
   - groups: [ wallpaper, 3d ]
     date: 2009-05-27
@@ -85,7 +87,7 @@ items:
     title: Master Chief
     img: master-chief.png
     original: Master_Chief_Portrait_by_Eightfold_Studios.jpg
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    description: longDescription
     extras: [ h2 ]
     cols: 3
   - groups: [ wallpaper, 3d ]
@@ -99,7 +101,7 @@ items:
     title: Pumpkin
     img: pumpkin.png
     original: pumpkin.jpg
-    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+    description: longDescription
     cols: 6
   - groups: [ wallpaper, 3d ]
     date: 2013-05-19
@@ -113,7 +115,7 @@ items:
     title: Newegg
     img: newegg.png
     original: newegg.jpg
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    description: longDescription
     extras: [ h2 ]
     cols: 3
   - groups: [ wallpaper ]
@@ -133,7 +135,7 @@ items:
     title: Grass
     img: grassy-hills.png
     original: grassy-hills.tif
-    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+    description: longDescription
     cols: 6
   - groups: [ wallpaper, 3d ]
     date: 2013-05-19

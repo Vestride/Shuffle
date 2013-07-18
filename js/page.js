@@ -398,8 +398,12 @@ $(document).ready(function() {
   Modules.Nav.init();
   Modules.Polyfill.init();
 
-  var src = site_url + '/img/favicon-sprite.png';
-  new Modules.Favicon( src, 21, 7, 3000 * 1 );
+  // Only animate the favicon on the homepage so that
+  // timeline tests aren't filled with junk
+  if ( window.location.pathname === '/Shuffle/' ) {
+    var src = site_url + '/img/favicon-sprite.png';
+    new Modules.Favicon( src, 21, 7, 3000 * 1 );
+  }
 });
 
 

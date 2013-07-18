@@ -2098,6 +2098,10 @@ input.faq-search:focus::-moz-input-placeholder {
   .figure-wrap:nth-child(n + 3) {
     margin-top: 1em;
   }
+
+  .site-nav .btn {
+    margin-bottom: 5px;
+  }
 }
 .btn-group:before, .btn-group:after {
   content: " ";
