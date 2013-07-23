@@ -16,7 +16,7 @@ var DEMO = (function( $ ) {
     }, 100);
 
     // You can subscribe to custom events. To receive the loading and done events,
-    // you must subscribe to them before intializing the plugin, otherwise they will
+    // you must subscribe to them before initializing the plugin, otherwise they will
     // fire before you have subscribed to them
     // shrink, shrunk, filter, filtered, sorted, load, done
     $grid.on('loading.shuffle done.shuffle shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle sorted.shuffle layout.shuffle', function(evt, shuffle) {
