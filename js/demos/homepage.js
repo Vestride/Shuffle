@@ -15,6 +15,17 @@ var DEMO = (function( $ ) {
       setupSearching();
     }, 100);
 
+    // You can subscribe to custom events. To receive the loading and done events,
+    // you must subscribe to them before intializing the plugin, otherwise they will
+    // fire before you have subscribed to them
+    // shrink, shrunk, filter, filtered, sorted, load, done
+    $grid.on('loading.shuffle done.shuffle shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle sorted.shuffle layout.shuffle', function(evt, shuffle) {
+      // Make sure the browser has a console
+      if ( window.console && window.console.log && typeof window.console.log === 'function' ) {
+        console.log( 'Shuffle:', evt.type );
+      }
+    });
+
     // instantiate the plugin
     $grid.shuffle({
       itemSelector: '.picture-item',
@@ -23,14 +34,6 @@ var DEMO = (function( $ ) {
 
     // Destroy it! o_O
     // $grid.shuffle('destroy');
-
-    // You can subscribe to custom events:
-    // shrink, shrunk, filter, filtered, sorted, load, done
-    // $grid.on('shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle sorted.shuffle layout.shuffle', function(evt, shuffle) {
-    //   if ( window.console ) {
-    //     console.log(evt.type, shuffle, this);
-    //   }
-    // });
   },
 
   // Set up button clicks
