@@ -9,12 +9,11 @@
   {% capture description %}{% if page.description %}{{ page.description }}{% else %}{{ site.defaultDescription }}{% endif %}{% endcapture %}
   {% capture image %}{% if page.image %}{{ page.image }}{% else %}{{ site.defaultImage }}{% endif %}{% endcapture %}
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <meta property="og:title" content="{{ page.title }}" />
   <meta property="og:description" content="{{ description }}" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="{{ site.baseurl }}{{ page.url }}" />
-  <meta property="og:image" content="{{ site.baseurl }}{{ image }}" />
+  <meta property="og:url" content="{{ site.url }}{{ site.baseurl }}{{ page.url }}" />
+  <meta property="og:image" content="{{ site.url }}{{ site.baseurl }}{{ image }}" />
   <meta property="og:site_name" content="" />
   <meta property="fb:admins" content="771347349" />
   <meta name="author" content="https://plus.google.com/u/0/100210640453700033824" />
@@ -22,7 +21,7 @@
   <meta name="twitter:creator" content="@Vestride">
   <meta name="twitter:title" content="{{ page.title }}">
   <meta name="twitter:description" content="{{ description }}">
-  <meta name="twitter:image" content="{{ site.baseurl }}{{ image }}">
+  <meta name="twitter:image" content="{{ site.url }}{{ site.baseurl }}{{ image }}">
 
   <link href="https://plus.google.com/u/0/100210640453700033824" rel="author" />
 

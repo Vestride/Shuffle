@@ -366,32 +366,6 @@ Modules.Favicon = (function( doc ) {
 }( document ));
 
 
-
-// Analytics
-var _gaq = [ ['_setAccount', 'UA-39355642-1'], ['_trackPageview'] ];
-
-(function(doc, script) {
-  'use strict';
-
-  var js,
-      fjs = doc.scripts[0],
-      frag = doc.createDocumentFragment(),
-      add = function(url, id) {
-          if (doc.getElementById(id)) {return;}
-          js = doc.createElement(script);
-          js.src = url;
-          if ( id ) { js.id = id; }
-          frag.appendChild( js );
-      };
-
-    // Load GA over http, we know it won't be over ssl
-    add('//www.google-analytics.com/ga.js');
-
-    fjs.parentNode.insertBefore(frag, fjs);
-
-}(document, 'script'));
-
-
 $(document).ready(function() {
   'use strict';
 

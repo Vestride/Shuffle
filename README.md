@@ -8,7 +8,12 @@ Categorize, sort, and filter a responsive grid of items
 This is a large improvement to shuffle. Most notably, the ability for [masonry](http://masonry.desandro.com) layouts. Other additions include adding/removing items, enabling/disabling, multiple instances on a page, and more!
 
 ## Running locally
-This project uses [Jekyll](http://jekyllrb.com/), so head over to [their quickstart guide](http://jekyllrb.com/docs/quickstart/) to get set up. You should then be able to run `jekyll serve --watch` and go to `http://localhost:4000/Shuffle` to see it.
+This project uses [Jekyll](http://jekyllrb.com/), so:
+* head over to [their quickstart guide](http://jekyllrb.com/docs/quickstart/) to setup jekyll.
+* run `jekyll serve --watch --config _config.yml,_config_dev.yml` in your console
+* go to `http://localhost:4000` to see it.
+
+The `--config` option can take multiple config files. In this case, the `_config_dev.yml` file overrides options set in `_config.yml`.
 
 ## Improvements still to make
 * Use Deferred objects for callbacks
