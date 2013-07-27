@@ -1,0 +1,6 @@
+
+# Options in this file override ones set in _config.yml
+
+environment: "development"
+url: http://localhost:4000
+baseurl: ""
