@@ -5,7 +5,7 @@
 // Another approach would be to initialize shuffle on document
 // ready and as imagesLoaded reports back progress, call shuffle.layout()
 
-// imagesLoade: https://github.com/desandro/imagesloaded
+// imagesLoaded: https://github.com/desandro/imagesloaded
 
 var ImageDemo = (function( $, imagesLoaded ) {
 
