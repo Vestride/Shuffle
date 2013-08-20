@@ -19,15 +19,15 @@
  */
 (function(b,c){var $=b.jQuery||b.Cowboy||(b.Cowboy={}),a;$.throttle=a=function(e,f,j,i){var h,d=0;if(typeof f!=="boolean"){i=j;j=f;f=c}function g(){var o=this,m=+new Date()-d,n=arguments;function l(){d=+new Date();j.apply(o,n)}function k(){h=c}if(i&&!h){l()}h&&clearTimeout(h);if(i===c&&m>e){l()}else{if(f!==true){h=setTimeout(i?k:l,i===c?e-m:e)}}}if($.guid){g.guid=j.guid=j.guid||$.guid++}return g};$.debounce=function(d,e,f){return f===c?a(d,e,false):a(d,f,e!==false)}})(this);
 
-/*!
+/**
  * jQuery Shuffle Plugin
  * Uses CSS Transforms to filter down a grid of items.
  * Dependencies: jQuery 1.9+, Modernizr 2.6.2. Optionally throttle/debounce by Ben Alman
  * Inspired by Isotope http://isotope.metafizzy.co/
- * Licensed under the MIT license.
- * @author Glen Cheney (http://glencheney.com)
- * @version 2.0
- * @date 07/05/13
+ * Modified 2013-08-19
+ * @license MIT license
+ * @author Glen Cheney <cheney.glen@gmail.com>
+ * @version 2.0.1
  */
 (function($, Modernizr, undefined) {
 
