@@ -1,0 +1,42 @@
+---
+layout: default
+title: Animate In Demo
+description: When elements enter the viewport, they transition in from zero opacity and from the bottom.
+image: /demos/animated.jpg
+extraJS: [ "viewport.js", "demos/animate-in.js" ]
+---
+<div class="container-fluid">
+  <div class="row-fluid">
+    <h2>Animated viewport entry</h2>
+  </div>
+</div>
+
+
+<div class="container-fluid">
+  <div id="grid" class="row-fluid m-row shuffle--container shuffle--fluid shuffle--animatein">
+    {% for item in site.items %}
+        {% assign item = item %}
+        {% include picture-item.html %}
+    {% endfor %}
+    {% for item in site.items %}
+        {% assign item = item %}
+        {% include picture-item.html %}
+    {% endfor %}
+    {% for item in site.items %}
+        {% assign item = item %}
+        {% include picture-item.html %}
+    {% endfor %}
+    <div class="span3 m-span3 shuffle__sizer"></div>
+  </div>
+</div>
+
+
+<div class="container-fluid">
+  <div class="row-fluid">
+    <h2>Shuffle.js</h2>
+    <p>{{ site.longDescription }}</p>
+    <p>This demo was inspired by <a href="http://tympanus.net/codrops/">codrops</a>&rsquo; demo <a href="http://tympanus.net/codrops/2013/07/02/loading-effects-for-grid-items-with-css-animations/">Loading effects for grid items with css animations</a>.</p>
+  </div>
+</div>
+
+{% include credit-jake.html %}

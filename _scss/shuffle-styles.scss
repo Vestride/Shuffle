@@ -1,4 +1,6 @@
 @import "variables";
+@import "compass";
+
 /*=============================================*\
  Some styles to show off masonry layout
 \*=============================================*/
@@ -8,8 +10,6 @@ $itemHeight: 220px;
 .picture-item {
   height: 220px;
   margin-top: $pictureGutter;
-  overflow: hidden;
-  background: $clouds;
 
   &.shuffle-item {
     margin-left: 0; /* shuffle items shouldn't have a left margin*/
@@ -35,7 +35,12 @@ $itemHeight: 220px;
     .picture-item__description {
       display: none;
     }
+  }
 
+  .picture-item__inner {
+    background: $clouds;
+    height: 100%;
+    overflow: hidden;
   }
 
   img {
@@ -63,6 +68,7 @@ $itemHeight: 220px;
   }
 }
 
+
 /*
   Shuffle needs either relative or absolute positioning on the container
   It will set it for you, but it'll cause another style recalculation and layout.
@@ -77,6 +83,27 @@ $itemHeight: 220px;
   position: absolute;
   opacity: 0;
   visibility: hidden;
+}
+
+
+/* Animate in styles */
+.shuffle--animatein {
+  overflow: visible;
+}
+
+.shuffle--animatein .picture-item__inner {
+  opacity: 0;
+  @include translate(0, 220px);
+}
+
+.shuffle--animatein .picture-item__inner--transition {
+  -webkit-transition: all .6s ease;
+          transition: all .6s ease;
+}
+
+.shuffle--animatein .picture-item.in .picture-item__inner {
+  opacity: 1;
+  @include translate(0, 0);
 }
 
 

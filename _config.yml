@@ -39,6 +39,10 @@ demos:
     slug: images
     label: Using images
     screenshot: images.webp
+  - url: 'demos/2013-08-25-animated'
+    slug: animated
+    label: Animated viewport entry
+    screenshot: animated.webp
 
 shapes:
   - shape: circle

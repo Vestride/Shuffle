@@ -7,6 +7,7 @@ var DEMO = (function( $ ) {
 
   init = function() {
 
+
     // None of these need to be executed synchronously
     setTimeout(function() {
       listen();
@@ -130,6 +131,11 @@ var DEMO = (function( $ ) {
 
       proxyImage.src = this.src;
     });
+
+    // Because this method doesn't seem to be perfect.
+    setTimeout(function() {
+      debouncedLayout();
+    }, 500);
   };
 
   return {
