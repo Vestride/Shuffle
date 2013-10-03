@@ -15,8 +15,4 @@ This project uses [Jekyll](http://jekyllrb.com/), so:
 
 The `--config` option can take multiple config files. In this case, the `_config_dev.yml` file overrides options set in `_config.yml`.
 
-## Improvements still to make
-* Use Deferred objects for callbacks
-* Horizontal layout
-
 Inspired by [Isotope](http://isotope.metafizzy.co/) and [Packery](http://packery.metafizzy.co/).

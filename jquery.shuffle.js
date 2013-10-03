@@ -123,6 +123,42 @@ $.fn.sorted.randomize = function( array ) {
 // Used for unique instance variables
 var id = 0;
 
+
+/**
+ * Returns css prefixed properties like `-webkit-transition` or `box-sizing`
+ * from `transition` or `boxSizing`, respectively.
+ * @param {(string|boolean)} prop Property to be prefixed.
+ * @return {string} The prefixed css property.
+ */
+function getCssPrefix( prop ) {
+    if (!prop) {
+      return '';
+    }
+
+    // Replace upper case with dash-lowercase,
+    // then fix ms- prefixes because they're not capitalized.
+    return prop.replace(/([A-Z])/g, function( str, m1 ) {
+        return '-' + m1.toLowerCase();
+    }).replace(/^ms-/,'-ms-');
+}
+
+// Constant, prefixed variables.
+var TRANSITION = Modernizr.prefixed('transition');
+var TRANSITION_DELAY = Modernizr.prefixed('transitionDelay');
+var TRANSITION_DURATION = Modernizr.prefixed('transitionDuration');
+var TRANSITIONEND = {
+    'WebkitTransition' : 'webkitTransitionEnd',
+    'transition' : 'transitionend'
+}[ TRANSITION ];
+var TRANSFORM = Modernizr.prefixed('transform');
+var CSS_TRANSFORM = getCssPrefix(TRANSFORM);
+
+// Constants
+var CAN_TRANSITION_TRANSFORMS = Modernizr.csstransforms && Modernizr.csstransitions;
+var HAS_TRANSFORMS_3D = Modernizr.csstransforms3d;
+var SHUFFLE = 'shuffle';
+
+
 var Shuffle = function( $container, options ) {
     var self = this;
     $.extend( self, Shuffle.options, options, Shuffle.settings );
@@ -158,7 +194,7 @@ Shuffle.prototype = {
         self._initItems();
 
         // Bind resize events (http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer)
-        self.$window.on('resize.shuffle.' + self.unique, debouncedResize);
+        self.$window.on('resize.' + SHUFFLE + '.' + self.unique, debouncedResize);
 
         // Get container css all in one request. Causes reflow
         containerCSS = self.$container.css(['paddingLeft', 'paddingRight', 'position', 'width']);
@@ -166,7 +202,7 @@ Shuffle.prototype = {
         // Position cannot be static.
         // This will cause an extra style layout if it has to be set and the sizer element is used.
         if ( containerCSS.position === 'static' ) {
-            self.$container.css('position', 'relative');
+            self.$container[0].style.position = 'relative';
         }
 
         // Get offset from container
@@ -187,7 +223,7 @@ Shuffle.prototype = {
         if ( self.supported ) {
             setTimeout(function() {
                 self._setTransitions();
-                self.$container[0].style[ self.transitionName ] = 'height ' + self.speed + 'ms ' + self.easing;
+                self.$container[0].style[ TRANSITION ] = 'height ' + self.speed + 'ms ' + self.easing;
             }, 0);
         }
     },
@@ -196,7 +232,7 @@ Shuffle.prototype = {
     _addClasses : function() {
         var self = this;
 
-        self.$container.addClass('shuffle');
+        self.$container.addClass( SHUFFLE );
         self.$items.addClass('shuffle-item filtered');
 
         return self;
@@ -206,19 +242,6 @@ Shuffle.prototype = {
         var self = this;
 
         self.$items = self._getItems();
-        self.transitionName = self.prefixed('transition'),
-        self.transitionDelayName = self.prefixed('transitionDelay');
-        self.transitionDuration = self.prefixed('transitionDuration');
-        self.transform = self.getPrefixed('transform');
-
-        // Get transitionend event name
-        self.transitionend = {
-            'WebkitTransition' : 'webkitTransitionEnd',
-            'MozTransition'    : 'transitionend',
-            'OTransition'      : 'oTransitionEnd',
-            'msTransition'     : 'MSTransitionEnd',
-            'transition'       : 'transitionend'
-        }[ self.transitionName ];
 
         // If the columnWidth property is a function, then the grid is fluid
         self.isFluid = self.columnWidth && typeof self.columnWidth === 'function';
@@ -338,8 +361,8 @@ Shuffle.prototype = {
 
     /**
      * Set the initial css for each item
-     * @param  {jQuery} $items optionally specifiy at set to initialize
-     * @return {jQuery}        the items which were just set
+     * @param {jQuery} [$items] Optionally specifiy at set to initialize
+     * @return {jQuery} The items which were just set
      */
     _initItems : function( $items ) {
         $items = $items || this.$items;
@@ -353,7 +376,7 @@ Shuffle.prototype = {
 
     _setTransition : function( element ) {
         var self = this;
-        element.style[ self.transitionName ] = self.transform + ' ' + self.speed + 'ms ' + self.easing + ', opacity ' + self.speed + 'ms ' + self.easing;
+        element.style[ TRANSITION ] = CSS_TRANSFORM + ' ' + self.speed + 'ms ' + self.easing + ', opacity ' + self.speed + 'ms ' + self.easing;
         return element;
     },
 
@@ -377,11 +400,11 @@ Shuffle.prototype = {
         // $collection can be an array of dom elements or jquery object
         $.each( $collection, function(i) {
             // This works because the transition-property: transform, opacity;
-            this.style[ self.transitionDelayName ] = '0ms,' + ((i + 1) * self.sequentialFadeDelay) + 'ms';
+            this.style[ TRANSITION_DELAY ] = '0ms,' + ((i + 1) * self.sequentialFadeDelay) + 'ms';
 
             // Set the delay back to zero after one transition
-            $(this).one(self.transitionend, function() {
-                this.style[ self.transitionDelayName ] = '0ms';
+            $(this).one(TRANSITIONEND, function() {
+                this.style[ TRANSITION_DELAY ] = '0ms';
             });
         });
     },
@@ -453,17 +476,18 @@ Shuffle.prototype = {
      * Fire events with .shuffle namespace
      */
     _fire : function( name, args ) {
-        this.$container.trigger( name + '.shuffle', args && args.length ? args : [ this ] );
+        this.$container.trigger( name + '.' + SHUFFLE, args && args.length ? args : [ this ] );
     },
 
 
     /**
      * Loops through each item that should be shown
      * Calculates the x and y position and then transitions it
-     * @param {array} items - array of items that will be shown/layed out in order in their array.
+     * @param {Array.<Element>} items Array of items that will be shown/layed out in order in their array.
      *     Because jQuery collection are always ordered in DOM order, we can't pass a jq collection
      * @param {function} complete callback function
      * @param {boolean} isOnlyPosition set this to true to only trigger positioning of the items
+     * @param {boolean} isHide
      */
     _layout: function( items, fn, isOnlyPosition, isHide ) {
         var self = this;
@@ -642,42 +666,19 @@ Shuffle.prototype = {
 
 
     /**
-     * Uses Modernizr's prefixed() to get the correct vendor property name and sets it using jQuery .css()
-     *
-     * @param {jq} $el the jquery object to set the css on
-     * @param {string} prop the property to set (e.g. 'transition')
-     * @param {string} value the value of the prop
-     */
-    setPrefixedCss : function( $el, prop, value ) {
-        $el.css( this.prefixed( prop ), value );
-    },
-
-
-    /**
-     * Returns things like `-webkit-transition` or `box-sizing` from `transition` or `boxSizing`, respectively
-     *
-     * @param {string} property to be prefixed.
-     * @return {string} the prefixed css property
-     */
-    getPrefixed : function( prop ) {
-        var styleName = this.prefixed( prop );
-        return styleName ? styleName.replace(/([A-Z])/g, function(str,m1){ return '-' + m1.toLowerCase(); }).replace(/^ms-/,'-ms-') : styleName;
-    },
-
-    /**
      * Transitions an item in the grid
      *
-     * @param {object}  opts options
-     * @param {jQuery}  opts.$this jQuery object representing the current item
-     * @param {int}     opts.x translate's x
-     * @param {int}     opts.y translate's y
-     * @param {String}  opts.left left position (used when no transforms available)
-     * @param {String}  opts.top top position (used when no transforms available)
-     * @param {float}   opts.scale amount to scale the item
-     * @param {float}   opts.opacity opacity of the item
-     * @param {String}  opts.height the height of the item (used when no transforms available)
-     * @param {String}  opts.width the width of the item (used when no transforms available)
-     * @param {function} opts.callback complete function for the animation
+     * @param {Object}   opts options
+     * @param {jQuery}   opts.$this jQuery object representing the current item
+     * @param {number}   opts.x translate's x
+     * @param {number}   opts.y translate's y
+     * @param {string}   opts.left left position (used when no transforms available)
+     * @param {string}   opts.top top position (used when no transforms available)
+     * @param {number}   opts.scale amount to scale the item
+     * @param {number}   opts.opacity opacity of the item
+     * @param {string}   opts.height the height of the item (used when no transforms available)
+     * @param {string}   opts.width the width of the item (used when no transforms available)
+     * @param {Function} opts.callback complete function for the animation
      */
     transition: function(opts) {
         var self = this,
@@ -704,14 +705,14 @@ Shuffle.prototype = {
                 opts.scale = 1;
             }
 
-            if (self.threeD) {
+            if ( HAS_TRANSFORMS_3D ) {
                 transform = 'translate3d(' + opts.x + 'px, ' + opts.y + 'px, 0) scale3d(' + opts.scale + ', ' + opts.scale + ', 1)';
             } else {
                 transform = 'translate(' + opts.x + 'px, ' + opts.y + 'px) scale(' + opts.scale + ', ' + opts.scale + ')';
             }
 
             if ( opts.x !== undefined ) {
-                self.setPrefixedCss(opts.$this, 'transform', transform);
+                opts.$this.css( TRANSFORM, transform );
             }
 
             if ( opts.opacity !== undefined ) {
@@ -719,7 +720,7 @@ Shuffle.prototype = {
                 opts.$this.css('opacity' , opts.opacity);
             }
 
-            opts.$this.one(self.transitionend, complete);
+            opts.$this.one(TRANSITIONEND, complete);
         } else {
 
             var cssObj = {
@@ -766,18 +767,16 @@ Shuffle.prototype = {
 
     /**
      * Change a property or execute a function which will not have a transition
-     * @param  {Element}         element    DOM element that won't be transitioned
-     * @param  {string|function} property   the new style property which will be set or a function which will be called
-     * @param  {string}          [value]    the value that `property` should be.
+     * @param {Element} element DOM element that won't be transitioned
+     * @param {(string|Function)} property The new style property which will be set or a function which will be called
+     * @param {string} [value] The value that `property` should be.
      */
     _skipTransition : function( element, property, value ) {
-        var self = this,
-            reflow,
-            durationName = self.transitionDuration,
-            duration = element.style[ durationName ];
+        var reflow,
+            duration = element.style[ TRANSITION_DURATION ];
 
         // Set the duration to zero so it happens immediately
-        element.style[ durationName ] = '0ms'; // ms needed for firefox!
+        element.style[ TRANSITION_DURATION ] = '0ms'; // ms needed for firefox!
 
         if ( $.isFunction( property ) ) {
             property();
@@ -789,7 +788,7 @@ Shuffle.prototype = {
         reflow = element.offsetWidth;
 
         // Put the duration back
-        element.style[ durationName ] = duration;
+        element.style[ TRANSITION_DURATION ] = duration;
     },
 
     _addItems : function( $newItems, animateIn, isSequential ) {
@@ -850,7 +849,7 @@ Shuffle.prototype = {
 
     /**
      * The magic. This is what makes the plugin 'shuffle'
-     * @param  {String|Function} category category to filter by. Can be a function
+     * @param {(string|Function)} [category] Category to filter by. Can be a function
      * @param {Object} [sortObj] A sort object which can sort the filtered set
      */
     shuffle : function( category, sortObj ) {
@@ -887,8 +886,8 @@ Shuffle.prototype = {
     /**
      * Gets the .filtered elements, sorts them, and passes them to layout
      *
-     * @param {object} opts the options object for the sorted plugin
-     * @param {Boolean} [fromFilter] was called from Shuffle.filter method.
+     * @param {Object} opts the options object for the sorted plugin
+     * @param {boolean} [fromFilter] was called from Shuffle.filter method.
      */
     sort: function( opts, fromFilter, isOnlyPosition ) {
         var self = this,
@@ -939,9 +938,9 @@ Shuffle.prototype = {
 
     /**
      * New items have been appended to shuffle. Fade them in sequentially
-     * @param  {jQuery}  $newItems    jQuery collection of new items
-     * @param  {Boolean}  [animateIn]    If false, the new items won't animate in
-     * @param  {Boolean} [isSequential] If false, new items won't sequentially fade in
+     * @param {jQuery} $newItems jQuery collection of new items
+     * @param {boolean} [animateIn] If false, the new items won't animate in
+     * @param {boolean} [isSequential] If false, new items won't sequentially fade in
      */
     appended : function( $newItems, animateIn, isSequential ) {
         // True if undefined
@@ -960,7 +959,7 @@ Shuffle.prototype = {
 
     /**
      * Enables shuffle again
-     * @param  {Boolean} isUpdateLayout if undefined, shuffle will update columns and gutters
+     * @param {boolean} [isUpdateLayout=true] if undefined, shuffle will update columns and gutters
      */
     enable : function( isUpdateLayout ) {
         this.enabled = true;
@@ -971,8 +970,8 @@ Shuffle.prototype = {
 
     /**
      * Remove 1 or more shuffle items
-     * @param  {jQuery} $collection a jQuery object containing one or more element in shuffle
-     * @return {Shuffle}             the shuffle object
+     * @param {jQuery} $collection A jQuery object containing one or more element in shuffle
+     * @return {Shuffle} The shuffle object
      */
     remove : function( $collection ) {
 
@@ -1021,14 +1020,21 @@ Shuffle.prototype = {
 
         // Reset container styles
         self.$container
-            .removeClass('shuffle')
+            .removeClass( SHUFFLE )
             .removeAttr('style')
-            .removeData('shuffle');
+            .removeData( SHUFFLE );
 
         // Reset individual item styles
         self.$items
             .removeAttr('style')
             .removeClass('concealed filtered shuffle-item');
+
+        // Null DOM references
+        self.$window = null;
+        self.$items = null;
+        self.$container = null;
+        self.$sizer = null;
+        self.sizer = null;
 
         // Set a flag so if a debounced resize has been triggered,
         // it can first check if it is actually destroyed and not doing anything
@@ -1052,7 +1058,7 @@ Shuffle.options = {
     throttle: $.throttle || null, // By default, shuffle will try to throttle the resize event. This option will change the method it uses
     throttleTime: 300, // How often shuffle can be called on resize (in milliseconds)
     sequentialFadeDelay: 150, // Delay between each item that fades in when adding items
-    supported: Modernizr.csstransforms && Modernizr.csstransitions // supports transitions and transforms
+    supported: CAN_TRANSITION_TRANSFORMS // supports transitions and transforms
 };
 
 // Not overrideable
@@ -1069,9 +1075,7 @@ Shuffle.settings = {
     keepSorted : true, // Keep sorted when shuffling/layout
     enabled: true,
     destroyed: false,
-    styleQueue: [],
-    prefixed: Modernizr.prefixed,
-    threeD: Modernizr.csstransforms3d // supports 3d transforms
+    styleQueue: []
 };
 
 
@@ -1080,12 +1084,12 @@ $.fn.shuffle = function( opts ) {
     var args = Array.prototype.slice.call( arguments, 1 );
     return this.each(function() {
         var $this = $( this ),
-            shuffle = $this.data( 'shuffle' );
+            shuffle = $this.data( SHUFFLE );
 
         // If we don't have a stored shuffle, make a new one and save it
         if ( !shuffle ) {
             shuffle = new Shuffle( $this, opts );
-            $this.data( 'shuffle', shuffle );
+            $this.data( SHUFFLE, shuffle );
         }
 
         if ( typeof opts === 'string' && shuffle[ opts ] ) {
