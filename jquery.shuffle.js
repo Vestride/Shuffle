@@ -129,7 +129,7 @@ var id = 0;
  * @param {(string|boolean)} prop Property to be prefixed.
  * @return {string} The prefixed css property.
  */
-function getCssPrefix( prop ) {
+function dashify( prop ) {
   if (!prop) {
     return '';
   }
@@ -150,26 +150,56 @@ var TRANSITIONEND = {
   'transition' : 'transitionend'
 }[ TRANSITION ];
 var TRANSFORM = Modernizr.prefixed('transform');
-var CSS_TRANSFORM = getCssPrefix(TRANSFORM);
+var CSS_TRANSFORM = dashify(TRANSFORM);
 
 // Constants
 var CAN_TRANSITION_TRANSFORMS = Modernizr.csstransforms && Modernizr.csstransitions;
 var HAS_TRANSFORMS_3D = Modernizr.csstransforms3d;
 var SHUFFLE = 'shuffle';
+var ALL_ITEMS = 'all';
+var FILTER_ATTRIBUTE_KEY = 'groups';
 
 
-var Shuffle = function( $container, options ) {
+/**
+ * Categorize, sort, and filter a responsive grid of items.
+ *
+ * @param {Element|jQuery} containerEl An element or a jQuery collection which
+ *     is the parent container for the grid items.
+ * @param {Object} [options=Shuffle.options] Options object.
+ * @constructor
+ */
+var Shuffle = function( containerEl, options ) {
   var self = this;
+
+  options = options || {};
   $.extend( self, Shuffle.options, options, Shuffle.settings );
 
-  self.$container = $container;
+  self.$container = $(containerEl);
   self.$window = $(window);
   self.unique = 'shuffle_' + id++;
 
-  self._fire('loading');
+  self._fire( Shuffle.EventType.LOADING );
   self._init();
-  self._fire('done');
+  self._fire( Shuffle.EventType.DONE );
 };
+
+
+/**
+ * Events the container element emits with the .shuffle namespace.
+ * For example, "done.shuffle".
+ * @enum {string}
+ */
+Shuffle.EventType = {
+  LOADING: 'loading',
+  SHRINK: 'shrink',
+  SHRUNK: 'shrunk',
+  FILTER: 'filter',
+  FILTERED: 'filtered',
+  SORTED: 'sorted',
+  LAYOUT: 'layout',
+  REMOVED: 'removed'
+};
+
 
 Shuffle.prototype = {
 
@@ -238,32 +268,33 @@ Shuffle.prototype = {
   },
 
   _setVars : function() {
-    var self = this;
+    var self = this,
+        columnWidth = self.columnWidth;
 
     self.$items = self._getItems();
 
     // If the columnWidth property is a function, then the grid is fluid
-    self.isFluid = self.columnWidth && typeof self.columnWidth === 'function';
+    self.isFluid = columnWidth && $.isFunction(self.columnWidth);
 
     // Column width is the default setting and sizer is not (meaning passed in)
     // Assume they meant column width to be the sizer
-    if ( self.columnWidth === 0 && self.sizer !== null ) {
-      self.columnWidth = self.sizer;
+    if ( columnWidth === 0 && self.sizer !== null ) {
+      columnWidth = self.sizer;
     }
 
     // If column width is a string, treat is as a selector and search for the
     // sizer element within the outermost container
-    if ( typeof self.columnWidth === 'string' ) {
-      self.$sizer = self.$container.find( self.columnWidth );
+    if ( typeof columnWidth === 'string' ) {
+      self.$sizer = self.$container.find( columnWidth );
 
     // Check for an element
-    } else if ( self.columnWidth && self.columnWidth.nodeType && self.columnWidth.nodeType === 1 ) {
+    } else if ( columnWidth && columnWidth.nodeType && columnWidth.nodeType === 1 ) {
       // Wrap it in jQuery
-      self.$sizer = $( self.columnWidth );
+      self.$sizer = $( columnWidth );
 
     // Check for jQuery object
-    } else if ( self.columnWidth && self.columnWidth.jquery ) {
-      self.$sizer = self.columnWidth;
+    } else if ( columnWidth && columnWidth.jquery ) {
+      self.$sizer = columnWidth;
     }
 
     if ( self.$sizer && self.$sizer.length ) {
@@ -282,11 +313,11 @@ Shuffle.prototype = {
 
     category = category || self.lastFilter;
 
-    self._fire('filter');
+    self._fire( Shuffle.EventType.FILTER );
 
     // Loop through each item and use provided function to determine
     // whether to hide it or not.
-    if ( $.isFunction(category) ) {
+    if ( $.isFunction( category ) ) {
       $items.each(function() {
         var $item = $(this),
         passes = category.call($item[0], $item, self);
@@ -295,27 +326,27 @@ Shuffle.prototype = {
           $filtered = $filtered.add( $item );
         }
       });
-    }
 
     // Otherwise we've been passed a category to filter by
-    else {
+    } else {
       self.group = category;
-      if (category !== 'all') {
+
+      // category === 'all', add filtered class to everything
+      if ( category === ALL_ITEMS ) {
+        $filtered = $items;
+
+      // Check each element's data-groups attribute against the given category.
+      } else {
         $items.each(function() {
           var $this = $(this),
-          groups = $this.data('groups'),
-          keys = self.delimeter && !$.isArray( groups ) ? groups.split( self.delimeter ) : groups,
-          passes = $.inArray(category, keys) > -1;
+              groups = $this.data( FILTER_ATTRIBUTE_KEY ),
+              keys = self.delimeter && !$.isArray( groups ) ? groups.split( self.delimeter ) : groups,
+              passes = $.inArray(category, keys) > -1;
 
           if ( passes ) {
             $filtered = $filtered.add( $this );
           }
         });
-      }
-
-      // category === 'all', add filtered class to everything
-      else {
-        $filtered = $items;
       }
     }
 
@@ -622,7 +653,7 @@ Shuffle.prototype = {
       return;
     }
 
-    self._fire('shrink');
+    self._fire( Shuffle.EventType.SHRINK );
 
     self.shrinkTransitionEnded = false;
     $concealed.each(function() {
@@ -685,7 +716,7 @@ Shuffle.prototype = {
     // Only fire callback once per collection's transition
     complete = function() {
       if ( !self.layoutTransitionEnded && opts.from === 'layout' ) {
-        self._fire('layout');
+        self._fire( Shuffle.EventType.LAYOUT );
         opts.callback.call( self );
         self.layoutTransitionEnded = true;
       } else if ( !self.shrinkTransitionEnded && opts.from === 'shrink' ) {
@@ -753,15 +784,15 @@ Shuffle.prototype = {
   },
 
   shrinkEnd: function() {
-    this._fire('shrunk');
+    this._fire( Shuffle.EventType.SHRUNK );
   },
 
   filterEnd: function() {
-    this._fire('filtered');
+    this._fire( Shuffle.EventType.FILTERED );
   },
 
   sortEnd: function() {
-    this._fire('sorted');
+    this._fire( Shuffle.EventType.SORTED );
   },
 
   /**
@@ -859,7 +890,7 @@ Shuffle.prototype = {
     }
 
     if ( !category ) {
-      category = 'all';
+      category = ALL_ITEMS;
     }
 
     self._filter( category );
@@ -993,7 +1024,7 @@ Shuffle.prototype = {
         shuffle.$items = shuffle._getItems();
         shuffle.layout();
         shuffle._updateItemCount();
-        shuffle._fire( 'removed', [ $collection, shuffle ] );
+        shuffle._fire( Shuffle.EventType.REMOVED, [ $collection, shuffle ] );
 
         // Let it get garbage collected
         $collection = null;
@@ -1044,7 +1075,7 @@ Shuffle.prototype = {
 
 // Overrideable options
 Shuffle.options = {
-  group: 'all', // Filter group
+  group: ALL_ITEMS, // Filter group
   speed: 250, // Transition/animation speed (milliseconds)
   easing: 'ease-out', // css easing function to use
   itemSelector: '', // e.g. '.picture-item'
