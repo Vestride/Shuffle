@@ -27,7 +27,7 @@
  * Modified 2014-03-08
  * @license MIT license
  * @author Glen Cheney <cheney.glen@gmail.com>
- * @version 2.0.3
+ * @version 2.0.4
  */
 (function($, Modernizr, undefined) {
 
@@ -77,24 +77,25 @@ var FILTER_ATTRIBUTE_KEY = 'groups';
 /**
  * Categorize, sort, and filter a responsive grid of items.
  *
- * @param {Element|jQuery} containerEl An element or a jQuery collection which
+ * @param {Element|jQuery} element An element or a jQuery collection which
  *     is the parent container for the grid items.
  * @param {Object} [options=Shuffle.options] Options object.
  * @constructor
  */
-var Shuffle = function( containerEl, options ) {
-  var self = this;
-
+var Shuffle = function( element, options ) {
   options = options || {};
-  $.extend( self, Shuffle.options, options, Shuffle.settings );
+  $.extend( this, Shuffle.options, options, Shuffle.settings );
 
-  self.$container = $(containerEl);
-  self.$window = $(window);
-  self.unique = 'shuffle_' + id++;
+  this.$el = $(element);
+  this.$window = $(window);
+  this.unique = 'shuffle_' + id++;
 
-  self._fire( Shuffle.EventType.LOADING );
-  self._init();
-  self._fire( Shuffle.EventType.DONE );
+  this._fire( Shuffle.EventType.LOADING );
+  this._init();
+
+  // Dispatch the done event asynchronously so that people can bind to it after
+  // Shuffle has been initialized.
+  setTimeout( $.proxy( this._fire, this, Shuffle.EventType.DONE ), 16 );
 };
 
 
@@ -105,6 +106,7 @@ var Shuffle = function( containerEl, options ) {
  */
 Shuffle.EventType = {
   LOADING: 'loading',
+  DONE: 'done',
   SHRINK: 'shrink',
   SHRUNK: 'shrunk',
   FILTER: 'filter',
@@ -120,6 +122,7 @@ Shuffle.prototype = {
   _init : function() {
     var self = this,
         containerCSS,
+        containerWidth,
         resizeFunction = $.proxy( self._onResize, self ),
         debouncedResize = self.throttle ? self.throttle( self.throttleTime, resizeFunction ) : resizeFunction,
         sort = self.initialSort ? self.initialSort : null;
@@ -140,12 +143,12 @@ Shuffle.prototype = {
     self.$window.on('resize.' + SHUFFLE + '.' + self.unique, debouncedResize);
 
     // Get container css all in one request. Causes reflow
-    containerCSS = self.$container.css(['paddingLeft', 'paddingRight', 'position', 'width']);
+    containerCSS = self.$el.css(['paddingLeft', 'paddingRight', 'position']);
+    containerWidth = self._getOuterWidth( self.$el[0] );
 
     // Position cannot be static.
-    // This will cause an extra style layout if it has to be set and the sizer element is used.
     if ( containerCSS.position === 'static' ) {
-      self.$container[0].style.position = 'relative';
+      self.$el[0].style.position = 'relative';
     }
 
     // Get offset from container
@@ -156,7 +159,7 @@ Shuffle.prototype = {
 
     // We already got the container's width above, no need to cause another reflow getting it again...
     // Calculate the number of columns there will be
-    self._setColumns( parseInt( containerCSS.width, 10 ) );
+    self._setColumns( parseInt( containerWidth, 10 ) );
 
     // Kick off!
     self.shuffle( self.group, sort );
@@ -166,19 +169,15 @@ Shuffle.prototype = {
     if ( self.supported ) {
       setTimeout(function() {
         self._setTransitions();
-        self.$container[0].style[ TRANSITION ] = 'height ' + self.speed + 'ms ' + self.easing;
+        self.$el[0].style[ TRANSITION ] = 'height ' + self.speed + 'ms ' + self.easing;
       }, 0);
     }
   },
 
   // Will invalidate styles
   _addClasses : function() {
-    var self = this;
-
-    self.$container.addClass( SHUFFLE );
-    self.$items.addClass('shuffle-item filtered');
-
-    return self;
+    this.$el.addClass( SHUFFLE );
+    this.$items.addClass('shuffle-item filtered');
   },
 
   _setVars : function() {
@@ -199,7 +198,7 @@ Shuffle.prototype = {
     // If column width is a string, treat is as a selector and search for the
     // sizer element within the outermost container
     if ( typeof columnWidth === 'string' ) {
-      self.$sizer = self.$container.find( columnWidth );
+      self.$sizer = self.$el.find( columnWidth );
 
     // Check for an element
     } else if ( columnWidth && columnWidth.nodeType && columnWidth.nodeType === 1 ) {
@@ -215,10 +214,17 @@ Shuffle.prototype = {
       self.useSizer = true;
       self.sizer = self.$sizer[0];
     }
-
-    return self;
   },
 
+
+  /**
+   * Filter the elements by a category.
+   * @param {string} [category] Category to filter by. If it's given, the last
+   *     category will be used to filter the items.
+   * @param {jQuery} [$collection] Optionally filter a collection. Defaults to
+   *     all the items.
+   * @return {jQuery} Filtered items.
+   */
   _filter : function( category, $collection ) {
     var self = this,
         isPartialSet = $collection !== undefined,
@@ -233,10 +239,8 @@ Shuffle.prototype = {
     // whether to hide it or not.
     if ( $.isFunction( category ) ) {
       $items.each(function() {
-        var $item = $(this),
-        passes = category.call($item[0], $item, self);
-
-        if ( passes ) {
+        var $item = $(this);
+        if ( category.call($item[0], $item, self) ) {
           $filtered = $filtered.add( $item );
         }
       });
@@ -252,13 +256,14 @@ Shuffle.prototype = {
       // Check each element's data-groups attribute against the given category.
       } else {
         $items.each(function() {
-          var $this = $(this),
-              groups = $this.data( FILTER_ATTRIBUTE_KEY ),
-              keys = self.delimeter && !$.isArray( groups ) ? groups.split( self.delimeter ) : groups,
-              passes = $.inArray(category, keys) > -1;
+          var $item = $(this),
+              groups = $item.data( FILTER_ATTRIBUTE_KEY ),
+              keys = self.delimeter && !$.isArray( groups ) ?
+                groups.split( self.delimeter ) :
+                groups;
 
-          if ( passes ) {
-            $filtered = $filtered.add( $this );
+          if ( $.inArray(category, keys) > -1 ) {
+            $filtered = $filtered.add( $item );
           }
         });
       }
@@ -309,19 +314,19 @@ Shuffle.prototype = {
    * @return {jQuery} The items which were just set
    */
   _initItems : function( $items ) {
-      $items = $items || this.$items;
-      return $items.css( this.itemCss );
+    $items = $items || this.$items;
+    return $items.css( this.itemCss );
   },
 
   _updateItemCount : function() {
-      this.visibleItems = this.$items.filter('.filtered').length;
-      return this;
+    this.visibleItems = this.$items.filter('.filtered').length;
+    return this;
   },
 
   _setTransition : function( element ) {
-      var self = this;
-      element.style[ TRANSITION ] = CSS_TRANSFORM + ' ' + self.speed + 'ms ' + self.easing + ', opacity ' + self.speed + 'ms ' + self.easing;
-      return element;
+    var self = this;
+    element.style[ TRANSITION ] = CSS_TRANSFORM + ' ' + self.speed + 'ms ' + self.easing + ', opacity ' + self.speed + 'ms ' + self.easing;
+    return element;
   },
 
   _setTransitions : function( $items ) {
@@ -354,7 +359,7 @@ Shuffle.prototype = {
   },
 
   _getItems : function() {
-    return this.$container.children( this.itemSelector );
+    return this.$el.children( this.itemSelector );
   },
 
   _getPreciseDimension : function( element, style ) {
@@ -416,7 +421,7 @@ Shuffle.prototype = {
 
   _getGutterSize: function(containerWidth) {
     var size;
-    if (this.gutterWidth === 'function') {
+    if ($.isFunction(this.gutterWidth)) {
       size = this.gutterWidth(containerWidth);
     } else if (this.useSizer) {
       size = this._getPreciseDimension(this.sizer, 'marginLeft');
@@ -433,7 +438,7 @@ Shuffle.prototype = {
    * @param {number} [theContainerWidth] Optionally specify a container width if it's already available.
    */
   _setColumns : function( theContainerWidth ) {
-    var containerWidth = theContainerWidth || this._getOuterWidth(this.$container[0]);
+    var containerWidth = theContainerWidth || this._getOuterWidth(this.$el[0]);
     var gutter = this._getGutterSize(containerWidth);
     var columnWidth = this._getColumnSize(gutter, containerWidth);
     var calculatedColumns = (containerWidth + gutter) / columnWidth;
@@ -453,16 +458,14 @@ Shuffle.prototype = {
    * Adjust the height of the grid
    */
   _setContainerSize : function() {
-    var self = this,
-    gridHeight = Math.max.apply( Math, self.colYs );
-    self.$container.css( 'height', gridHeight + 'px' );
+    this.$el.css( 'height', Math.max.apply( Math, this.colYs ) );
   },
 
   /**
    * Fire events with .shuffle namespace
    */
   _fire : function( name, args ) {
-    this.$container.trigger( name + '.' + SHUFFLE, args && args.length ? args : [ this ] );
+    this.$el.trigger( name + '.' + SHUFFLE, args && args.length ? args : [ this ] );
   },
 
 
@@ -530,8 +533,8 @@ Shuffle.prototype = {
     self._setContainerSize();
   },
 
+  // Reset columns.
   _resetCols : function() {
-    // reset columns
     var i = this.cols;
     this.colYs = [];
     while (i--) {
@@ -643,23 +646,20 @@ Shuffle.prototype = {
   },
 
   _onResize : function() {
-    var self = this,
-        containerWidth;
-
     // If shuffle is disabled, destroyed, don't do anything
-    if ( !self.enabled || self.destroyed ) {
+    if ( !this.enabled || this.destroyed ) {
       return;
     }
 
     // Will need to check height in the future if it's layed out horizontaly
-    containerWidth = self.$container.width();
+    var containerWidth = this._getOuterWidth(this.$el[0]);
 
     // containerWidth hasn't changed, don't do anything
-    if ( containerWidth === self.containerWidth ) {
+    if ( containerWidth === this.containerWidth ) {
       return;
     }
 
-    self.resized();
+    this.resized();
   },
 
 
@@ -1017,7 +1017,7 @@ Shuffle.prototype = {
     self.$window.off('.' + self.unique);
 
     // Reset container styles
-    self.$container
+    self.$el
         .removeClass( SHUFFLE )
         .removeAttr('style')
         .removeData( SHUFFLE );
@@ -1030,7 +1030,7 @@ Shuffle.prototype = {
     // Null DOM references
     self.$window = null;
     self.$items = null;
-    self.$container = null;
+    self.$el = null;
     self.$sizer = null;
     self.sizer = null;
 
