@@ -11,7 +11,7 @@
 * `_layout` and `_placeItem`s parameters.
 * Less jQuery dependency
 
-## Reason Zepto doesn't work
+## Reasons Zepto doesn't work
 * `.data()` - although I think it can be included?
 * `.filter()` and `.not()` don't work with collections.
 * `.css(['style1', 'style2', 'style3'])` isn't supported.

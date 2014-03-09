@@ -2,7 +2,7 @@
 /*!
  * jQuery Even Heights plugin
  * Author: Glen Cheney
- * Modified: 06/26/13
+ * Modified: 2014-03-08
  * Dependencies: jQuery 1.2.6+
  * Sets a jQuery collection to all be the same height
  * If you need to set multiple collection, please use `$.evenHeights( collectionsArray )`

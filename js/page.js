@@ -106,7 +106,8 @@ Modules.Nav = (function( $ ) {
     this.$trigger = this.$el.find('.js-nav-toggle');
     this.$tray = this.$el.find('.js-tray');
 
-    this.$trigger.data( 'openLabel', this.$trigger.text() );
+    this.openLabel = this.$trigger.text();
+    this.closeLabel = this.$trigger.attr('data-close-label');
 
     this.init();
   }
@@ -124,70 +125,50 @@ Modules.Nav = (function( $ ) {
   };
 
   NavTray.prototype.saveHeight = function() {
-    this.collapseHeight = this.$tray.children().first().outerHeight();
+    this.collapseHeight = this.$tray.children()[0].offsetHeight;
   };
 
   NavTray.prototype.listen = function() {
-    var self = this;
-
-    self.$trigger.on( 'click', $.proxy( self.toggle, self ) );
-    self.$window.on( 'resize', $.debounce( 250, $.proxy( self.onResize, self ) ) );
-
-    return self;
+    this.$trigger.on( 'click', $.proxy( this.toggle, this ) );
+    this.$window.on( 'resize', $.debounce( 250, $.proxy( this.onResize, this ) ) );
   };
 
   NavTray.prototype.onResize = function() {
-    var self = this;
-
-    self.$tray.css( 'height', '' );
+    this.$tray.css( 'height', '' );
     this.setEvenHeights();
-    self.saveHeight();
+    this.saveHeight();
 
-    if ( self.isOpen ) {
-      self.$tray.css( 'height', self.collapseHeight );
+    if ( this.isOpen ) {
+      this.$tray.css( 'height', this.collapseHeight );
     }
   };
 
   NavTray.prototype.toggle = function() {
-    var self  = this;
+    this.toggleBtnText();
 
-    self.toggleBtnText();
-
-    if ( self.isOpen ) {
-      self.close();
+    if ( this.isOpen ) {
+      this.close();
     } else {
-      self.open();
+      this.open();
     }
-
-    return self;
   };
 
   NavTray.prototype.open = function() {
-    var self = this;
-
-    self.$el.removeClass('collapsed');
-    self.$tray.css( 'height', self.collapseHeight );
-
-    self.isOpen = true;
+    this.$el.removeClass('collapsed');
+    this.$tray.css( 'height', this.collapseHeight );
+    this.isOpen = true;
   };
 
   NavTray.prototype.close = function() {
-    var self = this;
-
-    self.$el.addClass('collapsed');
-    self.$tray.css( 'height', '' );
-
-    self.isOpen = false;
+    this.$el.addClass('collapsed');
+    this.$tray.css( 'height', '' );
+    this.isOpen = false;
   };
 
 
   NavTray.prototype.toggleBtnText = function() {
-    var self = this,
-        key= self.isOpen ? 'openLabel' : 'closeLabel';
-
-    self.$trigger.text( self.$trigger.data( key ) );
-
-    return self;
+    var label = this.isOpen ? this.openLabel : this.closeLabel;
+    this.$trigger.text( label );
   };
 
   NavTray.prototype.setEvenHeights = function() {
