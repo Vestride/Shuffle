@@ -27,7 +27,7 @@
  * Modified 2014-03-08
  * @license MIT license
  * @author Glen Cheney <cheney.glen@gmail.com>
- * @version 2.0.4
+ * @version 2.0.5
  */
 (function($, Modernizr, undefined) {
 
