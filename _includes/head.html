@@ -43,6 +43,11 @@
   <link rel="stylesheet" href="{{ site.baseurl }}{{ href }}" />
   {% endfor %}
   {% endif %}
+  {% if page.externalCSS %}
+  {% for href in page.externalCSS %}
+  <link rel="stylesheet" href="{{ href }}" />
+  {% endfor %}
+  {% endif %}
 
   <!--[if lt IE 9]>
   <script src="{{ site.baseurl }}/js/html5shiv.js"></script>

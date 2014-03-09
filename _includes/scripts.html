@@ -1,8 +1,8 @@
 <!--[if lt IE 9]>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <![endif]-->
 <!--[if gte IE 9]><!-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 <!--<![endif]-->
 
 <!-- Shuffle! -->
@@ -15,6 +15,7 @@
 
 <script>var site_url = "{{ site.baseurl }}";</script>
 <script src="{{ site.baseurl }}/js/page.js"></script>
+<script src="{{ site.baseurl }}/js/evenheights.js"></script>
 
 {% if page.extraJS && page.extraJS.length %}
 {% for src in page.extraJS %}
@@ -23,29 +24,5 @@
 {% endif %}
 
 {% if site.environment == "production" %}
-<script>
-// Analytics
-var _gaq = [ ['_setAccount', 'UA-39355642-1'], ['_trackPageview'] ];
-
-(function(doc, script) {
-  'use strict';
-
-  var js,
-      fjs = doc.scripts[0],
-      frag = doc.createDocumentFragment(),
-      add = function(url, id) {
-          if (doc.getElementById(id)) {return;}
-          js = doc.createElement(script);
-          js.src = url;
-          if ( id ) { js.id = id; }
-          frag.appendChild( js );
-      };
-
-    // Load GA over http, we know it won't be over ssl
-    add('//www.google-analytics.com/ga.js');
-
-    fjs.parentNode.insertBefore(frag, fjs);
-
-}(document, 'script'));
-</script>
+<script>(function(G,o,O,g,l){G.GoogleAnalyticsObject=O;G[O]||(G[O]=function(){(G[O].q=G[O].q||[]).push(arguments)});G[O].l=+new Date;g=o.createElement('script'),l=o.scripts[0];g.src='//www.google-analytics.com/analytics.js';l.parentNode.insertBefore(g,l)}(this,document,'ga'));ga('create','UA-39355642-1','vestride.github.io');ga('send','pageview')</script>
 {% endif %}

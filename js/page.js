@@ -100,13 +100,20 @@ Modules.Nav = (function( $ ) {
 
   function NavTray( element ) {
     this.$el = $( element );
+
+    this.isOpen = false;
+    this.$window = $( window );
+    this.$trigger = this.$el.find('.js-nav-toggle');
+    this.$tray = this.$el.find('.js-tray');
+
+    this.$trigger.data( 'openLabel', this.$trigger.text() );
+
     this.init();
   }
 
   NavTray.prototype.init = function() {
-    this
-      .setVars()
-      .listen();
+    this.setEvenHeights();
+    this.listen();
 
     // Google web font loading affects this.
     // I could use their loader, but don't really want their js too
@@ -116,26 +123,8 @@ Modules.Nav = (function( $ ) {
     setTimeout( $.proxy( this.saveHeight, this ), 100 );
   };
 
-  NavTray.prototype.setVars = function() {
-    var self = this;
-
-    self.isOpen = false;
-    self.$window = $( window );
-    self.$trigger = self.$el.find('.js-nav-toggle');
-    self.$tray = self.$el.find('.js-tray');
-
-    self.$trigger.data( 'openLabel', self.$trigger.text() );
-
-    return self;
-  };
-
   NavTray.prototype.saveHeight = function() {
-    var self = this,
-        height = self.$tray.children().first().outerHeight();
-
-    self.collapseHeight = height;
-
-    return height;
+    this.collapseHeight = this.$tray.children().first().outerHeight();
   };
 
   NavTray.prototype.listen = function() {
@@ -151,6 +140,7 @@ Modules.Nav = (function( $ ) {
     var self = this;
 
     self.$tray.css( 'height', '' );
+    this.setEvenHeights();
     self.saveHeight();
 
     if ( self.isOpen ) {
@@ -198,6 +188,14 @@ Modules.Nav = (function( $ ) {
     self.$trigger.text( self.$trigger.data( key ) );
 
     return self;
+  };
+
+  NavTray.prototype.setEvenHeights = function() {
+    var groups = [
+      this.$el.find('.js-demo'),
+      $('#main .js-demo')
+    ];
+    $.evenHeights( groups );
   };
 
   return {

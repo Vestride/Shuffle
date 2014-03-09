@@ -101,6 +101,10 @@ nav > a {
 }
 
 
+.demo-list .figure-wrap {
+  position: relative;
+  z-index: 1;
+}
 
 .demo-list .figure-wrap,
 .demo-list .figure-wrap img {
@@ -122,6 +126,7 @@ nav > a {
 }
 
 .demo-list:hover .figure-wrap:hover {
+  z-index: 2;
   -webkit-transform: scale3d( 1.05, 1.05, 1 );
           transform: scale3d( 1.05, 1.05, 1 );
 
@@ -141,6 +146,7 @@ nav > a {
 
 .demo-list .figure-wrap figcaption {
   margin-top: .5em;
+  margin-bottom: 1em;
 }
 
 

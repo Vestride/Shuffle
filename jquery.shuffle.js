@@ -24,100 +24,14 @@
  * Uses CSS Transforms to filter down a grid of items.
  * Dependencies: jQuery 1.9+, Modernizr 2.6.2. Optionally throttle/debounce by Ben Alman
  * Inspired by Isotope http://isotope.metafizzy.co/
- * Modified 2013-08-19
+ * Modified 2014-03-08
  * @license MIT license
  * @author Glen Cheney <cheney.glen@gmail.com>
- * @version 2.0.1
+ * @version 2.0.3
  */
 (function($, Modernizr, undefined) {
 
 'use strict';
-
-// You can return `undefined` from the `by` function to revert to DOM order
-// This plugin does NOT return a jQuery object. It returns a plain array because
-// jQuery sorts everything in DOM order.
-$.fn.sorted = function(options) {
-  var opts = $.extend({}, $.fn.sorted.defaults, options),
-      arr = this.get(),
-      revert = false;
-
-  if ( !arr.length ) {
-    return [];
-  }
-
-  if ( opts.randomize ) {
-    return $.fn.sorted.randomize( arr );
-  }
-
-  // Sort the elements by the opts.by function.
-  // If we don't have opts.by, default to DOM order
-  if (opts.by !== $.noop && opts.by !== null && opts.by !== undefined) {
-    arr.sort(function(a, b) {
-
-      // Exit early if we already know we want to revert
-      if ( revert ) {
-        return 0;
-      }
-
-      var valA = opts.by($(a)),
-          valB = opts.by($(b));
-
-      // If both values are undefined, use the DOM order
-      if ( valA === undefined && valB === undefined ) {
-        revert = true;
-        return 0;
-      }
-
-      if ( valA === 'sortFirst' || valB === 'sortLast' ) {
-        return -1;
-      }
-
-      if ( valA === 'sortLast' || valB === 'sortFirst' ) {
-        return 1;
-      }
-
-      return (valA < valB) ? -1 :
-          (valA > valB) ? 1 : 0;
-    });
-  }
-
-  // Revert to the original array if necessary
-  if ( revert ) {
-    return this.get();
-  }
-
-  if ( opts.reverse ) {
-    arr.reverse();
-  }
-
-  return arr;
-};
-
-$.fn.sorted.defaults = {
-  reverse: false, // Use array.reverse() to reverse the results
-  by: null, // Sorting function
-  randomize: false // If true, this will skip the sorting and return a randomized order in the array
-};
-
-
-// http://stackoverflow.com/a/962890/373422
-$.fn.sorted.randomize = function( array ) {
-  var top = array.length,
-      tmp, current;
-
-  if ( !top ) {
-    return array;
-  }
-
-  while ( --top ) {
-    current = Math.floor( Math.random() * (top + 1) );
-    tmp = array[ current ];
-    array[ current ] = array[ top ];
-    array[ top ] = tmp;
-  }
-
-  return array;
-};
 
 // Used for unique instance variables
 var id = 0;
@@ -453,44 +367,86 @@ Shuffle.prototype = {
     return parseFloat( dimension );
   },
 
-  // Calculate number of columns
-  // Gets css if using sizer element
-  _setColumns : function( theContainerWidth ) {
-    var self = this,
-        containerWidth = theContainerWidth || self.$container.width(),
-        gutter = typeof self.gutterWidth === 'function' ?
-            self.gutterWidth( containerWidth ) :
-            self.useSizer ?
-                self._getPreciseDimension( self.sizer, 'marginLeft' ) :
-                self.gutterWidth,
-        calculatedColumns;
+  _getOuterWidth: function( element, includeMargins ) {
+    var width = element.offsetWidth;
 
-    // use fluid columnWidth function if there
-    self.colWidth = self.isFluid ? self.columnWidth( containerWidth ) :
-        // columnWidth option isn't a function, are they using a sizing element?
-        self.useSizer ? self._getPreciseDimension( self.sizer, 'width' ) :
-        // if not, how about the explicitly set option?
-        self.columnWidth ||
-        // or use the size of the first item
-        self.$items.outerWidth(true) ||
-        // if there's no items, use size of container
-        containerWidth;
+    if (includeMargins) {
+      var marginLeft = Math.round(parseFloat(element.style.marginLeft)) || 0;
+      var marginRight = Math.round(parseFloat(element.style.marginRight)) || 0;
+      width += marginLeft + marginRight;
+    }
+
+    return width;
+  },
+
+
+  _getColumnSize: function( gutterSize, containerWidth ) {
+    var size;
+
+    // Use fluid columnWidth function if there
+    if (this.isFluid) {
+      size = this.columnWidth(containerWidth);
+
+    // columnWidth option isn't a function, are they using a sizing element?
+    } else if (this.useSizer) {
+      size = this._getPreciseDimension(this.sizer, 'width');
+
+    // if not, how about the explicitly set option?
+    } else if (this.columnWidth) {
+      size = this.columnWidth;
+
+    // or use the size of the first item
+    } else if (this.$items.length > 0) {
+      size = this.getOuterWidth(this.$items[0], true);
+
+    // if there's no items, use size of container
+    } else {
+      size = containerWidth;
+    }
 
     // Don't let them set a column width of zero.
-    self.colWidth = self.colWidth || containerWidth;
-
-    self.colWidth += gutter;
-
-    calculatedColumns = (containerWidth + gutter) / self.colWidth;
-    // Widths given from getComputedStyle are not precise enough...
-    if ( Math.ceil(calculatedColumns) - calculatedColumns < 0.01 ) {
-      // e.g. calculatedColumns = 11.998876
-      calculatedColumns = Math.ceil( calculatedColumns );
+    if ( size === 0 ) {
+      size = containerWidth;
     }
-    self.cols = Math.floor( calculatedColumns );
-    self.cols = Math.max( self.cols, 1 );
 
-    self.containerWidth = containerWidth;
+    // return Math.round(size + gutterSize);
+    return size + gutterSize;
+  },
+
+
+  _getGutterSize: function(containerWidth) {
+    var size;
+    if (this.gutterWidth === 'function') {
+      size = this.gutterWidth(containerWidth);
+    } else if (this.useSizer) {
+      size = this._getPreciseDimension(this.sizer, 'marginLeft');
+    } else {
+      size = this.gutterWidth;
+    }
+
+    return size;
+  },
+
+
+  /**
+   * Calculate the number of columns to be used. Gets css if using sizer element.
+   * @param {number} [theContainerWidth] Optionally specify a container width if it's already available.
+   */
+  _setColumns : function( theContainerWidth ) {
+    var containerWidth = theContainerWidth || this._getOuterWidth(this.$container[0]);
+    var gutter = this._getGutterSize(containerWidth);
+    var columnWidth = this._getColumnSize(gutter, containerWidth);
+    var calculatedColumns = (containerWidth + gutter) / columnWidth;
+
+    // Widths given from getComputedStyle are not precise enough...
+    if ( Math.abs(Math.round(calculatedColumns) - calculatedColumns) < 0.03 ) {
+      // e.g. calculatedColumns = 11.998876
+      calculatedColumns = Math.round( calculatedColumns );
+    }
+
+    this.cols = Math.max( Math.floor(calculatedColumns), 1 );
+    this.containerWidth = containerWidth;
+    this.colWidth = columnWidth;
   },
 
   /**
@@ -525,18 +481,30 @@ Shuffle.prototype = {
     fn = fn || self.filterEnd;
 
     self.layoutTransitionEnded = false;
-    $.each(items, function(index) {
-      var $this = $(items[index]),
-      //how many columns does this brick span
-      colSpan = Math.ceil( $this.outerWidth(true) / self.colWidth );
-      colSpan = Math.min( colSpan, self.cols );
+    $.each(items, function(index, item) {
+      var $this = $(item),
+          brickWidth = self._getOuterWidth(item, true),
+          columnSpan = brickWidth / self.colWidth;
 
+      // If the difference between the rounded column span number and the
+      // calculated column span number is really small, round the number to
+      // make it fit.
+      if ( Math.abs(Math.round(columnSpan) - columnSpan) < 0.03 ) {
+        // e.g. columnSpan = 4.0089945390298745
+        columnSpan = Math.round( columnSpan );
+      }
+
+      // How many columns does this brick span. Ensure it's not more than the
+      // amount of columns in the whole layout.
+      var colSpan = Math.min( Math.ceil(columnSpan), self.cols );
+
+      // The brick is only one column.
       if ( colSpan === 1 ) {
-        // if brick spans only one column, just like singleMode
         self._placeItem( $this, self.colYs, fn, isOnlyPosition, isHide );
+
+      // The brick spans more than one column, figure out how many different
+      // places could this brick fit horizontally
       } else {
-        // brick spans more than one column
-        // how many different places could this brick fit horizontally
         var groupCount = self.cols + 1 - colSpan,
             groupY = [],
             groupColY,
@@ -1070,8 +1038,8 @@ Shuffle.prototype = {
     // it can first check if it is actually destroyed and not doing anything
     self.destroyed = true;
   }
-
 };
+
 
 // Overrideable options
 Shuffle.options = {
@@ -1090,6 +1058,7 @@ Shuffle.options = {
   sequentialFadeDelay: 150, // Delay between each item that fades in when adding items
   supported: CAN_TRANSITION_TRANSFORMS // supports transitions and transforms
 };
+
 
 // Not overrideable
 Shuffle.settings = {
@@ -1127,5 +1096,94 @@ $.fn.shuffle = function( opts ) {
     }
   });
 };
+
+
+// You can return `undefined` from the `by` function to revert to DOM order
+// This plugin does NOT return a jQuery object. It returns a plain array because
+// jQuery sorts everything in DOM order.
+$.fn.sorted = function(options) {
+  var opts = $.extend({}, $.fn.sorted.defaults, options),
+      arr = this.get(),
+      revert = false;
+
+  if ( !arr.length ) {
+    return [];
+  }
+
+  if ( opts.randomize ) {
+    return $.fn.sorted.randomize( arr );
+  }
+
+  // Sort the elements by the opts.by function.
+  // If we don't have opts.by, default to DOM order
+  if (opts.by !== $.noop && opts.by !== null && opts.by !== undefined) {
+    arr.sort(function(a, b) {
+
+      // Exit early if we already know we want to revert
+      if ( revert ) {
+        return 0;
+      }
+
+      var valA = opts.by($(a)),
+          valB = opts.by($(b));
+
+      // If both values are undefined, use the DOM order
+      if ( valA === undefined && valB === undefined ) {
+        revert = true;
+        return 0;
+      }
+
+      if ( valA === 'sortFirst' || valB === 'sortLast' ) {
+        return -1;
+      }
+
+      if ( valA === 'sortLast' || valB === 'sortFirst' ) {
+        return 1;
+      }
+
+      return (valA < valB) ? -1 :
+          (valA > valB) ? 1 : 0;
+    });
+  }
+
+  // Revert to the original array if necessary
+  if ( revert ) {
+    return this.get();
+  }
+
+  if ( opts.reverse ) {
+    arr.reverse();
+  }
+
+  return arr;
+};
+
+
+$.fn.sorted.defaults = {
+  reverse: false, // Use array.reverse() to reverse the results
+  by: null, // Sorting function
+  randomize: false // If true, this will skip the sorting and return a randomized order in the array
+};
+
+
+// http://stackoverflow.com/a/962890/373422
+$.fn.sorted.randomize = function( array ) {
+  var top = array.length,
+      tmp, current;
+
+  if ( !top ) {
+    return array;
+  }
+
+  while ( --top ) {
+    current = Math.floor( Math.random() * (top + 1) );
+    tmp = array[ current ];
+    array[ current ] = array[ top ];
+    array[ top ] = tmp;
+  }
+
+  return array;
+};
+
 
 })(jQuery, Modernizr);

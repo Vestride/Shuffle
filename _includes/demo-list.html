@@ -1,5 +1,5 @@
 <div class="row-fluid m-row js-demos demo-list">
-  {% for post in site.demos limit:4 %}
+  {% for post in site.demos %}
     <div class="span3 m-span3 figure-wrap js-demo">
       <a href="{{ site.baseurl }}/{{ post.slug }}">
         <figure>
@@ -12,20 +12,3 @@
     </div>
   {% endfor %}
 </div>
-
-{% if site.demos | size > 4 %}
-<div class="row-fluid m-row js-demos demo-list">
-  {% for post in site.demos limit:4 offset:4 %}
-    <div class="span3 m-span3 figure-wrap js-demo">
-      <a href="{{ site.baseurl }}/{{ post.slug }}">
-        <figure>
-          <div class="keep-ratio four-three">
-            <img src="{{ site.baseurl }}/img/demos/{{ post.slug }}.webp" alt="{{ post.label }}" />
-          </div>
-          <figcaption>{{ post.label }}</figcaption>
-        </figure>
-      </a>
-    </div>
-  {% endfor %}
-</div>
-{% endif %}

@@ -88,3 +88,13 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+
+.table-center-wrap {
+  display: table;
+  table-layout: fixed;
+}
+
+.table-center {
+  display: table-cell;
+  vertical-align: middle;
+}

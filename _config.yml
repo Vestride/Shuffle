@@ -43,6 +43,10 @@ demos:
     slug: animated
     label: Animated viewport entry
     screenshot: animated.webp
+  - url: 'demos/2014-03-08-bootstrap3-grid'
+    slug: bootstrap3-grid
+    label: Bootstrap 3 Grid Demo
+    screenshot: bootstrap3grid.webp
 
 shapes:
   - shape: circle
