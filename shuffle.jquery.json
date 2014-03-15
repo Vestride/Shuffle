@@ -3,7 +3,7 @@
     "title": "Shuffle.js",
     "description": "Categorize, sort, and filter a responsive grid of items",
     "keywords": ["gallery", "shuffle", "layout", "masonry", "filter", "sort", "responsive", "grid", "mobile", "tiles"],
-    "version": "2.0.5",
+    "version": "2.0.6",
     "author": {
         "name": "Glen Cheney",
         "email": "cheney.glen@gmail.com"

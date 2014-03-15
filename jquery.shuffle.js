@@ -27,7 +27,7 @@
  * Modified 2014-03-08
  * @license MIT license
  * @author Glen Cheney <cheney.glen@gmail.com>
- * @version 2.0.5
+ * @version 2.0.6
  */
 (function($, Modernizr, undefined) {
 
@@ -402,7 +402,7 @@ Shuffle.prototype = {
 
     // or use the size of the first item
     } else if (this.$items.length > 0) {
-      size = this.getOuterWidth(this.$items[0], true);
+      size = this._getOuterWidth(this.$items[0], true);
 
     // if there's no items, use size of container
     } else {
