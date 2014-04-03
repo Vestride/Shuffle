@@ -72,9 +72,7 @@
 .shuffle--animatein .picture-item__inner {
   opacity: 0;
   -webkit-transform: translate(0, 220px);
-  -moz-transform: translate(0, 220px);
   -ms-transform: translate(0, 220px);
-  -o-transform: translate(0, 220px);
   transform: translate(0, 220px);
 }
 
@@ -86,9 +84,7 @@
 .shuffle--animatein .picture-item.in .picture-item__inner {
   opacity: 1;
   -webkit-transform: translate(0, 0);
-  -moz-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
-  -o-transform: translate(0, 0);
   transform: translate(0, 0);
 }
 

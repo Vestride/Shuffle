@@ -1,5 +1,6 @@
 @import "variables";
-@import "compass";
+
+$sqrt3: 1.73205080757;
 
 .filter-options {
   margin-top: 20px;
@@ -81,14 +82,13 @@
 
 // 166 / sqrt(166^2 + 166^2) = scale
 .shape--diamond .shape__space {
-  -webkit-transform: rotate(45deg) scale(0.707106781);
-          transform: rotate(45deg) scale(0.707106781);
+  transform: rotate(45deg) scale(0.707106781);
 }
 
 
 $triangleSize: 220px;
 $halfSize: $triangleSize / 2;
-$fullSideWidth: round(sqrt(3) * $halfSize);
+$fullSideWidth: round($sqrt3 * $halfSize);
 $leftOver: $triangleSize - $fullSideWidth;
 .shape--triangle .shape__space {
   padding-top: $leftOver / 2;
@@ -120,7 +120,7 @@ $leftOver: $triangleSize - $fullSideWidth;
 
   $triangleSize: 270px;
   $halfSize: $triangleSize / 2;
-  $fullSideWidth: round(sqrt(3) * $halfSize);
+  $fullSideWidth: round($sqrt3 * $halfSize);
   $leftOver: $triangleSize - $fullSideWidth;
 
   .shape--triangle .shape__space {
@@ -133,7 +133,7 @@ $leftOver: $triangleSize - $fullSideWidth;
 
   $triangleSize: 166px;
   $halfSize: $triangleSize / 2;
-  $fullSideWidth: round(sqrt(3) * $halfSize);
+  $fullSideWidth: round($sqrt3 * $halfSize);
   $leftOver: $triangleSize - $fullSideWidth;
 
   .shape--triangle .shape__space {
@@ -146,7 +146,7 @@ $leftOver: $triangleSize - $fullSideWidth;
 
   $triangleSize: 200px;
   $halfSize: $triangleSize / 2;
-  $fullSideWidth: round(sqrt(3) * $halfSize);
+  $fullSideWidth: round($sqrt3 * $halfSize);
   $leftOver: $triangleSize - $fullSideWidth;
 
   .shape--triangle .shape__space {
@@ -159,7 +159,7 @@ $leftOver: $triangleSize - $fullSideWidth;
 
   $triangleSize: 100px;
   $halfSize: $triangleSize / 2;
-  $fullSideWidth: round(sqrt(3) * $halfSize);
+  $fullSideWidth: round($sqrt3 * $halfSize);
   $leftOver: $triangleSize - $fullSideWidth;
 
   .shape--triangle .shape__space {
@@ -190,9 +190,7 @@ body::before {
   width: 100%;
   height: 25px;
   background-color: hsla(110, 50%, 60%, .6);
-  -webkit-transition: background .2s ease;
-       -o-transition: background .2s ease;
-          transition: background .2s ease;
+  transition: background .2s ease;
 }
 
 @media (min-width: 1200px) {
@@ -222,4 +220,3 @@ body::before {
     background-color: hsla(300, 50%, 60%, .6);
   }
 }
-

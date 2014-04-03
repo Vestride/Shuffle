@@ -67,6 +67,7 @@
 
 .shape--diamond .shape__space {
   -webkit-transform: rotate(45deg) scale(0.70711);
+  -ms-transform: rotate(45deg) scale(0.70711);
   transform: rotate(45deg) scale(0.70711);
 }
 
@@ -125,7 +126,6 @@ body::before {
   height: 25px;
   background-color: rgba(119, 204, 102, 0.6);
   -webkit-transition: background .2s ease;
-  -o-transition: background .2s ease;
   transition: background .2s ease;
 }
 

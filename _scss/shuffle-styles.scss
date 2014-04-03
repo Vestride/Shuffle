@@ -1,5 +1,4 @@
 @import "variables";
-@import "compass";
 
 /*=============================================*\
  Some styles to show off masonry layout
@@ -93,17 +92,16 @@ $itemHeight: 220px;
 
 .shuffle--animatein .picture-item__inner {
   opacity: 0;
-  @include translate(0, 220px);
+  transform: translate(0, 220px);
 }
 
 .shuffle--animatein .picture-item__inner--transition {
-  -webkit-transition: all .6s ease;
-          transition: all .6s ease;
+  transition: all .6s ease;
 }
 
 .shuffle--animatein .picture-item.in .picture-item__inner {
   opacity: 1;
-  @include translate(0, 0);
+  transform: translate(0, 0);
 }
 
 
@@ -139,8 +137,3 @@ $itemHeight: 220px;
     float: none;
   }
 }
-
-
-
-
-

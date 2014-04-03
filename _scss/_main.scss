@@ -109,30 +109,25 @@ nav > a {
 .demo-list .figure-wrap,
 .demo-list .figure-wrap img {
   // Promote to its own layer. makes filters look ok on retina with images
-  -webkit-transform: translateZ(0);
-  -webkit-transition: .1s ease;
-          transition: .1s ease;
+  transform: translateZ(0);
+  transition: .1s ease;
 }
 
 .demo-list:hover .figure-wrap {
-  -webkit-transform: scale3d( 1, 1, 1 );
-          transform: scale3d( 1, 1, 1 );
+  transform: scale3d( 1, 1, 1 );
 
   img {
 
-    -webkit-filter: grayscale(1);
-            filter: grayscale(1);
+    filter: grayscale(1);
   }
 }
 
 .demo-list:hover .figure-wrap:hover {
   z-index: 2;
-  -webkit-transform: scale3d( 1.05, 1.05, 1 );
-          transform: scale3d( 1.05, 1.05, 1 );
+  transform: scale3d( 1.05, 1.05, 1 );
 
   img {
-    -webkit-filter: none;
-            filter: none;
+    filter: none;
   }
 }
 
@@ -264,6 +259,3 @@ input.faq-search {
     margin-bottom: 5px;
   }
 }
-
-
-
