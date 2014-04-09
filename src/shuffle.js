@@ -480,7 +480,7 @@ Shuffle.prototype = {
   _layout: function( items, fn, isOnlyPosition, isHide ) {
     var self = this;
 
-    fn = fn || self.filterEnd;
+    fn = fn || self._filterEnd;
 
     self.layoutTransitionEnded = false;
     $.each(items, function(index, item) {
@@ -543,14 +543,14 @@ Shuffle.prototype = {
 
   _reLayout : function( callback, isOnlyPosition ) {
     var self = this;
-    callback = callback || self.filterEnd;
+    callback = callback || self._filterEnd;
     self._resetCols();
 
     // If we've already sorted the elements, keep them sorted
     if ( self.keepSorted && self.lastSort ) {
       self.sort( self.lastSort, true, isOnlyPosition );
     } else {
-      self._layout( self.$items.filter('.filtered').get(), self.filterEnd, isOnlyPosition );
+      self._layout( self.$items.filter('.filtered').get(), self._filterEnd, isOnlyPosition );
     }
   },
 
@@ -616,7 +616,7 @@ Shuffle.prototype = {
     var self = this,
         $concealed = $collection || self.$items.filter('.concealed'),
         transitionObj = {},
-        callback = fn || self.shrinkEnd;
+        callback = fn || self._shrinkEnd;
 
     // Abort if no items
     if ( !$concealed.length ) {
@@ -669,15 +669,12 @@ Shuffle.prototype = {
    * @param {jQuery}   opts.$this jQuery object representing the current item
    * @param {number}   opts.x translate's x
    * @param {number}   opts.y translate's y
-   * @param {string}   opts.left left position (used when no transforms available)
-   * @param {string}   opts.top top position (used when no transforms available)
    * @param {number}   opts.scale amount to scale the item
    * @param {number}   opts.opacity opacity of the item
-   * @param {string}   opts.height the height of the item (used when no transforms available)
-   * @param {string}   opts.width the width of the item (used when no transforms available)
    * @param {Function} opts.callback complete function for the animation
+   * @private
    */
-  transition: function(opts) {
+  _transition: function(opts) {
     var self = this,
     transform,
     // Only fire callback once per collection's transition
@@ -739,10 +736,10 @@ Shuffle.prototype = {
 
       if ( transitionObj.skipTransition ) {
         self._skipTransition( transitionObj.$this[0], function() {
-          self.transition( transitionObj );
+          self._transition( transitionObj );
         });
       } else {
-        self.transition( transitionObj );
+        self._transition( transitionObj );
       }
     });
 
@@ -750,15 +747,15 @@ Shuffle.prototype = {
     self.styleQueue.length = 0;
   },
 
-  shrinkEnd: function() {
+  _shrinkEnd: function() {
     this._fire( Shuffle.EventType.SHRUNK );
   },
 
-  filterEnd: function() {
+  _filterEnd: function() {
     this._fire( Shuffle.EventType.FILTERED );
   },
 
-  sortEnd: function() {
+  _sortEnd: function() {
     this._fire( Shuffle.EventType.SORTED );
   },
 
@@ -767,25 +764,26 @@ Shuffle.prototype = {
    * @param {Element} element DOM element that won't be transitioned
    * @param {(string|Function)} property The new style property which will be set or a function which will be called
    * @param {string} [value] The value that `property` should be.
+   * @private
    */
   _skipTransition : function( element, property, value ) {
-      var reflow,
-          duration = element.style[ TRANSITION_DURATION ];
+    var reflow,
+        duration = element.style[ TRANSITION_DURATION ];
 
-      // Set the duration to zero so it happens immediately
-      element.style[ TRANSITION_DURATION ] = '0ms'; // ms needed for firefox!
+    // Set the duration to zero so it happens immediately
+    element.style[ TRANSITION_DURATION ] = '0ms'; // ms needed for firefox!
 
-      if ( $.isFunction( property ) ) {
-        property();
-      } else {
-        element.style[ property ] = value;
-      }
+    if ( $.isFunction( property ) ) {
+      property();
+    } else {
+      element.style[ property ] = value;
+    }
 
-      // Force reflow
-      reflow = element.offsetWidth;
+    // Force reflow
+    reflow = element.offsetWidth;
 
-      // Put the duration back
-      element.style[ TRANSITION_DURATION ] = duration;
+    // Put the duration back
+    element.style[ TRANSITION_DURATION ] = duration;
   },
 
   _addItems : function( $newItems, animateIn, isSequential ) {
@@ -830,7 +828,7 @@ Shuffle.prototype = {
 
     setTimeout(function() {
       $newFilteredItems.each(function(i, el) {
-        self.transition({
+        self._transition({
           from: 'reveal',
           $this: $(el),
           opacity: 1
@@ -896,9 +894,9 @@ Shuffle.prototype = {
 
     self._layout(items, function() {
       if (fromFilter) {
-        self.filterEnd();
+        self._filterEnd();
       }
-      self.sortEnd();
+      self._sortEnd();
     }, isOnlyPosition);
 
     self.lastSort = opts;
