@@ -49,6 +49,11 @@
   {% endfor %}
   {% endif %}
 
+
+  {% unless page.nomodernizr %}
+  <script src="{{ site.baseurl }}/dist/modernizr.custom.min.js"></script>
+  {% endunless %}
+
   <!--[if lt IE 9]>
   <script src="{{ site.baseurl }}/js/html5shiv.js"></script>
   <![endif]-->

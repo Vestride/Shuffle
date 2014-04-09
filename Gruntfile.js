@@ -1,6 +1,21 @@
 module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
 
+  var banner = [
+    '/*!',
+    ' * jQuery Shuffle Plugin',
+    ' * Uses CSS Transforms to filter down a grid of items.',
+    ' * Dependencies: jQuery 1.9+, Modernizr 2.6.2.',
+    ' * Inspired by Isotope http://isotope.metafizzy.co/',
+    ' * Modified 2014-03-08',
+    ' * @license MIT license',
+    ' * @author Glen Cheney <cheney.glen@gmail.com>',
+    ' * @version <%= pkg.version %>',
+    ' */\n'
+  ].join('\n');
+
+
+
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -29,6 +44,10 @@ module.exports = function(grunt) {
       css: {
         files: '_scss/*.scss',
         tasks: ['compile-css'],
+      },
+      src: {
+        files: 'src/*.js',
+        tasks: ['concat']
       }
     },
 
@@ -58,13 +77,35 @@ module.exports = function(grunt) {
       }
     },
 
+    concat: {
+      options: {
+        banner: banner
+      },
+      main: {
+        src: ['src/intro.js', 'src/shuffle.js', 'src/outro.js'],
+        dest: 'dist/jquery.shuffle.js'
+      },
+      modernizr: {
+        src: ['src/modernizr.custom.min.js', 'src/intro.js', 'src/shuffle.js', 'src/outro.js'],
+        dest: 'dist/jquery.shuffle.modernizr.js'
+      }
+    },
+
     uglify: {
       options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+        preserveComments: false,
+        banner: banner,
+        report: 'min',
+        mangle: true,
+        compress: true
       },
-      build: {
-        src: 'src/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>.min.js'
+      main: {
+        src: 'dist/jquery.shuffle.js',
+        dest: 'dist/jquery.shuffle.min.js'
+      },
+      modernizr: {
+        src: 'dist/jquery.shuffle.modernizr.js',
+        dest: 'dist/jquery.shuffle.modernizr.min.js'
       }
     }
   });
@@ -77,7 +118,21 @@ module.exports = function(grunt) {
 
   // Use Jekyll to watch and rebuild files.
   grunt.registerTask('serve', function() {
-    grunt.task.run(['shell:serve']);
+    grunt.task.run(['build', 'shell:serve']);
+  });
+
+
+  grunt.registerTask('build', function() {
+    // Copy over custom modernizr build.
+    grunt.file.copy('src/modernizr.custom.min.js', 'dist/modernizr.custom.min.js');
+
+    // Run concat and minfication.
+    grunt.task.run([
+      'concat:main',
+      'concat:modernizr',
+      'uglify:main',
+      'uglify:modernizr'
+    ]);
   });
 
   // Default task(s).
