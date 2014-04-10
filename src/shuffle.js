@@ -1,3 +1,12 @@
+
+// Validate Modernizr exists.
+// Shuffle requires `csstransitions`, `csstransforms`, `csstransforms3d`,
+// and `prefixed` to exist on the Modernizr object.
+if (typeof Modernizr !== 'object') {
+  throw new Error('Shuffle.js requires Modernizr.\n' +
+      'http://vestride.github.io/Shuffle/#dependencies');
+}
+
 // Used for unique instance variables
 var id = 0;
 
@@ -1181,3 +1190,5 @@ $.fn.sorted.randomize = function( array ) {
 
   return array;
 };
+
+return Shuffle;

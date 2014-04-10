@@ -8,9 +8,24 @@
  * @author Glen Cheney <cheney.glen@gmail.com>
  * @version 2.0.6
  */
-(function($, Modernizr, undefined) {
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery', 'modernizr'], factory);
+  } else {
+    factory(window.$, window.Modernizr);
+  }
+})(function($, Modernizr, undefined) {
 
 'use strict';
+
+
+// Validate Modernizr exists.
+// Shuffle requires `csstransitions`, `csstransforms`, `csstransforms3d`,
+// and `prefixed` to exist on the Modernizr object.
+if (typeof Modernizr !== 'object') {
+  throw new Error('Shuffle.js requires Modernizr.\n' +
+      'http://vestride.github.io/Shuffle/#dependencies');
+}
 
 // Used for unique instance variables
 var id = 0;
@@ -1196,4 +1211,6 @@ $.fn.sorted.randomize = function( array ) {
   return array;
 };
 
-})(jQuery, Modernizr);
+return Shuffle;
+
+});

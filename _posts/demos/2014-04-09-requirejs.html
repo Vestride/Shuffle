@@ -1,0 +1,67 @@
+---
+layout: default
+title: Using Shuffle with Requirejs
+description: TODO
+image: /demos/requirejs.jpg
+extraJS: []
+prism: false
+shuffle: false
+jquery: false
+pagejs: false
+---
+
+<div class="container-fluid">
+  <h2>RequireJS!</h2>
+  <p>
+    Shuffle is compatible with AMD loaders like <a href="http://requirejs.org">RequireJS</a>.
+    You can take a peek at the <a href="/js/require-main.js">config file</a> used on this page.
+    Just remember, Shuffle needs Modernizr to work!
+    I also don't recommend using the "jquery.shuffle.modernizr.js" file with RequireJS because Modernizr doesn't have an AMD defintion block.
+  </p>
+</div>
+
+
+<style>
+  .shuffle-wrap {
+    position: relative;
+  }
+
+  #grid .img-item {
+    margin-top: 10px;
+    margin-left: 0;
+  }
+
+  #grid .img-item img {
+    width: 100%;
+  }
+</style>
+
+<div class="container-fluid shuffle-wrap">
+  <div id="grid" class="shuffle--container row-fluid">
+    {% for item in site.items %}
+    <figure class="js-item img-item span3 m-span3">
+      <div class="keep-ratio four-three">
+        <div class="keep-ratio-inner">
+          <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="{{item.title}}"/>
+        </div>
+      </div>
+      <figcaption>{{ item.groups }}</figcaption>
+    </figure>
+    {% endfor %}
+    <div class="span3 m-span3" id="js-sizer"></div>
+  </div>
+</div>
+
+
+<section>
+  <div class="container-fluid">
+    <h2>Shuffle.js</h2>
+    <p>{{ site.longDescription }}</p>
+  </div>
+</section>
+
+
+{% include credit-jake.html %}
+
+
+<script data-main="/js/require-main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>

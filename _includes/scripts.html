@@ -1,12 +1,16 @@
+{% if page.jquery != false %}
 <!--[if lt IE 9]>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <![endif]-->
 <!--[if gte IE 9]><!-->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 <!--<![endif]-->
+{% endif %}
 
+{% if page.shuffle != false %}
 <!-- Shuffle! -->
 <script src="{{ site.baseurl }}/dist/jquery.shuffle.js"></script>
+{% endif %}
 
 {% if page.prism %}
 <!-- Syntax highlighting via Prism -->
@@ -14,8 +18,10 @@
 {% endif %}
 
 <script>var site_url = "{{ site.baseurl }}";</script>
+{% if page.pagejs != false %}
 <script src="{{ site.baseurl }}/js/page.js"></script>
 <script src="{{ site.baseurl }}/js/evenheights.js"></script>
+{% endif %}
 
 {% if page.extraJS && page.extraJS.length %}
 {% for src in page.extraJS %}

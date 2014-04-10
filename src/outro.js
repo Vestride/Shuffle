@@ -1,1 +1,1 @@
-})(jQuery, Modernizr);
+});
