@@ -426,6 +426,26 @@ h4 {
     margin: 2vw 0;
   }
 }
+h1 > a,
+h2 > a,
+h3 > a {
+  display: none;
+}
+
+h1:hover > a,
+h2:hover > a,
+h3:hover > a {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: -40px;
+  height: 50px;
+  width: 50px;
+  background: url("../img/link.svg") no-repeat;
+  overflow: hidden;
+  text-indent: -999em;
+}
+
 .unstyled {
   list-style-type: none;
   padding: 0;
@@ -2049,6 +2069,10 @@ span.demo-link-container::before {
   margin-top: 10px;
 }
 
+#be-social h2 {
+  margin-bottom: 32px;
+}
+
 .search-section {
   margin-top: 1em;
   margin-bottom: 1em;
@@ -2278,6 +2302,10 @@ button:active {
     font-size: .75em;
   }
 }
+.text-center {
+  text-align: center;
+}
+
 .ib {
   display: inline-block;
 }

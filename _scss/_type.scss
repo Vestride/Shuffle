@@ -77,6 +77,26 @@ h4 {
   }
 }
 
+h1 > a,
+h2 > a,
+h3 > a {
+  display: none;
+}
+
+h1:hover > a,
+h2:hover > a,
+h3:hover > a {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: -40px;
+  height: 50px;
+  width: 50px;
+  background: url('../img/link.svg') no-repeat;
+  overflow: hidden;
+  text-indent: -999em;
+}
+
 
 
 .unstyled {
