@@ -1,6 +1,10 @@
 # [Shuffle](http://vestride.github.io/Shuffle)
 Categorize, sort, and filter a responsive grid of items.
 
+```bash
+bower install shufflejs
+```
+
 ## Docs and Demos
 [All found here](http://vestride.github.io/Shuffle)
 
