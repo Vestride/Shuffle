@@ -145,6 +145,18 @@ nav > a {
 }
 
 
+.demo-link-container::before {
+  content: '➜';
+  color: $emerald;
+  margin-right: 5px;
+}
+
+
+span.demo-link-container::before {
+  margin-left: 5px;
+}
+
+
 
 // Filters
 .filter__label {
