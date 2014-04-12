@@ -47,6 +47,10 @@ demos:
     slug: bootstrap3-grid
     label: Bootstrap 3 Grid Demo
     screenshot: bootstrap3grid.webp
+  - url: 'demos/2014-04-09-requirejs'
+    slug: requirejs
+    label: RequireJS with Shuffle
+    screenshot: requirejs.webp
 
 shapes:
   - shape: circle
