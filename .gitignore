@@ -1,6 +1,6 @@
 node_modules
 .DS_Store
 _site
-.sass_cache
+.sass-cache
 *.scssc
 temp

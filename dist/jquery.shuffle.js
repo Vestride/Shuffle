@@ -1,11 +1,8 @@
 /*!
- * jQuery Shuffle Plugin
- * Uses CSS Transforms to filter down a grid of items.
- * Dependencies: jQuery 1.9+, Modernizr 2.6.2.
- * Inspired by Isotope http://isotope.metafizzy.co/
- * Modified 2014-03-08
+ * Shuffle.js by @Vestride
+ * Categorize, sort, and filter a responsive grid of items.
+ * Dependencies: jQuery 1.9+, Modernizr 2.6.2+
  * @license MIT license
- * @author Glen Cheney <cheney.glen@gmail.com>
  * @version 2.0.6
  */
 (function (factory) {
