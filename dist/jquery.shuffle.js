@@ -28,38 +28,6 @@ if (typeof Modernizr !== 'object') {
 var id = 0;
 
 
-// Underscore's throttle function.
-function throttle(func, wait, options) {
-  var context, args, result;
-  var timeout = null;
-  var previous = 0;
-  options = options || {};
-  var later = function() {
-    previous = options.leading === false ? 0 : $.now();
-    timeout = null;
-    result = func.apply(context, args);
-    context = args = null;
-  };
-  return function() {
-    var now = $.now();
-    if (!previous && options.leading === false) previous = now;
-    var remaining = wait - (now - previous);
-    context = this;
-    args = arguments;
-    if (remaining <= 0 || remaining > wait) {
-      clearTimeout(timeout);
-      timeout = null;
-      previous = now;
-      result = func.apply(context, args);
-      context = args = null;
-    } else if (!timeout && options.trailing !== false) {
-      timeout = setTimeout(later, remaining);
-    }
-    return result;
-  };
-}
-
-
 /**
  * Returns css prefixed properties like `-webkit-transition` or `box-sizing`
  * from `transition` or `boxSizing`, respectively.
@@ -97,6 +65,40 @@ var ALL_ITEMS = 'all';
 var FILTER_ATTRIBUTE_KEY = 'groups';
 
 
+// Underscore's throttle function.
+function throttle(func, wait, options) {
+  var context, args, result;
+  var timeout = null;
+  var previous = 0;
+  options = options || {};
+  var later = function() {
+    previous = options.leading === false ? 0 : $.now();
+    timeout = null;
+    result = func.apply(context, args);
+    context = args = null;
+  };
+  return function() {
+    var now = $.now();
+    if (!previous && options.leading === false) {
+      previous = now;
+    }
+    var remaining = wait - (now - previous);
+    context = this;
+    args = arguments;
+    if (remaining <= 0 || remaining > wait) {
+      clearTimeout(timeout);
+      timeout = null;
+      previous = now;
+      result = func.apply(context, args);
+      context = args = null;
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining);
+    }
+    return result;
+  };
+}
+
+
 /**
  * Categorize, sort, and filter a responsive grid of items.
  *
@@ -118,7 +120,10 @@ var Shuffle = function( element, options ) {
 
   // Dispatch the done event asynchronously so that people can bind to it after
   // Shuffle has been initialized.
-  setTimeout( $.proxy( this._fire, this, Shuffle.EventType.DONE ), 16 );
+  setTimeout( $.proxy(function() {
+    this.initialized = true;
+    this._fire( Shuffle.EventType.DONE );
+  }, this), 16 );
 };
 
 
@@ -152,7 +157,10 @@ Shuffle.prototype = {
             resizeFunction,
         sort = self.initialSort ? self.initialSort : null;
 
-    // Save variables needed later then add some classes
+
+    self._layoutList = [];
+    self._shrinkList = [];
+
     self._setVars();
 
     // Zero out all columns
@@ -164,7 +172,8 @@ Shuffle.prototype = {
     // Set initial css for each item
     self._initItems();
 
-    // Bind resize events (http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer)
+    // Bind resize events
+    // http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer
     self.$window.on('resize.' + SHUFFLE + '.' + self.unique, debouncedResize);
 
     // Get container css all in one request. Causes reflow
@@ -210,9 +219,6 @@ Shuffle.prototype = {
         columnWidth = self.columnWidth;
 
     self.$items = self._getItems();
-
-    // If the columnWidth property is a function, then the grid is fluid
-    self.isFluid = columnWidth && $.isFunction(self.columnWidth);
 
     // Column width is the default setting and sizer is not (meaning passed in)
     // Assume they meant column width to be the sizer
@@ -340,7 +346,7 @@ Shuffle.prototype = {
    */
   _initItems : function( $items ) {
     $items = $items || this.$items;
-    return $items.css( this.itemCss );
+    return $items.css( this.itemCss ).data('position', {x: 0, y: 0});
   },
 
   _updateItemCount : function() {
@@ -397,12 +403,23 @@ Shuffle.prototype = {
     return parseFloat( dimension );
   },
 
-  _getOuterWidth: function( element, includeMargins ) {
+
+  /**
+   * Returns the outer width of an element, optionally including its margins.
+   * @param {Element} element The element.
+   * @param {boolean} [includeMargins] Whether to include margins. Default is false.
+   * @return {number} The width.
+   */
+  _getOuterWidth : function( element, includeMargins ) {
     var width = element.offsetWidth;
 
+    // Use jQuery here because it uses getComputedStyle internally and is
+    // cross-browser. Using the style property of the element will only work
+    // if there are inline styles.
     if (includeMargins) {
-      var marginLeft = Math.round(parseFloat(element.style.marginLeft)) || 0;
-      var marginRight = Math.round(parseFloat(element.style.marginRight)) || 0;
+      var styles = $(element).css(['marginLeft', 'marginRight']);
+      var marginLeft = parseFloat(styles.marginLeft);
+      var marginRight = parseFloat(styles.marginRight);
       width += marginLeft + marginRight;
     }
 
@@ -410,23 +427,43 @@ Shuffle.prototype = {
   },
 
 
-  _getColumnSize: function( gutterSize, containerWidth ) {
+  /**
+   * Returns the outer height of an element, optionally including its margins.
+   * @param {Element} element The element.
+   * @param {boolean} [includeMargins] Whether to include margins. Default is false.
+   * @return {number} The height.
+   */
+  _getOuterHeight : function( element, includeMargins ) {
+    var height = element.offsetHeight;
+
+    if (includeMargins) {
+      var styles = $(element).css(['marginTop', 'marginBottom']);
+      var marginTop = parseFloat(styles.marginTop);
+      var marginBottom = parseFloat(styles.marginBottom);
+      height += marginTop + marginBottom;
+    }
+
+    return height;
+  },
+
+
+  _getColumnSize : function( gutterSize, containerWidth ) {
     var size;
 
-    // Use fluid columnWidth function if there
-    if (this.isFluid) {
+    // If the columnWidth property is a function, then the grid is fluid
+    if ( $.isFunction( this.columnWidth ) ) {
       size = this.columnWidth(containerWidth);
 
     // columnWidth option isn't a function, are they using a sizing element?
-    } else if (this.useSizer) {
+    } else if ( this.useSizer ) {
       size = this._getPreciseDimension(this.sizer, 'width');
 
     // if not, how about the explicitly set option?
-    } else if (this.columnWidth) {
+    } else if ( this.columnWidth ) {
       size = this.columnWidth;
 
     // or use the size of the first item
-    } else if (this.$items.length > 0) {
+    } else if ( this.$items.length > 0 ) {
       size = this._getOuterWidth(this.$items[0], true);
 
     // if there's no items, use size of container
@@ -439,16 +476,15 @@ Shuffle.prototype = {
       size = containerWidth;
     }
 
-    // return Math.round(size + gutterSize);
     return size + gutterSize;
   },
 
 
-  _getGutterSize: function(containerWidth) {
+  _getGutterSize : function( containerWidth ) {
     var size;
-    if ($.isFunction(this.gutterWidth)) {
+    if ( $.isFunction( this.gutterWidth ) ) {
       size = this.gutterWidth(containerWidth);
-    } else if (this.useSizer) {
+    } else if ( this.useSizer ) {
       size = this._getPreciseDimension(this.sizer, 'marginLeft');
     } else {
       size = this.gutterWidth;
@@ -495,24 +531,22 @@ Shuffle.prototype = {
 
 
   /**
-   * Loops through each item that should be shown
-   * Calculates the x and y position and then transitions it
+   * Loops through each item that should be shown and calculates the x, y position.
    * @param {Array.<Element>} items Array of items that will be shown/layed out in order in their array.
-   *     Because jQuery collection are always ordered in DOM order, we can't pass a jq collection
-   * @param {function} complete callback function
-   * @param {boolean} isOnlyPosition set this to true to only trigger positioning of the items
-   * @param {boolean} isHide
+   *     Because jQuery collection are always ordered in DOM order, we can't pass a jq collection.
+   * @param {function} fn Callback function.
+   * @param {boolean} isOnlyPosition If true this will position the items with zero opacity.
    */
-  _layout: function( items, fn, isOnlyPosition, isHide ) {
+  _layout : function( items, fn, isOnlyPosition ) {
     var self = this;
 
     fn = fn || self._filterEnd;
 
-    self.layoutTransitionEnded = false;
     $.each(items, function(index, item) {
-      var $this = $(item),
-          brickWidth = self._getOuterWidth(item, true),
-          columnSpan = brickWidth / self.colWidth;
+      var $item = $(item),
+          itemData = $item.data(),
+          itemWidth = self._getOuterWidth(item, true),
+          columnSpan = itemWidth / self.colWidth;
 
       // If the difference between the rounded column span number and the
       // calculated column span number is really small, round the number to
@@ -526,12 +560,14 @@ Shuffle.prototype = {
       // amount of columns in the whole layout.
       var colSpan = Math.min( Math.ceil(columnSpan), self.cols );
 
-      // The brick is only one column.
+      // The item spans only one column.
+      var currentPosition = itemData.position;
+      var position;
       if ( colSpan === 1 ) {
-        self._placeItem( $this, self.colYs, fn, isOnlyPosition, isHide );
+        position = self._placeItem( $item, self.colYs );
 
-      // The brick spans more than one column, figure out how many different
-      // places could this brick fit horizontally
+      // The item spans more than one column, figure out how many different
+      // places it could fit horizontally
       } else {
         var groupCount = self.cols + 1 - colSpan,
             groupY = [],
@@ -546,8 +582,35 @@ Shuffle.prototype = {
           groupY[i] = Math.max.apply( Math, groupColY );
         }
 
-        self._placeItem( $this, groupY, fn, isOnlyPosition, isHide );
+        position = self._placeItem( $item, groupY );
       }
+
+      var currentX = currentPosition.x;
+      var currentY = currentPosition.y;
+
+      // If the item will not change its position, do not add it to the render
+      // queue. Transitions don't fire when setting a property to the same value.
+      if ( position.x === currentX && position.y === currentY && itemData.scale === 1 ) {
+        return;
+      }
+
+      var transitionObj = {
+        $this: $item,
+        x: position.x,
+        y: position.y,
+        scale: 1
+      };
+
+      if ( isOnlyPosition ) {
+        transitionObj.skipTransition = true;
+        transitionObj.opacity = 0;
+      } else {
+        transitionObj.opacity = 1;
+        transitionObj.callback = fn;
+      }
+
+      self.styleQueue.push( transitionObj );
+      self._layoutList.push( $item[0] );
     });
 
     // `_layout` always happens after `_shrink`, so it's safe to process the style
@@ -567,21 +630,19 @@ Shuffle.prototype = {
     }
   },
 
-  _reLayout : function( callback, isOnlyPosition ) {
-    var self = this;
-    callback = callback || self._filterEnd;
-    self._resetCols();
+  _reLayout : function() {
+    this._resetCols();
 
     // If we've already sorted the elements, keep them sorted
-    if ( self.keepSorted && self.lastSort ) {
-      self.sort( self.lastSort, true, isOnlyPosition );
+    if ( this.lastSort ) {
+      this.sort( this.lastSort, true );
     } else {
-      self._layout( self.$items.filter('.filtered').get(), self._filterEnd, isOnlyPosition );
+      this._layout( this.$items.filter('.filtered').get(), this._filterEnd );
     }
   },
 
   // worker method that places brick in the columnSet with the the minY
-  _placeItem : function( $item, setY, callback, isOnlyPosition, isHide ) {
+  _placeItem : function( $item, setY ) {
     // get the minimum Y value from the columns
     var self = this,
         minimumY = Math.min.apply( Math, setY ),
@@ -598,51 +659,35 @@ Shuffle.prototype = {
     }
 
     // Position the item
-    var x = self.colWidth * shortCol,
-    y = minimumY;
-    x = Math.round( x + self.offset.left );
-    y = Math.round( y + self.offset.top );
+    var position = {
+      x: Math.round( (self.colWidth * shortCol) + self.offset.left ),
+      y: Math.round( minimumY + self.offset.top )
+    };
 
     // Save data for shrink
-    $item.data( {x: x, y: y} );
+    $item.data( 'position', position );
 
     // Apply setHeight to necessary columns
-    var setHeight = minimumY + $item.outerHeight( true ),
+    var setHeight = minimumY + self._getOuterHeight( $item[0], true ),
     setSpan = self.cols + 1 - len;
     for ( i = 0; i < setSpan; i++ ) {
       self.colYs[ shortCol + i ] = setHeight;
     }
 
-    var transitionObj = {
-      from: 'layout',
-      $this: $item,
-      x: x,
-      y: y,
-      scale: 1
-    };
-
-    if ( isOnlyPosition ) {
-      transitionObj.skipTransition = true;
-    } else {
-      transitionObj.opacity = 1;
-      transitionObj.callback = callback;
-    }
-
-    if ( isHide ) {
-      transitionObj.opacity = 0;
-    }
-
-    self.styleQueue.push( transitionObj );
+    return position;
   },
 
   /**
-   * Hides the elements that don't match our filter
+   * Hides the elements that don't match our filter.
+   * @param {jQuery} $collection jQuery collection to shrink.
+   * @param {Function} fn Callback function.
+   * @private
    */
   _shrink : function( $collection, fn ) {
     var self = this,
-        $concealed = $collection || self.$items.filter('.concealed'),
-        transitionObj = {},
-        callback = fn || self._shrinkEnd;
+        $concealed = $collection || self.$items.filter('.concealed');
+
+    fn = fn || self._shrinkEnd;
 
     // Abort if no items
     if ( !$concealed.length ) {
@@ -651,22 +696,21 @@ Shuffle.prototype = {
 
     self._fire( Shuffle.EventType.SHRINK );
 
-    self.shrinkTransitionEnded = false;
     $concealed.each(function() {
-      var $this = $(this),
-          data = $this.data();
+      var $item = $(this);
+      var position = $item.data('position');
 
-      transitionObj = {
-        from: 'shrink',
-        $this: $this,
-        x: data.x,
-        y: data.y,
+      var transitionObj = {
+        $this: $item,
+        x: position.x,
+        y: position.y,
         scale : 0.001,
         opacity: 0,
-        callback: callback
+        callback: fn
       };
 
       self.styleQueue.push( transitionObj );
+      self._shrinkList.push( $item[0] );
     });
   },
 
@@ -689,6 +733,24 @@ Shuffle.prototype = {
 
 
   /**
+   * If the browser has 3d transforms available, build a string with those,
+   * otherwise use 2d transforms.
+   * @param {number} x X position.
+   * @param {number} y Y position.
+   * @param {number} scale Scale amount.
+   * @return {string} A normalized string which can be used with the transform style.
+   * @private
+   */
+  _getItemTransformString: function(x, y, scale) {
+    if ( HAS_TRANSFORMS_3D ) {
+      return 'translate3d(' + x + 'px, ' + y + 'px, 0) scale3d(' + scale + ', ' + scale + ', 1)';
+    } else {
+      return 'translate(' + x + 'px, ' + y + 'px) scale(' + scale + ', ' + scale + ')';
+    }
+  },
+
+
+  /**
    * Transitions an item in the grid
    *
    * @param {Object}   opts options
@@ -700,65 +762,69 @@ Shuffle.prototype = {
    * @param {Function} opts.callback complete function for the animation
    * @private
    */
-  _transition: function(opts) {
-    var self = this,
-    transform,
-    // Only fire callback once per collection's transition
-    complete = function() {
-      if ( !self.layoutTransitionEnded && opts.from === 'layout' ) {
-        self._fire( Shuffle.EventType.LAYOUT );
-        opts.callback.call( self );
-        self.layoutTransitionEnded = true;
-      } else if ( !self.shrinkTransitionEnded && opts.from === 'shrink' ) {
-        opts.callback.call( self );
-        self.shrinkTransitionEnded = true;
-      }
-    };
+  _transition : function( opts ) {
+    var complete = $.proxy( this._handleItemAnimationEnd, this,
+        opts.callback || $.noop, opts.$this[0] );
 
-    opts.callback = opts.callback || $.noop;
+    opts.scale = opts.scale || 1;
+    opts.$this.data('scale', opts.scale);
 
     // Use CSS Transforms if we have them
-    if ( self.supported ) {
-
-      // Make scale one if it's not preset
-      if ( opts.scale === undefined ) {
-        opts.scale = 1;
-      }
-
-      if ( HAS_TRANSFORMS_3D ) {
-        transform = 'translate3d(' + opts.x + 'px, ' + opts.y + 'px, 0) scale3d(' + opts.scale + ', ' + opts.scale + ', 1)';
-      } else {
-        transform = 'translate(' + opts.x + 'px, ' + opts.y + 'px) scale(' + opts.scale + ', ' + opts.scale + ')';
-      }
+    if ( this.supported ) {
+      var styles = {};
 
       if ( opts.x !== undefined ) {
-        opts.$this.css( TRANSFORM, transform );
+        styles[ TRANSFORM ] = this._getItemTransformString( opts.x, opts.y, opts.scale );
       }
 
       if ( opts.opacity !== undefined ) {
-        // Update css to trigger CSS Animation
-        opts.$this.css('opacity' , opts.opacity);
+        styles.opacity = opts.opacity;
       }
 
-      opts.$this.one(TRANSITIONEND, complete);
-    } else {
+      opts.$this.css( styles );
 
-      var cssObj = {
+      // Transitions are not set until shuffle has loaded to avoid the initial transition.
+      if ( this.initialized ) {
+        opts.$this.on( TRANSITIONEND, complete );
+      } else {
+        complete();
+      }
+
+    // Use jQuery to animate left/top
+    } else {
+      opts.$this.stop( true ).animate({
         left: opts.x,
         top: opts.y,
         opacity: opts.opacity
-      };
+      }, this.speed, 'swing', complete);
+    }
+  },
 
-      // Use jQuery to animate left/top
-      opts.$this.stop( true ).animate( cssObj, self.speed, 'swing', complete);
+
+  _handleItemAnimationEnd : function( callback, item, evt ) {
+    // Make sure this event handler has not bubbled up from a child.
+    if ( evt ) {
+      if ( evt.target === item ) {
+        $( item ).off( TRANSITIONEND );
+      } else {
+        return;
+      }
+    }
+
+    if ( this._layoutList.length > 0 && $.inArray( item, this._layoutList ) > -1 ) {
+      this._fire( Shuffle.EventType.LAYOUT );
+      callback.call( this );
+      this._layoutList.length = 0;
+    } else if ( this._shrinkList.length > 0 && $.inArray( item, this._shrinkList ) > -1 ) {
+      callback.call( this );
+      this._shrinkList.length = 0;
     }
   },
 
   _processStyleQueue : function() {
-    var self = this,
-        queue = self.styleQueue;
+    var self = this;
 
-    $.each(queue, function(i, transitionObj) {
+    $.each(this.styleQueue, function(i, transitionObj) {
 
       if ( transitionObj.skipTransition ) {
         self._skipTransition( transitionObj.$this[0], function() {
@@ -773,15 +839,15 @@ Shuffle.prototype = {
     self.styleQueue.length = 0;
   },
 
-  _shrinkEnd: function() {
+  _shrinkEnd : function() {
     this._fire( Shuffle.EventType.SHRUNK );
   },
 
-  _filterEnd: function() {
+  _filterEnd : function() {
     this._fire( Shuffle.EventType.FILTERED );
   },
 
-  _sortEnd: function() {
+  _sortEnd : function() {
     this._fire( Shuffle.EventType.SORTED );
   },
 
@@ -793,8 +859,7 @@ Shuffle.prototype = {
    * @private
    */
   _skipTransition : function( element, property, value ) {
-    var reflow,
-        duration = element.style[ TRANSITION_DURATION ];
+    var duration = element.style[ TRANSITION_DURATION ];
 
     // Set the duration to zero so it happens immediately
     element.style[ TRANSITION_DURATION ] = '0ms'; // ms needed for firefox!
@@ -806,16 +871,16 @@ Shuffle.prototype = {
     }
 
     // Force reflow
-    reflow = element.offsetWidth;
+    var reflow = element.offsetWidth;
+    // Avoid jshint warnings: unused variables and expressions.
+    reflow = null;
 
     // Put the duration back
     element.style[ TRANSITION_DURATION ] = duration;
   },
 
   _addItems : function( $newItems, animateIn, isSequential ) {
-    var self = this,
-        $passed,
-        passed;
+    var self = this;
 
     if ( !self.supported ) {
       animateIn = false;
@@ -830,8 +895,8 @@ Shuffle.prototype = {
     $newItems.css('opacity', 0);
 
     // Get ones that passed the current filter
-    $passed = self._filter( undefined, $newItems );
-    passed = $passed.get();
+    var $passed = self._filter( undefined, $newItems );
+    var passed = $passed.get();
 
     // How many filtered elements?
     self._updateItemCount();
@@ -855,7 +920,6 @@ Shuffle.prototype = {
     setTimeout(function() {
       $newFilteredItems.each(function(i, el) {
         self._transition({
-          from: 'reveal',
           $this: $(el),
           opacity: 1
         });
@@ -891,8 +955,6 @@ Shuffle.prototype = {
     // How many filtered elements?
     self._updateItemCount();
 
-    self._resetCols();
-
     // Shrink each concealed item
     self._shrink();
 
@@ -910,7 +972,7 @@ Shuffle.prototype = {
    * @param {Object} opts the options object for the sorted plugin
    * @param {boolean} [fromFilter] was called from Shuffle.filter method.
    */
-  sort: function( opts, fromFilter, isOnlyPosition ) {
+  sort : function( opts, fromFilter ) {
     var self = this,
         items = self.$items.filter('.filtered').sorted(opts);
 
@@ -923,7 +985,7 @@ Shuffle.prototype = {
         self._filterEnd();
       }
       self._sortEnd();
-    }, isOnlyPosition);
+    });
 
     self.lastSort = opts;
   },
@@ -931,7 +993,7 @@ Shuffle.prototype = {
   /**
    * Relayout everything
    */
-  resized: function( isOnlyLayout ) {
+  resized : function( isOnlyLayout ) {
     if ( this.enabled ) {
 
       if ( !isOnlyLayout ) {
@@ -1031,7 +1093,7 @@ Shuffle.prototype = {
   /**
    * Destroys shuffle, removes events, styles, and classes
    */
-  destroy: function() {
+  destroy : function() {
     var self = this;
 
     // If there is more than one shuffle instance on the page,
@@ -1094,9 +1156,9 @@ Shuffle.settings = {
   },
   offset: { top: 0, left: 0 },
   revealAppendedDelay: 300,
-  keepSorted : true, // Keep sorted when shuffling/layout
   enabled: true,
   destroyed: false,
+  initialized: false,
   styleQueue: []
 };
 
