@@ -1,6 +1,5 @@
 @import "variables";
 
-$sqrt3: 1.73205080757;
 
 .filter-options {
   margin-top: 20px;
@@ -86,15 +85,20 @@ $sqrt3: 1.73205080757;
 }
 
 
-$triangleSize: 220px;
-$halfSize: $triangleSize / 2;
-$fullSideWidth: round($sqrt3 * $halfSize);
-$leftOver: $triangleSize - $fullSideWidth;
-.shape--triangle .shape__space {
+@mixin equilateralTriangle($size) {
+  $sqrt3: 1.73205080757;
+  $halfSize: $size / 2;
+  $fullSideWidth: round($sqrt3 * $halfSize);
+  $leftOver: $size - $fullSideWidth;
+
   padding-top: $leftOver / 2;
   height: 0;
   width: 0;
   border-width: 0 $halfSize $fullSideWidth $halfSize;
+}
+
+.shape--triangle .shape__space {
+  @include equilateralTriangle(220px);
   background-color: transparent;
 }
 
@@ -118,53 +122,37 @@ $leftOver: $triangleSize - $fullSideWidth;
 
 @media (min-width: 1200px) {
 
-  $triangleSize: 270px;
-  $halfSize: $triangleSize / 2;
-  $fullSideWidth: round($sqrt3 * $halfSize);
-  $leftOver: $triangleSize - $fullSideWidth;
-
   .shape--triangle .shape__space {
-    padding-top: $leftOver / 2;
-    border-width: 0 $halfSize $fullSideWidth $halfSize;
+    @include equilateralTriangle(270px);
   }
 }
 
 @media (min-width: 768px) and (max-width: 979px) {
 
-  $triangleSize: 166px;
-  $halfSize: $triangleSize / 2;
-  $fullSideWidth: round($sqrt3 * $halfSize);
-  $leftOver: $triangleSize - $fullSideWidth;
-
   .shape--triangle .shape__space {
-    padding-top: $leftOver / 2;
-    border-width: 0 $halfSize $fullSideWidth $halfSize;
+    @include equilateralTriangle(166px);
   }
 }
 
 @media (max-width: 767px) {
 
-  $triangleSize: 200px;
-  $halfSize: $triangleSize / 2;
-  $fullSideWidth: round($sqrt3 * $halfSize);
-  $leftOver: $triangleSize - $fullSideWidth;
+  .shape--triangle .shape__space {
+    @include equilateralTriangle(600px);
+    margin: auto;
+  }
+}
+
+@media (max-width: 600px) {
 
   .shape--triangle .shape__space {
-    padding-top: $leftOver / 2;
-    border-width: 0 $halfSize $fullSideWidth $halfSize;
+    @include equilateralTriangle(480px);
   }
 }
 
 @media (max-width: 480px) {
 
-  $triangleSize: 100px;
-  $halfSize: $triangleSize / 2;
-  $fullSideWidth: round($sqrt3 * $halfSize);
-  $leftOver: $triangleSize - $fullSideWidth;
-
   .shape--triangle .shape__space {
-    padding-top: $leftOver / 2;
-    border-width: 0 $halfSize $fullSideWidth $halfSize;
+    @include equilateralTriangle(320px);
   }
 }
 

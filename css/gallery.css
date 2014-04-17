@@ -95,25 +95,42 @@
 @media (min-width: 1200px) {
   .shape--triangle .shape__space {
     padding-top: 18px;
+    height: 0;
+    width: 0;
     border-width: 0 135px 234px 135px;
   }
 }
 @media (min-width: 768px) and (max-width: 979px) {
   .shape--triangle .shape__space {
     padding-top: 11px;
+    height: 0;
+    width: 0;
     border-width: 0 83px 144px 83px;
   }
 }
 @media (max-width: 767px) {
   .shape--triangle .shape__space {
-    padding-top: 13.5px;
-    border-width: 0 100px 173px 100px;
+    padding-top: 40px;
+    height: 0;
+    width: 0;
+    border-width: 0 300px 520px 300px;
+    margin: auto;
+  }
+}
+@media (max-width: 600px) {
+  .shape--triangle .shape__space {
+    padding-top: 32px;
+    height: 0;
+    width: 0;
+    border-width: 0 240px 416px 240px;
   }
 }
 @media (max-width: 480px) {
   .shape--triangle .shape__space {
-    padding-top: 6.5px;
-    border-width: 0 50px 87px 50px;
+    padding-top: 21.5px;
+    height: 0;
+    width: 0;
+    border-width: 0 160px 277px 160px;
   }
 }
 body::before {

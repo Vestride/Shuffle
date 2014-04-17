@@ -1945,6 +1945,14 @@ ul ul {
   list-style-type: circle;
 }
 
+li {
+  line-height: 1.4;
+}
+
+.breathable-list li {
+  line-height: 1.7;
+}
+
 .site-nav .site-nav__title {
   color: #ecf0f1;
 }

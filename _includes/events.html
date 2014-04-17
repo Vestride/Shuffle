@@ -1,6 +1,6 @@
 <h2>Events<a href="#events"></a></h2>
 <p>A list of events shuffle triggers:</p>
-<ul>
+<ul class="breathable-list">
   <li><code class="language-javascript">'loading.shuffle'</code></li>
   <li><code class="language-javascript">'done.shuffle'</code></li>
   <li><code class="language-javascript">'shrink.shuffle'</code></li>
@@ -10,9 +10,9 @@
   <li><code class="language-javascript">'layout.shuffle'</code></li>
   <li><code class="language-javascript">'removed.shuffle'</code></li>
 </ul>
+<p><strong>Heads up!</strong> To receive the <code>loading</code> event, you must subscribe to it before initializing the plugin, otherwise it will fire before you have subscribed to it.</p>
 
 <h3>Get notified when shuffle is done with setup</h3>
-<p>To receive the <code>loading</code> and <code>done</code> events, you must subscribe to them before initializing the plugin, otherwise they will fire before you have subscribed to them</p>
 <pre rel="JavaScript"><code class="language-javascript">$grid.on('done.shuffle', function() {
   console.log('Finished initializing shuffle!');
 });
