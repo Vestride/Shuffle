@@ -30,9 +30,6 @@ if (typeof Modernizr !== 'object') {
       'http://vestride.github.io/Shuffle/#dependencies');
 }
 
-// Used for unique instance variables
-var id = 0;
-
 
 /**
  * Returns css prefixed properties like `-webkit-transition` or `box-sizing`
@@ -67,8 +64,13 @@ var CSS_TRANSFORM = dashify(TRANSFORM);
 var CAN_TRANSITION_TRANSFORMS = Modernizr.csstransforms && Modernizr.csstransitions;
 var HAS_TRANSFORMS_3D = Modernizr.csstransforms3d;
 var SHUFFLE = 'shuffle';
+
+// Configurable. You can change these constants to fit your application.
+// The default scale and concealed scale, however, have to be different values.
 var ALL_ITEMS = 'all';
 var FILTER_ATTRIBUTE_KEY = 'groups';
+var DEFAULT_SCALE = 1;
+var CONCEALED_SCALE = 0.001;
 
 
 // Underscore's throttle function.
@@ -103,6 +105,9 @@ function throttle(func, wait, options) {
     return result;
   };
 }
+
+// Used for unique instance variables
+var id = 0;
 
 
 /**
@@ -348,22 +353,18 @@ Shuffle.prototype = {
   /**
    * Set the initial css for each item
    * @param {jQuery} [$items] Optionally specifiy at set to initialize
-   * @return {jQuery} The items which were just set
    */
   _initItems : function( $items ) {
     $items = $items || this.$items;
-    return $items.css( this.itemCss ).data('position', {x: 0, y: 0});
+    $items.css( this.itemCss ).data('position', {x: 0, y: 0});
   },
 
   _updateItemCount : function() {
     this.visibleItems = this.$items.filter('.filtered').length;
-    return this;
   },
 
   _setTransition : function( element ) {
-    var self = this;
-    element.style[ TRANSITION ] = CSS_TRANSFORM + ' ' + self.speed + 'ms ' + self.easing + ', opacity ' + self.speed + 'ms ' + self.easing;
-    return element;
+    element.style[ TRANSITION ] = CSS_TRANSFORM + ' ' + this.speed + 'ms ' + this.easing + ', opacity ' + this.speed + 'ms ' + this.easing;
   },
 
   _setTransitions : function( $items ) {
@@ -373,7 +374,6 @@ Shuffle.prototype = {
     $items.each(function() {
       self._setTransition( this );
     });
-    return self;
   },
 
   _setSequentialDelay : function( $collection ) {
@@ -384,13 +384,17 @@ Shuffle.prototype = {
     }
 
     // $collection can be an array of dom elements or jquery object
-    $.each( $collection, function(i) {
+    $.each($collection, function(i, el) {
       // This works because the transition-property: transform, opacity;
-      this.style[ TRANSITION_DELAY ] = '0ms,' + ((i + 1) * self.sequentialFadeDelay) + 'ms';
+      el.style[ TRANSITION_DELAY ] = '0ms,' + ((i + 1) * self.sequentialFadeDelay) + 'ms';
 
       // Set the delay back to zero after one transition
-      $(this).one(TRANSITIONEND, function() {
-        this.style[ TRANSITION_DELAY ] = '0ms';
+      $(el).on(TRANSITIONEND + '.' + self.unique, function(evt) {
+        var target = evt.currentTarget;
+        if ( target === evt.target ) {
+          target.style[ TRANSITION_DELAY ] = '0ms';
+          $(target).off(TRANSITIONEND + '.' + self.unique);
+        }
       });
     });
   },
@@ -424,8 +428,11 @@ Shuffle.prototype = {
     // if there are inline styles.
     if (includeMargins) {
       var styles = $(element).css(['marginLeft', 'marginRight']);
-      var marginLeft = parseFloat(styles.marginLeft);
-      var marginRight = parseFloat(styles.marginRight);
+
+      // Defaults to zero if parsing fails because IE will return 'auto' when
+      // the element doesn't have margins instead of the computed style.
+      var marginLeft = parseFloat(styles.marginLeft) || 0;
+      var marginRight = parseFloat(styles.marginRight) || 0;
       width += marginLeft + marginRight;
     }
 
@@ -444,8 +451,8 @@ Shuffle.prototype = {
 
     if (includeMargins) {
       var styles = $(element).css(['marginTop', 'marginBottom']);
-      var marginTop = parseFloat(styles.marginTop);
-      var marginBottom = parseFloat(styles.marginBottom);
+      var marginTop = parseFloat(styles.marginTop) || 0;
+      var marginBottom = parseFloat(styles.marginBottom) || 0;
       height += marginTop + marginBottom;
     }
 
@@ -549,62 +556,25 @@ Shuffle.prototype = {
     fn = fn || self._filterEnd;
 
     $.each(items, function(index, item) {
-      var $item = $(item),
-          itemData = $item.data(),
-          itemWidth = self._getOuterWidth(item, true),
-          columnSpan = itemWidth / self.colWidth;
+      var $item = $(item);
+      var itemData = $item.data();
+      var currPos = itemData.position;
+      var pos = self._getItemPosition( $item );
 
-      // If the difference between the rounded column span number and the
-      // calculated column span number is really small, round the number to
-      // make it fit.
-      if ( Math.abs(Math.round(columnSpan) - columnSpan) < 0.03 ) {
-        // e.g. columnSpan = 4.0089945390298745
-        columnSpan = Math.round( columnSpan );
-      }
-
-      // How many columns does this brick span. Ensure it's not more than the
-      // amount of columns in the whole layout.
-      var colSpan = Math.min( Math.ceil(columnSpan), self.cols );
-
-      // The item spans only one column.
-      var currentPosition = itemData.position;
-      var position;
-      if ( colSpan === 1 ) {
-        position = self._placeItem( $item, self.colYs );
-
-      // The item spans more than one column, figure out how many different
-      // places it could fit horizontally
-      } else {
-        var groupCount = self.cols + 1 - colSpan,
-            groupY = [],
-            groupColY,
-            i;
-
-        // for each group potential horizontal position
-        for ( i = 0; i < groupCount; i++ ) {
-          // make an array of colY values for that one group
-          groupColY = self.colYs.slice( i, i + colSpan );
-          // and get the max value of the array
-          groupY[i] = Math.max.apply( Math, groupColY );
-        }
-
-        position = self._placeItem( $item, groupY );
-      }
-
-      var currentX = currentPosition.x;
-      var currentY = currentPosition.y;
+      // Save data for shrink
+      $item.data( 'position', pos );
 
       // If the item will not change its position, do not add it to the render
       // queue. Transitions don't fire when setting a property to the same value.
-      if ( position.x === currentX && position.y === currentY && itemData.scale === 1 ) {
+      if ( pos.x === currPos.x && pos.y === currPos.y && itemData.scale === DEFAULT_SCALE ) {
         return;
       }
 
       var transitionObj = {
-        $this: $item,
-        x: position.x,
-        y: position.y,
-        scale: 1
+        $item: $item,
+        x: pos.x,
+        y: pos.y,
+        scale: DEFAULT_SCALE
       };
 
       if ( isOnlyPosition ) {
@@ -647,7 +617,48 @@ Shuffle.prototype = {
     }
   },
 
-  // worker method that places brick in the columnSet with the the minY
+  _getItemPosition : function( $item ) {
+    var self = this;
+    var itemWidth = self._getOuterWidth( $item[0], true );
+    var columnSpan = itemWidth / self.colWidth;
+
+    // If the difference between the rounded column span number and the
+    // calculated column span number is really small, round the number to
+    // make it fit.
+    if ( Math.abs(Math.round(columnSpan) - columnSpan) < 0.03 ) {
+      // e.g. columnSpan = 4.0089945390298745
+      columnSpan = Math.round( columnSpan );
+    }
+
+    // How many columns does this item span. Ensure it's not more than the
+    // amount of columns in the whole layout.
+    var colSpan = Math.min( Math.ceil(columnSpan), self.cols );
+
+    // The item spans only one column.
+    if ( colSpan === 1 ) {
+      return self._placeItem( $item, self.colYs );
+
+    // The item spans more than one column, figure out how many different
+    // places it could fit horizontally
+    } else {
+      var groupCount = self.cols + 1 - colSpan,
+          groupY = [],
+          groupColY,
+          i;
+
+      // for each group potential horizontal position
+      for ( i = 0; i < groupCount; i++ ) {
+        // make an array of colY values for that one group
+        groupColY = self.colYs.slice( i, i + colSpan );
+        // and get the max value of the array
+        groupY[i] = Math.max.apply( Math, groupColY );
+      }
+
+      return self._placeItem( $item, groupY );
+    }
+  },
+
+  // worker method that places item in the columnSet with the the minY
   _placeItem : function( $item, setY ) {
     // get the minimum Y value from the columns
     var self = this,
@@ -669,9 +680,6 @@ Shuffle.prototype = {
       x: Math.round( (self.colWidth * shortCol) + self.offset.left ),
       y: Math.round( minimumY + self.offset.top )
     };
-
-    // Save data for shrink
-    $item.data( 'position', position );
 
     // Apply setHeight to necessary columns
     var setHeight = minimumY + self._getOuterHeight( $item[0], true ),
@@ -704,13 +712,21 @@ Shuffle.prototype = {
 
     $concealed.each(function() {
       var $item = $(this);
-      var position = $item.data('position');
+      var itemData = $item.data();
+      var alreadyShrunk = itemData.scale === CONCEALED_SCALE;
+
+      // Continuing would add a transitionend event listener to the element, but
+      // that listener would execute because the transform and opacity would
+      // stay the same.
+      if ( alreadyShrunk ) {
+        return;
+      }
 
       var transitionObj = {
-        $this: $item,
-        x: position.x,
-        y: position.y,
-        scale : 0.001,
+        $item: $item,
+        x: itemData.position.x,
+        y: itemData.position.y,
+        scale : CONCEALED_SCALE,
         opacity: 0,
         callback: fn
       };
@@ -747,7 +763,7 @@ Shuffle.prototype = {
    * @return {string} A normalized string which can be used with the transform style.
    * @private
    */
-  _getItemTransformString: function(x, y, scale) {
+  _getItemTransformString : function(x, y, scale) {
     if ( HAS_TRANSFORMS_3D ) {
       return 'translate3d(' + x + 'px, ' + y + 'px, 0) scale3d(' + scale + ', ' + scale + ', 1)';
     } else {
@@ -755,12 +771,34 @@ Shuffle.prototype = {
     }
   },
 
+  _getStylesForTransition : function( opts ) {
+    var styles = {
+      opacity: opts.opacity
+    };
+
+    if ( this.supported ) {
+      if ( opts.x !== undefined ) {
+        styles[ TRANSFORM ] = this._getItemTransformString( opts.x, opts.y, opts.scale );
+      }
+    } else {
+      styles.left = opts.x;
+      styles.top = opts.y;
+    }
+
+
+    // Show the item if its opacity will be 1.
+    if ( opts.opacity === 1 ) {
+      styles.visibility = 'visible';
+    }
+
+    return styles;
+  },
 
   /**
    * Transitions an item in the grid
    *
    * @param {Object}   opts options
-   * @param {jQuery}   opts.$this jQuery object representing the current item
+   * @param {jQuery}   opts.$item jQuery object representing the current item
    * @param {number}   opts.x translate's x
    * @param {number}   opts.y translate's y
    * @param {number}   opts.scale amount to scale the item
@@ -769,49 +807,49 @@ Shuffle.prototype = {
    * @private
    */
   _transition : function( opts ) {
-    var complete = $.proxy( this._handleItemAnimationEnd, this,
-        opts.callback || $.noop, opts.$this[0] );
+    opts.$item.data('scale', opts.scale);
 
-    opts.scale = opts.scale || 1;
-    opts.$this.data('scale', opts.scale);
+    var styles = this._getStylesForTransition( opts );
+    this._startItemAnimation( opts.$item, styles, opts.callback );
+  },
+
+
+  _startItemAnimation : function( $item, styles, callback ) {
+    var willBeVisible = styles.opacity === 1;
+    var complete = $.proxy( this._handleItemAnimationEnd, this,
+        callback || $.noop, $item[0], willBeVisible );
 
     // Use CSS Transforms if we have them
     if ( this.supported ) {
-      var styles = {};
 
-      if ( opts.x !== undefined ) {
-        styles[ TRANSFORM ] = this._getItemTransformString( opts.x, opts.y, opts.scale );
-      }
-
-      if ( opts.opacity !== undefined ) {
-        styles.opacity = opts.opacity;
-      }
-
-      opts.$this.css( styles );
+      $item.css( styles );
 
       // Transitions are not set until shuffle has loaded to avoid the initial transition.
       if ( this.initialized ) {
-        opts.$this.on( TRANSITIONEND, complete );
+        // Namespaced because the reveal appended function also wants to know
+        // about the transition end event.
+        $item.on( TRANSITIONEND + '.shuffleitem', complete );
       } else {
         complete();
       }
 
     // Use jQuery to animate left/top
     } else {
-      opts.$this.stop( true ).animate({
-        left: opts.x,
-        top: opts.y,
-        opacity: opts.opacity
-      }, this.speed, 'swing', complete);
+      // jQuery cannot animate visibility, set it immediately.
+      if ( 'visibility' in styles ) {
+        $item.css('visibility', styles.visibility);
+        delete styles.visibility;
+      }
+      $item.stop( true ).animate( styles, this.speed, 'swing', complete );
     }
   },
 
 
-  _handleItemAnimationEnd : function( callback, item, evt ) {
+  _handleItemAnimationEnd : function( callback, item, willBeVisible, evt ) {
     // Make sure this event handler has not bubbled up from a child.
     if ( evt ) {
       if ( evt.target === item ) {
-        $( item ).off( TRANSITIONEND );
+        $( item ).off( '.shuffleitem' );
       } else {
         return;
       }
@@ -825,6 +863,10 @@ Shuffle.prototype = {
       callback.call( this );
       this._shrinkList.length = 0;
     }
+
+    if ( !willBeVisible ) {
+      item.style.visibility = 'hidden';
+    }
   },
 
   _processStyleQueue : function() {
@@ -833,8 +875,8 @@ Shuffle.prototype = {
     $.each(this.styleQueue, function(i, transitionObj) {
 
       if ( transitionObj.skipTransition ) {
-        self._skipTransition( transitionObj.$this[0], function() {
-          self._transition( transitionObj );
+        self._skipTransition(transitionObj.$item[0], function() {
+          transitionObj.$item.css( self._getStylesForTransition( transitionObj ) );
         });
       } else {
         self._transition( transitionObj );
@@ -908,7 +950,7 @@ Shuffle.prototype = {
     self._updateItemCount();
 
     if ( animateIn ) {
-      self._layout( passed, null, true, true );
+      self._layout( passed, null, true );
 
       if ( isSequential ) {
         self._setSequentialDelay( $passed );
@@ -926,8 +968,9 @@ Shuffle.prototype = {
     setTimeout(function() {
       $newFilteredItems.each(function(i, el) {
         self._transition({
-          $this: $(el),
-          opacity: 1
+          $item: $(el),
+          opacity: 1,
+          scale: DEFAULT_SCALE
         });
       });
     }, self.revealAppendedDelay);

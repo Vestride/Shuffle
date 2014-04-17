@@ -4,6 +4,7 @@
 * TESTS!
 * Horizontal layout
 * More JSDoc
+* Create an `Item` class for shuffle items so they can handle storing values and more.
 
 ## Things I don't like and would like to fix
 * Move everything to Shuffle.prototype.method = function.
