@@ -108,6 +108,7 @@ function throttle(func, wait, options) {
 
 // Used for unique instance variables
 var id = 0;
+var $window = $( window );
 
 
 /**
@@ -123,7 +124,6 @@ var Shuffle = function( element, options ) {
   $.extend( this, Shuffle.options, options, Shuffle.settings );
 
   this.$el = $(element);
-  this.$window = $(window);
   this.unique = 'shuffle_' + id++;
 
   this._fire( Shuffle.EventType.LOADING );
@@ -156,18 +156,125 @@ Shuffle.EventType = {
 };
 
 
+/** @enum {string} */
+Shuffle.ClassName = {
+  BASE: SHUFFLE,
+  SHUFFLE_ITEM: 'shuffle-item',
+  FILTERED: 'filtered',
+  CONCEALED: 'concealed'
+};
+
+
+
+/**
+ * If the browser has 3d transforms available, build a string with those,
+ * otherwise use 2d transforms.
+ * @param {number} x X position.
+ * @param {number} y Y position.
+ * @param {number} scale Scale amount.
+ * @return {string} A normalized string which can be used with the transform style.
+ * @private
+ */
+Shuffle._getItemTransformString = function(x, y, scale) {
+  if ( HAS_TRANSFORMS_3D ) {
+    return 'translate3d(' + x + 'px, ' + y + 'px, 0) scale3d(' + scale + ', ' + scale + ', 1)';
+  } else {
+    return 'translate(' + x + 'px, ' + y + 'px) scale(' + scale + ', ' + scale + ')';
+  }
+};
+
+
+
+Shuffle._getPreciseDimension = function( element, style ) {
+  var dimension;
+  if ( window.getComputedStyle ) {
+    dimension = window.getComputedStyle( element, null )[ style ];
+  } else {
+    dimension = $( element ).css( style );
+  }
+  return parseFloat( dimension );
+};
+
+
+/**
+ * Returns the outer width of an element, optionally including its margins.
+ * @param {Element} element The element.
+ * @param {boolean} [includeMargins] Whether to include margins. Default is false.
+ * @return {number} The width.
+ */
+Shuffle._getOuterWidth = function( element, includeMargins ) {
+  var width = element.offsetWidth;
+
+  // Use jQuery here because it uses getComputedStyle internally and is
+  // cross-browser. Using the style property of the element will only work
+  // if there are inline styles.
+  if (includeMargins) {
+    var styles = $(element).css(['marginLeft', 'marginRight']);
+
+    // Defaults to zero if parsing fails because IE will return 'auto' when
+    // the element doesn't have margins instead of the computed style.
+    var marginLeft = parseFloat(styles.marginLeft) || 0;
+    var marginRight = parseFloat(styles.marginRight) || 0;
+    width += marginLeft + marginRight;
+  }
+
+  return width;
+};
+
+
+/**
+ * Returns the outer height of an element, optionally including its margins.
+ * @param {Element} element The element.
+ * @param {boolean} [includeMargins] Whether to include margins. Default is false.
+ * @return {number} The height.
+ */
+Shuffle._getOuterHeight = function( element, includeMargins ) {
+  var height = element.offsetHeight;
+
+  if (includeMargins) {
+    var styles = $(element).css(['marginTop', 'marginBottom']);
+    var marginTop = parseFloat(styles.marginTop) || 0;
+    var marginBottom = parseFloat(styles.marginBottom) || 0;
+    height += marginTop + marginBottom;
+  }
+
+  return height;
+};
+
+
+/**
+ * Change a property or execute a function which will not have a transition
+ * @param {Element} element DOM element that won't be transitioned
+ * @param {(string|Function)} property The new style property which will be set or a function which will be called
+ * @param {string} [value] The value that `property` should be.
+ * @private
+ */
+Shuffle._skipTransition = function( element, property, value ) {
+  var duration = element.style[ TRANSITION_DURATION ];
+
+  // Set the duration to zero so it happens immediately
+  element.style[ TRANSITION_DURATION ] = '0ms'; // ms needed for firefox!
+
+  if ( $.isFunction( property ) ) {
+    property();
+  } else {
+    element.style[ property ] = value;
+  }
+
+  // Force reflow
+  var reflow = element.offsetWidth;
+  // Avoid jshint warnings: unused variables and expressions.
+  reflow = null;
+
+  // Put the duration back
+  element.style[ TRANSITION_DURATION ] = duration;
+};
+
+
 Shuffle.prototype = {
 
   _init : function() {
-    var self = this,
-        containerCSS,
-        containerWidth,
-        resizeFunction = $.proxy( self._onResize, self ),
-        debouncedResize = self.throttle ?
-            self.throttle( resizeFunction, self.throttleTime ) :
-            resizeFunction,
-        sort = self.initialSort ? self.initialSort : null;
-
+    var self = this;
 
     self._layoutList = [];
     self._shrinkList = [];
@@ -178,18 +285,18 @@ Shuffle.prototype = {
     self._resetCols();
 
     // Add classes and invalidate styles
-    self._addClasses();
+    this.$el.addClass( Shuffle.ClassName.BASE );
 
     // Set initial css for each item
     self._initItems();
 
     // Bind resize events
     // http://stackoverflow.com/questions/1852751/window-resize-event-firing-in-internet-explorer
-    self.$window.on('resize.' + SHUFFLE + '.' + self.unique, debouncedResize);
+    $window.on('resize.' + SHUFFLE + '.' + self.unique, self._getResizeFunction());
 
     // Get container css all in one request. Causes reflow
-    containerCSS = self.$el.css(['paddingLeft', 'paddingRight', 'position']);
-    containerWidth = self._getOuterWidth( self.$el[0] );
+    var containerCSS = self.$el.css(['paddingLeft', 'paddingRight', 'position']);
+    var containerWidth = Shuffle._getOuterWidth( self.$el[0] );
 
     // Position cannot be static.
     if ( containerCSS.position === 'static' ) {
@@ -207,7 +314,7 @@ Shuffle.prototype = {
     self._setColumns( parseInt( containerWidth, 10 ) );
 
     // Kick off!
-    self.shuffle( self.group, sort );
+    self.shuffle( self.group, self.initialSort );
 
     // The shuffle items haven't had transitions set on them yet
     // so the user doesn't see the first layout. Set them now that the first layout is done.
@@ -219,10 +326,16 @@ Shuffle.prototype = {
     }
   },
 
-  // Will invalidate styles
-  _addClasses : function() {
-    this.$el.addClass( SHUFFLE );
-    this.$items.addClass('shuffle-item filtered');
+  /**
+   * Returns a throttled and proxied function for the resize handler.
+   * @return {Function}
+   * @private
+   */
+  _getResizeFunction : function() {
+    var resizeFunction = $.proxy( this._onResize, this );
+    return this.throttle ?
+        this.throttle( resizeFunction, this.throttleTime ) :
+        resizeFunction;
   },
 
   _setVars : function() {
@@ -268,86 +381,100 @@ Shuffle.prototype = {
    * @return {jQuery} Filtered items.
    */
   _filter : function( category, $collection ) {
-    var self = this,
-        isPartialSet = $collection !== undefined,
-        $items = isPartialSet ? $collection : self.$items,
-        $filtered = $();
+    category = category || this.lastFilter;
+    $collection = $collection || this.$items;
 
-    category = category || self.lastFilter;
+    this._fire( Shuffle.EventType.FILTER );
 
-    self._fire( Shuffle.EventType.FILTER );
-
-    // Loop through each item and use provided function to determine
-    // whether to hide it or not.
-    if ( $.isFunction( category ) ) {
-      $items.each(function() {
-        var $item = $(this);
-        if ( category.call($item[0], $item, self) ) {
-          $filtered = $filtered.add( $item );
-        }
-      });
-
-    // Otherwise we've been passed a category to filter by
-    } else {
-      self.group = category;
-
-      // category === 'all', add filtered class to everything
-      if ( category === ALL_ITEMS ) {
-        $filtered = $items;
-
-      // Check each element's data-groups attribute against the given category.
-      } else {
-        $items.each(function() {
-          var $item = $(this),
-              groups = $item.data( FILTER_ATTRIBUTE_KEY ),
-              keys = self.delimeter && !$.isArray( groups ) ?
-                groups.split( self.delimeter ) :
-                groups;
-
-          if ( $.inArray(category, keys) > -1 ) {
-            $filtered = $filtered.add( $item );
-          }
-        });
-      }
-    }
+    var set = this._getFilteredSets( category, $collection );
 
     // Individually add/remove concealed/filtered classes
-    self._toggleFilterClasses( $items, $filtered );
+    this._toggleFilterClasses( set.filtered, set.concealed );
 
-    $items = null;
-    $collection = null;
+    // Save the last filter in case elements are appended.
+    this.lastFilter = category;
 
-    return $filtered;
+    // This is saved mainly because providing a filter function (like searching)
+    // will overwrite the `lastFilter` property every time its called.
+    if ( typeof category === 'string' ) {
+      this.group = category;
+    }
+
+    return set.filtered;
   },
 
 
-  _toggleFilterClasses : function( $items, $filtered ) {
-    var concealed = 'concealed',
-        filtered = 'filtered';
+  /**
+   * Returns an object containing the filtered and concealed elements.
+   * @param {string|Function} category Category or function to filter by.
+   * @param {jQuery} $items jQuery collection of items to filter.
+   * @return {!{filtered: jQuery, concealed: jQuery}}
+   * @private
+   */
+  _getFilteredSets : function( category, $items ) {
+    var $filtered = $();
+    var $concealed = $();
 
-    $items.filter( $filtered ).each(function() {
-      var $filteredItem = $(this);
-      // Remove concealed if it's there
-      if ( $filteredItem.hasClass( concealed ) ) {
-        $filteredItem.removeClass( concealed );
-      }
-      // Add filtered class if it's not there
-      if ( !$filteredItem.hasClass( filtered ) ) {
-        $filteredItem.addClass( filtered );
-      }
-    });
+    // category === 'all', add filtered class to everything
+    if ( category === ALL_ITEMS ) {
+      $filtered = $items;
 
-    $items.not( $filtered ).each(function() {
-      var $filteredItem = $(this);
-      // Add concealed if it's not there
-      if ( !$filteredItem.hasClass( concealed ) ) {
-        $filteredItem.addClass( concealed );
-      }
-      // Remove filtered class if it's there
-      if ( $filteredItem.hasClass( filtered ) ) {
-        $filteredItem.removeClass( filtered );
-      }
-    });
+    // Loop through each item and use provided function to determine
+    // whether to hide it or not.
+    } else {
+      var self = this;
+      $items.each(function(i, el) {
+        var $item = $(el);
+        if ( self._doesPassFilter( category, $item ) ) {
+          $filtered = $filtered.add( $item );
+        } else {
+          $concealed = $concealed.add( $item );
+        }
+      });
+    }
+
+    return {
+      filtered: $filtered,
+      concealed: $concealed
+    };
+  },
+
+
+  /**
+   * Test an item to see if it passes a category.
+   * @param {string|Function} category Category or function to filter by.
+   * @param {jQuery} $item A single item, wrapped with jQuery.
+   * @return {boolean} Whether it passes the category/filter.
+   * @private
+   */
+  _doesPassFilter : function( category, $item ) {
+    if ( $.isFunction( category ) ) {
+      return category.call( $item[0], $item, this );
+
+    // Check each element's data-groups attribute against the given category.
+    } else {
+      var groups = $item.data( FILTER_ATTRIBUTE_KEY );
+      var keys = this.delimeter && !$.isArray( groups ) ?
+          groups.split( this.delimeter ) :
+          groups;
+      return $.inArray(category, keys) > -1;
+    }
+  },
+
+
+  /**
+   * Toggles the filtered and concealed class names.
+   * @param {jQuery} $filtered Filtered set.
+   * @param {jQuery} $concealed Concealed set.
+   * @private
+   */
+  _toggleFilterClasses : function( $filtered, $concealed ) {
+    $filtered
+      .removeClass( Shuffle.ClassName.CONCEALED )
+      .addClass( Shuffle.ClassName.FILTERED );
+    $concealed
+      .removeClass( Shuffle.ClassName.FILTERED )
+      .addClass( Shuffle.ClassName.CONCEALED );
   },
 
   /**
@@ -356,15 +483,20 @@ Shuffle.prototype = {
    */
   _initItems : function( $items ) {
     $items = $items || this.$items;
+    $items.addClass([
+      Shuffle.ClassName.SHUFFLE_ITEM,
+      Shuffle.ClassName.FILTERED
+    ].join(' '));
     $items.css( this.itemCss ).data('position', {x: 0, y: 0});
   },
 
   _updateItemCount : function() {
-    this.visibleItems = this.$items.filter('.filtered').length;
+    this.visibleItems = this._getFilteredItems().length;
   },
 
   _setTransition : function( element ) {
-    element.style[ TRANSITION ] = CSS_TRANSFORM + ' ' + this.speed + 'ms ' + this.easing + ', opacity ' + this.speed + 'ms ' + this.easing;
+    element.style[ TRANSITION ] = CSS_TRANSFORM + ' ' + this.speed + 'ms ' +
+      this.easing + ', opacity ' + this.speed + 'ms ' + this.easing;
   },
 
   _setTransitions : function( $items ) {
@@ -403,60 +535,12 @@ Shuffle.prototype = {
     return this.$el.children( this.itemSelector );
   },
 
-  _getPreciseDimension : function( element, style ) {
-    var dimension;
-    if ( window.getComputedStyle ) {
-      dimension = window.getComputedStyle( element, null )[ style ];
-    } else {
-      dimension = $( element ).css( style );
-    }
-    return parseFloat( dimension );
+  _getFilteredItems : function() {
+    return this.$items.filter('.' + Shuffle.ClassName.FILTERED);
   },
 
-
-  /**
-   * Returns the outer width of an element, optionally including its margins.
-   * @param {Element} element The element.
-   * @param {boolean} [includeMargins] Whether to include margins. Default is false.
-   * @return {number} The width.
-   */
-  _getOuterWidth : function( element, includeMargins ) {
-    var width = element.offsetWidth;
-
-    // Use jQuery here because it uses getComputedStyle internally and is
-    // cross-browser. Using the style property of the element will only work
-    // if there are inline styles.
-    if (includeMargins) {
-      var styles = $(element).css(['marginLeft', 'marginRight']);
-
-      // Defaults to zero if parsing fails because IE will return 'auto' when
-      // the element doesn't have margins instead of the computed style.
-      var marginLeft = parseFloat(styles.marginLeft) || 0;
-      var marginRight = parseFloat(styles.marginRight) || 0;
-      width += marginLeft + marginRight;
-    }
-
-    return width;
-  },
-
-
-  /**
-   * Returns the outer height of an element, optionally including its margins.
-   * @param {Element} element The element.
-   * @param {boolean} [includeMargins] Whether to include margins. Default is false.
-   * @return {number} The height.
-   */
-  _getOuterHeight : function( element, includeMargins ) {
-    var height = element.offsetHeight;
-
-    if (includeMargins) {
-      var styles = $(element).css(['marginTop', 'marginBottom']);
-      var marginTop = parseFloat(styles.marginTop) || 0;
-      var marginBottom = parseFloat(styles.marginBottom) || 0;
-      height += marginTop + marginBottom;
-    }
-
-    return height;
+  _getConcealedItems : function() {
+    return this.$items.filter('.' + Shuffle.ClassName.CONCEALED);
   },
 
 
@@ -469,7 +553,7 @@ Shuffle.prototype = {
 
     // columnWidth option isn't a function, are they using a sizing element?
     } else if ( this.useSizer ) {
-      size = this._getPreciseDimension(this.sizer, 'width');
+      size = Shuffle._getPreciseDimension(this.sizer, 'width');
 
     // if not, how about the explicitly set option?
     } else if ( this.columnWidth ) {
@@ -477,7 +561,7 @@ Shuffle.prototype = {
 
     // or use the size of the first item
     } else if ( this.$items.length > 0 ) {
-      size = this._getOuterWidth(this.$items[0], true);
+      size = Shuffle._getOuterWidth(this.$items[0], true);
 
     // if there's no items, use size of container
     } else {
@@ -498,7 +582,7 @@ Shuffle.prototype = {
     if ( $.isFunction( this.gutterWidth ) ) {
       size = this.gutterWidth(containerWidth);
     } else if ( this.useSizer ) {
-      size = this._getPreciseDimension(this.sizer, 'marginLeft');
+      size = Shuffle._getPreciseDimension(this.sizer, 'marginLeft');
     } else {
       size = this.gutterWidth;
     }
@@ -512,7 +596,7 @@ Shuffle.prototype = {
    * @param {number} [theContainerWidth] Optionally specify a container width if it's already available.
    */
   _setColumns : function( theContainerWidth ) {
-    var containerWidth = theContainerWidth || this._getOuterWidth(this.$el[0]);
+    var containerWidth = theContainerWidth || Shuffle._getOuterWidth(this.$el[0]);
     var gutter = this._getGutterSize(containerWidth);
     var columnWidth = this._getColumnSize(gutter, containerWidth);
     var calculatedColumns = (containerWidth + gutter) / columnWidth;
@@ -532,7 +616,16 @@ Shuffle.prototype = {
    * Adjust the height of the grid
    */
   _setContainerSize : function() {
-    this.$el.css( 'height', Math.max.apply( Math, this.colYs ) );
+    this.$el.css( 'height', this._getContainerSize() );
+  },
+
+  /**
+   * Based on the column heights, it returns the biggest one.
+   * @return {number}
+   * @private
+   */
+  _getContainerSize : function() {
+    return Math.max.apply( Math, this.colYs );
   },
 
   /**
@@ -613,13 +706,13 @@ Shuffle.prototype = {
     if ( this.lastSort ) {
       this.sort( this.lastSort, true );
     } else {
-      this._layout( this.$items.filter('.filtered').get(), this._filterEnd );
+      this._layout( this._getFilteredItems().get(), this._filterEnd );
     }
   },
 
   _getItemPosition : function( $item ) {
     var self = this;
-    var itemWidth = self._getOuterWidth( $item[0], true );
+    var itemWidth = Shuffle._getOuterWidth( $item[0], true );
     var columnSpan = itemWidth / self.colWidth;
 
     // If the difference between the rounded column span number and the
@@ -682,7 +775,7 @@ Shuffle.prototype = {
     };
 
     // Apply setHeight to necessary columns
-    var setHeight = minimumY + self._getOuterHeight( $item[0], true ),
+    var setHeight = minimumY + Shuffle._getOuterHeight( $item[0], true ),
     setSpan = self.cols + 1 - len;
     for ( i = 0; i < setSpan; i++ ) {
       self.colYs[ shortCol + i ] = setHeight;
@@ -699,7 +792,7 @@ Shuffle.prototype = {
    */
   _shrink : function( $collection, fn ) {
     var self = this,
-        $concealed = $collection || self.$items.filter('.concealed');
+        $concealed = $collection || self._getConcealedItems();
 
     fn = fn || self._shrinkEnd;
 
@@ -743,7 +836,7 @@ Shuffle.prototype = {
     }
 
     // Will need to check height in the future if it's layed out horizontaly
-    var containerWidth = this._getOuterWidth(this.$el[0]);
+    var containerWidth = Shuffle._getOuterWidth(this.$el[0]);
 
     // containerWidth hasn't changed, don't do anything
     if ( containerWidth === this.containerWidth ) {
@@ -754,23 +847,6 @@ Shuffle.prototype = {
   },
 
 
-  /**
-   * If the browser has 3d transforms available, build a string with those,
-   * otherwise use 2d transforms.
-   * @param {number} x X position.
-   * @param {number} y Y position.
-   * @param {number} scale Scale amount.
-   * @return {string} A normalized string which can be used with the transform style.
-   * @private
-   */
-  _getItemTransformString : function(x, y, scale) {
-    if ( HAS_TRANSFORMS_3D ) {
-      return 'translate3d(' + x + 'px, ' + y + 'px, 0) scale3d(' + scale + ', ' + scale + ', 1)';
-    } else {
-      return 'translate(' + x + 'px, ' + y + 'px) scale(' + scale + ', ' + scale + ')';
-    }
-  },
-
   _getStylesForTransition : function( opts ) {
     var styles = {
       opacity: opts.opacity
@@ -778,7 +854,7 @@ Shuffle.prototype = {
 
     if ( this.supported ) {
       if ( opts.x !== undefined ) {
-        styles[ TRANSFORM ] = this._getItemTransformString( opts.x, opts.y, opts.scale );
+        styles[ TRANSFORM ] = Shuffle._getItemTransformString( opts.x, opts.y, opts.scale );
       }
     } else {
       styles.left = opts.x;
@@ -875,7 +951,7 @@ Shuffle.prototype = {
     $.each(this.styleQueue, function(i, transitionObj) {
 
       if ( transitionObj.skipTransition ) {
-        self._skipTransition(transitionObj.$item[0], function() {
+        Shuffle._skipTransition(transitionObj.$item[0], function() {
           transitionObj.$item.css( self._getStylesForTransition( transitionObj ) );
         });
       } else {
@@ -899,34 +975,6 @@ Shuffle.prototype = {
     this._fire( Shuffle.EventType.SORTED );
   },
 
-  /**
-   * Change a property or execute a function which will not have a transition
-   * @param {Element} element DOM element that won't be transitioned
-   * @param {(string|Function)} property The new style property which will be set or a function which will be called
-   * @param {string} [value] The value that `property` should be.
-   * @private
-   */
-  _skipTransition : function( element, property, value ) {
-    var duration = element.style[ TRANSITION_DURATION ];
-
-    // Set the duration to zero so it happens immediately
-    element.style[ TRANSITION_DURATION ] = '0ms'; // ms needed for firefox!
-
-    if ( $.isFunction( property ) ) {
-      property();
-    } else {
-      element.style[ property ] = value;
-    }
-
-    // Force reflow
-    var reflow = element.offsetWidth;
-    // Avoid jshint warnings: unused variables and expressions.
-    reflow = null;
-
-    // Put the duration back
-    element.style[ TRANSITION_DURATION ] = duration;
-  },
-
   _addItems : function( $newItems, animateIn, isSequential ) {
     var self = this;
 
@@ -934,7 +982,6 @@ Shuffle.prototype = {
       animateIn = false;
     }
 
-    $newItems.addClass('shuffle-item');
     self._initItems( $newItems );
     self._setTransitions( $newItems );
     self.$items = self._getItems();
@@ -943,7 +990,7 @@ Shuffle.prototype = {
     $newItems.css('opacity', 0);
 
     // Get ones that passed the current filter
-    var $passed = self._filter( undefined, $newItems );
+    var $passed = self._filter( null, $newItems );
     var passed = $passed.get();
 
     // How many filtered elements?
@@ -983,7 +1030,7 @@ Shuffle.prototype = {
 
   /**
    * The magic. This is what makes the plugin 'shuffle'
-   * @param {(string|Function)} [category] Category to filter by. Can be a function
+   * @param {string|Function} [category] Category to filter by. Can be a function
    * @param {Object} [sortObj] A sort object which can sort the filtered set
    */
   shuffle : function( category, sortObj ) {
@@ -998,8 +1045,6 @@ Shuffle.prototype = {
     }
 
     self._filter( category );
-    // Save the last filter in case elements are appended.
-    self.lastFilter = category;
 
     // How many filtered elements?
     self._updateItemCount();
@@ -1023,7 +1068,7 @@ Shuffle.prototype = {
    */
   sort : function( opts, fromFilter ) {
     var self = this,
-        items = self.$items.filter('.filtered').sorted(opts);
+        items = self._getFilteredItems().sorted(opts);
 
     if ( !fromFilter ) {
       self._resetCols();
@@ -1148,7 +1193,7 @@ Shuffle.prototype = {
     // If there is more than one shuffle instance on the page,
     // removing the resize handler from the window would remove them
     // all. This is why a unique value is needed.
-    self.$window.off('.' + self.unique);
+    $window.off('.' + self.unique);
 
     // Reset container styles
     self.$el
@@ -1162,7 +1207,6 @@ Shuffle.prototype = {
         .removeClass('concealed filtered shuffle-item');
 
     // Null DOM references
-    self.$window = null;
     self.$items = null;
     self.$el = null;
     self.$sizer = null;
@@ -1250,7 +1294,7 @@ $.fn.sorted = function(options) {
 
   // Sort the elements by the opts.by function.
   // If we don't have opts.by, default to DOM order
-  if (opts.by !== $.noop && opts.by !== null && opts.by !== undefined) {
+  if ( $.isFunction( opts.by ) ) {
     arr.sort(function(a, b) {
 
       // Exit early if we already know we want to revert
@@ -1267,16 +1311,15 @@ $.fn.sorted = function(options) {
         return 0;
       }
 
-      if ( valA === 'sortFirst' || valB === 'sortLast' ) {
+      if ( valA < valB || valA === 'sortFirst' || valB === 'sortLast' ) {
         return -1;
       }
 
-      if ( valA === 'sortLast' || valB === 'sortFirst' ) {
+      if ( valA > valB || valA === 'sortLast' || valB === 'sortFirst' ) {
         return 1;
       }
 
-      return (valA < valB) ? -1 :
-          (valA > valB) ? 1 : 0;
+      return 0;
     });
   }
 
