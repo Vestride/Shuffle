@@ -908,13 +908,17 @@ Shuffle.prototype = {
       }
     }
 
+    // Use timeouts so that all the items have been set to hidden before the
+    // callbacks are executed.
     if ( this._layoutList.length > 0 && $.inArray( item, this._layoutList ) > -1 ) {
-      this._fire( Shuffle.EventType.LAYOUT );
-      callback.call( this );
+      setTimeout($.proxy(function () {
+        this._fire( Shuffle.EventType.LAYOUT );
+        callback.call( this );
+      }, this), 0);
       this._layoutList.length = 0;
     } else if ( this._shrinkList.length > 0 && $.inArray( item, this._shrinkList ) > -1 ) {
-      callback.call( this );
       this._shrinkList.length = 0;
+      setTimeout( $.proxy( callback, this ), 0 );
     }
 
     if ( !willBeVisible ) {
