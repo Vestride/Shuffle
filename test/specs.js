@@ -11,11 +11,18 @@ describe('Shuffle.js', function() {
     });
 
     afterEach(function(done) {
-      // Shuffle init is async.
-      setTimeout(function () {
-        $('#regular-shuffle').shuffle('destroy');
+      var shuffle = $('#regular-shuffle').data('shuffle');
+
+      function finish() {
+        shuffle.destroy();
         done();
-      }, 32);
+      }
+
+      if (shuffle.initialized) {
+        setTimeout(finish, 0);
+      } else {
+        shuffle.$el.on('done.shuffle', finish);
+      }
     });
 
     it('should get default options', function() {
@@ -141,10 +148,10 @@ describe('Shuffle.js', function() {
         done();
       }
 
-      setTimeout(first, 32);
+      $shuffle.one('done.shuffle', first);
     });
 
-    it('can shuffle by function', function() {
+    it('can shuffle by function', function(done) {
       var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
@@ -163,10 +170,75 @@ describe('Shuffle.js', function() {
         var $filteredItems = $('#item1, #item2, #item3, #item4, #item5');
         expect($concealedItems).toHaveClass('concealed');
         expect($filteredItems).toHaveClass('filtered');
+        done();
       }
 
       // First shuffle is async.
-      setTimeout(first, 32);
+      $shuffle.one('done.shuffle', first);
+    });
+
+    it('can initialize filtered and the category parameter is optional', function(done) {
+        var $shuffle = $('#regular-shuffle');
+        var shuffle = $shuffle.shuffle({
+          speed: 100,
+          group: 'design'
+        }).data('shuffle');
+
+        expect(shuffle.visibleItems).toBe(3);
+
+        function first() {
+          expect(shuffle.visibleItems).toBe(10);
+          done();
+        }
+
+        $shuffle.one('layout.shuffle', first);
+        shuffle.shuffle();
+    });
+
+    it('can initialize sorted', function() {
+        var $shuffle = $('#regular-shuffle');
+
+        var sortObj = {
+          by: function($el) {
+            return parseInt($el.attr('data-age'), 10);
+          }
+        };
+
+        var shuffle = $shuffle.shuffle({
+          speed: 100,
+          initialSort: sortObj
+        }).data('shuffle');
+
+        expect(shuffle.lastSort).toEqual(sortObj);
+    });
+
+    it('can add items', function(done) {
+      var $shuffle = $('#regular-shuffle');
+      var shuffle = $shuffle.shuffle({
+        speed: 100
+      }).data('shuffle');
+
+      function first() {
+        var $eleven = $('<div>', {
+          'class': 'item',
+          'data-age': 36,
+          'data-groups': '["ux", "black"]',
+          id: 'item11',
+          text: 'Person 11'
+        });
+        var $twelve = $('<div>', {
+          'class': 'item',
+          'data-age': 37,
+          'data-groups': '["strategy", "blue"]',
+          id: 'item12',
+          text: 'Person 12'
+        });
+
+        var $collection = $eleven.add($twelve);
+        done();
+      }
+
+      $shuffle.one('done.shuffle', first);
     });
 
 
