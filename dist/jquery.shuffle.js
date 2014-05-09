@@ -680,6 +680,12 @@ Shuffle.prototype = {
     // queue here with styles from the shrink method
     self._processStyleQueue();
 
+    // A call to layout happened, but none of the newly filtered items will
+    // change position. Asynchronously fire the callback here.
+    if ( items.length > 0 && self._layoutList.length === 0 ) {
+      self._layoutEnd( fn );
+    }
+
     // Adjust the height of the container
     self._setContainerSize();
   },
@@ -928,10 +934,7 @@ Shuffle.prototype = {
     // Use timeouts so that all the items have been set to hidden before the
     // callbacks are executed.
     if ( this._layoutList.length > 0 && $.inArray( item, this._layoutList ) > -1 ) {
-      setTimeout($.proxy(function () {
-        this._fire( Shuffle.EventType.LAYOUT );
-        callback.call( this );
-      }, this), 0);
+      this._layoutEnd( callback );
       this._layoutList.length = 0;
     } else if ( this._shrinkList.length > 0 && $.inArray( item, this._shrinkList ) > -1 ) {
       this._shrinkList.length = 0;
@@ -971,6 +974,13 @@ Shuffle.prototype = {
 
   _sortEnd : function() {
     this._fire( Shuffle.EventType.SORTED );
+  },
+
+  _layoutEnd : function( callback ) {
+    setTimeout($.proxy(function () {
+      this._fire( Shuffle.EventType.LAYOUT );
+      callback.call( this );
+    }, this), 0);
   },
 
   _addItems : function( $newItems, animateIn, isSequential ) {
