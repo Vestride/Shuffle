@@ -16,7 +16,7 @@
   ],
   "main": "jquery.shuffle.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",
