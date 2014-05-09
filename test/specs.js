@@ -212,33 +212,60 @@ describe('Shuffle.js', function() {
         expect(shuffle.lastSort).toEqual(sortObj);
     });
 
-    it('can add items', function(done) {
+    // it('can add items', function(done) {
+    //   var $shuffle = $('#regular-shuffle');
+    //   var shuffle = $shuffle.shuffle({
+    //     speed: 100,
+    //     group: 'black'
+    //   }).data('shuffle');
+
+    //   function first() {
+    //     var $eleven = $('<div>', {
+    //       'class': 'item',
+    //       'data-age': 36,
+    //       'data-groups': '["ux", "black"]',
+    //       id: 'item11',
+    //       text: 'Person 11'
+    //     });
+    //     var $twelve = $('<div>', {
+    //       'class': 'item',
+    //       'data-age': 37,
+    //       'data-groups': '["strategy", "blue"]',
+    //       id: 'item12',
+    //       text: 'Person 12'
+    //     });
+
+    //     var $collection = $eleven.add($twelve);
+    //     $shuffle.append($collection);
+    //     shuffle.appended($collection);
+
+    //     // Already 2 in the items, plus number 11.
+    //     expect(shuffle.visibleItems).toBe(3);
+
+
+    //     done();
+    //   }
+
+    //   $shuffle.one('done.shuffle', first);
+    // });
+
+
+    it('can call appended with different options', function() {
       var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
       }).data('shuffle');
 
-      function first() {
-        var $eleven = $('<div>', {
-          'class': 'item',
-          'data-age': 36,
-          'data-groups': '["ux", "black"]',
-          id: 'item11',
-          text: 'Person 11'
-        });
-        var $twelve = $('<div>', {
-          'class': 'item',
-          'data-age': 37,
-          'data-groups': '["strategy", "blue"]',
-          id: 'item12',
-          text: 'Person 12'
-        });
+      spyOn(shuffle, '_addItems').and.callFake(function() {});
 
-        var $collection = $eleven.add($twelve);
-        done();
-      }
-
-      $shuffle.one('done.shuffle', first);
+      shuffle.appended(null, true, true);
+      expect(shuffle._addItems).toHaveBeenCalledWith(null, true, true);
+      shuffle.appended(null, false, false);
+      expect(shuffle._addItems).toHaveBeenCalledWith(null, false, false);
+      shuffle.appended(null);
+      expect(shuffle._addItems).toHaveBeenCalledWith(null, true, true);
+      shuffle.appended(null, null, null);
+      expect(shuffle._addItems).toHaveBeenCalledWith(null, true, true);
     });
 
 
@@ -249,9 +276,6 @@ describe('Shuffle.js', function() {
 
     beforeEach(function() {
       loadFixtures('regular.html');
-    });
-
-    afterEach(function() {
     });
 
 

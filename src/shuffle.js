@@ -353,7 +353,7 @@ Shuffle.prototype = {
    * Filter the elements by a category.
    * @param {string} [category] Category to filter by. If it's given, the last
    *     category will be used to filter the items.
-   * @param {jQuery} [$collection] Optionally filter a collection. Defaults to
+   * @param {ArrayLike} [$collection] Optionally filter a collection. Defaults to
    *     all the items.
    * @return {jQuery} Filtered items.
    */
@@ -384,7 +384,7 @@ Shuffle.prototype = {
   /**
    * Returns an object containing the filtered and concealed elements.
    * @param {string|Function} category Category or function to filter by.
-   * @param {jQuery} $items jQuery collection of items to filter.
+   * @param {ArrayLike.<Element>} $items A collection of items to filter.
    * @return {!{filtered: jQuery, concealed: jQuery}}
    * @private
    */
@@ -400,7 +400,7 @@ Shuffle.prototype = {
     // whether to hide it or not.
     } else {
       var self = this;
-      $items.each(function(i, el) {
+      $.each($items, function(i, el) {
         var $item = $(el);
         if ( self._doesPassFilter( category, $item ) ) {
           $filtered = $filtered.add( $item );
@@ -485,6 +485,11 @@ Shuffle.prototype = {
     });
   },
 
+  /**
+   * Sets a transition delay on a collection of elements, making each delay
+   * greater than the last.
+   * @param {ArrayLike.<Element>} $collection Array to iterate over.
+   */
   _setSequentialDelay : function( $collection ) {
     var self = this;
 
@@ -684,13 +689,7 @@ Shuffle.prototype = {
 
   _reLayout : function() {
     this._resetCols();
-
-    // If we've already sorted the elements, keep them sorted
-    if ( this.lastSort ) {
-      this.sort( this.lastSort, true );
-    } else {
-      this._layout( this._getFilteredItems().get(), this._filterEnd );
-    }
+    this.sort( this.lastSort, true );
   },
 
   _getItemPosition : function( $item ) {
@@ -916,6 +915,8 @@ Shuffle.prototype = {
 
     // Use timeouts so that all the items have been set to hidden before the
     // callbacks are executed.
+    // Note(glen): I'm still not convinced this is the best way to handle firing
+    // a callback when all items have finished.
     if ( this._layoutList.length > 0 && $.inArray( item, this._layoutList ) > -1 ) {
       this._layoutEnd( callback );
       this._layoutList.length = 0;
@@ -967,44 +968,55 @@ Shuffle.prototype = {
   },
 
   _addItems : function( $newItems, animateIn, isSequential ) {
-    var self = this;
-
-    if ( !self.supported ) {
-      animateIn = false;
-    }
-
-    self._initItems( $newItems );
-    self._setTransitions( $newItems );
-    self.$items = self._getItems();
+    this._initItems( $newItems );
+    this._setTransitions( $newItems );
+    this.$items = this._getItems();
 
     // Hide all items
-    $newItems.css('opacity', 0);
+    // $newItems.css('opacity', 0);
 
-    // Get ones that passed the current filter
-    var $passed = self._filter( null, $newItems );
-    var passed = $passed.get();
+    // Shrink all items (without transitions).
+    this._shrink( $newItems, $.noop );
+    $.each(this.styleQueue, function(i, transitionObj) {
+      transitionObj.skipTransition = true;
+    });
+    this._processStyleQueue();
 
-    // How many filtered elements?
-    self._updateItemCount();
-
-    if ( animateIn ) {
-      self._layout( passed, null, true );
-
-      if ( isSequential ) {
-        self._setSequentialDelay( $passed );
-      }
-
-      self._revealAppended( $passed );
+    if ( this.supported && animateIn ) {
+      this._addItemsToEnd( $newItems, isSequential );
     } else {
-      self._layout( passed );
+      this.shuffle( this.lastFilter );
     }
   },
 
+
+  _addItemsToEnd : function( $newItems, isSequential ) {
+    // Get ones that passed the current filter
+    var $passed = this._filter( null, $newItems );
+    var passed = $passed.get();
+
+    // How many filtered elements?
+    this._updateItemCount();
+
+    this._layout( passed, null, true );
+
+    if ( isSequential ) {
+      this._setSequentialDelay( passed );
+    }
+
+    this._revealAppended( passed );
+  },
+
+  /**
+   * Triggers appended elements to fade in.
+   * @param {ArrayLike.<Element>} $newFilteredItems Collection of elements.
+   * @private
+   */
   _revealAppended : function( $newFilteredItems ) {
     var self = this;
 
     setTimeout(function() {
-      $newFilteredItems.each(function(i, el) {
+      $.each($newFilteredItems, function(i, el) {
         self._transition({
           $item: $(el),
           opacity: 1,
@@ -1240,6 +1252,8 @@ Shuffle.settings = {
   },
   offset: { top: 0, left: 0 },
   revealAppendedDelay: 300,
+  lastSort: {},
+  lastFilter: ALL_ITEMS,
   enabled: true,
   destroyed: false,
   initialized: false,

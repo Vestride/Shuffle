@@ -148,7 +148,8 @@ module.exports = function(grunt) {
       'concat:main',
       'concat:modernizr',
       'uglify:main',
-      'uglify:modernizr'
+      'uglify:modernizr',
+      'test'
     ]);
   });
 

@@ -8,6 +8,9 @@ window.Manipulator = (function($) {
 
     self.$el = $( element );
     self.init();
+
+    this.addToEnd = true;
+    this.sequentialDelay = true;
   };
 
   Manipulator.prototype.init = function() {
@@ -44,6 +47,8 @@ window.Manipulator = (function($) {
     $('#add').on('click', $.proxy( self.onAddClick, self ));
     $('#randomize').on('click', $.proxy( self.onRandomize, self ));
     $('#remove').on('click', $.proxy( self.onRemoveClick, self ));
+    $('#sorter').on('change', $.proxy( self.onSortChange, self ));
+    $('#mode').on('change', $.proxy( self.onModeChange, self ));
 
     // Show off some shuffle events
     self.$el.on('removed.shuffle', function( evt, $collection, shuffle ) {
@@ -74,6 +79,7 @@ window.Manipulator = (function($) {
       random = Math.random();
       box = document.createElement('div');
       box.className = 'box';
+      box.setAttribute('created', this.getRandomInt(1, 150));
 
       // Randomly add a class
       if ( random > 0.8 ) {
@@ -90,7 +96,7 @@ window.Manipulator = (function($) {
 
     // Tell shuffle items have been appended.
     // It expects a jQuery object as the parameter.
-    self.shuffle.appended( $items );
+    self.shuffle.appended( $items, this.addToEnd, this.sequentialDelay );
     // or
     // self.$el.shuffle('appended', $items );
   };
@@ -131,14 +137,43 @@ window.Manipulator = (function($) {
   };
 
   Manipulator.prototype.onRandomize = function() {
-    var self = this,
-        sortObj = {
-          randomize: true
-        };
+    $('#sorter').val('random').trigger('change');
+  };
 
-    self.shuffle.sort( sortObj );
-    // or
-    // self.$el.shuffle('sort', sortObj);
+  Manipulator.prototype.onSortChange = function(evt) {
+    var value = evt.target.value;
+    var opts = {};
+
+    // We're given the element wrapped in jQuery
+    if ( value === 'created' ) {
+      opts = {
+        by: function($el) {
+          return parseInt($el.attr('created'), 10);
+        }
+      };
+    } else if ( value === 'random' ) {
+      opts = {
+        randomize: true
+      };
+    }
+
+    // Filter elements
+    this.$el.shuffle('sort', opts);
+  };
+
+  Manipulator.prototype.onModeChange = function(evt) {
+    var value = evt.target.value;
+
+    if (value === 'end') {
+      this.addToEnd = true;
+      this.sequentialDelay = false;
+    } else if (value === 'end-sequential') {
+      this.addToEnd = true;
+      this.sequentialDelay = true;
+    } else if (value === 'mix') {
+      this.addToEnd = false;
+      this.sequentialDelay = false;
+    }
   };
 
   return Manipulator;

@@ -31,6 +31,7 @@
     "loadFixtures": true,
     "jasmine": true,
     "expect": true,
+    "spyOn": true,
     "$": true,
     "Modernizr": true
   }
