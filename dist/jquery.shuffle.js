@@ -503,15 +503,6 @@ Shuffle.prototype = {
     $.each($collection, function(i, el) {
       // This works because the transition-property: transform, opacity;
       el.style[ TRANSITION_DELAY ] = '0ms,' + ((i + 1) * self.sequentialFadeDelay) + 'ms';
-
-      // Set the delay back to zero after one transition
-      $(el).on(TRANSITIONEND + '.' + self.unique, function(evt) {
-        var target = evt.currentTarget;
-        if ( target === evt.target ) {
-          target.style[ TRANSITION_DELAY ] = '0ms';
-          $(target).off(TRANSITIONEND + '.' + self.unique);
-        }
-      });
     });
   },
 
@@ -901,7 +892,7 @@ Shuffle.prototype = {
     });
 
     if ( $transitions.length > 0 ) {
-      if ( this.initialized ) {
+      if ( this.initialized && this.supported ) {
         // TODO: Transitioning flag.
         this._whenCollectionDone( $transitions, TRANSITIONEND, this._layoutEnd );
       } else {
@@ -956,7 +947,7 @@ Shuffle.prototype = {
     // How many filtered elements?
     this._updateItemCount();
 
-    this._layout( passed, null, true );
+    this._layout( passed, true );
 
     if ( isSequential && this.supported ) {
       this._setSequentialDelay( passed );
@@ -970,16 +961,20 @@ Shuffle.prototype = {
    * @param {ArrayLike.<Element>} $newFilteredItems Collection of elements.
    * @private
    */
-  _revealAppended : function( $newFilteredItems ) {
+  _revealAppended : function( newFilteredItems ) {
     var self = this;
 
     setTimeout(function() {
-      $.each($newFilteredItems, function(i, el) {
+      $.each(newFilteredItems, function(i, el) {
         self._transition({
           $item: $(el),
           opacity: 1,
           scale: DEFAULT_SCALE
         });
+      });
+
+      self._whenCollectionDone($(newFilteredItems), TRANSITIONEND, function() {
+        $(newFilteredItems).css( TRANSITION_DELAY, '0ms' );
       });
     }, self.revealAppendedDelay);
   },
@@ -1128,26 +1123,22 @@ Shuffle.prototype = {
       return;
     }
 
-
-    // Hide collection first.
-    this._shrink( $collection );
-
     this._whenCollectionDone( $collection, TRANSITIONEND, function() {
-      var self = this;
       // Remove the collection in the callback
       $collection.remove();
 
       // Update the items, layout, count and fire off `removed` event
-      setTimeout(function() {
-        self.$items = self._getItems();
-        self.layout();
-        self._updateItemCount();
-        self._fire( Shuffle.EventType.REMOVED, [ $collection, self ] );
+      this.$items = this._getItems();
+      this.layout();
+      this._updateItemCount();
+      this._fire( Shuffle.EventType.REMOVED, [ $collection, this ] );
 
-        // Let it get garbage collected
-        $collection = null;
-      }, 0);
+      // Let it get garbage collected
+      $collection = null;
     });
+
+    // Hide collection first.
+    this._shrink( $collection );
 
     // Process changes
     this._processStyleQueue();

@@ -4,20 +4,16 @@ window.Manipulator = (function($) {
   var hasConsole = window.console && typeof window.console.log === 'function';
 
   var Manipulator = function( element ) {
-    var self = this;
-
-    self.$el = $( element );
-    self.init();
+    this.$el = $( element );
+    this.init();
 
     this.addToEnd = true;
     this.sequentialDelay = true;
   };
 
   Manipulator.prototype.init = function() {
-    var self = this;
-
-    self.initShuffle();
-    self.setupEvents();
+    this.initShuffle();
+    this.setupEvents();
   };
 
   // Column width and gutter width options can be functions
@@ -42,16 +38,14 @@ window.Manipulator = (function($) {
   };
 
   Manipulator.prototype.setupEvents = function() {
-    var self = this;
-
-    $('#add').on('click', $.proxy( self.onAddClick, self ));
-    $('#randomize').on('click', $.proxy( self.onRandomize, self ));
-    $('#remove').on('click', $.proxy( self.onRemoveClick, self ));
-    $('#sorter').on('change', $.proxy( self.onSortChange, self ));
-    $('#mode').on('change', $.proxy( self.onModeChange, self ));
+    $('#add').on('click', $.proxy( this.onAddClick, this ));
+    $('#randomize').on('click', $.proxy( this.onRandomize, this ));
+    $('#remove').on('click', $.proxy( this.onRemoveClick, this ));
+    $('#sorter').on('change', $.proxy( this.onSortChange, this ));
+    $('#mode').on('change', $.proxy( this.onModeChange, this ));
 
     // Show off some shuffle events
-    self.$el.on('removed.shuffle', function( evt, $collection, shuffle ) {
+    this.$el.on('removed.shuffle', function( evt, $collection, shuffle ) {
 
       // Make sure logs work
       if ( !hasConsole ) {
@@ -66,10 +60,9 @@ window.Manipulator = (function($) {
 
     // Creating random elements. You could use an
     // ajax request or clone elements instead
-    var self = this,
-        itemsToCreate = 5,
+    var itemsToCreate = 5,
         frag = document.createDocumentFragment(),
-        grid = self.$el[0],
+        grid = this.$el[0],
         items = [],
         $items,
         classes = ['w2', 'h2', 'w3'],
@@ -96,9 +89,9 @@ window.Manipulator = (function($) {
 
     // Tell shuffle items have been appended.
     // It expects a jQuery object as the parameter.
-    self.shuffle.appended( $items, this.addToEnd, this.sequentialDelay );
+    this.shuffle.appended( $items, this.addToEnd, this.sequentialDelay );
     // or
-    // self.$el.shuffle('appended', $items );
+    // this.$el.shuffle('appended', $items );
   };
 
   Manipulator.prototype.getRandomInt = function(min, max) {
@@ -107,8 +100,7 @@ window.Manipulator = (function($) {
 
   // Randomly choose some elements to remove
   Manipulator.prototype.onRemoveClick = function() {
-    var self = this,
-        total = self.shuffle.visibleItems,
+    var total = this.shuffle.visibleItems,
         numberToRemove = Math.min( 3, total ),
         indexesToRemove = [],
         i = 0,
@@ -122,18 +114,19 @@ window.Manipulator = (function($) {
     // This has the possibility to choose the same index for more than
     // one in the array, meaning sometimes less than 3 will be removed
     for ( ; i < numberToRemove; i++ ) {
-      indexesToRemove.push( self.getRandomInt( 0, total - 1 ) );
+      indexesToRemove.push( this.getRandomInt( 0, total - 1 ) );
     }
 
     // Make a jQuery collection out of the index selections
+    var self = this;
     $.each(indexesToRemove, function(i, index) {
       $collection = $collection.add( self.shuffle.$items.eq( index ) );
     });
 
     // Tell shuffle to remove them
-    self.shuffle.remove( $collection );
+    this.shuffle.remove( $collection );
     // or
-    // self.$el.shuffle('remove', $collection);
+    // this.$el.shuffle('remove', $collection);
   };
 
   Manipulator.prototype.onRandomize = function() {
