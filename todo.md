@@ -6,7 +6,6 @@
 * Horizontal layout
 
 ## Things I don't like and would like to fix
-* Move everything to Shuffle.prototype.method = function.
 * Less jQuery dependency
 
 ## Reasons Zepto doesn't work
