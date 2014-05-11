@@ -140,10 +140,6 @@ var Shuffle = function( element, options ) {
 Shuffle.EventType = {
   LOADING: 'loading',
   DONE: 'done',
-  SHRINK: 'shrink',
-  SHRUNK: 'shrunk',
-  FILTER: 'filter',
-  FILTERED: 'filtered',
   SORTED: 'sorted',
   LAYOUT: 'layout',
   REMOVED: 'removed'
@@ -239,21 +235,18 @@ Shuffle._getOuterHeight = function( element, includeMargins ) {
 /**
  * Change a property or execute a function which will not have a transition
  * @param {Element} element DOM element that won't be transitioned
- * @param {(string|Function)} property The new style property which will be set or a function which will be called
- * @param {string} [value] The value that `property` should be.
+ * @param {Function} callback A function which will be called while transition
+ *     is set to 0ms.
+ * @param {Object} [context] Optional context for the callback function.
  * @private
  */
-Shuffle._skipTransition = function( element, property, value ) {
+Shuffle._skipTransition = function( element, callback, context ) {
   var duration = element.style[ TRANSITION_DURATION ];
 
   // Set the duration to zero so it happens immediately
   element.style[ TRANSITION_DURATION ] = '0ms'; // ms needed for firefox!
 
-  if ( $.isFunction( property ) ) {
-    property();
-  } else {
-    element.style[ property ] = value;
-  }
+  callback.call( context );
 
   // Force reflow
   var reflow = element.offsetWidth;
@@ -270,13 +263,7 @@ Shuffle.prototype = {
   _init : function() {
     var self = this;
 
-    self._layoutList = [];
-    self._shrinkList = [];
-
     self._setVars();
-
-    // Zero out all columns
-    self._resetCols();
 
     // Add classes and invalidate styles
     this.$el.addClass( Shuffle.ClassName.BASE );
@@ -377,8 +364,6 @@ Shuffle.prototype = {
   _filter : function( category, $collection ) {
     category = category || this.lastFilter;
     $collection = $collection || this.$items;
-
-    this._fire( Shuffle.EventType.FILTER );
 
     var set = this._getFilteredSets( category, $collection );
 
@@ -639,13 +624,11 @@ Shuffle.prototype = {
    * Loops through each item that should be shown and calculates the x, y position.
    * @param {Array.<Element>} items Array of items that will be shown/layed out in order in their array.
    *     Because jQuery collection are always ordered in DOM order, we can't pass a jq collection.
-   * @param {function} fn Callback function.
    * @param {boolean} isOnlyPosition If true this will position the items with zero opacity.
    */
-  _layout : function( items, fn, isOnlyPosition ) {
+  _layout : function( items, isOnlyPosition ) {
     var self = this;
-
-    fn = fn || self._filterEnd;
+    var added = 0;
 
     $.each(items, function(index, item) {
       var $item = $(item);
@@ -666,19 +649,23 @@ Shuffle.prototype = {
         $item: $item,
         x: pos.x,
         y: pos.y,
-        scale: DEFAULT_SCALE
+        scale: DEFAULT_SCALE,
+        opacity: isOnlyPosition ? 0 : 1,
+        skipTransition: !!isOnlyPosition,
+        callfront: function() {
+          if ( !isOnlyPosition ) {
+            $item.css( 'visibility', 'visible' );
+          }
+        },
+        callback: function() {
+          if ( isOnlyPosition ) {
+            $item.css( 'visibility', 'hidden' );
+          }
+        }
       };
 
-      if ( isOnlyPosition ) {
-        transitionObj.skipTransition = true;
-        transitionObj.opacity = 0;
-      } else {
-        transitionObj.opacity = 1;
-        transitionObj.callback = fn;
-      }
-
+      added++;
       self.styleQueue.push( transitionObj );
-      self._layoutList.push( $item[0] );
     });
 
     // `_layout` always happens after `_shrink`, so it's safe to process the style
@@ -687,26 +674,24 @@ Shuffle.prototype = {
 
     // A call to layout happened, but none of the newly filtered items will
     // change position. Asynchronously fire the callback here.
-    if ( items.length > 0 && self._layoutList.length === 0 ) {
-      self._layoutEnd( fn );
+    if ( items.length > 0 && added === 0 ) {
+      self._layoutEnd();
     }
 
     // Adjust the height of the container
     self._setContainerSize();
   },
 
-  // Reset columns.
+  /**
+   * Zeros out the y columns array, which is used to determine item placement.
+   * @private
+   */
   _resetCols : function() {
     var i = this.cols;
     this.colYs = [];
     while (i--) {
       this.colYs.push( 0 );
     }
-  },
-
-  _reLayout : function() {
-    this._resetCols();
-    this.sort( this.lastSort, true );
   },
 
   _getItemPosition : function( $item ) {
@@ -750,7 +735,7 @@ Shuffle.prototype = {
     }
   },
 
-  // worker method that places item in the columnSet with the the minY
+  // TODO: Cleanup and combine with _getItemPosition.
   _placeItem : function( $item, setY ) {
     // get the minimum Y value from the columns
     var self = this,
@@ -786,23 +771,13 @@ Shuffle.prototype = {
   /**
    * Hides the elements that don't match our filter.
    * @param {jQuery} $collection jQuery collection to shrink.
-   * @param {Function} fn Callback function.
    * @private
    */
-  _shrink : function( $collection, fn ) {
-    var self = this,
-        $concealed = $collection || self._getConcealedItems();
+  _shrink : function( $collection ) {
+    var self = this;
+    var $concealed = $collection || self._getConcealedItems();
 
-    fn = fn || self._shrinkEnd;
-
-    // Abort if no items
-    if ( !$concealed.length ) {
-      return;
-    }
-
-    self._fire( Shuffle.EventType.SHRINK );
-
-    $concealed.each(function() {
+    $.each($concealed, function() {
       var $item = $(this);
       var itemData = $item.data();
       var alreadyShrunk = itemData.scale === CONCEALED_SCALE;
@@ -820,11 +795,12 @@ Shuffle.prototype = {
         y: itemData.position.y,
         scale : CONCEALED_SCALE,
         opacity: 0,
-        callback: fn
+        callback: function() {
+          $item.css( 'visibility', 'hidden' );
+        }
       };
 
       self.styleQueue.push( transitionObj );
-      self._shrinkList.push( $item[0] );
     });
   },
 
@@ -842,7 +818,7 @@ Shuffle.prototype = {
       return;
     }
 
-    this.resized();
+    this.update();
   },
 
 
@@ -860,39 +836,31 @@ Shuffle.prototype = {
       styles.top = opts.y;
     }
 
-
-    // Show the item if its opacity will be 1.
-    if ( opts.opacity === 1 ) {
-      styles.visibility = 'visible';
-    }
-
     return styles;
   },
 
   /**
    * Transitions an item in the grid
    *
-   * @param {Object}   opts options
-   * @param {jQuery}   opts.$item jQuery object representing the current item
-   * @param {number}   opts.x translate's x
-   * @param {number}   opts.y translate's y
-   * @param {number}   opts.scale amount to scale the item
-   * @param {number}   opts.opacity opacity of the item
-   * @param {Function} opts.callback complete function for the animation
+   * @param {Object} opts options.
+   * @param {jQuery} opts.$item jQuery object representing the current item.
+   * @param {number} opts.x Translate's x.
+   * @param {number} opts.y Translate's y.
+   * @param {number} opts.scale Amount to scale the item.
+   * @param {number} opts.opacity Opacity of the item.
+   * @param {Function} opts.callback complete function for the animation.
    * @private
    */
   _transition : function( opts ) {
     opts.$item.data('scale', opts.scale);
 
     var styles = this._getStylesForTransition( opts );
-    this._startItemAnimation( opts.$item, styles, opts.callback );
+    this._startItemAnimation( opts.$item, styles, opts.callfront || $.noop, opts.callback || $.noop );
   },
 
 
-  _startItemAnimation : function( $item, styles, callback ) {
-    var willBeVisible = styles.opacity === 1;
-    var complete = $.proxy( this._handleItemAnimationEnd, this,
-        callback || $.noop, $item[0], willBeVisible );
+  _startItemAnimation : function( $item, styles, callfront, callback ) {
+    callfront();
 
     // Use CSS Transforms if we have them
     if ( this.supported ) {
@@ -903,103 +871,76 @@ Shuffle.prototype = {
       if ( this.initialized ) {
         // Namespaced because the reveal appended function also wants to know
         // about the transition end event.
-        $item.on( TRANSITIONEND + '.shuffleitem', complete );
+        $item.on( TRANSITIONEND, function( evt ) {
+          // Make sure this event handler has not bubbled up from a child.
+          if ( evt.target === evt.currentTarget ) {
+            callback();
+          }
+        });
       } else {
-        complete();
+        callback();
       }
 
     // Use jQuery to animate left/top
     } else {
-      // jQuery cannot animate visibility, set it immediately.
-      if ( 'visibility' in styles ) {
-        $item.css('visibility', styles.visibility);
-        delete styles.visibility;
-      }
-      $item.stop( true ).animate( styles, this.speed, 'swing', complete );
-    }
-  },
-
-
-  _handleItemAnimationEnd : function( callback, item, willBeVisible, evt ) {
-    // Make sure this event handler has not bubbled up from a child.
-    if ( evt ) {
-      if ( evt.target === item ) {
-        $( item ).off( '.shuffleitem' );
-      } else {
-        return;
-      }
-    }
-
-    // Use timeouts so that all the items have been set to hidden before the
-    // callbacks are executed.
-    // Note(glen): I'm still not convinced this is the best way to handle firing
-    // a callback when all items have finished.
-    if ( this._layoutList.length > 0 && $.inArray( item, this._layoutList ) > -1 ) {
-      this._layoutEnd( callback );
-      this._layoutList.length = 0;
-    } else if ( this._shrinkList.length > 0 && $.inArray( item, this._shrinkList ) > -1 ) {
-      this._shrinkList.length = 0;
-      setTimeout( $.proxy( callback, this ), 0 );
-    }
-
-    if ( !willBeVisible ) {
-      item.style.visibility = 'hidden';
+      $item.stop( true ).animate( styles, this.speed, 'swing', callback );
     }
   },
 
   _processStyleQueue : function() {
     var self = this;
+    var $transitions = $();
 
     $.each(this.styleQueue, function(i, transitionObj) {
-
       if ( transitionObj.skipTransition ) {
-        Shuffle._skipTransition(transitionObj.$item[0], function() {
-          transitionObj.$item.css( self._getStylesForTransition( transitionObj ) );
-        });
+        self._styleImmediately( transitionObj );
       } else {
+        $transitions = $transitions.add( transitionObj.$item );
         self._transition( transitionObj );
       }
     });
+
+    if ( $transitions.length > 0 ) {
+      if ( this.initialized ) {
+        // TODO: Transitioning flag.
+        this._whenCollectionDone( $transitions, TRANSITIONEND, this._layoutEnd );
+      } else {
+        this._layoutEnd();
+      }
+    }
 
     // Remove everything in the style queue
     self.styleQueue.length = 0;
   },
 
-  _shrinkEnd : function() {
-    this._fire( Shuffle.EventType.SHRUNK );
+  _styleImmediately : function( opts ) {
+    Shuffle._skipTransition(opts.$item[0], function() {
+      opts.$item.css( this._getStylesForTransition( opts ) );
+    }, this);
   },
 
-  _filterEnd : function() {
-    this._fire( Shuffle.EventType.FILTERED );
+  _layoutEnd : function() {
+    setTimeout($.proxy( this._fire, this, Shuffle.EventType.LAYOUT ), 0);
   },
 
-  _sortEnd : function() {
-    this._fire( Shuffle.EventType.SORTED );
-  },
-
-  _layoutEnd : function( callback ) {
-    setTimeout($.proxy(function () {
-      this._fire( Shuffle.EventType.LAYOUT );
-      callback.call( this );
-    }, this), 0);
-  },
-
-  _addItems : function( $newItems, animateIn, isSequential ) {
+  _addItems : function( $newItems, addToEnd, isSequential ) {
+    // Add classes and set initial positions.
     this._initItems( $newItems );
+
+    // Add transition to each item.
     this._setTransitions( $newItems );
+
+    // Update the list of
     this.$items = this._getItems();
 
-    // Hide all items
-    // $newItems.css('opacity', 0);
-
     // Shrink all items (without transitions).
-    this._shrink( $newItems, $.noop );
+    this._shrink( $newItems );
     $.each(this.styleQueue, function(i, transitionObj) {
       transitionObj.skipTransition = true;
     });
     this._processStyleQueue();
 
-    if ( this.supported && animateIn ) {
+    if ( addToEnd ) {
       this._addItemsToEnd( $newItems, isSequential );
     } else {
       this.shuffle( this.lastFilter );
@@ -1017,7 +958,7 @@ Shuffle.prototype = {
 
     this._layout( passed, null, true );
 
-    if ( isSequential ) {
+    if ( isSequential && this.supported ) {
       this._setSequentialDelay( passed );
     }
 
@@ -1045,6 +986,36 @@ Shuffle.prototype = {
 
 
   /**
+   * Execute a function when an event has been triggered for every item in a collection.
+   * @param {jQuery} $collection Collection of elements.
+   * @param {string} eventName Event to listen for.
+   * @param {Function} callback Callback to execute when they're done.
+   * @private
+   */
+  _whenCollectionDone : function( $collection, eventName, callback ) {
+    var done = 0;
+    var items = $collection.length;
+    var self = this;
+
+    function handleEventName( evt ) {
+      if ( evt.target === evt.currentTarget ) {
+        $( evt.target ).off( eventName );
+
+        done++;
+
+        // Execute callback if all items have emitted the correct event.
+        if ( done === items ) {
+          callback.call( self );
+        }
+      }
+    }
+
+    // Bind the event to all items.
+    $collection.on( eventName, handleEventName );
+  },
+
+
+  /**
    * Public Methods
    */
 
@@ -1054,9 +1025,7 @@ Shuffle.prototype = {
    * @param {Object} [sortObj] A sort object which can sort the filtered set
    */
   shuffle : function( category, sortObj ) {
-    var self = this;
-
-    if ( !self.enabled ) {
+    if ( !this.enabled ) {
       return;
     }
 
@@ -1064,50 +1033,39 @@ Shuffle.prototype = {
       category = ALL_ITEMS;
     }
 
-    self._filter( category );
+    this._filter( category );
 
     // How many filtered elements?
-    self._updateItemCount();
+    this._updateItemCount();
 
     // Shrink each concealed item
-    self._shrink();
+    this._shrink();
 
-    // If given a valid sort object, save it so that _reLayout() will sort the items
-    if ( sortObj ) {
-      self.lastSort = sortObj;
-    }
     // Update transforms on .filtered elements so they will animate to their new positions
-    self._reLayout();
+    this.sort( sortObj );
   },
 
   /**
-   * Gets the .filtered elements, sorts them, and passes them to layout
-   *
+   * Gets the .filtered elements, sorts them, and passes them to layout.
    * @param {Object} opts the options object for the sorted plugin
-   * @param {boolean} [fromFilter] was called from Shuffle.filter method.
    */
-  sort : function( opts, fromFilter ) {
-    var self = this,
-        items = self._getFilteredItems().sorted(opts);
+  sort : function( opts ) {
+    this._resetCols();
 
-    if ( !fromFilter ) {
-      self._resetCols();
-    }
+    var sortOptions = opts || this.lastSort;
+    var items = this._getFilteredItems().sorted( sortOptions );
 
-    self._layout(items, function() {
-      if (fromFilter) {
-        self._filterEnd();
-      }
-      self._sortEnd();
-    });
+    this._layout( items );
 
-    self.lastSort = opts;
+    this.lastSort = opts;
   },
 
   /**
-   * Relayout everything
+   * Reposition everything.
+   * @param {boolean} isOnlyLayout If true, column and gutter widths won't be
+   *     recalculated.
    */
-  resized : function( isOnlyLayout ) {
+  update : function( isOnlyLayout ) {
     if ( this.enabled ) {
 
       if ( !isOnlyLayout ) {
@@ -1116,7 +1074,7 @@ Shuffle.prototype = {
       }
 
       // Layout items
-      this._reLayout();
+      this.sort();
     }
   },
 
@@ -1129,22 +1087,15 @@ Shuffle.prototype = {
     this.update( true );
   },
 
-  update : function( isOnlyLayout ) {
-    this.resized( isOnlyLayout );
-  },
-
   /**
    * New items have been appended to shuffle. Fade them in sequentially
    * @param {jQuery} $newItems jQuery collection of new items
-   * @param {boolean} [animateIn] If false, the new items won't animate in
-   * @param {boolean} [isSequential] If false, new items won't sequentially fade in
+   * @param {boolean} [addToEnd=false] If true, new items will be added to the end / bottom
+   *     of the items. If not true, items will be mixed in with the current sort order.
+   * @param {boolean} [isSequential=true] If false, new items won't sequentially fade in
    */
-  appended : function( $newItems, animateIn, isSequential ) {
-    // True if undefined
-    animateIn = animateIn === false ? false : true;
-    isSequential = isSequential === false ? false : true;
-
-    this._addItems( $newItems, animateIn, isSequential );
+  appended : function( $newItems, addToEnd, isSequential ) {
+    this._addItems( $newItems, addToEnd === true, isSequential !== false );
   },
 
   /**
@@ -1177,21 +1128,21 @@ Shuffle.prototype = {
       return;
     }
 
-    var self = this;
 
-    // Hide collection first
-    self._shrink( $collection, function() {
-      var shuffle = this;
+    // Hide collection first.
+    this._shrink( $collection );
 
+    this._whenCollectionDone( $collection, TRANSITIONEND, function() {
+      var self = this;
       // Remove the collection in the callback
       $collection.remove();
 
       // Update the items, layout, count and fire off `removed` event
       setTimeout(function() {
-        shuffle.$items = shuffle._getItems();
-        shuffle.layout();
-        shuffle._updateItemCount();
-        shuffle._fire( Shuffle.EventType.REMOVED, [ $collection, shuffle ] );
+        self.$items = self._getItems();
+        self.layout();
+        self._updateItemCount();
+        self._fire( Shuffle.EventType.REMOVED, [ $collection, self ] );
 
         // Let it get garbage collected
         $collection = null;
@@ -1199,9 +1150,7 @@ Shuffle.prototype = {
     });
 
     // Process changes
-    self._processStyleQueue();
-
-    return self;
+    this._processStyleQueue();
   },
 
   /**
