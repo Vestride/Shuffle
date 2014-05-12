@@ -670,6 +670,7 @@ Shuffle.prototype._layout = function( items, isOnlyPosition ) {
     var $item = $(item);
     var itemData = $item.data();
     var currPos = itemData.position;
+    var currScale = itemData.scale;
     var pos = this._getItemPosition( $item );
 
     // Save data for shrink
@@ -678,7 +679,7 @@ Shuffle.prototype._layout = function( items, isOnlyPosition ) {
 
     // If the item will not change its position, do not add it to the render
     // queue. Transitions don't fire when setting a property to the same value.
-    if ( pos.x === currPos.x && pos.y === currPos.y && itemData.scale === DEFAULT_SCALE ) {
+    if ( pos.x === currPos.x && pos.y === currPos.y && currScale === DEFAULT_SCALE ) {
       return;
     }
 
