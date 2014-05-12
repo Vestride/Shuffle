@@ -257,7 +257,13 @@ Shuffle._skipTransition = function( element, callback, context ) {
  */
 
 Shuffle.prototype._init = function() {
-  this._setVars();
+  this.$items = this._getItems();
+
+  this.sizer = this._getElementOption( this.sizer );
+
+  if ( this.sizer ) {
+    this.useSizer = true;
+  }
 
   // Add classes and invalidate styles
   this.$el.addClass( Shuffle.ClassName.BASE );
@@ -313,36 +319,29 @@ Shuffle.prototype._getResizeFunction = function() {
       resizeFunction;
 };
 
-Shuffle.prototype._setVars = function() {
-  var columnWidth = this.columnWidth;
 
-  this.$items = this._getItems();
-
-  // Column width is the default setting and sizer is not (meaning passed in)
-  // Assume they meant column width to be the sizer
-  if ( columnWidth === 0 && this.sizer !== null ) {
-    columnWidth = this.sizer;
-  }
-
+/**
+ * Retrieve an element from an option.
+ * @param {string|jQuery|Element} option The option to check.
+ * @return {?Element} The plain element or null.
+ * @private
+ */
+Shuffle.prototype._getElementOption = function( option ) {
   // If column width is a string, treat is as a selector and search for the
   // sizer element within the outermost container
-  if ( typeof columnWidth === 'string' ) {
-    this.$sizer = this.$el.find( columnWidth );
+  if ( typeof option === 'string' ) {
+    return this.$el.find( option )[0] || null;
 
   // Check for an element
-  } else if ( columnWidth && columnWidth.nodeType && columnWidth.nodeType === 1 ) {
-    // Wrap it in jQuery
-    this.$sizer = $( columnWidth );
+  } else if ( option && option.nodeType && option.nodeType === 1 ) {
+    return option;
 
   // Check for jQuery object
-  } else if ( columnWidth && columnWidth.jquery ) {
-    this.$sizer = columnWidth;
+  } else if ( option && option.jquery ) {
+    return option[0];
   }
 
-  if ( this.$sizer && this.$sizer.length ) {
-    this.useSizer = true;
-    this.sizer = this.$sizer[0];
-  }
+  return null;
 };
 
 
@@ -461,21 +460,38 @@ Shuffle.prototype._initItems = function( $items ) {
   $items.css( this.itemCss ).data('position', {x: 0, y: 0});
 };
 
+/**
+ * Updates the filtered item count.
+ * @private
+ */
 Shuffle.prototype._updateItemCount = function() {
   this.visibleItems = this._getFilteredItems().length;
 };
 
+
+/**
+ * Sets css transform transition on a an element.
+ * @param {Element} element Element to set transition on.
+ * @private
+ */
 Shuffle.prototype._setTransition = function( element ) {
   element.style[ TRANSITION ] = CSS_TRANSFORM + ' ' + this.speed + 'ms ' +
     this.easing + ', opacity ' + this.speed + 'ms ' + this.easing;
 };
 
+
+/**
+ * Sets css transform transition on a group of elements.
+ * @param {ArrayLike.<Element>} $items Elements to set transitions on.
+ * @private
+ */
 Shuffle.prototype._setTransitions = function( $items ) {
   $items = $items || this.$items;
   each($items, function( el ) {
     this._setTransition( el );
   }, this);
 };
+
 
 /**
  * Sets a transition delay on a collection of elements, making each delay
@@ -494,19 +510,29 @@ Shuffle.prototype._setSequentialDelay = function( $collection ) {
   }, this);
 };
 
+
 Shuffle.prototype._getItems = function() {
   return this.$el.children( this.itemSelector );
 };
 
+
 Shuffle.prototype._getFilteredItems = function() {
   return this.$items.filter('.' + Shuffle.ClassName.FILTERED);
 };
+
 
 Shuffle.prototype._getConcealedItems = function() {
   return this.$items.filter('.' + Shuffle.ClassName.CONCEALED);
 };
 
 
+/**
+ * Returns the column size, based on column width and sizer options.
+ * @param {number} gutterSize Size of the gutters.
+ * @param {number} containerWidth Size of the parent container.
+ * @return {number}
+ * @private
+ */
 Shuffle.prototype._getColumnSize = function( gutterSize, containerWidth ) {
   var size;
 
@@ -540,6 +566,12 @@ Shuffle.prototype._getColumnSize = function( gutterSize, containerWidth ) {
 };
 
 
+/**
+ * Returns the gutter size, based on gutter width and sizer options.
+ * @param {number} containerWidth Size of the parent container.
+ * @return {number}
+ * @private
+ */
 Shuffle.prototype._getGutterSize = function( containerWidth ) {
   var size;
   if ( $.isFunction( this.gutterWidth ) ) {
@@ -779,6 +811,10 @@ Shuffle.prototype._shrink = function( $collection ) {
   }, this);
 };
 
+/**
+ * Resize handler.
+ * @private
+ */
 Shuffle.prototype._onResize = function() {
   // If shuffle is disabled, destroyed, don't do anything
   if ( !this.enabled || this.destroyed ) {
@@ -797,6 +833,12 @@ Shuffle.prototype._onResize = function() {
 };
 
 
+/**
+ * Returns styles for either jQuery animate or transition.
+ * @param {Object} opts Transition options.
+ * @return {!Object} Transforms for transitions, left/top for animate.
+ * @private
+ */
 Shuffle.prototype._getStylesForTransition = function( opts ) {
   var styles = {
     opacity: opts.opacity
@@ -823,7 +865,8 @@ Shuffle.prototype._getStylesForTransition = function( opts ) {
  * @param {number} opts.y Translate's y.
  * @param {number} opts.scale Amount to scale the item.
  * @param {number} opts.opacity Opacity of the item.
- * @param {Function} opts.callback complete function for the animation.
+ * @param {Function} opts.callback Complete function for the animation.
+ * @param {Function} opts.callfront Function to call before transitioning.
  * @private
  */
 Shuffle.prototype._transition = function( opts ) {
@@ -1146,12 +1189,17 @@ Shuffle.prototype.destroy = function() {
   // Reset individual item styles
   this.$items
       .removeAttr('style')
-      .removeClass('concealed filtered shuffle-item');
+      .removeData('position')
+      .removeData('scale')
+      .removeClass([
+        Shuffle.ClassName.CONCEALED,
+        Shuffle.ClassName.FILTERED,
+        Shuffle.ClassName.SHUFFLE_ITEM
+      ].join(' '));
 
   // Null DOM references
   this.$items = null;
   this.$el = null;
-  this.$sizer = null;
   this.sizer = null;
   this.element = null;
 
@@ -1163,11 +1211,11 @@ Shuffle.prototype.destroy = function() {
 
 // Overrideable options
 Shuffle.options = {
-  group: ALL_ITEMS, // Filter group
+  group: ALL_ITEMS, // Initial filter group.
   speed: 250, // Transition/animation speed (milliseconds)
   easing: 'ease-out', // css easing function to use
   itemSelector: '', // e.g. '.picture-item'
-  sizer: null, // sizer element. Can be anything columnWidth is
+  sizer: null, // sizer element. Use an element to determine the size of columns and gutters.
   gutterWidth: 0, // a static number or function that tells the plugin how wide the gutters between columns are (in pixels)
   columnWidth: 0, // a static number or function that returns a number which tells the plugin how wide the columns are (in pixels)
   delimeter: null, // if your group is not json, and is comma delimeted, you could set delimeter to ','
@@ -1182,7 +1230,6 @@ Shuffle.options = {
 
 // Not overrideable
 Shuffle.settings = {
-  $sizer: null,
   useSizer: false,
   itemCss : { // default CSS for each item
     position: 'absolute',
@@ -1204,16 +1251,14 @@ Shuffle.settings = {
 $.fn.shuffle = function( opts ) {
   var args = Array.prototype.slice.call( arguments, 1 );
   return this.each(function() {
-    var $this = $( this ),
-        shuffle = $this.data( SHUFFLE );
+    var $this = $( this );
+    var shuffle = $this.data( SHUFFLE );
 
     // If we don't have a stored shuffle, make a new one and save it
     if ( !shuffle ) {
       shuffle = new Shuffle( this, opts );
       $this.data( SHUFFLE, shuffle );
-    }
-
-    if ( typeof opts === 'string' && shuffle[ opts ] ) {
+    } else if ( typeof opts === 'string' && shuffle[ opts ] ) {
       shuffle[ opts ].apply( shuffle, args );
     }
   });

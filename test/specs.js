@@ -13,6 +13,10 @@ describe('Shuffle.js', function() {
     afterEach(function(done) {
       var shuffle = $('#regular-shuffle').data('shuffle');
 
+      if (!shuffle) {
+        return done();
+      }
+
       function finish() {
         shuffle.destroy();
         done();
@@ -21,7 +25,7 @@ describe('Shuffle.js', function() {
       if (shuffle.initialized) {
         setTimeout(finish, 0);
       } else {
-        shuffle.$el.on('done.shuffle', finish);
+        shuffle.$el.one('done.shuffle', finish);
       }
     });
 
@@ -268,6 +272,195 @@ describe('Shuffle.js', function() {
       expect(shuffle._addItems).toHaveBeenCalledWith(null, false, true);
     });
 
+
+    it('can remove items', function(done) {
+      var $shuffle = $('#regular-shuffle');
+      var shuffle = $shuffle.shuffle({
+        speed: 100
+      }).data('shuffle');
+
+      function first() {
+        var $itemsToRemove = $shuffle.children().slice(0, 2);
+
+        shuffle.remove($itemsToRemove);
+        $shuffle.one('removed.shuffle', second);
+        $shuffle.one('layout.shuffle', third);
+      }
+
+      function second(evt, $items, instance) {
+        expect(instance.visibleItems).toBe(8);
+        expect($items[0].id).toBe('item1');
+        expect($items[1].id).toBe('item2');
+        expect($shuffle.children().length).toBe(8);
+      }
+
+      function third() {
+        done();
+      }
+
+      $shuffle.one('done.shuffle', first);
+    });
+
+    it('can get an element option', function() {
+      var $shuffle = $('#regular-shuffle');
+      var shuffle = $shuffle.shuffle({
+        speed: 100
+      }).data('shuffle');
+
+      var $first = $shuffle.children().first();
+
+      expect(shuffle._getElementOption($first)).toEqual($first[0]);
+      expect(shuffle._getElementOption($first[0])).toEqual($first[0]);
+      expect(shuffle._getElementOption('#item1')).toEqual($first[0]);
+      expect(shuffle._getElementOption('#hello-world')).toEqual(null);
+      expect(shuffle._getElementOption(null)).toEqual(null);
+      expect(shuffle._getElementOption(undefined)).toEqual(null);
+      expect(shuffle._getElementOption(function() {
+        return $first;
+      })).toEqual(null);
+    });
+
+    it('can test elements against filters', function() {
+      var $shuffle = $('#regular-shuffle');
+      var shuffle = $shuffle.shuffle({
+        speed: 100
+      }).data('shuffle');
+
+      var $first = $shuffle.children().first();
+      expect(shuffle._doesPassFilter('design', $first)).toBe(true);
+      expect(shuffle._doesPassFilter('black', $first)).toBe(false);
+      expect(shuffle._doesPassFilter(function($el) {
+        expect($el).toExist();
+        return $el.attr('data-age') === '21';
+      }, $first)).toBe(true);
+      expect(shuffle._doesPassFilter(function($el) {
+        return $el.attr('data-age') === '22';
+      }, $first)).toBe(false);
+    });
+
+    it('can initialize a collection of items', function() {
+      var $shuffle = $('#regular-shuffle');
+      var shuffle = $shuffle.shuffle({
+        speed: 100
+      }).data('shuffle');
+
+      var $eleven = $('<div>', {
+        'class': 'item',
+        'data-age': 36,
+        'data-groups': '["ux", "black"]',
+        id: 'item11',
+        text: 'Person 11'
+      });
+      var $twelve = $('<div>', {
+        'class': 'item',
+        'data-age': 37,
+        'data-groups': '["strategy", "blue"]',
+        id: 'item12',
+        text: 'Person 12'
+      });
+
+      var $collection = $eleven.add($twelve);
+
+      expect($collection).not.toHaveClass('shuffle-item');
+      expect($collection).not.toHaveClass('filtered');
+      expect($collection).not.toHaveData('position');
+      shuffle._initItems($collection);
+      expect($collection).toHaveClass('shuffle-item');
+      expect($collection).toHaveClass('filtered');
+      expect($collection).toHaveData('position');
+    });
+
+
+    it('should reset columns', function() {
+      var $shuffle = $('#regular-shuffle');
+      var shuffle = $shuffle.shuffle({
+        speed: 100
+      }).data('shuffle');
+
+      expect(shuffle.cols).toBeGreaterThan(0);
+      shuffle._resetCols();
+
+      var colYs = new Array(shuffle.cols);
+      for (var i = 0; i < shuffle.cols; i++) {
+        colYs[i] = 0;
+      }
+      expect(shuffle.colYs).toEqual(colYs);
+    });
+
+    it('should destroy properly', function(done) {
+      var $shuffle = $('#regular-shuffle');
+      var shuffle = $shuffle.shuffle({
+        speed: 100
+      }).data('shuffle');
+      var $items = shuffle.$items;
+
+      function first() {
+        shuffle.destroy();
+
+        expect(shuffle.element).toBe(null);
+        expect(shuffle.$items).toBe(null);
+        expect(shuffle.sizer).toBe(null);
+        expect(shuffle.$el).toBe(null);
+
+        expect($shuffle).not.toHaveData('shuffle');
+        expect($shuffle).not.toHaveClass('shuffle');
+        expect($items).not.toHaveClass('shuffle-item');
+        expect($items).not.toHaveClass('filtered');
+        expect($items).not.toHaveClass('concealed');
+        expect($items).not.toHaveData('position');
+        expect($items).not.toHaveData('scale');
+
+        done();
+      }
+
+      $shuffle.one('done.shuffle', first);
+    });
+
+    it('should not update or shuffle when disabled or destroyed', function(done) {
+      var $shuffle = $('#regular-shuffle');
+      var shuffle = $shuffle.shuffle({
+        speed: 100
+      }).data('shuffle');
+
+      function first() {
+        spyOn(shuffle, 'update');
+        spyOn(shuffle, '_filter');
+
+        shuffle.disable();
+
+        shuffle.shuffle('design');
+
+        expect(shuffle._filter).not.toHaveBeenCalled();
+        expect(shuffle.update).not.toHaveBeenCalled();
+
+        shuffle.enable(false);
+
+        shuffle.destroy();
+        shuffle._onResize();
+        expect(shuffle.update).not.toHaveBeenCalled();
+        done();
+      }
+
+      $shuffle.one('done.shuffle', first);
+    });
+
+    it('should not update when the container is the same size', function(done) {
+      var $shuffle = $('#regular-shuffle');
+      var shuffle = $shuffle.shuffle({
+        speed: 100
+      }).data('shuffle');
+
+      function first() {
+        spyOn(shuffle, 'update');
+
+        shuffle._onResize();
+
+        expect(shuffle.update).not.toHaveBeenCalled();
+        done();
+      }
+
+      $shuffle.one('done.shuffle', first);
+    });
 
   });
 
