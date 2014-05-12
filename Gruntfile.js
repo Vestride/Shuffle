@@ -44,11 +44,11 @@ module.exports = function(grunt) {
       },
       src: {
         files: 'src/*.js',
-        tasks: ['concat']
+        tasks: ['concat', 'test']
       },
       test: {
         files: 'test/specs.js',
-        tasks: ['jasmine:main']
+        tasks: ['test']
       }
     },
 
@@ -117,7 +117,7 @@ module.exports = function(grunt) {
           specs: 'test/specs.js',
           vendor: [
             'dist/modernizr.custom.min.js',
-            'http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js',
+            'http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js',
             'bower_components/jasmine-jquery/lib/jasmine-jquery.js'
           ],
           outfile: 'test/_SpecRunner.html',

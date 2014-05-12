@@ -6,12 +6,15 @@ describe('Shuffle.js', function() {
 
   describe('regular markup', function() {
 
+    var $shuffle;
     beforeEach(function() {
       loadFixtures('regular.html');
+      $shuffle = $('#regular-shuffle');
     });
 
     afterEach(function(done) {
-      var shuffle = $('#regular-shuffle').data('shuffle');
+      var shuffle = $shuffle.data('shuffle');
+      $shuffle = null;
 
       if (!shuffle) {
         return done();
@@ -27,6 +30,7 @@ describe('Shuffle.js', function() {
       } else {
         shuffle.$el.one('done.shuffle', finish);
       }
+
     });
 
     it('should get default options', function() {
@@ -46,7 +50,6 @@ describe('Shuffle.js', function() {
       expect(shuffle.throttleTime).toBe(300);
       expect(shuffle.sequentialFadeDelay).toBe(150);
       expect(shuffle.useSizer).toBe(false);
-      expect(shuffle.supported).toBe(Modernizr.csstransforms && Modernizr.csstransitions);
       expect(shuffle.unique).toBe('shuffle_0');
     });
 
@@ -68,7 +71,6 @@ describe('Shuffle.js', function() {
 
 
     it('should be 3 columns with gutters', function() {
-      var $shuffle = $('#regular-shuffle');
       $shuffle.css({
         width: '1000px'
       });
@@ -90,7 +92,6 @@ describe('Shuffle.js', function() {
 
 
     it('can have a function for columns and gutters', function() {
-      var $shuffle = $('#regular-shuffle');
       $shuffle.css({
         width: '1000px'
       });
@@ -118,7 +119,6 @@ describe('Shuffle.js', function() {
     });
 
     it('can filter by the data attribute', function(done) {
-      var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
       }).data('shuffle');
@@ -156,7 +156,6 @@ describe('Shuffle.js', function() {
     });
 
     it('can shuffle by function', function(done) {
-      var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
       }).data('shuffle');
@@ -174,6 +173,34 @@ describe('Shuffle.js', function() {
         var $filteredItems = $('#item1, #item2, #item3, #item4, #item5');
         expect($concealedItems).toHaveClass('concealed');
         expect($filteredItems).toHaveClass('filtered');
+        expect(shuffle.isTransitioning).toBe(false);
+        done();
+      }
+
+      // First shuffle is async.
+      $shuffle.one('done.shuffle', first);
+    });
+
+    it('can shuffle by function without transitions', function(done) {
+      var shuffle = $shuffle.shuffle({
+        speed: 100,
+        supported: false
+      }).data('shuffle');
+
+      function first() {
+        shuffle.shuffle(function($el) {
+          return parseInt($el.attr('id').substring(4), 10) <= 5;
+        });
+        $shuffle.one('layout.shuffle', second);
+      }
+
+      function second() {
+        expect(shuffle.visibleItems).toBe(5);
+        var $concealedItems = $('#item6, #item7, #item8, #item9, #item10');
+        var $filteredItems = $('#item1, #item2, #item3, #item4, #item5');
+        expect($concealedItems).toHaveClass('concealed');
+        expect($filteredItems).toHaveClass('filtered');
+        expect(shuffle.isTransitioning).toBe(false);
         done();
       }
 
@@ -182,7 +209,6 @@ describe('Shuffle.js', function() {
     });
 
     it('can initialize filtered and the category parameter is optional', function(done) {
-        var $shuffle = $('#regular-shuffle');
         var shuffle = $shuffle.shuffle({
           speed: 100,
           group: 'design'
@@ -200,7 +226,6 @@ describe('Shuffle.js', function() {
     });
 
     it('can initialize sorted', function() {
-        var $shuffle = $('#regular-shuffle');
 
         var sortObj = {
           by: function($el) {
@@ -216,14 +241,11 @@ describe('Shuffle.js', function() {
         expect(shuffle.lastSort).toEqual(sortObj);
     });
 
-    it('can add items', function(done) {
-      var $shuffle = $('#regular-shuffle');
-      var shuffle = $shuffle.shuffle({
-        speed: 100,
-        group: 'black'
-      }).data('shuffle');
+    describe('inserting elements', function() {
 
-      function first() {
+      var $collection;
+
+      beforeEach(function() {
         var $eleven = $('<div>', {
           'class': 'item',
           'data-age': 36,
@@ -239,23 +261,64 @@ describe('Shuffle.js', function() {
           text: 'Person 12'
         });
 
-        var $collection = $eleven.add($twelve);
-        $shuffle.append($collection);
-        shuffle.appended($collection);
+        $collection = $eleven.add($twelve);
+      });
 
-        // Already 2 in the items, plus number 11.
-        expect(shuffle.visibleItems).toBe(3);
+      afterEach(function() {
+        $collection = null;
+      });
 
 
-        done();
-      }
+      it('can add items', function(done) {
+        var shuffle = $shuffle.shuffle({
+          speed: 100,
+          group: 'black'
+        }).data('shuffle');
 
-      $shuffle.one('done.shuffle', first);
+        function first() {
+          $shuffle.append($collection);
+          shuffle.appended($collection);
+
+          // Already 2 in the items, plus number 11.
+          expect(shuffle.visibleItems).toBe(3);
+
+
+          $shuffle.one('layout.shuffle', function() {
+            expect(shuffle.isTransitioning).toBe(false);
+            done();
+          });
+        }
+
+        $shuffle.one('done.shuffle', first);
+      });
+
+      it('can add items without transitions', function(done) {
+        var shuffle = $shuffle.shuffle({
+          speed: 100,
+          group: 'black',
+          supported: false
+        }).data('shuffle');
+
+        function first() {
+          $shuffle.append($collection);
+          shuffle.appended($collection);
+
+          // Already 2 in the items, plus number 11.
+          expect(shuffle.visibleItems).toBe(3);
+
+          $shuffle.one('layout.shuffle', function() {
+            expect(shuffle.isTransitioning).toBe(false);
+            done();
+          });
+        }
+
+        $shuffle.one('done.shuffle', first);
+      });
+
     });
 
 
     it('can call appended with different options', function() {
-      var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
       }).data('shuffle');
@@ -273,36 +336,67 @@ describe('Shuffle.js', function() {
     });
 
 
-    it('can remove items', function(done) {
-      var $shuffle = $('#regular-shuffle');
-      var shuffle = $shuffle.shuffle({
-        speed: 100
-      }).data('shuffle');
+    describe('removing elements', function() {
+      var shuffle;
+      var $itemsToRemove;
+      var onDone;
+      var onRemoved;
 
-      function first() {
-        var $itemsToRemove = $shuffle.children().slice(0, 2);
+      beforeEach(function() {
+        $itemsToRemove = $shuffle.children().slice(0, 2);
+        onDone = function() {
+          shuffle.remove($itemsToRemove);
+          $shuffle.one('removed.shuffle', onRemoved);
+        };
+      });
+      afterEach(function() {
+        $itemsToRemove = null;
+        shuffle = null;
+        onDone = null;
+        onRemoved = null;
+      });
 
-        shuffle.remove($itemsToRemove);
-        $shuffle.one('removed.shuffle', second);
-        $shuffle.one('layout.shuffle', third);
-      }
+      it('can remove items', function(done) {
+        shuffle = $shuffle.shuffle({
+          speed: 100
+        }).data('shuffle');
 
-      function second(evt, $items, instance) {
-        expect(instance.visibleItems).toBe(8);
-        expect($items[0].id).toBe('item1');
-        expect($items[1].id).toBe('item2');
-        expect($shuffle.children().length).toBe(8);
-      }
+        onRemoved = function(evt, $items, instance) {
+          expect(instance.visibleItems).toBe(8);
+          expect($items[0].id).toBe('item1');
+          expect($items[1].id).toBe('item2');
+          expect($shuffle.children().length).toBe(8);
+          expect(instance.isTransitioning).toBe(false);
 
-      function third() {
-        done();
-      }
+          done();
+        };
 
-      $shuffle.one('done.shuffle', first);
+        $shuffle.one('done.shuffle', onDone);
+      });
+
+
+      it('can remove items without transitions', function(done) {
+        shuffle = $shuffle.shuffle({
+          speed: 100,
+          supported: false
+        }).data('shuffle');
+
+        onRemoved = function(evt, $items, instance) {
+          expect(instance.visibleItems).toBe(8);
+          expect($items[0].id).toBe('item1');
+          expect($items[1].id).toBe('item2');
+          expect($shuffle.children().length).toBe(8);
+          expect(instance.isTransitioning).toBe(false);
+
+          done();
+        };
+
+        $shuffle.one('done.shuffle', onDone);
+      });
     });
 
+
     it('can get an element option', function() {
-      var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
       }).data('shuffle');
@@ -321,7 +415,6 @@ describe('Shuffle.js', function() {
     });
 
     it('can test elements against filters', function() {
-      var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
       }).data('shuffle');
@@ -339,7 +432,6 @@ describe('Shuffle.js', function() {
     });
 
     it('can initialize a collection of items', function() {
-      var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
       }).data('shuffle');
@@ -372,7 +464,6 @@ describe('Shuffle.js', function() {
 
 
     it('should reset columns', function() {
-      var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
       }).data('shuffle');
@@ -388,7 +479,6 @@ describe('Shuffle.js', function() {
     });
 
     it('should destroy properly', function(done) {
-      var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
       }).data('shuffle');
@@ -417,7 +507,6 @@ describe('Shuffle.js', function() {
     });
 
     it('should not update or shuffle when disabled or destroyed', function(done) {
-      var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
       }).data('shuffle');
@@ -445,7 +534,6 @@ describe('Shuffle.js', function() {
     });
 
     it('should not update when the container is the same size', function(done) {
-      var $shuffle = $('#regular-shuffle');
       var shuffle = $shuffle.shuffle({
         speed: 100
       }).data('shuffle');
