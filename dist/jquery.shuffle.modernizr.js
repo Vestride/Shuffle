@@ -15,7 +15,7 @@ window.Modernizr=function(a,b,c){function z(a){j.cssText=a}function A(a,b){retur
   if (typeof define === 'function' && define.amd) {
     define(['jquery', 'modernizr'], factory);
   } else {
-    factory(window.$, window.Modernizr);
+    factory(window.jQuery, window.Modernizr);
   }
 })(function($, Modernizr, undefined) {
 
