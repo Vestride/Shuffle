@@ -30,10 +30,15 @@ function dashify( prop ) {
 var TRANSITION = Modernizr.prefixed('transition');
 var TRANSITION_DELAY = Modernizr.prefixed('transitionDelay');
 var TRANSITION_DURATION = Modernizr.prefixed('transitionDuration');
+
+// Note(glen): Stock Android 4.1.x browser will fail here because it wrongly
+// says it supports non-prefixed transitions.
+// https://github.com/Modernizr/Modernizr/issues/897
 var TRANSITIONEND = {
   'WebkitTransition' : 'webkitTransitionEnd',
   'transition' : 'transitionend'
 }[ TRANSITION ];
+
 var TRANSFORM = Modernizr.prefixed('transform');
 var CSS_TRANSFORM = dashify(TRANSFORM);
 
@@ -41,6 +46,7 @@ var CSS_TRANSFORM = dashify(TRANSFORM);
 var CAN_TRANSITION_TRANSFORMS = Modernizr.csstransforms && Modernizr.csstransitions;
 var HAS_TRANSFORMS_3D = Modernizr.csstransforms3d;
 var SHUFFLE = 'shuffle';
+var COLUMN_THRESHOLD = 0.3;
 
 // Configurable. You can change these constants to fit your application.
 // The default scale and concealed scale, however, have to be different values.
@@ -93,6 +99,14 @@ function each(obj, iterator, context) {
 
 function defer(fn, context, wait) {
   return setTimeout( $.proxy( fn, context ), wait || 0 );
+}
+
+function arrayMax( array ) {
+  return Math.max.apply( Math, array );
+}
+
+function arrayMin( array ) {
+  return Math.min.apply( Math, array );
 }
 
 
@@ -173,37 +187,40 @@ Shuffle._getItemTransformString = function(x, y, scale) {
 };
 
 
-
-Shuffle._getPreciseDimension = function( element, style ) {
-  var dimension;
-  if ( window.getComputedStyle ) {
-    dimension = window.getComputedStyle( element, null )[ style ];
-  } else {
-    dimension = $( element ).css( style );
-  }
-  return parseFloat( dimension );
+/**
+ * Retrieve the computed style for an element, parsed as a float. This should
+ * not be used for width or height values because jQuery mangles them and they
+ * are not precise enough.
+ * @param {Element} element Element to get style for.
+ * @param {string} style Style property.
+ * @return {number} The parsed computed value or zero if that fails because IE
+ *     will return 'auto' when the element doesn't have margins instead of
+ *     the computed style.
+ * @private
+ */
+Shuffle._getNumberStyle = function( element, style ) {
+  return parseFloat( $( element ).css( style ) ) || 0;
 };
 
 
 /**
  * Returns the outer width of an element, optionally including its margins.
+ * the client rect is used instead of `offsetWidth` because Firefox returns an
+ * integer value instead of a double.
  * @param {Element} element The element.
  * @param {boolean} [includeMargins] Whether to include margins. Default is false.
  * @return {number} The width.
  */
 Shuffle._getOuterWidth = function( element, includeMargins ) {
-  var width = element.offsetWidth;
+  var rect = element.getBoundingClientRect();
+  var width = rect.right - rect.left;
 
   // Use jQuery here because it uses getComputedStyle internally and is
   // cross-browser. Using the style property of the element will only work
   // if there are inline styles.
-  if (includeMargins) {
-    var styles = $(element).css(['marginLeft', 'marginRight']);
-
-    // Defaults to zero if parsing fails because IE will return 'auto' when
-    // the element doesn't have margins instead of the computed style.
-    var marginLeft = parseFloat(styles.marginLeft) || 0;
-    var marginRight = parseFloat(styles.marginRight) || 0;
+  if ( includeMargins ) {
+    var marginLeft = Shuffle._getNumberStyle( element, 'marginLeft');
+    var marginRight = Shuffle._getNumberStyle( element, 'marginRight');
     width += marginLeft + marginRight;
   }
 
@@ -220,10 +237,9 @@ Shuffle._getOuterWidth = function( element, includeMargins ) {
 Shuffle._getOuterHeight = function( element, includeMargins ) {
   var height = element.offsetHeight;
 
-  if (includeMargins) {
-    var styles = $(element).css(['marginTop', 'marginBottom']);
-    var marginTop = parseFloat(styles.marginTop) || 0;
-    var marginBottom = parseFloat(styles.marginBottom) || 0;
+  if ( includeMargins ) {
+    var marginTop = Shuffle._getNumberStyle( element, 'marginTop');
+    var marginBottom = Shuffle._getNumberStyle( element, 'marginBottom');
     height += marginTop + marginBottom;
   }
 
@@ -533,12 +549,12 @@ Shuffle.prototype._getConcealedItems = function() {
 
 /**
  * Returns the column size, based on column width and sizer options.
- * @param {number} gutterSize Size of the gutters.
  * @param {number} containerWidth Size of the parent container.
+ * @param {number} gutterSize Size of the gutters.
  * @return {number}
  * @private
  */
-Shuffle.prototype._getColumnSize = function( gutterSize, containerWidth ) {
+Shuffle.prototype._getColumnSize = function( containerWidth, gutterSize ) {
   var size;
 
   // If the columnWidth property is a function, then the grid is fluid
@@ -547,7 +563,7 @@ Shuffle.prototype._getColumnSize = function( gutterSize, containerWidth ) {
 
   // columnWidth option isn't a function, are they using a sizing element?
   } else if ( this.useSizer ) {
-    size = Shuffle._getPreciseDimension(this.sizer, 'width');
+    size = Shuffle._getOuterWidth(this.sizer);
 
   // if not, how about the explicitly set option?
   } else if ( this.columnWidth ) {
@@ -582,7 +598,7 @@ Shuffle.prototype._getGutterSize = function( containerWidth ) {
   if ( $.isFunction( this.gutterWidth ) ) {
     size = this.gutterWidth(containerWidth);
   } else if ( this.useSizer ) {
-    size = Shuffle._getPreciseDimension(this.sizer, 'marginLeft');
+    size = Shuffle._getNumberStyle(this.sizer, 'marginLeft');
   } else {
     size = this.gutterWidth;
   }
@@ -598,11 +614,11 @@ Shuffle.prototype._getGutterSize = function( containerWidth ) {
 Shuffle.prototype._setColumns = function( theContainerWidth ) {
   var containerWidth = theContainerWidth || Shuffle._getOuterWidth( this.element );
   var gutter = this._getGutterSize( containerWidth );
-  var columnWidth = this._getColumnSize( gutter, containerWidth );
+  var columnWidth = this._getColumnSize( containerWidth, gutter );
   var calculatedColumns = (containerWidth + gutter) / columnWidth;
 
   // Widths given from getComputedStyle are not precise enough...
-  if ( Math.abs(Math.round(calculatedColumns) - calculatedColumns) < 0.03 ) {
+  if ( Math.abs(Math.round(calculatedColumns) - calculatedColumns) < COLUMN_THRESHOLD ) {
     // e.g. calculatedColumns = 11.998876
     calculatedColumns = Math.round( calculatedColumns );
   }
@@ -625,7 +641,7 @@ Shuffle.prototype._setContainerSize = function() {
  * @private
  */
 Shuffle.prototype._getContainerSize = function() {
-  return Math.max.apply( Math, this.colYs );
+  return arrayMax( this.colYs );
 };
 
 /**
@@ -635,60 +651,6 @@ Shuffle.prototype._fire = function( name, args ) {
   this.$el.trigger( name + '.' + SHUFFLE, args && args.length ? args : [ this ] );
 };
 
-
-/**
- * Loops through each item that should be shown and calculates the x, y position.
- * @param {Array.<Element>} items Array of items that will be shown/layed out in order in their array.
- *     Because jQuery collection are always ordered in DOM order, we can't pass a jq collection.
- * @param {boolean} isOnlyPosition If true this will position the items with zero opacity.
- */
-Shuffle.prototype._layout = function( items, isOnlyPosition ) {
-  each(items, function( item ) {
-    var $item = $(item);
-    var itemData = $item.data();
-    var currPos = itemData.position;
-    var currScale = itemData.scale;
-    var pos = this._getItemPosition( $item );
-
-    // Save data for shrink
-    $item.data( 'position', pos );
-    $item.data( 'scale', DEFAULT_SCALE );
-
-    // If the item will not change its position, do not add it to the render
-    // queue. Transitions don't fire when setting a property to the same value.
-    if ( pos.x === currPos.x && pos.y === currPos.y && currScale === DEFAULT_SCALE ) {
-      return;
-    }
-
-    var transitionObj = {
-      $item: $item,
-      x: pos.x,
-      y: pos.y,
-      scale: DEFAULT_SCALE,
-      opacity: isOnlyPosition ? 0 : 1,
-      skipTransition: !!isOnlyPosition,
-      callfront: function() {
-        if ( !isOnlyPosition ) {
-          $item.css( 'visibility', 'visible' );
-        }
-      },
-      callback: function() {
-        if ( isOnlyPosition ) {
-          $item.css( 'visibility', 'hidden' );
-        }
-      }
-    };
-
-    this.styleQueue.push( transitionObj );
-  }, this);
-
-  // `_layout` always happens after `_shrink`, so it's safe to process the style
-  // queue here with styles from the shrink method
-  this._processStyleQueue();
-
-  // Adjust the height of the container
-  this._setContainerSize();
-};
 
 /**
  * Zeros out the y columns array, which is used to determine item placement.
@@ -702,76 +664,154 @@ Shuffle.prototype._resetCols = function() {
   }
 };
 
-Shuffle.prototype._getItemPosition = function( $item ) {
-  var itemWidth = Shuffle._getOuterWidth( $item[0], true );
-  var columnSpan = itemWidth / this.colWidth;
+/**
+ * Loops through each item that should be shown and calculates the x, y position.
+ * @param {Array.<Element>} items Array of items that will be shown/layed out in order in their array.
+ *     Because jQuery collection are always ordered in DOM order, we can't pass a jq collection.
+ * @param {boolean} isOnlyPosition If true this will position the items with zero opacity.
+ */
+Shuffle.prototype._layout = function( items, isOnlyPosition ) {
+  each(items, function( item ) {
+    this._layoutItem( item, isOnlyPosition );
+  }, this);
+
+  // `_layout` always happens after `_shrink`, so it's safe to process the style
+  // queue here with styles from the shrink method
+  this._processStyleQueue();
+
+  // Adjust the height of the container
+  this._setContainerSize();
+};
+
+Shuffle.prototype._layoutItem = function( item, isOnlyPosition ) {
+  var $item = $(item);
+  var itemData = $item.data();
+  var currPos = itemData.position;
+  var currScale = itemData.scale;
+  var itemSize = {
+    width: Shuffle._getOuterWidth( item, true ),
+    height: Shuffle._getOuterHeight( item, true )
+  };
+  var pos = this._getItemPosition( itemSize );
+
+  // Save data for shrink
+  $item.data( 'position', pos );
+  $item.data( 'scale', DEFAULT_SCALE );
+
+  // If the item will not change its position, do not add it to the render
+  // queue. Transitions don't fire when setting a property to the same value.
+  if ( pos.x === currPos.x && pos.y === currPos.y && currScale === DEFAULT_SCALE ) {
+    return;
+  }
+
+  var transitionObj = {
+    $item: $item,
+    x: pos.x,
+    y: pos.y,
+    scale: DEFAULT_SCALE,
+    opacity: isOnlyPosition ? 0 : 1,
+    skipTransition: !!isOnlyPosition,
+    callfront: function() {
+      if ( !isOnlyPosition ) {
+        $item.css( 'visibility', 'visible' );
+      }
+    },
+    callback: function() {
+      if ( isOnlyPosition ) {
+        $item.css( 'visibility', 'hidden' );
+      }
+    }
+  };
+
+  this.styleQueue.push( transitionObj );
+};
+
+Shuffle.prototype._getItemPosition = function( itemSize ) {
+  var columnSpan = itemSize.width / this.colWidth;
 
   // If the difference between the rounded column span number and the
   // calculated column span number is really small, round the number to
   // make it fit.
-  if ( Math.abs(Math.round(columnSpan) - columnSpan) < 0.03 ) {
+  if ( Math.abs(Math.round(columnSpan) - columnSpan) < COLUMN_THRESHOLD ) {
     // e.g. columnSpan = 4.0089945390298745
     columnSpan = Math.round( columnSpan );
   }
 
-  // How many columns does this item span. Ensure it's not more than the
-  // amount of columns in the whole layout.
-  var colSpan = Math.min( Math.ceil(columnSpan), this.cols );
+  // Ensure the column span is not more than the amount of columns in the whole layout.
+  columnSpan = Math.min( Math.ceil(columnSpan), this.cols );
 
+  var setY = this._getColumnSet( columnSpan, this.cols );
+
+  // Finds the index of the smallest number in the set.
+  var shortColumnIndex = this._getShortColumn( setY, this.buffer );
+
+  // Position the item
+  var position = {
+    x: Math.round( (this.colWidth * shortColumnIndex) + this.offset.left ),
+    y: Math.round( setY[shortColumnIndex] + this.offset.top )
+  };
+
+  // Update the columns array with the new values for each column.
+  // e.g. before the update the columns could be [250, 0, 0, 0] for an item
+  // which spans 2 columns. After it would be [250, itemHeight, itemHeight, 0].
+  var setHeight = setY[shortColumnIndex] + itemSize.height;
+  var setSpan = this.cols + 1 - setY.length;
+  for ( var i = 0; i < setSpan; i++ ) {
+    this.colYs[ shortColumnIndex + i ] = setHeight;
+  }
+
+  return position;
+};
+
+
+/**
+ * Retrieves the column set to use for placement.
+ * @param {number} columnSpan The number of columns this current item spans.
+ * @param {number} columns The total columns in the grid.
+ * @return {Array.<number>} An array of numbers represeting the column set.
+ * @private
+ */
+Shuffle.prototype._getColumnSet = function( columnSpan, columns ) {
   // The item spans only one column.
-  if ( colSpan === 1 ) {
-    return this._placeItem( $item, this.colYs );
+  if ( columnSpan === 1 ) {
+    return this.colYs;
 
   // The item spans more than one column, figure out how many different
   // places it could fit horizontally
   } else {
-    var groupCount = this.cols + 1 - colSpan;
+    var groupCount = columns + 1 - columnSpan;
     var groupY = [];
     var groupColY;
-    var i;
 
     // for each group potential horizontal position
-    for ( i = 0; i < groupCount; i++ ) {
+    for ( var i = 0; i < groupCount; i++ ) {
       // make an array of colY values for that one group
-      groupColY = this.colYs.slice( i, i + colSpan );
+      groupColY = this.colYs.slice( i, i + columnSpan );
       // and get the max value of the array
-      groupY[i] = Math.max.apply( Math, groupColY );
+      groupY[i] = arrayMax( groupColY );
     }
 
-    return this._placeItem( $item, groupY );
+    return groupY;
   }
 };
 
-// TODO: Cleanup and combine with _getItemPosition.
-Shuffle.prototype._placeItem = function( $item, setY ) {
-  // get the minimum Y value from the columns
-  var minimumY = Math.min.apply( Math, setY );
-  var shortCol = 0;
-
-  // Find index of short column, the first from the left where this item will go
-  // if ( setY[i] === minimumY ) requires items' height to be exact every time.
-  // The buffer value is very useful when the height is a percentage of the width
-  for (var i = 0, len = setY.length; i < len; i++) {
-    if ( setY[i] >= minimumY - this.buffer && setY[i] <= minimumY + this.buffer ) {
-      shortCol = i;
-      break;
+/**
+ * Find index of short column, the first from the left where this item will go.
+ *
+ * @param {Array.<number>} positions The array to search for the smallest number.
+ * @param {number} buffer Optional buffer which is very useful when the height
+ *     is a percentage of the width.
+ * @return {number} Index of the short column.
+ * @private
+ */
+Shuffle.prototype._getShortColumn = function( positions, buffer ) {
+  var minPosition = arrayMin( positions );
+  for (var i = 0, len = positions.length; i < len; i++) {
+    if ( positions[i] >= minPosition - buffer && positions[i] <= minPosition + buffer ) {
+      return i;
     }
   }
-
-  // Position the item
-  var position = {
-    x: Math.round( (this.colWidth * shortCol) + this.offset.left ),
-    y: Math.round( minimumY + this.offset.top )
-  };
-
-  // Apply setHeight to necessary columns
-  var setHeight = minimumY + Shuffle._getOuterHeight( $item[0], true ),
-  setSpan = this.cols + 1 - len;
-  for ( i = 0; i < setSpan; i++ ) {
-    this.colYs[ shortCol + i ] = setHeight;
-  }
-
-  return position;
+  return 0;
 };
 
 /**

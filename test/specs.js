@@ -112,7 +112,7 @@ describe('Shuffle.js', function() {
       var shuffle = $shuffle.data('shuffle');
 
       expect(shuffle._getGutterSize(1000)).toBe(50);
-      expect(shuffle._getColumnSize(50, 1000)).toBe(350);
+      expect(shuffle._getColumnSize(1000, 50)).toBe(350);
       expect(shuffle.colWidth).toBe(350);
       expect(shuffle.cols).toBe(3);
       expect(shuffle.colYs).toEqual([600, 450, 450]);
