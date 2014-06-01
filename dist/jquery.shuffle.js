@@ -3,7 +3,7 @@
  * Categorize, sort, and filter a responsive grid of items.
  * Dependencies: jQuery 1.9+, Modernizr 2.6.2+
  * @license MIT license
- * @version 2.1.1
+ * @version 2.1.2
  */
 (function (factory) {
   if (typeof define === 'function' && define.amd) {

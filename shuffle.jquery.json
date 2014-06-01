@@ -1,6 +1,6 @@
 {
     "name": "shuffle",
-    "version": "2.1.1",
+    "version": "2.1.2",
     "title": "Shuffle.js",
     "description": "Categorize, sort, and filter a responsive grid of items",
     "keywords": ["gallery", "shuffle", "layout", "masonry", "filter", "sort", "responsive", "grid", "mobile", "tiles"],
