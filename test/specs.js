@@ -59,7 +59,8 @@ describe('Shuffle.js', function() {
       expect(shuffle.$el).toHaveClass('shuffle');
       expect(shuffle.$items).toHaveClass('shuffle-item filtered');
       expect(shuffle.$el).toHaveCss({
-        position: 'relative'
+        position: 'relative',
+        overflow: 'hidden'
       });
       expect(shuffle.$items).toHaveCss({
         opacity: '1',

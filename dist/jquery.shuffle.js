@@ -313,13 +313,11 @@ Shuffle.prototype._init = function() {
   $window.on('resize.' + SHUFFLE + '.' + this.unique, this._getResizeFunction());
 
   // Get container css all in one request. Causes reflow
-  var containerCSS = this.$el.css(['paddingLeft', 'paddingRight', 'position']);
+  var containerCSS = this.$el.css(['paddingLeft', 'paddingRight', 'position', 'overflow']);
   var containerWidth = Shuffle._getOuterWidth( this.element );
 
-  // Position cannot be static.
-  if ( containerCSS.position === 'static' ) {
-    this.element.style.position = 'relative';
-  }
+  // Add styles to the container if it doesn't have them.
+  this._validateStyles(containerCSS);
 
   // Get offset from container
   this.offset = {
@@ -343,6 +341,7 @@ Shuffle.prototype._init = function() {
     }, this);
   }
 };
+
 
 /**
  * Returns a throttled and proxied function for the resize handler.
@@ -383,12 +382,31 @@ Shuffle.prototype._getElementOption = function( option ) {
 
 
 /**
+ * Ensures the shuffle container has the css styles it needs applied to it.
+ * @param {Object} styles Key value pairs for position and overflow.
+ * @private
+ */
+Shuffle.prototype._validateStyles = function(styles) {
+  // Position cannot be static.
+  if ( styles.position === 'static' ) {
+    this.element.style.position = 'relative';
+  }
+
+  // Overflow has to be hidden
+  if ( styles.overflow !== 'hidden' ) {
+    this.element.style.overflow = 'hidden';
+  }
+};
+
+
+/**
  * Filter the elements by a category.
  * @param {string} [category] Category to filter by. If it's given, the last
  *     category will be used to filter the items.
  * @param {ArrayLike} [$collection] Optionally filter a collection. Defaults to
  *     all the items.
  * @return {jQuery} Filtered items.
+ * @private
  */
 Shuffle.prototype._filter = function( category, $collection ) {
   category = category || this.lastFilter;
