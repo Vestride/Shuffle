@@ -1267,7 +1267,7 @@ Shuffle.prototype.sort = function( opts ) {
 
     this._layout( items );
 
-    this.lastSort = opts;
+    this.lastSort = sortOptions;
   }
 };
 
