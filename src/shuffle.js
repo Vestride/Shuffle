@@ -98,7 +98,7 @@ function each(obj, iterator, context) {
 }
 
 function defer(fn, context, wait) {
-  return setTimeout( $.proxy( fn, context ), wait || 0 );
+  return setTimeout( $.proxy( fn, context ), wait );
 }
 
 function arrayMax( array ) {
@@ -108,6 +108,28 @@ function arrayMax( array ) {
 function arrayMin( array ) {
   return Math.min.apply( Math, array );
 }
+
+
+/**
+ * Represents a coordinate pair.
+ * @param {number} [x=0] X.
+ * @param {number} [y=0] Y.
+ */
+var Point = function(x, y) {
+  this.x = Shuffle._getNumber( x );
+  this.y = Shuffle._getNumber( y );
+};
+
+
+/**
+ * Whether two points are equal.
+ * @param {Point} a Point A.
+ * @param {Point} b Point B.
+ * @return {boolean}
+ */
+Point.equals = function(a, b) {
+  return a.x === b.x && a.y === b.y;
+};
 
 
 // Used for unique instance variables
@@ -171,17 +193,16 @@ Shuffle.ClassName = {
 /**
  * If the browser has 3d transforms available, build a string with those,
  * otherwise use 2d transforms.
- * @param {number} x X position.
- * @param {number} y Y position.
+ * @param {Point} point X and Y positions.
  * @param {number} scale Scale amount.
  * @return {string} A normalized string which can be used with the transform style.
  * @private
  */
-Shuffle._getItemTransformString = function(x, y, scale) {
+Shuffle._getItemTransformString = function(point, scale) {
   if ( HAS_TRANSFORMS_3D ) {
-    return 'translate3d(' + x + 'px, ' + y + 'px, 0) scale3d(' + scale + ', ' + scale + ', 1)';
+    return 'translate3d(' + point.x + 'px, ' + point.y + 'px, 0) scale3d(' + scale + ', ' + scale + ', 1)';
   } else {
-    return 'translate(' + x + 'px, ' + y + 'px) scale(' + scale + ', ' + scale + ')';
+    return 'translate(' + point.x + 'px, ' + point.y + 'px) scale(' + scale + ')';
   }
 };
 
@@ -198,21 +219,52 @@ Shuffle._getItemTransformString = function(x, y, scale) {
  * @private
  */
 Shuffle._getNumberStyle = function( element, style ) {
-  return parseFloat( $( element ).css( style ) ) || 0;
+  return Shuffle._getFloat( $( element ).css( style )  );
+};
+
+
+/**
+ * Parse a string as an integer.
+ * @param {string} value String integer.
+ * @return {number} The string as an integer or zero.
+ * @private
+ */
+Shuffle._getInt = function(value) {
+  return Shuffle._getNumber( parseInt( value, 10 ) );
+};
+
+/**
+ * Parse a string as an float.
+ * @param {string} value String float.
+ * @return {number} The string as an float or zero.
+ * @private
+ */
+Shuffle._getFloat = function(value) {
+  return Shuffle._getNumber( parseFloat( value ) );
+};
+
+/**
+ * Always returns a numeric value, given a value.
+ * @param {*} value Possibly numeric value.
+ * @return {number} `value` or zero if `value` isn't numeric.
+ * @private
+ */
+Shuffle._getNumber = function(value) {
+  return $.isNumeric(value) ? value : 0;
 };
 
 
 /**
  * Returns the outer width of an element, optionally including its margins.
- * the client rect is used instead of `offsetWidth` because Firefox returns an
- * integer value instead of a double.
+ * The `offsetWidth` property must be used because having a scale transform
+ * on the element affects the bounding box. Sadly, Firefox doesn't return an
+ * integer value for offsetWidth (yet).
  * @param {Element} element The element.
  * @param {boolean} [includeMargins] Whether to include margins. Default is false.
  * @return {number} The width.
  */
 Shuffle._getOuterWidth = function( element, includeMargins ) {
-  var rect = element.getBoundingClientRect();
-  var width = rect.right - rect.left;
+  var width = element.offsetWidth;
 
   // Use jQuery here because it uses getComputedStyle internally and is
   // cross-browser. Using the style property of the element will only work
@@ -304,8 +356,8 @@ Shuffle.prototype._init = function() {
 
   // Get offset from container
   this.offset = {
-    left: parseInt( containerCSS.paddingLeft, 10 ) || 0,
-    top: parseInt( containerCSS.paddingTop, 10 ) || 0
+    left: Shuffle._getInt( containerCSS.paddingLeft ),
+    top: Shuffle._getInt( containerCSS.paddingTop )
   };
 
   // We already got the container's width above, no need to cause another reflow getting it again...
@@ -495,7 +547,7 @@ Shuffle.prototype._initItems = function( $items ) {
     Shuffle.ClassName.SHUFFLE_ITEM,
     Shuffle.ClassName.FILTERED
   ].join(' '));
-  $items.css( this.itemCss ).data('position', {x: 0, y: 0}).data('scale', DEFAULT_SCALE);
+  $items.css( this.itemCss ).data('position', new Point()).data('scale', DEFAULT_SCALE);
 };
 
 /**
@@ -711,20 +763,19 @@ Shuffle.prototype._layoutItem = function( item, isOnlyPosition ) {
   };
   var pos = this._getItemPosition( itemSize );
 
-  // Save data for shrink
-  $item.data( 'position', pos );
-  $item.data( 'scale', DEFAULT_SCALE );
-
   // If the item will not change its position, do not add it to the render
   // queue. Transitions don't fire when setting a property to the same value.
-  if ( pos.x === currPos.x && pos.y === currPos.y && currScale === DEFAULT_SCALE ) {
+  if ( this._hasItemMoved( currPos, pos, currScale ) ) {
     return;
   }
 
+  // Save data for shrink
+  itemData.position = pos;
+  itemData.scale = DEFAULT_SCALE;
+
   var transitionObj = {
     $item: $item,
-    x: pos.x,
-    y: pos.y,
+    point: pos,
     scale: DEFAULT_SCALE,
     opacity: isOnlyPosition ? 0 : 1,
     skipTransition: !!isOnlyPosition,
@@ -763,10 +814,9 @@ Shuffle.prototype._getItemPosition = function( itemSize ) {
   var shortColumnIndex = this._getShortColumn( setY, this.buffer );
 
   // Position the item
-  var position = {
-    x: Math.round( (this.colWidth * shortColumnIndex) + this.offset.left ),
-    y: Math.round( setY[shortColumnIndex] + this.offset.top )
-  };
+  var position = new Point(
+    Math.round( (this.colWidth * shortColumnIndex) + this.offset.left ),
+    Math.round( setY[shortColumnIndex] + this.offset.top ));
 
   // Update the columns array with the new values for each column.
   // e.g. before the update the columns could be [250, 0, 0, 0] for an item
@@ -831,6 +881,20 @@ Shuffle.prototype._getShortColumn = function( positions, buffer ) {
   return 0;
 };
 
+
+/**
+ * Whether an item will transition if given the new position and scale when
+ * being laid out.
+ * @param {Point} currPos Current x and y position of the item.
+ * @param {Point} nextPos New x and y position of the item.
+ * @param {number} scale The item's current scale.
+ * @return {boolean}
+ * @private
+ */
+Shuffle.prototype._hasItemMoved = function( currPos, nextPos, scale) {
+  return Point.equals(currPos, nextPos) && scale === DEFAULT_SCALE;
+};
+
 /**
  * Hides the elements that don't match our filter.
  * @param {jQuery} $collection jQuery collection to shrink.
@@ -842,12 +906,11 @@ Shuffle.prototype._shrink = function( $collection ) {
   each($concealed, function( item ) {
     var $item = $(item);
     var itemData = $item.data();
-    var alreadyShrunk = itemData.scale === CONCEALED_SCALE;
 
     // Continuing would add a transitionend event listener to the element, but
     // that listener would execute because the transform and opacity would
     // stay the same.
-    if ( alreadyShrunk ) {
+    if ( itemData.scale === CONCEALED_SCALE ) {
       return;
     }
 
@@ -855,8 +918,7 @@ Shuffle.prototype._shrink = function( $collection ) {
 
     var transitionObj = {
       $item: $item,
-      x: itemData.position.x,
-      y: itemData.position.y,
+      point: itemData.position,
       scale : CONCEALED_SCALE,
       opacity: 0,
       callback: function() {
@@ -902,12 +964,12 @@ Shuffle.prototype._getStylesForTransition = function( opts ) {
   };
 
   if ( this.supported ) {
-    if ( opts.x !== undefined ) {
-      styles[ TRANSFORM ] = Shuffle._getItemTransformString( opts.x, opts.y, opts.scale );
+    if ( opts.point.x !== undefined ) {
+      styles[ TRANSFORM ] = Shuffle._getItemTransformString( opts.point, opts.scale );
     }
   } else {
-    styles.left = opts.x;
-    styles.top = opts.y;
+    styles.left = opts.point.x;
+    styles.top = opts.point.y;
   }
 
   return styles;
@@ -918,8 +980,7 @@ Shuffle.prototype._getStylesForTransition = function( opts ) {
  *
  * @param {Object} opts options.
  * @param {jQuery} opts.$item jQuery object representing the current item.
- * @param {number} opts.x Translate's x.
- * @param {number} opts.y Translate's y.
+ * @param {Point} opts.point A point object with the x and y coordinates.
  * @param {number} opts.scale Amount to scale the item.
  * @param {number} opts.opacity Opacity of the item.
  * @param {Function} opts.callback Complete function for the animation.

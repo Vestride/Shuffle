@@ -551,6 +551,36 @@ describe('Shuffle.js', function() {
       $shuffle.one('done.shuffle', first);
     });
 
+    it('can get the real width of an element which is scaled', function() {
+      var div = document.createElement('div');
+      div.style.cssText = 'width:100px;height:100px;';
+      div.style[Modernizr.prefixed('transform')] = window.Shuffle._getItemTransformString({
+        x: 0,
+        y: 0
+      }, 0.5);
+
+      document.body.appendChild(div);
+
+      expect(window.Shuffle._getOuterWidth(div, false)).toBe(100);
+      expect(window.Shuffle._getOuterWidth(div, true)).toBe(100);
+
+      expect(window.Shuffle._getOuterHeight(div, false)).toBe(100);
+      expect(window.Shuffle._getOuterHeight(div, true)).toBe(100);
+
+      div.style.marginLeft = '10px';
+      div.style.marginRight = '20px';
+      div.style.marginTop = '30px';
+      div.style.marginBottom = '40px';
+
+      expect(window.Shuffle._getOuterWidth(div, false)).toBe(100);
+      expect(window.Shuffle._getOuterWidth(div, true)).toBe(130);
+
+      expect(window.Shuffle._getOuterHeight(div, false)).toBe(100);
+      expect(window.Shuffle._getOuterHeight(div, true)).toBe(170);
+
+      document.body.removeChild(div);
+    });
+
   });
 
 
