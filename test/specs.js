@@ -88,7 +88,7 @@ describe('Shuffle.js', function() {
 
       expect(shuffle.colWidth).toBe(350);
       expect(shuffle.cols).toBe(3);
-      expect(shuffle.colYs).toEqual([600, 450, 450]);
+      expect(shuffle.positions).toEqual([600, 450, 450]);
     });
 
 
@@ -116,7 +116,7 @@ describe('Shuffle.js', function() {
       expect(shuffle._getColumnSize(1000, 50)).toBe(350);
       expect(shuffle.colWidth).toBe(350);
       expect(shuffle.cols).toBe(3);
-      expect(shuffle.colYs).toEqual([600, 450, 450]);
+      expect(shuffle.positions).toEqual([600, 450, 450]);
     });
 
     it('can filter by the data attribute', function(done) {
@@ -456,11 +456,11 @@ describe('Shuffle.js', function() {
 
       expect($collection).not.toHaveClass('shuffle-item');
       expect($collection).not.toHaveClass('filtered');
-      expect($collection).not.toHaveData('position');
+      expect($collection).not.toHaveData('point');
       shuffle._initItems($collection);
       expect($collection).toHaveClass('shuffle-item');
       expect($collection).toHaveClass('filtered');
-      expect($collection).toHaveData('position');
+      expect($collection).toHaveData('point');
     });
 
 
@@ -472,11 +472,11 @@ describe('Shuffle.js', function() {
       expect(shuffle.cols).toBeGreaterThan(0);
       shuffle._resetCols();
 
-      var colYs = new Array(shuffle.cols);
+      var positions = new Array(shuffle.cols);
       for (var i = 0; i < shuffle.cols; i++) {
-        colYs[i] = 0;
+        positions[i] = 0;
       }
-      expect(shuffle.colYs).toEqual(colYs);
+      expect(shuffle.positions).toEqual(positions);
     });
 
     it('should destroy properly', function(done) {
@@ -498,7 +498,7 @@ describe('Shuffle.js', function() {
         expect($items).not.toHaveClass('shuffle-item');
         expect($items).not.toHaveClass('filtered');
         expect($items).not.toHaveClass('concealed');
-        expect($items).not.toHaveData('position');
+        expect($items).not.toHaveData('point');
         expect($items).not.toHaveData('scale');
 
         done();

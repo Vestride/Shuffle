@@ -564,7 +564,7 @@ Shuffle.prototype._initItems = function( $items ) {
     Shuffle.ClassName.SHUFFLE_ITEM,
     Shuffle.ClassName.FILTERED
   ].join(' '));
-  $items.css( this.itemCss ).data('position', new Point()).data('scale', DEFAULT_SCALE);
+  $items.css( this.itemCss ).data('point', new Point()).data('scale', DEFAULT_SCALE);
 };
 
 /**
@@ -727,7 +727,7 @@ Shuffle.prototype._setContainerSize = function() {
  * @private
  */
 Shuffle.prototype._getContainerSize = function() {
-  return arrayMax( this.colYs );
+  return arrayMax( this.positions );
 };
 
 /**
@@ -744,9 +744,9 @@ Shuffle.prototype._fire = function( name, args ) {
  */
 Shuffle.prototype._resetCols = function() {
   var i = this.cols;
-  this.colYs = [];
+  this.positions = [];
   while (i--) {
-    this.colYs.push( 0 );
+    this.positions.push( 0 );
   }
 };
 
@@ -772,7 +772,7 @@ Shuffle.prototype._layout = function( items, isOnlyPosition ) {
 Shuffle.prototype._layoutItem = function( item, isOnlyPosition ) {
   var $item = $(item);
   var itemData = $item.data();
-  var currPos = itemData.position;
+  var currPos = itemData.point;
   var currScale = itemData.scale;
   var itemSize = {
     width: Shuffle._getOuterWidth( item, true ),
@@ -787,7 +787,7 @@ Shuffle.prototype._layoutItem = function( item, isOnlyPosition ) {
   }
 
   // Save data for shrink
-  itemData.position = pos;
+  itemData.point = pos;
   itemData.scale = DEFAULT_SCALE;
 
   var transitionObj = {
@@ -812,18 +812,7 @@ Shuffle.prototype._layoutItem = function( item, isOnlyPosition ) {
 };
 
 Shuffle.prototype._getItemPosition = function( itemSize ) {
-  var columnSpan = itemSize.width / this.colWidth;
-
-  // If the difference between the rounded column span number and the
-  // calculated column span number is really small, round the number to
-  // make it fit.
-  if ( Math.abs(Math.round(columnSpan) - columnSpan) < COLUMN_THRESHOLD ) {
-    // e.g. columnSpan = 4.0089945390298745
-    columnSpan = Math.round( columnSpan );
-  }
-
-  // Ensure the column span is not more than the amount of columns in the whole layout.
-  columnSpan = Math.min( Math.ceil(columnSpan), this.cols );
+  var columnSpan = this._getColumnSpan( itemSize.width, this.colWidth, this.cols );
 
   var setY = this._getColumnSet( columnSpan, this.cols );
 
@@ -831,7 +820,7 @@ Shuffle.prototype._getItemPosition = function( itemSize ) {
   var shortColumnIndex = this._getShortColumn( setY, this.buffer );
 
   // Position the item
-  var position = new Point(
+  var point = new Point(
     Math.round( (this.colWidth * shortColumnIndex) + this.offset.left ),
     Math.round( setY[shortColumnIndex] + this.offset.top ));
 
@@ -841,10 +830,34 @@ Shuffle.prototype._getItemPosition = function( itemSize ) {
   var setHeight = setY[shortColumnIndex] + itemSize.height;
   var setSpan = this.cols + 1 - setY.length;
   for ( var i = 0; i < setSpan; i++ ) {
-    this.colYs[ shortColumnIndex + i ] = setHeight;
+    this.positions[ shortColumnIndex + i ] = setHeight;
   }
 
-  return position;
+  return point;
+};
+
+
+/**
+ * Determine the number of columns an items spans.
+ * @param {number} itemWidth Width of the item.
+ * @param {number} columnWidth Width of the column (includes gutter).
+ * @param {number} columns Total number of columns
+ * @return {number}
+ * @private
+ */
+Shuffle.prototype._getColumnSpan = function( itemWidth, columnWidth, columns ) {
+  var columnSpan = itemWidth / columnWidth;
+
+  // If the difference between the rounded column span number and the
+  // calculated column span number is really small, round the number to
+  // make it fit.
+  if ( Math.abs(Math.round( columnSpan) - columnSpan ) < COLUMN_THRESHOLD ) {
+    // e.g. columnSpan = 4.0089945390298745
+    columnSpan = Math.round( columnSpan );
+  }
+
+  // Ensure the column span is not more than the amount of columns in the whole layout.
+  return Math.min( Math.ceil( columnSpan ), columns );
 };
 
 
@@ -858,7 +871,7 @@ Shuffle.prototype._getItemPosition = function( itemSize ) {
 Shuffle.prototype._getColumnSet = function( columnSpan, columns ) {
   // The item spans only one column.
   if ( columnSpan === 1 ) {
-    return this.colYs;
+    return this.positions;
 
   // The item spans more than one column, figure out how many different
   // places it could fit horizontally
@@ -870,7 +883,7 @@ Shuffle.prototype._getColumnSet = function( columnSpan, columns ) {
     // for each group potential horizontal position
     for ( var i = 0; i < groupCount; i++ ) {
       // make an array of colY values for that one group
-      groupColY = this.colYs.slice( i, i + columnSpan );
+      groupColY = this.positions.slice( i, i + columnSpan );
       // and get the max value of the array
       groupY[i] = arrayMax( groupColY );
     }
@@ -935,7 +948,7 @@ Shuffle.prototype._shrink = function( $collection ) {
 
     var transitionObj = {
       $item: $item,
-      point: itemData.position,
+      point: itemData.point,
       scale : CONCEALED_SCALE,
       opacity: 0,
       callback: function() {
@@ -981,9 +994,7 @@ Shuffle.prototype._getStylesForTransition = function( opts ) {
   };
 
   if ( this.supported ) {
-    if ( opts.point.x !== undefined ) {
-      styles[ TRANSFORM ] = Shuffle._getItemTransformString( opts.point, opts.scale );
-    }
+    styles[ TRANSFORM ] = Shuffle._getItemTransformString( opts.point, opts.scale );
   } else {
     styles.left = opts.point.x;
     styles.top = opts.point.y;
@@ -1148,9 +1159,11 @@ Shuffle.prototype._addItemsToEnd = function( $newItems, isSequential ) {
 Shuffle.prototype._revealAppended = function( newFilteredItems ) {
   defer(function() {
     each(newFilteredItems, function( el ) {
+      var $item = $( el );
       this._transition({
-        $item: $(el),
+        $item: $item,
         opacity: 1,
+        point: $item.data('point'),
         scale: DEFAULT_SCALE
       });
     }, this);
@@ -1361,7 +1374,7 @@ Shuffle.prototype.destroy = function() {
   // Reset individual item styles
   this.$items
       .removeAttr('style')
-      .removeData('position')
+      .removeData('point')
       .removeData('scale')
       .removeClass([
         Shuffle.ClassName.CONCEALED,
