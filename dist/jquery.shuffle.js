@@ -128,13 +128,24 @@ function arrayMin( array ) {
 
 
 /**
+ * Always returns a numeric value, given a value.
+ * @param {*} value Possibly numeric value.
+ * @return {number} `value` or zero if `value` isn't numeric.
+ * @private
+ */
+function getNumber(value) {
+  return $.isNumeric(value) ? value : 0;
+}
+
+
+/**
  * Represents a coordinate pair.
  * @param {number} [x=0] X.
  * @param {number} [y=0] Y.
  */
 var Point = function(x, y) {
-  this.x = Shuffle._getNumber( x );
-  this.y = Shuffle._getNumber( y );
+  this.x = getNumber( x );
+  this.y = getNumber( y );
 };
 
 
@@ -203,6 +214,50 @@ Shuffle.ClassName = {
 };
 
 
+// Overrideable options
+Shuffle.options = {
+  group: ALL_ITEMS, // Initial filter group.
+  speed: 250, // Transition/animation speed (milliseconds).
+  easing: 'ease-out', // CSS easing function to use.
+  itemSelector: '', // e.g. '.picture-item'.
+  sizer: null, // Sizer element. Use an element to determine the size of columns and gutters.
+  gutterWidth: 0, // A static number or function that tells the plugin how wide the gutters between columns are (in pixels).
+  columnWidth: 0, // A static number or function that returns a number which tells the plugin how wide the columns are (in pixels).
+  delimeter: null, // If your group is not json, and is comma delimeted, you could set delimeter to ','.
+  buffer: 0, // Useful for percentage based heights when they might not always be exactly the same (in pixels).
+  initialSort: null, // Shuffle can be initialized with a sort object. It is the same object given to the sort method.
+  throttle: throttle, // By default, shuffle will throttle resize events. This can be changed or removed.
+  throttleTime: 300, // How often shuffle can be called on resize (in milliseconds).
+  sequentialFadeDelay: 150, // Delay between each item that fades in when adding items.
+  supported: CAN_TRANSITION_TRANSFORMS // Whether to use transforms or absolute positioning.
+};
+
+
+// Not overrideable
+Shuffle.settings = {
+  useSizer: false,
+  itemCss : { // default CSS for each item
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    visibility: 'visible'
+  },
+  offset: { top: 0, left: 0 },
+  revealAppendedDelay: 300,
+  lastSort: {},
+  lastFilter: ALL_ITEMS,
+  enabled: true,
+  destroyed: false,
+  initialized: false,
+  _animations: [],
+  styleQueue: []
+};
+
+
+// Expose for testing.
+Shuffle.Point = Point;
+
+
 /**
  * Static methods.
  */
@@ -247,7 +302,7 @@ Shuffle._getNumberStyle = function( element, style ) {
  * @private
  */
 Shuffle._getInt = function(value) {
-  return Shuffle._getNumber( parseInt( value, 10 ) );
+  return getNumber( parseInt( value, 10 ) );
 };
 
 /**
@@ -257,17 +312,7 @@ Shuffle._getInt = function(value) {
  * @private
  */
 Shuffle._getFloat = function(value) {
-  return Shuffle._getNumber( parseFloat( value ) );
-};
-
-/**
- * Always returns a numeric value, given a value.
- * @param {*} value Possibly numeric value.
- * @return {number} `value` or zero if `value` isn't numeric.
- * @private
- */
-Shuffle._getNumber = function(value) {
-  return $.isNumeric(value) ? value : 0;
+  return getNumber( parseFloat( value ) );
 };
 
 
@@ -554,6 +599,7 @@ Shuffle.prototype._toggleFilterClasses = function( $filtered, $concealed ) {
     .addClass( Shuffle.ClassName.CONCEALED );
 };
 
+
 /**
  * Set the initial css for each item
  * @param {jQuery} [$items] Optionally specifiy at set to initialize
@@ -566,6 +612,7 @@ Shuffle.prototype._initItems = function( $items ) {
   ].join(' '));
   $items.css( this.itemCss ).data('point', new Point()).data('scale', DEFAULT_SCALE);
 };
+
 
 /**
  * Updates the filtered item count.
@@ -721,6 +768,7 @@ Shuffle.prototype._setContainerSize = function() {
   this.$el.css( 'height', this._getContainerSize() );
 };
 
+
 /**
  * Based on the column heights, it returns the biggest one.
  * @return {number}
@@ -729,6 +777,7 @@ Shuffle.prototype._setContainerSize = function() {
 Shuffle.prototype._getContainerSize = function() {
   return arrayMax( this.positions );
 };
+
 
 /**
  * Fire events with .shuffle namespace
@@ -750,25 +799,34 @@ Shuffle.prototype._resetCols = function() {
   }
 };
 
+
 /**
  * Loops through each item that should be shown and calculates the x, y position.
  * @param {Array.<Element>} items Array of items that will be shown/layed out in order in their array.
  *     Because jQuery collection are always ordered in DOM order, we can't pass a jq collection.
- * @param {boolean} isOnlyPosition If true this will position the items with zero opacity.
+ * @param {boolean} [isOnlyPosition=false] If true this will position the items with zero opacity.
  */
 Shuffle.prototype._layout = function( items, isOnlyPosition ) {
   each(items, function( item ) {
-    this._layoutItem( item, isOnlyPosition );
+    this._layoutItem( item, !!isOnlyPosition );
   }, this);
 
   // `_layout` always happens after `_shrink`, so it's safe to process the style
-  // queue here with styles from the shrink method
+  // queue here with styles from the shrink method.
   this._processStyleQueue();
 
-  // Adjust the height of the container
+  // Adjust the height of the container.
   this._setContainerSize();
 };
 
+
+/**
+ * Calculates the position of the item and pushes it onto the style queue.
+ * @param {Element} item Element which is being positioned.
+ * @param {boolean} isOnlyPosition Whether to position the item, but with zero
+ *     opacity so that it can fade in later.
+ * @private
+ */
 Shuffle.prototype._layoutItem = function( item, isOnlyPosition ) {
   var $item = $(item);
   var itemData = $item.data();
@@ -782,7 +840,7 @@ Shuffle.prototype._layoutItem = function( item, isOnlyPosition ) {
 
   // If the item will not change its position, do not add it to the render
   // queue. Transitions don't fire when setting a property to the same value.
-  if ( this._hasItemMoved( currPos, pos, currScale ) ) {
+  if ( Point.equals(currPos, pos) && currScale === DEFAULT_SCALE ) {
     return;
   }
 
@@ -790,12 +848,12 @@ Shuffle.prototype._layoutItem = function( item, isOnlyPosition ) {
   itemData.point = pos;
   itemData.scale = DEFAULT_SCALE;
 
-  var transitionObj = {
+  this.styleQueue.push({
     $item: $item,
     point: pos,
     scale: DEFAULT_SCALE,
     opacity: isOnlyPosition ? 0 : 1,
-    skipTransition: !!isOnlyPosition,
+    skipTransition: isOnlyPosition,
     callfront: function() {
       if ( !isOnlyPosition ) {
         $item.css( 'visibility', 'visible' );
@@ -806,11 +864,16 @@ Shuffle.prototype._layoutItem = function( item, isOnlyPosition ) {
         $item.css( 'visibility', 'hidden' );
       }
     }
-  };
-
-  this.styleQueue.push( transitionObj );
+  });
 };
 
+
+/**
+ * Determine the location of the next item, based on its size.
+ * @param {{width: number, height: number}} itemSize Object with width and height.
+ * @return {Point}
+ * @private
+ */
 Shuffle.prototype._getItemPosition = function( itemSize ) {
   var columnSpan = this._getColumnSpan( itemSize.width, this.colWidth, this.cols );
 
@@ -851,7 +914,7 @@ Shuffle.prototype._getColumnSpan = function( itemWidth, columnWidth, columns ) {
   // If the difference between the rounded column span number and the
   // calculated column span number is really small, round the number to
   // make it fit.
-  if ( Math.abs(Math.round( columnSpan) - columnSpan ) < COLUMN_THRESHOLD ) {
+  if ( Math.abs(Math.round( columnSpan ) - columnSpan ) < COLUMN_THRESHOLD ) {
     // e.g. columnSpan = 4.0089945390298745
     columnSpan = Math.round( columnSpan );
   }
@@ -892,6 +955,7 @@ Shuffle.prototype._getColumnSet = function( columnSpan, columns ) {
   }
 };
 
+
 /**
  * Find index of short column, the first from the left where this item will go.
  *
@@ -913,19 +977,6 @@ Shuffle.prototype._getShortColumn = function( positions, buffer ) {
 
 
 /**
- * Whether an item will transition if given the new position and scale when
- * being laid out.
- * @param {Point} currPos Current x and y position of the item.
- * @param {Point} nextPos New x and y position of the item.
- * @param {number} scale The item's current scale.
- * @return {boolean}
- * @private
- */
-Shuffle.prototype._hasItemMoved = function( currPos, nextPos, scale) {
-  return Point.equals(currPos, nextPos) && scale === DEFAULT_SCALE;
-};
-
-/**
  * Hides the elements that don't match our filter.
  * @param {jQuery} $collection jQuery collection to shrink.
  * @private
@@ -938,15 +989,15 @@ Shuffle.prototype._shrink = function( $collection ) {
     var itemData = $item.data();
 
     // Continuing would add a transitionend event listener to the element, but
-    // that listener would execute because the transform and opacity would
+    // that listener would not execute because the transform and opacity would
     // stay the same.
     if ( itemData.scale === CONCEALED_SCALE ) {
       return;
     }
 
-    $item.data( 'scale', CONCEALED_SCALE );
+    itemData.scale = CONCEALED_SCALE;
 
-    var transitionObj = {
+    this.styleQueue.push({
       $item: $item,
       point: itemData.point,
       scale : CONCEALED_SCALE,
@@ -954,11 +1005,10 @@ Shuffle.prototype._shrink = function( $collection ) {
       callback: function() {
         $item.css( 'visibility', 'hidden' );
       }
-    };
-
-    this.styleQueue.push( transitionObj );
+    });
   }, this);
 };
+
 
 /**
  * Resize handler.
@@ -1003,6 +1053,7 @@ Shuffle.prototype._getStylesForTransition = function( opts ) {
   return styles;
 };
 
+
 /**
  * Transitions an item in the grid
  *
@@ -1043,18 +1094,24 @@ Shuffle.prototype._startItemAnimation = function( $item, styles, callfront, call
   // Use CSS Transforms if we have them
   if ( this.supported ) {
     $item.css( styles );
-
-    // Namespaced because the reveal appended function also wants to know
-    // about the transition end event.
     $item.on( TRANSITIONEND, handleTransitionEnd );
 
   // Use jQuery to animate left/top
   } else {
+    // Save the deferred object which jQuery returns.
     var anim = $item.stop( true ).animate( styles, this.speed, 'swing', callback );
+    // Push the animation to the list of pending animations.
     this._animations.push( anim.promise() );
   }
 };
 
+
+/**
+ * Execute the styles gathered in the style queue. This applies styles to elements,
+ * triggering transitions.
+ * @param {boolean} noLayout Whether to trigger a layout event.
+ * @private
+ */
 Shuffle.prototype._processStyleQueue = function( noLayout ) {
   var $transitions = $();
 
@@ -1092,6 +1149,12 @@ Shuffle.prototype._processStyleQueue = function( noLayout ) {
   this.styleQueue.length = 0;
 };
 
+
+/**
+ * Apply styles without a transition.
+ * @param {Object} opts Transitions options object.
+ * @private
+ */
 Shuffle.prototype._styleImmediately = function( opts ) {
   Shuffle._skipTransition(opts.$item[0], function() {
     opts.$item.css( this._getStylesForTransition( opts ) );
@@ -1150,6 +1213,7 @@ Shuffle.prototype._addItemsToEnd = function( $newItems, isSequential ) {
 
   this._revealAppended( passed );
 };
+
 
 /**
  * Triggers appended elements to fade in.
@@ -1248,6 +1312,7 @@ Shuffle.prototype.shuffle = function( category, sortObj ) {
   this.sort( sortObj );
 };
 
+
 /**
  * Gets the .filtered elements, sorts them, and passes them to layout.
  * @param {Object} opts the options object for the sorted plugin
@@ -1264,6 +1329,7 @@ Shuffle.prototype.sort = function( opts ) {
     this.lastSort = sortOptions;
   }
 };
+
 
 /**
  * Reposition everything.
@@ -1283,6 +1349,7 @@ Shuffle.prototype.update = function( isOnlyLayout ) {
   }
 };
 
+
 /**
  * Use this instead of `update()` if you don't need the columns and gutters updated
  * Maybe an image inside `shuffle` loaded (and now has a height), which means calculations
@@ -1291,6 +1358,7 @@ Shuffle.prototype.update = function( isOnlyLayout ) {
 Shuffle.prototype.layout = function() {
   this.update( true );
 };
+
 
 /**
  * New items have been appended to shuffle. Fade them in sequentially
@@ -1303,12 +1371,14 @@ Shuffle.prototype.appended = function( $newItems, addToEnd, isSequential ) {
   this._addItems( $newItems, addToEnd === true, isSequential !== false );
 };
 
+
 /**
  * Disables shuffle from updating dimensions and layout on resize
  */
 Shuffle.prototype.disable = function() {
   this.enabled = false;
 };
+
 
 /**
  * Enables shuffle again
@@ -1320,6 +1390,7 @@ Shuffle.prototype.enable = function( isUpdateLayout ) {
     this.update();
   }
 };
+
 
 /**
  * Remove 1 or more shuffle items
@@ -1356,6 +1427,7 @@ Shuffle.prototype.remove = function( $collection ) {
   this.$el.one( Shuffle.EventType.LAYOUT + '.' + SHUFFLE, $.proxy( handleRemoved, this ) );
 };
 
+
 /**
  * Destroys shuffle, removes events, styles, and classes
  */
@@ -1391,46 +1463,6 @@ Shuffle.prototype.destroy = function() {
   // Set a flag so if a debounced resize has been triggered,
   // it can first check if it is actually destroyed and not doing anything
   this.destroyed = true;
-};
-
-
-// Overrideable options
-Shuffle.options = {
-  group: ALL_ITEMS, // Initial filter group.
-  speed: 250, // Transition/animation speed (milliseconds).
-  easing: 'ease-out', // CSS easing function to use.
-  itemSelector: '', // e.g. '.picture-item'.
-  sizer: null, // Sizer element. Use an element to determine the size of columns and gutters.
-  gutterWidth: 0, // A static number or function that tells the plugin how wide the gutters between columns are (in pixels).
-  columnWidth: 0, // A static number or function that returns a number which tells the plugin how wide the columns are (in pixels).
-  delimeter: null, // If your group is not json, and is comma delimeted, you could set delimeter to ','.
-  buffer: 0, // Useful for percentage based heights when they might not always be exactly the same (in pixels).
-  initialSort: null, // Shuffle can be initialized with a sort object. It is the same object given to the sort method.
-  throttle: throttle, // By default, shuffle will throttle resize events. This can be changed or removed.
-  throttleTime: 300, // How often shuffle can be called on resize (in milliseconds).
-  sequentialFadeDelay: 150, // Delay between each item that fades in when adding items.
-  supported: CAN_TRANSITION_TRANSFORMS // Whether to use transforms or absolute positioning.
-};
-
-
-// Not overrideable
-Shuffle.settings = {
-  useSizer: false,
-  itemCss : { // default CSS for each item
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    visibility: 'visible'
-  },
-  offset: { top: 0, left: 0 },
-  revealAppendedDelay: 300,
-  lastSort: {},
-  lastFilter: ALL_ITEMS,
-  enabled: true,
-  destroyed: false,
-  initialized: false,
-  _animations: [],
-  styleQueue: []
 };
 
 
