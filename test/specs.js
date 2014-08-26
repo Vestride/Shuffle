@@ -119,6 +119,48 @@ describe('Shuffle.js', function() {
       expect(shuffle.positions).toEqual([600, 450, 450]);
     });
 
+    it('can have a function for columns/gutters and span multiple columns', function() {
+      $shuffle.css({
+        width: '1200px'
+      });
+
+      var $kids = $shuffle.children();
+      $kids.css({
+        width: '300px',
+        height: '10px'
+      });
+
+      $kids.eq(1).css({
+        width: '600px'
+      });
+
+      $kids.eq(5).css({
+        width: '600px'
+      });
+
+      $kids.eq(6).css({
+        width: '900px'
+      });
+
+      $shuffle.shuffle({
+        columnWidth: function(containerWidth) {
+          expect(containerWidth).toBe(1200);
+          return 300;
+        },
+        gutterWidth: function() {
+          return 0;
+        }
+      });
+
+      var shuffle = $shuffle.data('shuffle');
+
+      expect(shuffle._getGutterSize(1200)).toBe(0);
+      expect(shuffle._getColumnSize(1200, 0)).toBe(300);
+      expect(shuffle.colWidth).toBe(300);
+      expect(shuffle.cols).toBe(4);
+      expect(shuffle.positions).toEqual([40, 40, 30, 30]);
+    });
+
     it('can filter by the data attribute', function(done) {
       var shuffle = $shuffle.shuffle({
         speed: 100
@@ -397,6 +439,27 @@ describe('Shuffle.js', function() {
 
       afterEach(function() {
         jasmine.clock().uninstall();
+      });
+
+      it('can calculate column spans', function() {
+        expect(shuffle._getColumnSpan(50, 100, 3)).toBe(1);
+        expect(shuffle._getColumnSpan(200, 100, 3)).toBe(2);
+        expect(shuffle._getColumnSpan(200, 200, 3)).toBe(1);
+        expect(shuffle._getColumnSpan(300, 100, 3)).toBe(3);
+
+        // Column span should not be larger than the number of columns.
+        expect(shuffle._getColumnSpan(300, 50, 3)).toBe(3);
+
+        // Fix for percentage values.
+        expect(shuffle._getColumnSpan(100.02, 100, 4)).toBe(1);
+        expect(shuffle._getColumnSpan(99.98, 100, 4)).toBe(1);
+      });
+
+      it('can calculate column sets', function() {
+        // _getColumnSet(columnSpan, columns)
+        shuffle.positions = [150, 0, 0, 0];
+        expect(shuffle._getColumnSet(1, 4)).toEqual([150, 0, 0, 0]);
+        expect(shuffle._getColumnSet(2, 4)).toEqual([150, 0, 0]);
       });
 
       it('can call appended with different options', function() {

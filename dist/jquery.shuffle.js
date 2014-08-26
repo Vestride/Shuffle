@@ -937,18 +937,32 @@ Shuffle.prototype._getColumnSet = function( columnSpan, columns ) {
     return this.positions;
 
   // The item spans more than one column, figure out how many different
-  // places it could fit horizontally
+  // places it could fit horizontally.
+  // The group count is the number of places within the positions this block
+  // could fit, ignoring the current positions of items.
+  // Imagine a 2 column brick as the second item in a 4 column grid with
+  // 10px height each. Find the places it would fit:
+  // [10, 0, 0, 0]
+  //  |   |  |
+  //  *   *  *
+  //
+  // Then take the places which fit and get the bigger of the two:
+  // max([10, 0]), max([0, 0]), max([0, 0]) = [10, 0, 0]
+  //
+  // Next, find the first smallest number (the short column).
+  // [10, 0, 0]
+  //      |
+  //      *
+  //
+  // And that's where it should be placed!
   } else {
     var groupCount = columns + 1 - columnSpan;
     var groupY = [];
-    var groupColY;
 
-    // for each group potential horizontal position
+    // For how many possible positions for this item there are.
     for ( var i = 0; i < groupCount; i++ ) {
-      // make an array of colY values for that one group
-      groupColY = this.positions.slice( i, i + columnSpan );
-      // and get the max value of the array
-      groupY[i] = arrayMax( groupColY );
+      // Find the bigger value for each place it could fit.
+      groupY[i] = arrayMax( this.positions.slice( i, i + columnSpan ) );
     }
 
     return groupY;
