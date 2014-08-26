@@ -242,7 +242,6 @@ Shuffle.settings = {
     left: 0,
     visibility: 'visible'
   },
-  offset: { top: 0, left: 0 },
   revealAppendedDelay: 300,
   lastSort: {},
   lastFilter: ALL_ITEMS,
@@ -399,7 +398,7 @@ Shuffle.prototype._init = function() {
     this.useSizer = true;
   }
 
-  // Add classes and invalidate styles
+  // Add class and invalidate styles
   this.$el.addClass( Shuffle.ClassName.BASE );
 
   // Set initial css for each item
@@ -410,21 +409,15 @@ Shuffle.prototype._init = function() {
   $window.on('resize.' + SHUFFLE + '.' + this.unique, this._getResizeFunction());
 
   // Get container css all in one request. Causes reflow
-  var containerCSS = this.$el.css(['paddingLeft', 'paddingRight', 'position', 'overflow']);
+  var containerCSS = this.$el.css(['position', 'overflow']);
   var containerWidth = Shuffle._getOuterWidth( this.element );
 
   // Add styles to the container if it doesn't have them.
-  this._validateStyles(containerCSS);
-
-  // Get offset from container
-  this.offset = {
-    left: Shuffle._getInt( containerCSS.paddingLeft ),
-    top: Shuffle._getInt( containerCSS.paddingTop )
-  };
+  this._validateStyles( containerCSS );
 
   // We already got the container's width above, no need to cause another reflow getting it again...
   // Calculate the number of columns there will be
-  this._setColumns( parseInt( containerWidth, 10 ) );
+  this._setColumns( containerWidth );
 
   // Kick off!
   this.shuffle( this.group, this.initialSort );
@@ -884,8 +877,8 @@ Shuffle.prototype._getItemPosition = function( itemSize ) {
 
   // Position the item
   var point = new Point(
-    Math.round( (this.colWidth * shortColumnIndex) + this.offset.left ),
-    Math.round( setY[shortColumnIndex] + this.offset.top ));
+    Math.round( this.colWidth * shortColumnIndex ),
+    Math.round( setY[shortColumnIndex] ));
 
   // Update the columns array with the new values for each column.
   // e.g. before the update the columns could be [250, 0, 0, 0] for an item

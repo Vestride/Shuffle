@@ -1602,7 +1602,7 @@ input.faq-search:focus::-moz-input-placeholder {
   padding-top: 1.25em;
   border-top: 2px solid #2ECC71; }
 
-.question__text {
+.question__title {
   margin-top: 0; }
 
 .question__answer {
