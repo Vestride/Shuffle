@@ -7,7 +7,7 @@
       $searchInput = $('#search'),
       $questions = $('.js-question'),
       $questionInners = $questions.find('.question__inner'),
-      $questionTexts = $questions.find('.question__text'),
+      $questionTitles = $questions.find('.question__title'),
 
   keyup = function() {
     // Value they've entered
@@ -16,7 +16,7 @@
     // Filter elements based on if their string exists in the product model
     $questions.each(function( i, el ) {
       var $el = $( el ),
-          text = $.trim( $questionTexts.eq( i ).text() ).toLowerCase(),
+          text = $.trim( $questionTitles.eq( i ).text() ).toLowerCase(),
           passes = text.indexOf( val ) !== -1;
 
       if ( passes ) {

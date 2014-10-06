@@ -3,14 +3,9 @@
 <ul class="breathable-list">
   <li><code class="language-javascript">'loading.shuffle'</code></li>
   <li><code class="language-javascript">'done.shuffle'</code></li>
-  <li><code class="language-javascript">'shrink.shuffle'</code></li>
-  <li><code class="language-javascript">'shrunk.shuffle'</code></li>
-  <li><code class="language-javascript">'filter.shuffle'</code></li>
-  <li><code class="language-javascript">'filtered.shuffle'</code></li>
   <li><code class="language-javascript">'layout.shuffle'</code></li>
   <li><code class="language-javascript">'removed.shuffle'</code></li>
 </ul>
-<p><strong>Heads up!</strong> To receive the <code>loading</code> event, you must subscribe to it before initializing the plugin, otherwise it will fire before you have subscribed to it.</p>
 
 <h3>Get notified when shuffle is done with setup</h3>
 <pre rel="JavaScript"><code class="language-javascript">$grid.on('done.shuffle', function() {

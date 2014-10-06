@@ -44,7 +44,11 @@ module.exports = function(grunt) {
       },
       src: {
         files: 'src/*.js',
-        tasks: ['concat']
+        tasks: ['concat', 'test']
+      },
+      test: {
+        files: 'test/specs.js',
+        tasks: ['test']
       }
     },
 
@@ -104,6 +108,22 @@ module.exports = function(grunt) {
         src: 'dist/jquery.shuffle.modernizr.js',
         dest: 'dist/jquery.shuffle.modernizr.min.js'
       }
+    },
+
+    jasmine: {
+      main: {
+        src: 'dist/jquery.shuffle.js',
+        options: {
+          specs: 'test/specs.js',
+          vendor: [
+            'dist/modernizr.custom.min.js',
+            'http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js',
+            'bower_components/jasmine-jquery/lib/jasmine-jquery.js'
+          ],
+          outfile: 'test/_SpecRunner.html',
+          keepRunner: true
+        }
+      }
     }
   });
 
@@ -128,8 +148,13 @@ module.exports = function(grunt) {
       'concat:main',
       'concat:modernizr',
       'uglify:main',
-      'uglify:modernizr'
+      'uglify:modernizr',
+      'test'
     ]);
+  });
+
+  grunt.registerTask('test', function() {
+    grunt.task.run('jasmine:main');
   });
 
   // Default task(s).

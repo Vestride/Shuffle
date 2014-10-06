@@ -45,5 +45,8 @@
   "dependencies": {
     "jquery": ">=1.9.0",
     "modernizr": "^2.6.2"
+  },
+  "devDependencies": {
+    "jasmine-jquery": "~2.0.5"
   }
 }

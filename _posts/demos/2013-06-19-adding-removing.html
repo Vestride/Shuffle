@@ -31,6 +31,14 @@ extraJS: [ "demos/adding-removing.js" ]
     left: .5em;
   }
 
+  .box::after {
+    content: 'Box SKU: ' attr(created);
+    position: absolute;
+    color: white;
+    bottom: .5em;
+    left: .5em;
+  }
+
   .box.shuffle-item,
   .box:first-child {
     margin-left: 0;
@@ -56,19 +64,37 @@ extraJS: [ "demos/adding-removing.js" ]
 </section>
 
 <section class="container">
-    <button id="randomize">Randomize</button>
+  <div style="margin-bottom: 10px;">
+    <span class="filter__label">Add mode:</span>
+    <select id="mode" class="sort-options">
+      <option value="end">Add to end</option>
+      <option selected value="end-sequential">Add to end with delay</option>
+      <option value="mix">Mix in with current</option>
+    </select>
+  </div>
+  <div class="pull-left">
     <button id="add">Add 5 Boxes</button>
     <button id="remove">Remove Some Boxes</button>
+    <button id="randomize">Randomize</button>
+  </div>
+  <div class="pull-right">
+    <span class="filter__label">Sort:</span>
+    <select id="sorter" class="sort-options">
+      <option value="dom">Default</option>
+      <option value="created">Box SKU</option>
+      <option value="random">Randomize</option>
+    </select>
+  </div>
 </section>
 
 <section class="container">
     <div id="my-shuffle" class="items">
-        <div class="box"></div>
-        <div class="box h2 w2"></div>
-        <div class="box"></div>
-        <div class="box"></div>
-        <div class="box w2"></div>
-        <div class="box"></div>
+        <div class="box" created="45"></div>
+        <div class="box h2 w2" created="19"></div>
+        <div class="box" created="66"></div>
+        <div class="box" created="148"></div>
+        <div class="box w2" created="99"></div>
+        <div class="box" created="3"></div>
     </div>
 </section>
 

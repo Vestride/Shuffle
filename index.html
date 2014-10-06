@@ -6,13 +6,18 @@ extraJS: [ "demos/homepage.js" ]
 includeHeader: true
 prism: true
 ---
-<section id="downloads">
+<section id="install">
   <div class="container-fluid">
-    <h2>Downloads<a href="#downloads"></a></h2>
+    <h2>Install<a href="#install"></a></h2>
+    <div class="row-fluid">
+      <div class="span12">
+        <pre><code class="language">bower install shufflejs</code></pre>
+      </div>
+    </div>
     <div class="row-fluid">
       <nav class="span6" role="secondary">
-        <a href="{{ site.baseurl }}/dist/jquery.shuffle.js">jquery.shuffle.js</a>
-        <a href="{{ site.baseurl }}/dist/jquery.shuffle.min.js">jquery.shuffle.min.js</a>
+        <a href="https://github.com/Vestride/Shuffle">View the GitHub repository</a>
+        <a href="https://github.com/Vestride/Shuffle/releases">See the latest releases</a>
       </nav>
     </div>
   </div>
@@ -110,6 +115,12 @@ prism: true
 <section id="adding-removing">
   <div class="container-fluid">
     {% include adding-removing.html %}
+  </div>
+</section>
+
+<section id="public-methods">
+  <div class="container-fluid">
+    {% include public-methods.html %}
   </div>
 </section>
 
