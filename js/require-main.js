@@ -1,5 +1,5 @@
 requirejs.config({
-  baseUrl: '/js',
+  baseUrl: site_url + '/js',
   paths: {
     jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min',
     shuffle: '../dist/jquery.shuffle',
