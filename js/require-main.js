@@ -37,7 +37,7 @@ define(function(require) {
   var Page = require('page');
 
   // Create a new shuffle instance.
-  var shuffle = new Shuffle($('#grid'), {
+  var shuffle = new Shuffle($('#grid').get(0), {
     itemSelector: '.js-item',
     sizer: $('#js-sizer')
   });
