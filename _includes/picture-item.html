@@ -11,6 +11,7 @@
   <div class="picture-item__inner">
     <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="" height="145" width="230" />
     <div class="picture-item__details clearfix">
+      <img class="picture-item__blur" src="{{ site.baseurl }}/img/{{ item.img }}" alt="" height="145" width="230" />
       <figcaption class="picture-item__title pull-left"><a href="{{ site.baseurl }}/img/originals/{{ item.original }}" target="_blank">{{ item.title }}</a></figcaption>
       <p class="picture-item__tags pull-right">{{ item.groups | join: ', ' }}</p>
     </div>

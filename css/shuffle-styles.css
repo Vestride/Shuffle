@@ -5,10 +5,10 @@
   height: 220px;
   margin-top: 24px; }
 .picture-item.shuffle-item {
-  margin-left: 0;
+  margin-left: 0
   /* shuffle items shouldn't have a left margin*/ }
 .picture-item.picture-item--h2 {
-  height: 464px;
+  height: 464px
   /* 2x the height + 1 gutter */ }
 .picture-item.span6:not(.picture-item--h2) .picture-item__details {
   position: absolute;
@@ -17,7 +17,8 @@
   width: 100%;
   background-color: #333;
   background-color: rgba(0, 0, 0, 0.6);
-  color: white; }
+  color: white;
+  overflow: hidden; }
 .picture-item.span6:not(.picture-item--h2) .picture-item__description {
   display: none; }
 .picture-item .picture-item__inner {
@@ -28,6 +29,8 @@
   display: block;
   width: 100%;
   height: auto; }
+.picture-item .picture-item__blur {
+  display: none; }
 .picture-item .picture-item__details, .picture-item .picture-item__description {
   padding: 1em; }
 .picture-item .picture-item__description {
@@ -37,6 +40,22 @@
 .picture-item .picture-item__tags {
   margin: 0; }
 
+/* autoprefixer: off */
+@supports (filter: blur(1px)) or (-webkit-filter: blur(1px)) {
+  .picture-item.span6:not(.picture-item--h2) .picture-item__blur {
+    /* autoprefixer: on */
+    position: absolute;
+    z-index: 1;
+    top: calc(50px - 220px);
+    left: 0;
+    display: block;
+    -webkit-filter: blur(7px);
+            filter: blur(7px); }
+  .picture-item.span6:not(.picture-item--h2) .picture-item__details {
+    background: none; }
+  .picture-item.span6:not(.picture-item--h2) .picture-item__tags, .picture-item.span6:not(.picture-item--h2) .picture-item__title {
+    position: relative;
+    z-index: 2; } }
 /*
   Shuffle needs either relative or absolute positioning on the container
   It will set it for you, but it'll cause another style recalculation and layout.
@@ -57,19 +76,14 @@
 
 .shuffle--animatein .picture-item__inner {
   opacity: 0;
-  -webkit-transform: translate(0, 220px);
-      -ms-transform: translate(0, 220px);
-          transform: translate(0, 220px); }
+  transform: translate(0, 220px); }
 
 .shuffle--animatein .picture-item__inner--transition {
-  -webkit-transition: all .6s ease;
-          transition: all .6s ease; }
+  transition: all .6s ease; }
 
 .shuffle--animatein .picture-item.in .picture-item__inner {
   opacity: 1;
-  -webkit-transform: translate(0, 0);
-      -ms-transform: translate(0, 0);
-          transform: translate(0, 0); }
+  transform: translate(0, 0); }
 
 @media (max-width: 47.9375em) {
   .picture-item {

@@ -29,6 +29,7 @@ $itemHeight: 220px;
       background-color: #333;
       background-color: rgba(black, .6);
       color: white;
+      overflow: hidden;
     }
 
     .picture-item__description {
@@ -48,6 +49,10 @@ $itemHeight: 220px;
     height: auto;
   }
 
+  .picture-item__blur {
+    display: none;
+  }
+
   .picture-item__details,
   .picture-item__description {
     padding: 1em;
@@ -64,6 +69,35 @@ $itemHeight: 220px;
 
   .picture-item__title {
 
+  }
+}
+
+// Autoprefixer misses a parenthesis.
+/* autoprefixer: off */
+@supports (filter: blur(1px)) or (-webkit-filter: blur(1px)) {
+
+  .picture-item.span6:not(.picture-item--h2) {
+
+
+    .picture-item__blur {
+      /* autoprefixer: on */
+      position: absolute;
+      z-index: 1;
+      top: calc(50px - #{$itemHeight}); // Caption is 50px tall.
+      left: 0;
+      display: block;
+      filter: blur(7px);
+    }
+
+    .picture-item__details {
+      background: none;
+    }
+
+    .picture-item__tags,
+    .picture-item__title {
+      position: relative;
+      z-index: 2;
+    }
   }
 }
 
