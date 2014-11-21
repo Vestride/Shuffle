@@ -42,7 +42,7 @@ html {
   /* 1 */
   -ms-text-size-adjust: 100%;
   /* 2 */
-  -webkit-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%
   /* 2 */ }
 
 /**
@@ -183,7 +183,7 @@ fieldset {
 legend {
   border: 0;
   /* 1 */
-  padding: 0;
+  padding: 0
   /* 2 */ }
 
 /**
@@ -196,7 +196,7 @@ button, input, select, textarea {
   /* 1 */
   font-size: 100%;
   /* 2 */
-  margin: 0;
+  margin: 0
   /* 3 */ }
 
 /**
@@ -225,7 +225,7 @@ button, select {
 button, html input[type="button"], input[type="reset"], input[type="submit"] {
   -webkit-appearance: button;
   /* 2 */
-  cursor: pointer;
+  cursor: pointer
   /* 3 */ }
 
 /**
@@ -241,14 +241,14 @@ button[disabled], html input[disabled] {
 input[type="checkbox"], input[type="radio"] {
   box-sizing: border-box;
   /* 1 */
-  padding: 0;
+  padding: 0
   /* 2 */ }
 
 /**
  * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
  */
 input[type="search"] {
-  -webkit-appearance: textfield;
+  -webkit-appearance: textfield
   /* 1 */ }
 
 /**
@@ -272,7 +272,7 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 textarea {
   overflow: auto;
   /* 1 */
-  vertical-align: top;
+  vertical-align: top
   /* 2 */ }
 
 /* ==========================================================================
@@ -1758,7 +1758,7 @@ input.faq-search:focus::-moz-input-placeholder {
 .clearfix:before, .clearfix:after {
   content: " ";
   /* 1 */
-  display: table;
+  display: table
   /* 2 */ }
 
 .clearfix:after {

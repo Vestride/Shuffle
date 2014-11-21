@@ -1,5 +1,5 @@
 requirejs.config({
-  baseUrl: '/js',
+  baseUrl: site_url + '/js',
   paths: {
     jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min',
     shuffle: '../dist/jquery.shuffle',
@@ -37,7 +37,7 @@ define(function(require) {
   var Page = require('page');
 
   // Create a new shuffle instance.
-  var shuffle = new Shuffle($('#grid'), {
+  var shuffle = new Shuffle($('#grid').get(0), {
     itemSelector: '.js-item',
     sizer: $('#js-sizer')
   });
