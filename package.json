@@ -14,7 +14,7 @@
     "mobile",
     "tiles"
   ],
-  "main": "jquery.shuffle.js",
+  "main": "dist/jquery.shuffle.js",
   "scripts": {
     "test": "grunt test"
   },
