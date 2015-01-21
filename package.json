@@ -1,8 +1,9 @@
 {
   "name": "Shuffle",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Categorize, sort, and filter a responsive grid of items",
   "keywords": [
+    "jquery-plugin",
     "gallery",
     "shuffle",
     "layout",
