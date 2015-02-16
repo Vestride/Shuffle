@@ -1,6 +1,6 @@
 {
   "name": "shufflejs",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "homepage": "https://github.com/Vestride/Shuffle",
   "authors": [
     "Glen Cheney <cheney.glen@gmail.com>"
@@ -37,7 +37,6 @@
     "index.html",
     "package.json",
     "robots.txt",
-    "shuffle.jquery.json",
     "todo.md",
     "test",
     "tests"
