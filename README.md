@@ -5,6 +5,8 @@ Categorize, sort, and filter a responsive grid of items.
 bower install shufflejs
 ```
 
+Shuffle is also available on NPM as `shufflejs`.
+
 ## Docs and Demos
 [All found here](http://vestride.github.io/Shuffle)
 
