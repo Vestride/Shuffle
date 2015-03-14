@@ -232,6 +232,8 @@ Shuffle.settings = {
   destroyed: false,
   initialized: false,
   _animations: [],
+  _transitions: [],
+  _isMovementCanceled: false,
   styleQueue: []
 };
 
@@ -1006,7 +1008,7 @@ Shuffle.prototype._shrink = function( $collection ) {
  */
 Shuffle.prototype._onResize = function() {
   // If shuffle is disabled, destroyed, don't do anything
-  if ( !this.enabled || this.destroyed || this.isTransitioning ) {
+  if ( !this.enabled || this.destroyed ) {
     return;
   }
 
@@ -1063,14 +1065,21 @@ Shuffle.prototype._transition = function( opts ) {
 
 
 Shuffle.prototype._startItemAnimation = function( $item, styles, callfront, callback ) {
+  var _this = this;
   // Transition end handler removes its listener.
   function handleTransitionEnd( evt ) {
     // Make sure this event handler has not bubbled up from a child.
     if ( evt.target === evt.currentTarget ) {
       $( evt.target ).off( TRANSITIONEND, handleTransitionEnd );
+      _this._removeTransitionReference(reference);
       callback();
     }
   }
+
+  var reference = {
+    $element: $item,
+    handler: handleTransitionEnd
+  };
 
   callfront();
 
@@ -1085,6 +1094,7 @@ Shuffle.prototype._startItemAnimation = function( $item, styles, callfront, call
   if ( this.supported ) {
     $item.css( styles );
     $item.on( TRANSITIONEND, handleTransitionEnd );
+    this._transitions.push(reference);
 
   // Use jQuery to animate left/top
   } else {
@@ -1103,6 +1113,10 @@ Shuffle.prototype._startItemAnimation = function( $item, styles, callfront, call
  * @private
  */
 Shuffle.prototype._processStyleQueue = function( noLayout ) {
+  if ( this.isTransitioning ) {
+    this._cancelMovement();
+  }
+
   var $transitions = $();
 
   // Iterate over the queue and keep track of ones that use transitions.
@@ -1137,6 +1151,36 @@ Shuffle.prototype._processStyleQueue = function( noLayout ) {
 
   // Remove everything in the style queue
   this.styleQueue.length = 0;
+};
+
+Shuffle.prototype._cancelMovement = function() {
+  if (this.supported) {
+    // Remove the transition end event for each listener.
+    each(this._transitions, function( transition ) {
+      transition.$element.off( TRANSITIONEND, transition.handler );
+    });
+  } else {
+    // Even when `stop` is called on the jQuery animation, its promise will
+    // still be resolved. Since it cannot be determine from within that callback
+    // whether the animation was stopped or not, a flag is set here to distinguish
+    // between the two states.
+    this._isMovementCanceled = true;
+    this.$items.stop(true);
+    this._isMovementCanceled = false;
+  }
+
+  // Reset the array.
+  this._transitions.length = 0;
+
+  // Show it's no longer active.
+  this.isTransitioning = false;
+};
+
+Shuffle.prototype._removeTransitionReference = function(ref) {
+  var indexInArray = $.inArray(ref, this._transitions);
+  if (indexInArray > -1) {
+    this._transitions.splice(indexInArray, 1);
+  }
 };
 
 
@@ -1249,13 +1293,22 @@ Shuffle.prototype._whenCollectionDone = function( $collection, eventName, callba
 
       // Execute callback if all items have emitted the correct event.
       if ( done === items ) {
+        self._removeTransitionReference(reference);
         callback.call( self );
       }
     }
   }
 
+  var reference = {
+    $element: $collection,
+    handler: handleEventName
+  };
+
   // Bind the event to all items.
   $collection.on( eventName, handleEventName );
+
+  // Keep track of transitionend events so they can be removed.
+  this._transitions.push(reference);
 };
 
 
@@ -1267,7 +1320,9 @@ Shuffle.prototype._whenCollectionDone = function( $collection, eventName, callba
 Shuffle.prototype._whenAnimationsDone = function( callback ) {
   $.when.apply( null, this._animations ).always( $.proxy( function() {
     this._animations.length = 0;
-    callback.call( this );
+    if (!this._isMovementCanceled) {
+      callback.call( this );
+    }
   }, this ));
 };
 
@@ -1282,7 +1337,7 @@ Shuffle.prototype._whenAnimationsDone = function( callback ) {
  * @param {Object} [sortObj] A sort object which can sort the filtered set
  */
 Shuffle.prototype.shuffle = function( category, sortObj ) {
-  if ( !this.enabled || this.isTransitioning ) {
+  if ( !this.enabled ) {
     return;
   }
 
@@ -1308,7 +1363,7 @@ Shuffle.prototype.shuffle = function( category, sortObj ) {
  * @param {Object} opts the options object for the sorted plugin
  */
 Shuffle.prototype.sort = function( opts ) {
-  if ( this.enabled && !this.isTransitioning ) {
+  if ( this.enabled ) {
     this._resetCols();
 
     var sortOptions = opts || this.lastSort;
@@ -1327,7 +1382,7 @@ Shuffle.prototype.sort = function( opts ) {
  *     recalculated.
  */
 Shuffle.prototype.update = function( isOnlyLayout ) {
-  if ( this.enabled && !this.isTransitioning ) {
+  if ( this.enabled ) {
 
     if ( !isOnlyLayout ) {
       // Get updated colCount
@@ -1449,6 +1504,7 @@ Shuffle.prototype.destroy = function() {
   this.$el = null;
   this.sizer = null;
   this.element = null;
+  this._transitions = null;
 
   // Set a flag so if a debounced resize has been triggered,
   // it can first check if it is actually destroyed and not doing anything
