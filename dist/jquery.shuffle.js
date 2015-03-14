@@ -850,7 +850,8 @@ Shuffle.prototype._layoutItem = function( item, isOnlyPosition ) {
     point: pos,
     scale: DEFAULT_SCALE,
     opacity: isOnlyPosition ? 0 : 1,
-    skipTransition: isOnlyPosition,
+    // Set styles immediately if there is no transition speed.
+    skipTransition: isOnlyPosition || this.speed === 0,
     callfront: function() {
       if ( !isOnlyPosition ) {
         $item.css( 'visibility', 'visible' );
@@ -1149,7 +1150,7 @@ Shuffle.prototype._processStyleQueue = function( noLayout ) {
   }, this);
 
 
-  if ( $transitions.length > 0 && this.initialized ) {
+  if ( $transitions.length > 0 && this.initialized && this.speed > 0 ) {
     // Set flag that shuffle is currently in motion.
     this.isTransitioning = true;
 
