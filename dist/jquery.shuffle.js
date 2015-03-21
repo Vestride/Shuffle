@@ -9,7 +9,7 @@
   if (typeof define === 'function' && define.amd) {
     define(['jquery', 'modernizr'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(window.jQuery, window.Modernizr);
+    module.exports = factory(require('jquery'), window.Modernizr);
   } else {
     window.Shuffle = factory(window.jQuery, window.Modernizr);
   }
@@ -64,8 +64,8 @@ var CSS_TRANSFORM = dashify(TRANSFORM);
 // Constants
 var CAN_TRANSITION_TRANSFORMS = Modernizr.csstransforms && Modernizr.csstransitions;
 var HAS_TRANSFORMS_3D = Modernizr.csstransforms3d;
+var HAS_COMPUTED_STYLE = !!window.getComputedStyle;
 var SHUFFLE = 'shuffle';
-var COLUMN_THRESHOLD = 0.3;
 
 // Configurable. You can change these constants to fit your application.
 // The default scale and concealed scale, however, have to be different values.
@@ -73,7 +73,6 @@ var ALL_ITEMS = 'all';
 var FILTER_ATTRIBUTE_KEY = 'groups';
 var DEFAULT_SCALE = 1;
 var CONCEALED_SCALE = 0.001;
-
 
 // Underscore's throttle function.
 function throttle(func, wait, options) {
@@ -139,6 +138,7 @@ function getNumber(value) {
   return $.isNumeric(value) ? value : 0;
 }
 
+var getStyles = window.getComputedStyle || function() {};
 
 /**
  * Represents a coordinate pair.
@@ -160,6 +160,24 @@ var Point = function(x, y) {
 Point.equals = function(a, b) {
   return a.x === b.x && a.y === b.y;
 };
+
+var COMPUTED_SIZE_INCLUDES_PADDING = (function() {
+  if (!HAS_COMPUTED_STYLE) {
+    return false;
+  }
+
+  var e = document.createElement('div');
+  e.style.cssText = 'width:10px;padding:2px;' +
+    '-webkit-box-sizing:border-box;box-sizing:border-box;';
+  document.body.appendChild(e);
+
+  var width = getStyles(e, null).width;
+  var ret = width === '10px';
+
+  document.body.removeChild(e);
+
+  return ret;
+}());
 
 
 // Used for unique instance variables
@@ -227,6 +245,7 @@ Shuffle.options = {
   columnWidth: 0, // A static number or function that returns a number which tells the plugin how wide the columns are (in pixels).
   delimeter: null, // If your group is not json, and is comma delimeted, you could set delimeter to ','.
   buffer: 0, // Useful for percentage based heights when they might not always be exactly the same (in pixels).
+  columnThreshold: HAS_COMPUTED_STYLE ? 0.01 : 0.1, // Reading the width of elements isn't precise enough and can cause columns to jump between values.
   initialSort: null, // Shuffle can be initialized with a sort object. It is the same object given to the sort method.
   throttle: throttle, // By default, shuffle will throttle resize events. This can be changed or removed.
   throttleTime: 300, // How often shuffle can be called on resize (in milliseconds).
@@ -283,30 +302,40 @@ Shuffle._getItemTransformString = function(point, scale) {
 
 
 /**
- * Retrieve the computed style for an element, parsed as a float. This should
- * not be used for width or height values because jQuery mangles them and they
- * are not precise enough.
+ * Retrieve the computed style for an element, parsed as a float.
  * @param {Element} element Element to get style for.
  * @param {string} style Style property.
+ * @param {CSSStyleDeclaration} [styles] Optionally include clean styles to
+ *     use instead of asking for them again.
  * @return {number} The parsed computed value or zero if that fails because IE
  *     will return 'auto' when the element doesn't have margins instead of
  *     the computed style.
  * @private
  */
-Shuffle._getNumberStyle = function( element, style ) {
-  return Shuffle._getFloat( $( element ).css( style )  );
+Shuffle._getNumberStyle = function( element, style, styles ) {
+  if ( HAS_COMPUTED_STYLE ) {
+    styles = styles || getStyles( element, null );
+    var value = Shuffle._getFloat( styles[ style ] );
+
+    // Support IE<=11 and W3C spec.
+    if ( !COMPUTED_SIZE_INCLUDES_PADDING && style === 'width' ) {
+      value += Shuffle._getFloat( styles.paddingLeft ) +
+        Shuffle._getFloat( styles.paddingRight ) +
+        Shuffle._getFloat( styles.borderLeftWidth ) +
+        Shuffle._getFloat( styles.borderRightWidth );
+    } else if ( !COMPUTED_SIZE_INCLUDES_PADDING && style === 'height' ) {
+      value += Shuffle._getFloat( styles.paddingTop ) +
+        Shuffle._getFloat( styles.paddingBottom ) +
+        Shuffle._getFloat( styles.borderTopWidth ) +
+        Shuffle._getFloat( styles.borderBottomWidth );
+    }
+
+    return value;
+  } else {
+    return Shuffle._getFloat( $( element ).css( style )  );
+  }
 };
 
-
-/**
- * Parse a string as an integer.
- * @param {string} value String integer.
- * @return {number} The string as an integer or zero.
- * @private
- */
-Shuffle._getInt = function(value) {
-  return getNumber( parseInt( value, 10 ) );
-};
 
 /**
  * Parse a string as an float.
@@ -321,22 +350,37 @@ Shuffle._getFloat = function(value) {
 
 /**
  * Returns the outer width of an element, optionally including its margins.
- * The `offsetWidth` property must be used because having a scale transform
- * on the element affects the bounding box. Sadly, Firefox doesn't return an
- * integer value for offsetWidth (yet).
+ *
+ * There are a few different methods for getting the width of an element, none of
+ * which work perfectly for all Shuffle's use cases.
+ *
+ * 1. getBoundingClientRect() `left` and `right` properties.
+ *   - Accounts for transform scaled elements, making it useless for Shuffle
+ *   elements which have shrunk.
+ * 2. The `offsetWidth` property (or jQuery's CSS).
+ *   - This value stays the same regardless of the elements transform property,
+ *   however, it does not return subpixel values.
+ * 3. getComputedStyle()
+ *   - This works great Chrome, Firefox, Safari, but IE<=11 does not include
+ *   padding and border when box-sizing: border-box is set, requiring a feature
+ *   test and extra work to add the padding back for IE and other browsers which
+ *   follow the W3C spec here.
+ *
  * @param {Element} element The element.
  * @param {boolean} [includeMargins] Whether to include margins. Default is false.
  * @return {number} The width.
  */
 Shuffle._getOuterWidth = function( element, includeMargins ) {
-  var width = element.offsetWidth;
+  // Store the styles so that they can be used by others without asking for it again.
+  var styles = getStyles( element, null );
+  var width = Shuffle._getNumberStyle( element, 'width', styles );
 
   // Use jQuery here because it uses getComputedStyle internally and is
   // cross-browser. Using the style property of the element will only work
   // if there are inline styles.
   if ( includeMargins ) {
-    var marginLeft = Shuffle._getNumberStyle( element, 'marginLeft');
-    var marginRight = Shuffle._getNumberStyle( element, 'marginRight');
+    var marginLeft = Shuffle._getNumberStyle( element, 'marginLeft', styles );
+    var marginRight = Shuffle._getNumberStyle( element, 'marginRight', styles );
     width += marginLeft + marginRight;
   }
 
@@ -351,11 +395,12 @@ Shuffle._getOuterWidth = function( element, includeMargins ) {
  * @return {number} The height.
  */
 Shuffle._getOuterHeight = function( element, includeMargins ) {
-  var height = element.offsetHeight;
+  var styles = getStyles( element, null );
+  var height = Shuffle._getNumberStyle( element, 'height', styles );
 
   if ( includeMargins ) {
-    var marginTop = Shuffle._getNumberStyle( element, 'marginTop');
-    var marginBottom = Shuffle._getNumberStyle( element, 'marginBottom');
+    var marginTop = Shuffle._getNumberStyle( element, 'marginTop', styles );
+    var marginBottom = Shuffle._getNumberStyle( element, 'marginBottom', styles );
     height += marginTop + marginBottom;
   }
 
@@ -747,8 +792,8 @@ Shuffle.prototype._setColumns = function( theContainerWidth ) {
   var columnWidth = this._getColumnSize( containerWidth, gutter );
   var calculatedColumns = (containerWidth + gutter) / columnWidth;
 
-  // Widths given from getComputedStyle are not precise enough...
-  if ( Math.abs(Math.round(calculatedColumns) - calculatedColumns) < COLUMN_THRESHOLD ) {
+  // Widths given from getStyles are not precise enough...
+  if ( Math.abs(Math.round(calculatedColumns) - calculatedColumns) < this.columnThreshold ) {
     // e.g. calculatedColumns = 11.998876
     calculatedColumns = Math.round( calculatedColumns );
   }
@@ -912,7 +957,7 @@ Shuffle.prototype._getColumnSpan = function( itemWidth, columnWidth, columns ) {
   // If the difference between the rounded column span number and the
   // calculated column span number is really small, round the number to
   // make it fit.
-  if ( Math.abs(Math.round( columnSpan ) - columnSpan ) < COLUMN_THRESHOLD ) {
+  if ( Math.abs(Math.round( columnSpan ) - columnSpan ) < this.columnThreshold ) {
     // e.g. columnSpan = 4.0089945390298745
     columnSpan = Math.round( columnSpan );
   }
