@@ -3,7 +3,7 @@
  * Categorize, sort, and filter a responsive grid of items.
  * Dependencies: jQuery 1.9+, Modernizr 2.6.2+
  * @license MIT license
- * @version 3.1.0
+ * @version 3.1.1
  */
 
 /* Modernizr 2.6.2 (Custom Build) | MIT & BSD
@@ -172,15 +172,16 @@ var COMPUTED_SIZE_INCLUDES_PADDING = (function() {
     return false;
   }
 
+  var parent = document.body || document.documentElement;
   var e = document.createElement('div');
   e.style.cssText = 'width:10px;padding:2px;' +
     '-webkit-box-sizing:border-box;box-sizing:border-box;';
-  document.body.appendChild(e);
+  parent.appendChild(e);
 
   var width = getStyles(e, null).width;
   var ret = width === '10px';
 
-  document.body.removeChild(e);
+  parent.removeChild(e);
 
   return ret;
 }());
