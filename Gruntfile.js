@@ -98,7 +98,7 @@ module.exports = function(grunt) {
         banner: banner,
         report: 'min',
         mangle: true,
-        compress: true
+        compress: {}
       },
       main: {
         src: 'dist/jquery.shuffle.js',
