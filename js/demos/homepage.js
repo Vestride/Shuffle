@@ -18,7 +18,7 @@ var DEMO = (function( $ ) {
 
     // You can subscribe to custom events.
     // shrink, shrunk, filter, filtered, sorted, load, done
-    $grid.on('loading.shuffle done.shuffle shrink.shuffle shrunk.shuffle filter.shuffle filtered.shuffle sorted.shuffle layout.shuffle', function(evt, shuffle) {
+    $grid.on('loading.shuffle done.shuffle layout.shuffle', function(evt, shuffle) {
       // Make sure the browser has a console
       if ( window.console && window.console.log && typeof window.console.log === 'function' ) {
         console.log( 'Shuffle:', evt.type );
