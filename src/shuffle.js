@@ -603,7 +603,15 @@ Shuffle.prototype._doesPassFilter = function( category, $item ) {
     var keys = this.delimeter && !$.isArray( groups ) ?
         groups.split( this.delimeter ) :
         groups;
-    return $.inArray(category, keys) > -1;
+    var categories = [];
+    categories = categories.concat(category);
+    for (var i = 0; i < categories.length; i++) {
+      var categoryIsInKeys = $.inArray(categories[i], keys) > -1;
+      if(!categoryIsInKeys) {
+        return false;
+      }
+    }
+    return true;
   }
 };
 
