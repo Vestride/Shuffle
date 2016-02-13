@@ -6,6 +6,7 @@ _site
 *.scssc
 temp
 .grunt
+*.map
 
 **/.*
 **/_*
