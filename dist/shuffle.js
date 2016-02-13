@@ -90,6 +90,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	function toArray(arrayLike) {
+	  return Array.prototype.slice.call(arrayLike);
+	}
+	
 	// Constants
 	var SHUFFLE = 'shuffle';
 	
@@ -161,7 +165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var COMPUTED_SIZE_INCLUDES_PADDING = function () {
 	  var parent = document.body || document.documentElement;
 	  var e = document.createElement('div');
-	  e.style.cssText = 'width:10px;padding:2px;' + '-webkit-box-sizing:border-box;box-sizing:border-box;';
+	  e.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
 	  parent.appendChild(e);
 	
 	  var width = getStyles(e, null).width;
@@ -414,13 +418,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (Array.isArray(category)) {
 	              return {
 	                v: category.some(function (name) {
-	                  return keys.include(name);
+	                  return keys.indexOf(name) > -1;
 	                })
 	              };
 	            }
 	
 	            return {
-	              v: keys.includes(category)
+	              v: keys.indexOf(category) > -1
 	            };
 	          }();
 	
@@ -528,7 +532,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function _getItems() {
 	      var _this4 = this;
 	
-	      return Array.from(this.element.children).filter(function (el) {
+	      return toArray(this.element.children).filter(function (el) {
 	        return (0, _matchesSelector2.default)(el, _this4.itemSelector);
 	      }).map(function (el) {
 	        return new _shuffleItem2.default(el);

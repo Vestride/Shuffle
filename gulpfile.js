@@ -4,7 +4,7 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var webpack = require('webpack');
 var config = {
-  watch: false,
+  watch: true,
   isProduction: false,
 };
 

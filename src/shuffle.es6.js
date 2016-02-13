@@ -8,6 +8,10 @@ import getNumber from './get-number';
 import sorter from './sorter';
 import './custom-event';
 
+function toArray(arrayLike) {
+  return Array.prototype.slice.call(arrayLike);
+}
+
 // Constants
 const SHUFFLE = 'shuffle';
 
@@ -79,8 +83,7 @@ var getStyles = window.getComputedStyle;
 const COMPUTED_SIZE_INCLUDES_PADDING = (function () {
   var parent = document.body || document.documentElement;
   var e = document.createElement('div');
-  e.style.cssText = 'width:10px;padding:2px;' +
-    '-webkit-box-sizing:border-box;box-sizing:border-box;';
+  e.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
   parent.appendChild(e);
 
   var width = getStyles(e, null).width;
@@ -303,11 +306,11 @@ class Shuffle {
 
       if (Array.isArray(category)) {
         return category.some((name) => {
-          return keys.include(name);
+          return keys.indexOf(name) > -1;
         });
       }
 
-      return keys.includes(category);
+      return keys.indexOf(category) > -1;
     }
   }
 
@@ -384,7 +387,7 @@ class Shuffle {
   }
 
   _getItems() {
-    return Array.from(this.element.children)
+    return toArray(this.element.children)
       .filter(el => matches(el, this.itemSelector))
       .map(el => new ShuffleItem(el));
   }
