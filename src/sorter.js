@@ -1,5 +1,7 @@
 'use strict';
 
+import assign from './assign';
+
 // http://stackoverflow.com/a/962890/373422
 function randomize(array) {
   var tmp;
@@ -29,12 +31,16 @@ let defaults = {
 
   // If true, this will skip the sorting and return a randomized order in the array
   randomize: false,
+
+  // Determines which property of each item in the array is passed to the
+  // sorting method.
+  key: 'element',
 };
 
 // You can return `undefined` from the `by` function to revert to DOM order.
 export default function sorter(arr, options) {
-  let opts = Object.assign({}, defaults, options);
-  let original = Array.from(arr);
+  let opts = assign({}, defaults, options);
+  let original = [].slice.call(arr);
   let revert = false;
 
   if (!arr.length) {
@@ -47,7 +53,7 @@ export default function sorter(arr, options) {
 
   // Sort the elements by the opts.by function.
   // If we don't have opts.by, default to DOM order
-  if (typeof options.by === 'function') {
+  if (typeof opts.by === 'function') {
     arr.sort(function (a, b) {
 
       // Exit early if we already know we want to revert
@@ -55,8 +61,8 @@ export default function sorter(arr, options) {
         return 0;
       }
 
-      let valA = opts.by(a);
-      let valB = opts.by(b);
+      let valA = opts.by(a[opts.key]);
+      let valB = opts.by(b[opts.key]);
 
       // If both values are undefined, use the DOM order
       if (valA === undefined && valB === undefined) {

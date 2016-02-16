@@ -32,7 +32,7 @@
   "indent": 2,
 
   // Prohibit use of a variable before it is defined.
-  "latedef": true,
+  "latedef": "nofunc",
 
   // Enforce line length to 100 characters
   "maxlen": 100,

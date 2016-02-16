@@ -618,22 +618,22 @@ describe('Shuffle.js', function() {
 
       document.body.appendChild(div);
 
-      expect(window.Shuffle._getOuterWidth(div, false)).toBe(100);
-      expect(window.Shuffle._getOuterWidth(div, true)).toBe(100);
+      expect(window.Shuffle.getSize(div, false).width).toBe(100);
+      expect(window.Shuffle.getSize(div, true).width).toBe(100);
 
-      expect(window.Shuffle._getOuterHeight(div, false)).toBe(100);
-      expect(window.Shuffle._getOuterHeight(div, true)).toBe(100);
+      expect(window.Shuffle.getSize(div, false).height).toBe(100);
+      expect(window.Shuffle.getSize(div, true).height).toBe(100);
 
       div.style.marginLeft = '10px';
       div.style.marginRight = '20px';
       div.style.marginTop = '30px';
       div.style.marginBottom = '40px';
 
-      expect(window.Shuffle._getOuterWidth(div, false)).toBe(100);
-      expect(window.Shuffle._getOuterWidth(div, true)).toBe(130);
+      expect(window.Shuffle.getSize(div, false).width).toBe(100);
+      expect(window.Shuffle.getSize(div, true).width).toBe(130);
 
-      expect(window.Shuffle._getOuterHeight(div, false)).toBe(100);
-      expect(window.Shuffle._getOuterHeight(div, true)).toBe(170);
+      expect(window.Shuffle.getSize(div, false).height).toBe(100);
+      expect(window.Shuffle.getSize(div, true).height).toBe(170);
 
       document.body.removeChild(div);
     });

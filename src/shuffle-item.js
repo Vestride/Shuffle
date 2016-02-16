@@ -21,7 +21,7 @@ class ShuffleItem {
 
   init() {
     this.addClasses([Classes.SHUFFLE_ITEM, Classes.FILTERED]);
-    this._applyCss(ShuffleItem.css);
+    this.applyCss(ShuffleItem.css);
     this.scale = ShuffleItem.Scale.VISIBLE;
     this.point = new Point();
   }
@@ -32,10 +32,27 @@ class ShuffleItem {
     });
   }
 
-  _applyCss(obj) {
+  removeClasses(classes) {
+    classes.forEach((className) => {
+      this.element.classList.remove(className);
+    });
+  }
+
+  applyCss(obj) {
     Object.keys(obj).forEach((key) => {
       this.element.style[key] = obj[key];
     });
+  }
+
+  dispose() {
+    this.removeClasses([
+      Classes.CONCEALED,
+      Classes.FILTERED,
+      Classes.SHUFFLE_ITEM,
+    ]);
+
+    this.element.removeAttribute('style');
+    this.element = null;
   }
 }
 

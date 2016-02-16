@@ -1,61 +1,17 @@
 'use strict';
 
 import matches from 'matches-selector';
+import throttle from './throttle';
 import Point from './point';
 import ShuffleItem from './shuffle-item';
 import Classes from './classes';
-import getNumber from './get-number';
+import getNumberStyle from './get-number-style';
 import sorter from './sorter';
+import assign from './assign';
 import './custom-event';
 
 function toArray(arrayLike) {
   return Array.prototype.slice.call(arrayLike);
-}
-
-// Constants
-const SHUFFLE = 'shuffle';
-
-// Configurable. You can change these constants to fit your application.
-// The default scale and concealed scale, however, have to be different values.
-var ALL_ITEMS = 'all';
-var FILTER_ATTRIBUTE_KEY = 'groups';
-var DEFAULT_SCALE = 1;
-var CONCEALED_SCALE = 0.001;
-
-// Underscore's throttle function.
-function throttle(func, wait, options) {
-  var context, args, result;
-  var timeout = null;
-  var previous = 0;
-  options = options || {};
-  var later = function () {
-    previous = options.leading === false ? 0 : Date.now();
-    timeout = null;
-    result = func.apply(context, args);
-    context = args = null;
-  };
-
-  return function () {
-    var now = Date.now();
-    if (!previous && options.leading === false) {
-      previous = now;
-    }
-
-    var remaining = wait - (now - previous);
-    context = this;
-    args = arguments;
-    if (remaining <= 0 || remaining > wait) {
-      clearTimeout(timeout);
-      timeout = null;
-      previous = now;
-      result = func.apply(context, args);
-      context = args = null;
-    } else if (!timeout && options.trailing !== false) {
-      timeout = setTimeout(later, remaining);
-    }
-
-    return result;
-  };
 }
 
 function each(obj, iterator, context) {
@@ -78,21 +34,7 @@ function arrayMin(array) {
   return Math.min.apply(Math, array);
 }
 
-var getStyles = window.getComputedStyle;
-
-const COMPUTED_SIZE_INCLUDES_PADDING = (function () {
-  var parent = document.body || document.documentElement;
-  var e = document.createElement('div');
-  e.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
-  parent.appendChild(e);
-
-  var width = getStyles(e, null).width;
-  var ret = width === '10px';
-
-  parent.removeChild(e);
-
-  return ret;
-}());
+function noop() {}
 
 // Used for unique instance variables
 let id = 0;
@@ -107,7 +49,18 @@ class Shuffle {
    * @constructor
    */
   constructor(element, options = {}) {
-    Object.assign(this, Shuffle.options, options, Shuffle.settings);
+    assign(this, Shuffle.options, options);
+
+    this.useSizer = false;
+    this.revealAppendedDelay = 300;
+    this.lastSort = {};
+    this.lastFilter = Shuffle.ALL_ITEMS;
+    this.isEnabled = true;
+    this.isDestroyed = false;
+    this.isInitialized = false;
+    this._transitions = [];
+    this._isMovementCanceled = false;
+    this._queue = [];
 
     element = this._getElementOption(element);
 
@@ -124,7 +77,7 @@ class Shuffle {
     // Dispatch the done event asynchronously so that people can bind to it after
     // Shuffle has been initialized.
     defer(function () {
-      this.initialized = true;
+      this.isInitialized = true;
       this._dispatch(Shuffle.EventType.DONE);
     }, this, 16);
   }
@@ -150,7 +103,7 @@ class Shuffle {
 
     // Get container css all in one request. Causes reflow
     var containerCSS = window.getComputedStyle(this.element, null);
-    var containerWidth = Shuffle._getOuterWidth(this.element);
+    var containerWidth = Shuffle.getSize(this.element).width;
 
     // Add styles to the container if it doesn't have them.
     this._validateStyles(containerCSS);
@@ -160,16 +113,14 @@ class Shuffle {
     this._setColumns(containerWidth);
 
     // Kick off!
-    this.shuffle(this.group, this.initialSort);
+    this.filter(this.group, this.initialSort);
 
     // The shuffle items haven't had transitions set on them yet
     // so the user doesn't see the first layout. Set them now that the first layout is done.
-    if (this.supported) {
-      defer(function () {
-        this._setTransitions();
-        this.element.style.transition = 'height ' + this.speed + 'ms ' + this.easing;
-      }, this);
-    }
+    defer(function () {
+      this._setTransitions();
+      this.element.style.transition = 'height ' + this.speed + 'ms ' + this.easing;
+    }, this);
   }
 
   /**
@@ -249,7 +200,7 @@ class Shuffle {
       this.group = category;
     }
 
-    return set.filtered;
+    return set;
   }
 
   /**
@@ -264,7 +215,7 @@ class Shuffle {
     var concealed = [];
 
     // category === 'all', add filtered class to everything
-    if (category === ALL_ITEMS) {
+    if (category === Shuffle.ALL_ITEMS) {
       filtered = items;
 
     // Loop through each item and use provided function to determine
@@ -298,7 +249,7 @@ class Shuffle {
 
     // Check each element's data-groups attribute against the given category.
     } else {
-      let attr = item.element.getAttribute('data-' + FILTER_ATTRIBUTE_KEY);
+      let attr = item.element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
       let groups = JSON.parse(attr);
       let keys = this.delimeter && !Array.isArray(groups) ?
           groups.split(this.delimeter) :
@@ -349,23 +300,26 @@ class Shuffle {
   }
 
   /**
-   * Sets css transform transition on a an element.
-   * @param {Element} element Element to set transition on.
-   * @private
-   */
-  _setTransition(element) {
-    element.style.transition = 'transform ' + this.speed + 'ms ' +
-      this.easing + ', opacity ' + this.speed + 'ms ' + this.easing;
-  }
-
-  /**
    * Sets css transform transition on a group of elements.
    * @param {ArrayLike.<Element>} $items Elements to set transitions on.
    * @private
    */
   _setTransitions(items = this.items) {
+    let speed = this.speed;
+    let easing = this.easing;
+
+    var str;
+    if (this.useTransforms) {
+      str = 'transform ' + speed + 'ms ' + easing +
+        ', opacity ' + speed + 'ms ' + easing;
+    } else {
+      str = 'top ' + speed + 'ms ' + easing +
+        ', left ' + speed + 'ms ' + easing +
+        ', opacity ' + speed + 'ms ' + easing;
+    }
+
     each(items, function (item) {
-      this._setTransition(item.element);
+      item.element.style.transition = str;
     }, this);
   }
 
@@ -375,11 +329,9 @@ class Shuffle {
    * @param {ArrayLike.<Element>} $collection Array to iterate over.
    */
   _setSequentialDelay($collection) {
-    if (!this.supported) {
-      return;
-    }
 
     // $collection can be an array of dom elements or jquery object
+    // FIXME won't work for noTransforms
     each($collection, function (el, i) {
       // This works because the transition-property: transform, opacity;
       el.style.transitionDelay = '0ms,' + ((i + 1) * this.sequentialFadeDelay) + 'ms';
@@ -416,7 +368,7 @@ class Shuffle {
 
     // columnWidth option isn't a function, are they using a sizing element?
     } else if (this.useSizer) {
-      size = Shuffle._getOuterWidth(this.sizer);
+      size = Shuffle.getSize(this.sizer).width;
 
     // if not, how about the explicitly set option?
     } else if (this.columnWidth) {
@@ -424,7 +376,7 @@ class Shuffle {
 
     // or use the size of the first item
     } else if (this.items.length > 0) {
-      size = Shuffle._getOuterWidth(this.items[0], true);
+      size = Shuffle.getSize(this.items[0], true).width;
 
     // if there's no items, use size of container
     } else {
@@ -450,7 +402,7 @@ class Shuffle {
     if (typeof this.gutterWidth === 'function') {
       size = this.gutterWidth(containerWidth);
     } else if (this.useSizer) {
-      size = Shuffle._getNumberStyle(this.sizer, 'marginLeft');
+      size = getNumberStyle(this.sizer, 'marginLeft');
     } else {
       size = this.gutterWidth;
     }
@@ -460,11 +412,10 @@ class Shuffle {
 
   /**
    * Calculate the number of columns to be used. Gets css if using sizer element.
-   * @param {number} [theContainerWidth] Optionally specify a container width if
+   * @param {number} [containerWidth] Optionally specify a container width if
    *    it's already available.
    */
-  _setColumns(theContainerWidth) {
-    var containerWidth = theContainerWidth || Shuffle._getOuterWidth(this.element);
+  _setColumns(containerWidth = Shuffle.getSize(this.element).width) {
     var gutter = this._getGutterSize(containerWidth);
     var columnWidth = this._getColumnSize(containerWidth, gutter);
     var calculatedColumns = (containerWidth + gutter) / columnWidth;
@@ -497,7 +448,6 @@ class Shuffle {
   }
 
   /**
-   * Fire events with .shuffle namespace
    * @return {boolean} Whether the event was prevented or not.
    */
   _dispatch(name, details = {}) {
@@ -526,67 +476,36 @@ class Shuffle {
    * @param {Array.<Element>} items Array of items that will be shown/layed out in
    *     order in their array. Because jQuery collection are always ordered in DOM
    *     order, we can't pass a jq collection.
-   * @param {boolean} [isOnlyPosition=false] If true this will position the items
-   *     with zero opacity.
    */
-  _layout(items, isOnlyPosition) {
-    each(items, function (item) {
-      this._layoutItem(item, !!isOnlyPosition);
-    }, this);
-
-    // `_layout` always happens after `_shrink`, so it's safe to process the style
-    // queue here with styles from the shrink method.
-    this._processStyleQueue();
-
-    // Adjust the height of the container.
-    this._setContainerSize();
+  _layout(items) {
+    each(items, this._layoutItem, this);
   }
 
   /**
    * Calculates the position of the item and pushes it onto the style queue.
    * @param {ShuffleItem} item ShuffleItem which is being positioned.
-   * @param {boolean} isOnlyPosition Whether to position the item, but with zero
-   *     opacity so that it can fade in later.
    * @private
    */
-  _layoutItem(item, isOnlyPosition) {
+  _layoutItem(item, i) {
     var currPos = item.point;
     var currScale = item.scale;
-    var itemSize = {
-      width: Shuffle._getOuterWidth(item.element, true),
-      height: Shuffle._getOuterHeight(item.element, true),
-    };
+    var itemSize = Shuffle.getSize(item.element, true);
     var pos = this._getItemPosition(itemSize);
 
     // If the item will not change its position, do not add it to the render
     // queue. Transitions don't fire when setting a property to the same value.
-    if (Point.equals(currPos, pos) && currScale === DEFAULT_SCALE) {
+    if (Point.equals(currPos, pos) && currScale === ShuffleItem.Scale.VISIBLE) {
       return;
     }
 
-    // Save data for shrink
     item.point = pos;
-    item.scale = DEFAULT_SCALE;
+    item.scale = ShuffleItem.Scale.VISIBLE;
 
-    this.styleQueue.push({
-      $item: window.jQuery(item.element),
-      point: pos,
-      scale: DEFAULT_SCALE,
-      opacity: isOnlyPosition ? 0 : 1,
-
-      // Set styles immediately if there is no transition speed.
-      skipTransition: isOnlyPosition || this.speed === 0,
-      callfront: function () {
-        if (!isOnlyPosition) {
-          item.element.style.visibility = 'visible';
-        }
-      },
-
-      callback: function () {
-        if (isOnlyPosition) {
-          item.element.style.visibility = 'hidden';
-        }
-      },
+    this._queue.push({
+      item,
+      opacity: 1,
+      visibility: 'visible',
+      transitionDelay: Math.min(i * this.staggerAmount, this.staggerAmountMax),
     });
   }
 
@@ -711,32 +630,29 @@ class Shuffle {
 
   /**
    * Hides the elements that don't match our filter.
-   * @param {jQuery} $collection jQuery collection to shrink.
+   * @param {Array.<ShuffleItem>} collection Collection to shrink.
    * @private
    */
-  _shrink(collection) {
-    collection = collection || this._getConcealedItems();
-
-    collection.forEach((item) => {
+  _shrink(collection = this._getConcealedItems()) {
+    each(collection, (item, i) => {
       // Continuing would add a transitionend event listener to the element, but
       // that listener would not execute because the transform and opacity would
       // stay the same.
-      if (item.scale === CONCEALED_SCALE) {
+      if (item.scale === ShuffleItem.Scale.FILTERED) {
         return;
       }
 
-      item.scale = CONCEALED_SCALE;
+      item.scale = ShuffleItem.Scale.FILTERED;
 
-      this.styleQueue.push({
-        $item: window.jQuery(item.element),
-        point: item.point,
-        scale: CONCEALED_SCALE,
+      this._queue.push({
+        item,
         opacity: 0,
-        callback: function () {
+        transitionDelay: Math.min(i * this.staggerAmount, this.staggerAmountMax),
+        callback() {
           item.element.style.visibility = 'hidden';
         },
       });
-    });
+    }, this);
   }
 
   /**
@@ -745,12 +661,12 @@ class Shuffle {
    */
   _handleResize() {
     // If shuffle is disabled, destroyed, don't do anything
-    if (!this.enabled || this.destroyed) {
+    if (!this.isEnabled || this.isDestroyed) {
       return;
     }
 
     // Will need to check height in the future if it's layed out horizontaly
-    var containerWidth = Shuffle._getOuterWidth(this.element);
+    var containerWidth = Shuffle.getSize(this.element).width;
 
     // containerWidth hasn't changed, don't do anything
     if (containerWidth === this.containerWidth) {
@@ -762,146 +678,117 @@ class Shuffle {
 
   /**
    * Returns styles for either jQuery animate or transition.
-   * @param {Object} opts Transition options.
+   * @param {Object} obj Transition options.
    * @return {!Object} Transforms for transitions, left/top for animate.
    * @private
    */
-  _getStylesForTransition(opts) {
-    var styles = {
-      opacity: opts.opacity,
+  _getStylesForTransition(obj) {
+    let item = obj.item;
+    let styles = {
+      opacity: obj.opacity,
+      visibility: obj.visibility,
+      transitionDelay: (obj.transitionDelay || 0) + 'ms',
     };
 
-    if (this.supported) {
-      styles.transform = Shuffle._getItemTransformString(opts.point, opts.scale);
+    if (this.useTransforms) {
+      styles.transform = Shuffle._getItemTransformString(item.point, item.scale);
     } else {
-      styles.left = opts.point.x;
-      styles.top = opts.point.y;
+      styles.left = item.point.x + 'px';
+      styles.top = item.point.y + 'px';
     }
 
     return styles;
   }
 
-  /**
-   * Transitions an item in the grid
-   *
-   * @param {Object} opts options.
-   * @param {jQuery} opts.$item jQuery object representing the current item.
-   * @param {Point} opts.point A point object with the x and y coordinates.
-   * @param {number} opts.scale Amount to scale the item.
-   * @param {number} opts.opacity Opacity of the item.
-   * @param {Function} opts.callback Complete function for the animation.
-   * @param {Function} opts.callfront Function to call before transitioning.
-   * @private
-   */
   _transition(opts) {
-    var styles = this._getStylesForTransition(opts);
-    this._startItemAnimation(opts.$item, styles, opts.callfront || window.jQuery.noop, opts.callback || window.jQuery.noop);
-  }
+    let styles = this._getStylesForTransition(opts);
+    let callfront = opts.callfront || noop;
+    let callback = opts.callback || noop;
+    let item = opts.item;
+    let _this = this;
 
-  _startItemAnimation($item, styles, callfront, callback) {
-    var _this = this;
+    return new Promise((resolve) => {
+      let reference = {
+        item,
+        handler(evt) {
+          let element = evt.target;
 
-    // Transition end handler removes its listener.
-    function handleTransitionEnd(evt) {
-      // Make sure this event handler has not bubbled up from a child.
-      if (evt.target === evt.currentTarget) {
-        window.jQuery(evt.target).off('transitionend', handleTransitionEnd);
-        _this._removeTransitionReference(reference);
+          // Make sure this event handler has not bubbled up from a child.
+          if (element === evt.currentTarget) {
+            element.removeEventListener('transitionend', reference.handler);
+            element.style.transitionDelay = '';
+            _this._removeTransitionReference(reference);
+            callback();
+            resolve();
+          }
+        },
+      };
+
+      callfront();
+      item.applyCss(styles);
+
+      // Transitions are not set until shuffle has loaded to avoid the initial transition.
+      if (this.isInitialized) {
+        item.element.addEventListener('transitionend', reference.handler);
+        this._transitions.push(reference);
+      } else {
         callback();
+        resolve();
       }
-    }
-
-    var reference = {
-      $element: $item,
-      handler: handleTransitionEnd,
-    };
-
-    callfront();
-
-    // Transitions are not set until shuffle has loaded to avoid the initial transition.
-    if (!this.initialized) {
-      $item.css(styles);
-      callback();
-      return;
-    }
-
-    // Use CSS Transforms if we have them
-    if (this.supported) {
-      $item.css(styles);
-      $item.on('transitionend', handleTransitionEnd);
-      this._transitions.push(reference);
-
-    // Use jQuery to animate left/top
-    } else {
-      // Save the deferred object which jQuery returns.
-      var anim = $item.stop(true).animate(styles, this.speed, 'swing', callback);
-
-      // Push the animation to the list of pending animations.
-      this._animations.push(anim.promise());
-    }
+    });
   }
 
   /**
    * Execute the styles gathered in the style queue. This applies styles to elements,
    * triggering transitions.
-   * @param {boolean} noLayout Whether to trigger a layout event.
+   * @param {boolean} withLayout Whether to trigger a layout event.
    * @private
    */
-  _processStyleQueue(noLayout) {
+  _processQueue(withLayout = true) {
     if (this.isTransitioning) {
       this._cancelMovement();
     }
 
-    var $transitions = window.jQuery();
-
     // Iterate over the queue and keep track of ones that use transitions.
-    each(this.styleQueue, function (transitionObj) {
-      if (transitionObj.skipTransition) {
-        this._styleImmediately(transitionObj);
+    let immediates = [];
+    let transitions = [];
+    this._queue.forEach((obj) => {
+      if (!this.isInitialized || this.speed === 0) {
+        immediates.push(obj);
       } else {
-        $transitions = $transitions.add(transitionObj.$item);
-        this._transition(transitionObj);
+        transitions.push(obj);
       }
-    }, this);
+    });
 
-    if ($transitions.length > 0 && this.initialized && this.speed > 0) {
+    immediates.forEach((obj) => {
+      this._styleImmediately(obj);
+    });
+
+    let promises = transitions.map((obj) => {
+      return this._transition(obj);
+    });
+
+    if (transitions.length > 0 && this.speed > 0) {
       // Set flag that shuffle is currently in motion.
       this.isTransitioning = true;
 
-      if (this.supported) {
-        this._whenCollectionDone($transitions, 'transitionend', this._movementFinished);
-
-      // The _transition function appends a promise to the animations array.
-      // When they're all complete, do things.
-      } else {
-        this._whenAnimationsDone(this._movementFinished);
-      }
+      Promise.all(promises).then(this._movementFinished.bind(this));
 
     // A call to layout happened, but none of the newly filtered items will
     // change position. Asynchronously fire the callback here.
-    } else if (!noLayout) {
-      defer(this._layoutEnd, this);
+    } else if (withLayout) {
+      defer(this._dispatchLayout, this);
     }
 
     // Remove everything in the style queue
-    this.styleQueue.length = 0;
+    this._queue.length = 0;
   }
 
   _cancelMovement() {
-    if (this.supported) {
-      // Remove the transition end event for each listener.
-      each(this._transitions, function (transition) {
-        transition.$element.off('transitionend', transition.handler);
-      });
-    } else {
-      // Even when `stop` is called on the jQuery animation, its promise will
-      // still be resolved. Since it cannot be determine from within that callback
-      // whether the animation was stopped or not, a flag is set here to distinguish
-      // between the two states.
-      this._isMovementCanceled = true;
-      this.items.stop(true);
-      this._isMovementCanceled = false;
-    }
+    // Remove the transition end event for each listener.
+    each(this._transitions, (transition) => {
+      transition.item.element.removeEventListener('transitionend', transition.handler);
+    });
 
     // Reset the array.
     this._transitions.length = 0;
@@ -911,7 +798,7 @@ class Shuffle {
   }
 
   _removeTransitionReference(ref) {
-    var indexInArray = window.jQuery.inArray(ref, this._transitions);
+    let indexInArray = this._transitions.indexOf(ref);
     if (indexInArray > -1) {
       this._transitions.splice(indexInArray, 1);
     }
@@ -922,18 +809,18 @@ class Shuffle {
    * @param {Object} opts Transitions options object.
    * @private
    */
-  _styleImmediately(opts) {
-    Shuffle._skipTransition(opts.$item[0], function () {
-      opts.$item.css(this._getStylesForTransition(opts));
-    }, this);
+  _styleImmediately(obj) {
+    Shuffle._skipTransition(obj.item.element, () => {
+      obj.item.applyCss(this._getStylesForTransition(obj));
+    });
   }
 
   _movementFinished() {
     this.isTransitioning = false;
-    this._layoutEnd();
+    this._dispatchLayout();
   }
 
-  _layoutEnd() {
+  _dispatchLayout() {
     this._dispatch(Shuffle.EventType.LAYOUT);
   }
 
@@ -949,31 +836,32 @@ class Shuffle {
 
     // Shrink all items (without transitions).
     this._shrink($newItems);
-    each(this.styleQueue, function (transitionObj) {
+    each(this._queue, function (transitionObj) {
       transitionObj.skipTransition = true;
     });
 
     // Apply shrink positions, but do not cause a layout event.
-    this._processStyleQueue(true);
+    this._processQueue(false);
 
     if (addToEnd) {
       this._addItemsToEnd($newItems, isSequential);
     } else {
-      this.shuffle(this.lastFilter);
+      this.filter(this.lastFilter);
     }
   }
 
   _addItemsToEnd($newItems, isSequential) {
     // Get ones that passed the current filter
-    var $passed = this._filter(null, $newItems);
+    var $passed = this._filter(null, $newItems).filtered;
     var passed = $passed.get();
 
     // How many filtered elements?
     this._updateItemCount();
 
+    // FIXME won't process queue.
     this._layout(passed, true);
 
-    if (isSequential && this.supported) {
+    if (isSequential) {
       this._setSequentialDelay(passed);
     }
 
@@ -993,7 +881,7 @@ class Shuffle {
           $item: $item,
           opacity: 1,
           point: $item.data('point'),
-          scale: DEFAULT_SCALE,
+          scale: ShuffleItem.Scale.VISIBLE,
         });
       }, this);
 
@@ -1005,77 +893,27 @@ class Shuffle {
   }
 
   /**
-   * Execute a function when an event has been triggered for every item in a collection.
-   * @param {jQuery} $collection Collection of elements.
-   * @param {string} eventName Event to listen for.
-   * @param {Function} callback Callback to execute when they're done.
-   * @private
-   */
-  _whenCollectionDone($collection, eventName, callback) {
-    var done = 0;
-    var items = $collection.length;
-    var _this = this;
-
-    function handleEventName(evt) {
-      if (evt.target === evt.currentTarget) {
-        window.jQuery(evt.target).off(eventName, handleEventName);
-        done++;
-
-        // Execute callback if all items have emitted the correct event.
-        if (done === items) {
-          _this._removeTransitionReference(reference);
-          callback.call(_this);
-        }
-      }
-    }
-
-    var reference = {
-      $element: $collection,
-      handler: handleEventName,
-    };
-
-    // Bind the event to all items.
-    $collection.on(eventName, handleEventName);
-
-    // Keep track of transitionend events so they can be removed.
-    this._transitions.push(reference);
-  }
-
-  /**
-   * Execute a callback after jQuery `animate` for a collection has finished.
-   * @param {Function} callback Callback to execute when they're done.
-   * @private
-   */
-  _whenAnimationsDone(callback) {
-    window.jQuery.when.apply(null, this._animations).always(window.jQuery.proxy(function () {
-      this._animations.length = 0;
-      if (!this._isMovementCanceled) {
-        callback.call(this);
-      }
-    }, this));
-  }
-
-  /**
    * The magic. This is what makes the plugin 'shuffle'
-   * @param {string|Function} [category] Category to filter by. Can be a function
+   * @param {string|Function|Array.<string>} [category] Category to filter by.
+   *     Can be a function, string, or array of strings.
    * @param {Object} [sortObj] A sort object which can sort the filtered set
    */
-  shuffle(category, sortObj) {
-    if (!this.enabled) {
+  filter(category, sortObj) {
+    if (!this.isEnabled) {
       return;
     }
 
-    if (!category) {
-      category = ALL_ITEMS;
+    if (!category || (category && category.length === 0)) {
+      category = Shuffle.ALL_ITEMS;
     }
 
     this._filter(category);
 
-    // How many filtered elements?
-    this._updateItemCount();
-
     // Shrink each concealed item
     this._shrink();
+
+    // How many filtered elements?
+    this._updateItemCount();
 
     // Update transforms on .filtered elements so they will animate to their new positions
     this.sort(sortObj);
@@ -1085,18 +923,26 @@ class Shuffle {
    * Gets the .filtered elements, sorts them, and passes them to layout.
    * @param {Object} opts the options object for the sorted plugin
    */
-  sort(opts) {
-    if (this.enabled) {
-      this._resetCols();
-
-      var sortOptions = opts || this.lastSort;
-      var items = this._getFilteredItems();
-      items = sorter(items, sortOptions);
-
-      this._layout(items);
-
-      this.lastSort = sortOptions;
+  sort(opts = this.lastSort) {
+    if (!this.isEnabled) {
+      return;
     }
+
+    this._resetCols();
+
+    var items = this._getFilteredItems();
+    items = sorter(items, opts);
+
+    this._layout(items);
+
+    // `_layout` always happens after `_shrink`, so it's safe to process the style
+    // queue here with styles from the shrink method.
+    this._processQueue();
+
+    // Adjust the height of the container.
+    this._setContainerSize();
+
+    this.lastSort = opts;
   }
 
   /**
@@ -1105,7 +951,7 @@ class Shuffle {
    *     recalculated.
    */
   update(isOnlyLayout) {
-    if (this.enabled) {
+    if (this.isEnabled) {
 
       if (!isOnlyLayout) {
         // Get updated colCount
@@ -1141,7 +987,7 @@ class Shuffle {
    * Disables shuffle from updating dimensions and layout on resize
    */
   disable() {
-    this.enabled = false;
+    this.isEnabled = false;
   }
 
   /**
@@ -1149,7 +995,7 @@ class Shuffle {
    * @param {boolean} [isUpdateLayout=true] if undefined, shuffle will update columns and gutters
    */
   enable(isUpdateLayout) {
-    this.enabled = true;
+    this.isEnabled = true;
     if (isUpdateLayout !== false) {
       this.update();
     }
@@ -1187,7 +1033,7 @@ class Shuffle {
 
     this.sort();
 
-    this.$el.one(Shuffle.EventType.LAYOUT + '.' + SHUFFLE, window.jQuery.proxy(handleRemoved, this));
+    this.$el.one(Shuffle.EventType.LAYOUT + '.shuffle', window.jQuery.proxy(handleRemoved, this));
   }
 
   /**
@@ -1197,21 +1043,13 @@ class Shuffle {
     window.removeEventListener('resize', this._onResize);
 
     // Reset container styles
-    this.$el
-        .removeClass(SHUFFLE)
-        .removeAttr('style')
-        .removeData(SHUFFLE);
+    this.element.classList.remove('shuffle');
+    this.element.removeAttribute('style');
 
     // Reset individual item styles
-    this.items
-        .removeAttr('style')
-        .removeData('point')
-        .removeData('scale')
-        .removeClass([
-          Shuffle.ClassName.CONCEALED,
-          Shuffle.ClassName.FILTERED,
-          Shuffle.ClassName.SHUFFLE_ITEM,
-        ].join(' '));
+    this.items.forEach((item) => {
+      item.dispose();
+    });
 
     // Null DOM references
     this.items = null;
@@ -1221,22 +1059,108 @@ class Shuffle {
     this._transitions = null;
 
     // Set a flag so if a debounced resize has been triggered,
-    // it can first check if it is actually destroyed and not doing anything
+    // it can first check if it is actually isDestroyed and not doing anything
     this.destroyed = true;
+  }
+
+  /**
+   * Get the CSS transform based on position and scale.
+   * @param {Point} point X and Y positions.
+   * @param {number} scale Scale amount.
+   * @return {string} A normalized string which can be used with the transform style.
+   * @private
+   */
+  static _getItemTransformString(point, scale) {
+    return 'translate(' + point.x + 'px, ' + point.y + 'px) scale(' + scale + ')';
+  }
+
+  /**
+   * Returns the outer width of an element, optionally including its margins.
+   *
+   * There are a few different methods for getting the width of an element, none of
+   * which work perfectly for all Shuffle's use cases.
+   *
+   * 1. getBoundingClientRect() `left` and `right` properties.
+   *   - Accounts for transform scaled elements, making it useless for Shuffle
+   *   elements which have shrunk.
+   * 2. The `offsetWidth` property (or jQuery's CSS).
+   *   - This value stays the same regardless of the elements transform property,
+   *   however, it does not return subpixel values.
+   * 3. getComputedStyle()
+   *   - This works great Chrome, Firefox, Safari, but IE<=11 does not include
+   *   padding and border when box-sizing: border-box is set, requiring a feature
+   *   test and extra work to add the padding back for IE and other browsers which
+   *   follow the W3C spec here.
+   *
+   * @param {Element} element The element.
+   * @param {boolean} [includeMargins] Whether to include margins. Default is false.
+   * @return {{width: number, height: number}} The width and height.
+   */
+  static getSize(element, includeMargins) {
+    // Store the styles so that they can be used by others without asking for it again.
+    var styles = window.getComputedStyle(element, null);
+    var width = getNumberStyle(element, 'width', styles);
+    var height = getNumberStyle(element, 'height', styles);
+
+    // Use jQuery here because it uses getComputedStyle internally and is
+    // cross-browser. Using the style property of the element will only work
+    // if there are inline styles.
+    if (includeMargins) {
+      var marginLeft = getNumberStyle(element, 'marginLeft', styles);
+      var marginRight = getNumberStyle(element, 'marginRight', styles);
+      var marginTop = getNumberStyle(element, 'marginTop', styles);
+      var marginBottom = getNumberStyle(element, 'marginBottom', styles);
+      width += marginLeft + marginRight;
+      height += marginTop + marginBottom;
+    }
+
+    return {
+      width,
+      height,
+    };
+  }
+
+  /**
+   * Change a property or execute a function which will not have a transition
+   * @param {Element} element DOM element that won't be transitioned
+   * @param {Function} callback A function which will be called while transition
+   *     is set to 0ms.
+   * @private
+   */
+  static _skipTransition(element, callback) {
+    let style = element.style;
+    var duration = style.transitionDuration;
+    var delay = style.transitionDelay;
+
+    // Set the duration to zero so it happens immediately
+    style.transitionDuration = '0ms';
+    style.transitionDelay = '0ms';
+
+    callback();
+
+    // Force reflow
+    var reflow = element.offsetWidth;
+
+    // Avoid jshint warnings: unused variables and expressions.
+    reflow = null;
+
+    // Put the duration back
+    style.transitionDuration = duration;
+    style.transitionDelay = delay;
   }
 }
 
+Shuffle.ALL_ITEMS = 'all';
+Shuffle.FILTER_ATTRIBUTE_KEY = 'groups';
 
 /**
- * Events the container element emits with the .shuffle namespace.
- * For example, "done.shuffle".
  * @enum {string}
  */
 Shuffle.EventType = {
-  LOADING: 'loading',
-  DONE: 'done',
-  LAYOUT: 'layout',
-  REMOVED: 'removed',
+  LOADING: 'shuffle:loading',
+  DONE: 'shuffle:done',
+  LAYOUT: 'shuffle:layout',
+  REMOVED: 'shuffle:removed',
 };
 
 /** @enum {string} */
@@ -1244,182 +1168,68 @@ Shuffle.ClassName = Classes;
 
 // Overrideable options
 Shuffle.options = {
-  group: ALL_ITEMS, // Initial filter group.
-  speed: 250, // Transition/animation speed (milliseconds).
-  easing: 'ease-out', // CSS easing function to use.
-  itemSelector: '', // e.g. '.picture-item'.
-  sizer: null, // Sizer element. Use an element to determine the size of columns and gutters.
-  gutterWidth: 0, // A static number or function that tells the plugin how wide the gutters between columns are (in pixels).
-  columnWidth: 0, // A static number or function that returns a number which tells the plugin how wide the columns are (in pixels).
-  delimeter: null, // If your group is not json, and is comma delimeted, you could set delimeter to ','.
-  buffer: 0, // Useful for percentage based heights when they might not always be exactly the same (in pixels).
-  columnThreshold: 0.01, // Reading the width of elements isn't precise enough and can cause columns to jump between values.
-  initialSort: null, // Shuffle can be initialized with a sort object. It is the same object given to the sort method.
-  throttle: throttle, // By default, shuffle will throttle resize events. This can be changed or removed.
-  throttleTime: 300, // How often shuffle can be called on resize (in milliseconds).
-  sequentialFadeDelay: 150, // Delay between each item that fades in when adding items.
-  supported: true, // Whether to use transforms or absolute positioning.
-};
+  // Initial filter group.
+  group: Shuffle.ALL_ITEMS,
 
-// Not overrideable
-Shuffle.settings = {
-  useSizer: false,
-  revealAppendedDelay: 300,
-  lastSort: {},
-  lastFilter: ALL_ITEMS,
-  enabled: true,
-  destroyed: false,
-  initialized: false,
-  _animations: [],
-  _transitions: [],
-  _isMovementCanceled: false,
-  styleQueue: [],
+  // Transition/animation speed (milliseconds).
+  speed: 250,
+
+  // CSS easing function to use.
+  easing: 'ease',
+
+  // e.g. '.picture-item'.
+  itemSelector: '',
+
+  // Sizer element. Use an element to determine the size of columns and gutters.
+  sizer: null,
+
+  // A static number or function that tells the plugin how wide the gutters
+  // between columns are (in pixels).
+  gutterWidth: 0,
+
+  // A static number or function that returns a number which tells the plugin
+  // how wide the columns are (in pixels).
+  columnWidth: 0,
+
+  // If your group is not json, and is comma delimeted, you could set delimeter
+  // to ','.
+  delimeter: null,
+
+  // Useful for percentage based heights when they might not always be exactly
+  // the same (in pixels).
+  buffer: 0,
+
+  // Reading the width of elements isn't precise enough and can cause columns to
+  // jump between values.
+  columnThreshold: 0.01,
+
+  // Shuffle can be isInitialized with a sort object. It is the same object
+  // given to the sort method.
+  initialSort: null,
+
+  // By default, shuffle will throttle resize events. This can be changed or
+  // removed.
+  throttle: throttle,
+
+  // How often shuffle can be called on resize (in milliseconds).
+  throttleTime: 300,
+
+  // Delay between each item that fades in when adding items.
+  sequentialFadeDelay: 150,
+
+  // Transition delay offset for each item in milliseconds.
+  staggerAmount: 15,
+
+  // It can look a little weird when the last element is in the top row
+  staggerAmountMax: 250,
+
+  // Whether to use transforms or absolute positioning.
+  useTransforms: true,
 };
 
 // Expose for testing.
 Shuffle.Point = Point;
 Shuffle.ShuffleItem = ShuffleItem;
 Shuffle.sorter = sorter;
-
-/**
- * Static methods.
- */
-
-/**
- * If the browser has 3d transforms available, build a string with those,
- * otherwise use 2d transforms.
- * @param {Point} point X and Y positions.
- * @param {number} scale Scale amount.
- * @return {string} A normalized string which can be used with the transform style.
- * @private
- */
-Shuffle._getItemTransformString = function (point, scale) {
-  return 'translate(' + point.x + 'px, ' + point.y + 'px) scale(' + scale + ')';
-};
-
-/**
- * Retrieve the computed style for an element, parsed as a float.
- * @param {Element} element Element to get style for.
- * @param {string} style Style property.
- * @param {CSSStyleDeclaration} [styles] Optionally include clean styles to
- *     use instead of asking for them again.
- * @return {number} The parsed computed value or zero if that fails because IE
- *     will return 'auto' when the element doesn't have margins instead of
- *     the computed style.
- * @private
- */
-Shuffle._getNumberStyle = function (element, style, styles) {
-  styles = styles || getStyles(element, null);
-  var value = Shuffle._getFloat(styles[style]);
-
-  // Support IE<=11 and W3C spec.
-  if (!COMPUTED_SIZE_INCLUDES_PADDING && style === 'width') {
-    value += Shuffle._getFloat(styles.paddingLeft) +
-      Shuffle._getFloat(styles.paddingRight) +
-      Shuffle._getFloat(styles.borderLeftWidth) +
-      Shuffle._getFloat(styles.borderRightWidth);
-  } else if (!COMPUTED_SIZE_INCLUDES_PADDING && style === 'height') {
-    value += Shuffle._getFloat(styles.paddingTop) +
-      Shuffle._getFloat(styles.paddingBottom) +
-      Shuffle._getFloat(styles.borderTopWidth) +
-      Shuffle._getFloat(styles.borderBottomWidth);
-  }
-
-  return value;
-};
-
-/**
- * Parse a string as an float.
- * @param {string} value String float.
- * @return {number} The string as an float or zero.
- * @private
- */
-Shuffle._getFloat = function (value) {
-  return getNumber(parseFloat(value));
-};
-
-/**
- * Returns the outer width of an element, optionally including its margins.
- *
- * There are a few different methods for getting the width of an element, none of
- * which work perfectly for all Shuffle's use cases.
- *
- * 1. getBoundingClientRect() `left` and `right` properties.
- *   - Accounts for transform scaled elements, making it useless for Shuffle
- *   elements which have shrunk.
- * 2. The `offsetWidth` property (or jQuery's CSS).
- *   - This value stays the same regardless of the elements transform property,
- *   however, it does not return subpixel values.
- * 3. getComputedStyle()
- *   - This works great Chrome, Firefox, Safari, but IE<=11 does not include
- *   padding and border when box-sizing: border-box is set, requiring a feature
- *   test and extra work to add the padding back for IE and other browsers which
- *   follow the W3C spec here.
- *
- * @param {Element} element The element.
- * @param {boolean} [includeMargins] Whether to include margins. Default is false.
- * @return {number} The width.
- */
-Shuffle._getOuterWidth = function (element, includeMargins) {
-  // Store the styles so that they can be used by others without asking for it again.
-  var styles = getStyles(element, null);
-  var width = Shuffle._getNumberStyle(element, 'width', styles);
-
-  // Use jQuery here because it uses getComputedStyle internally and is
-  // cross-browser. Using the style property of the element will only work
-  // if there are inline styles.
-  if (includeMargins) {
-    var marginLeft = Shuffle._getNumberStyle(element, 'marginLeft', styles);
-    var marginRight = Shuffle._getNumberStyle(element, 'marginRight', styles);
-    width += marginLeft + marginRight;
-  }
-
-  return width;
-};
-
-/**
- * Returns the outer height of an element, optionally including its margins.
- * @param {Element} element The element.
- * @param {boolean} [includeMargins] Whether to include margins. Default is false.
- * @return {number} The height.
- */
-Shuffle._getOuterHeight = function (element, includeMargins) {
-  var styles = getStyles(element, null);
-  var height = Shuffle._getNumberStyle(element, 'height', styles);
-
-  if (includeMargins) {
-    var marginTop = Shuffle._getNumberStyle(element, 'marginTop', styles);
-    var marginBottom = Shuffle._getNumberStyle(element, 'marginBottom', styles);
-    height += marginTop + marginBottom;
-  }
-
-  return height;
-};
-
-/**
- * Change a property or execute a function which will not have a transition
- * @param {Element} element DOM element that won't be transitioned
- * @param {Function} callback A function which will be called while transition
- *     is set to 0ms.
- * @param {Object} [context] Optional context for the callback function.
- * @private
- */
-Shuffle._skipTransition = function (element, callback, context) {
-  var duration = element.style.transitionDuration;
-
-  // Set the duration to zero so it happens immediately
-  element.style.transitionDuration = '0ms';
-
-  callback.call(context);
-
-  // Force reflow
-  var reflow = element.offsetWidth;
-
-  // Avoid jshint warnings: unused variables and expressions.
-  reflow = null;
-
-  // Put the duration back
-  element.style.transitionDuration = duration;
-};
 
 module.exports = Shuffle;

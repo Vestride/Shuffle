@@ -10,7 +10,7 @@ export default function getNumber(value) {
   let str = value && value.toString();
   let val = parseFloat(str);
   if (val + 1 >= 0) {
-    return value;
+    return val;
   }
 
   return 0;
