@@ -3,6 +3,7 @@ bower_components
 .DS_Store
 _site
 .sass-cache
+.jekyll-metadata
 *.scssc
 temp
 .grunt
@@ -14,11 +15,11 @@ css
 img
 js
 Gruntfile.js
+gulpfile.js
 favicon.png
 index.html
 package.json
 robots.txt
-todo.md
 test
 tests
 CONTRIBUTING.md

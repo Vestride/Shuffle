@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["Shuffle"] = factory();
+		exports["shuffle"] = factory();
 	else
-		root["Shuffle"] = factory();
+		root["shuffle"] = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -64,35 +64,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _matchesSelector2 = _interopRequireDefault(_matchesSelector);
 	
-	var _throttle = __webpack_require__(10);
+	var _throttle = __webpack_require__(2);
 	
 	var _throttle2 = _interopRequireDefault(_throttle);
 	
-	var _point = __webpack_require__(2);
+	var _point = __webpack_require__(3);
 	
 	var _point2 = _interopRequireDefault(_point);
 	
-	var _shuffleItem = __webpack_require__(4);
+	var _shuffleItem = __webpack_require__(5);
 	
 	var _shuffleItem2 = _interopRequireDefault(_shuffleItem);
 	
-	var _classes = __webpack_require__(5);
+	var _classes = __webpack_require__(6);
 	
 	var _classes2 = _interopRequireDefault(_classes);
 	
-	var _getNumberStyle = __webpack_require__(6);
+	var _getNumberStyle = __webpack_require__(7);
 	
 	var _getNumberStyle2 = _interopRequireDefault(_getNumberStyle);
 	
-	var _sorter = __webpack_require__(8);
+	var _sorter = __webpack_require__(9);
 	
 	var _sorter2 = _interopRequireDefault(_sorter);
 	
-	var _assign = __webpack_require__(11);
+	var _assign = __webpack_require__(10);
 	
 	var _assign2 = _interopRequireDefault(_assign);
 	
-	__webpack_require__(9);
+	__webpack_require__(11);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -1543,6 +1543,55 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// Underscore's throttle method.
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	exports.default = function (func, wait, options) {
+	  var _this;
+	  var args;
+	  var result;
+	  var timeout = null;
+	  var previous = 0;
+	  if (!options) options = {};
+	  var later = function later() {
+	    previous = options.leading === false ? 0 : Date.now();
+	    timeout = null;
+	    result = func.apply(_this, args);
+	    if (!timeout) _this = args = null;
+	  };
+	
+	  return function () {
+	    var now = Date.now();
+	    if (!previous && options.leading === false) previous = now;
+	    var remaining = wait - (now - previous);
+	    _this = this;
+	    args = arguments;
+	    if (remaining <= 0 || remaining > wait) {
+	      if (timeout) {
+	        clearTimeout(timeout);
+	        timeout = null;
+	      }
+	
+	      previous = now;
+	      result = func.apply(_this, args);
+	      if (!timeout) _this = args = null;
+	    } else if (!timeout && options.trailing !== false) {
+	      timeout = setTimeout(later, remaining);
+	    }
+	
+	    return result;
+	  };
+	};
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1551,7 +1600,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _getNumber = __webpack_require__(3);
+	var _getNumber = __webpack_require__(4);
 	
 	var _getNumber2 = _interopRequireDefault(_getNumber);
 	
@@ -1580,7 +1629,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Point;
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1607,7 +1656,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1618,11 +1667,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _point = __webpack_require__(2);
+	var _point = __webpack_require__(3);
 	
 	var _point2 = _interopRequireDefault(_point);
 	
-	var _classes = __webpack_require__(5);
+	var _classes = __webpack_require__(6);
 	
 	var _classes2 = _interopRequireDefault(_classes);
 	
@@ -1716,7 +1765,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ShuffleItem;
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1729,7 +1778,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1739,11 +1788,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.default = getNumberStyle;
 	
-	var _getNumber = __webpack_require__(3);
+	var _getNumber = __webpack_require__(4);
 	
 	var _getNumber2 = _interopRequireDefault(_getNumber);
 	
-	var _computedSize = __webpack_require__(7);
+	var _computedSize = __webpack_require__(8);
 	
 	var _computedSize2 = _interopRequireDefault(_computedSize);
 	
@@ -1776,7 +1825,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1798,7 +1847,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ret;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1808,7 +1857,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.default = sorter;
 	
-	var _assign = __webpack_require__(11);
+	var _assign = __webpack_require__(10);
 	
 	var _assign2 = _interopRequireDefault(_assign);
 	
@@ -1907,81 +1956,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	(function () {
-	  'use strict';
-	
-	  if (typeof window.CustomEvent === 'function') {
-	    return false;
-	  }
-	
-	  function CustomEvent(event, params) {
-	    params = params || { bubbles: false, cancelable: false, detail: undefined };
-	    var evt = document.createEvent('CustomEvent');
-	    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-	    return evt;
-	  }
-	
-	  CustomEvent.prototype = window.Event.prototype;
-	
-	  window.CustomEvent = CustomEvent;
-	})();
-
-/***/ },
 /* 10 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// Underscore's throttle method.
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	exports.default = function (func, wait, options) {
-	  var _this;
-	  var args;
-	  var result;
-	  var timeout = null;
-	  var previous = 0;
-	  if (!options) options = {};
-	  var later = function later() {
-	    previous = options.leading === false ? 0 : Date.now();
-	    timeout = null;
-	    result = func.apply(_this, args);
-	    if (!timeout) _this = args = null;
-	  };
-	
-	  return function () {
-	    var now = Date.now();
-	    if (!previous && options.leading === false) previous = now;
-	    var remaining = wait - (now - previous);
-	    _this = this;
-	    args = arguments;
-	    if (remaining <= 0 || remaining > wait) {
-	      if (timeout) {
-	        clearTimeout(timeout);
-	        timeout = null;
-	      }
-	
-	      previous = now;
-	      result = func.apply(_this, args);
-	      if (!timeout) _this = args = null;
-	    } else if (!timeout && options.trailing !== false) {
-	      timeout = setTimeout(later, remaining);
-	    }
-	
-	    return result;
-	  };
-	};
-
-/***/ },
-/* 11 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2007,6 +1982,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  return output;
 	}
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	(function () {
+	  'use strict';
+	
+	  if (typeof window.CustomEvent === 'function') {
+	    return false;
+	  }
+	
+	  function CustomEvent(event, params) {
+	    params = params || { bubbles: false, cancelable: false, detail: undefined };
+	    var evt = document.createEvent('CustomEvent');
+	    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+	    return evt;
+	  }
+	
+	  CustomEvent.prototype = window.Event.prototype;
+	
+	  window.CustomEvent = CustomEvent;
+	})();
 
 /***/ }
 /******/ ])

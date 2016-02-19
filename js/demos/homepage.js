@@ -1,6 +1,6 @@
 'use strict';
 
-var Shuffle = window.Shuffle;
+var Shuffle = window.shuffle;
 
 var Demo = function (element) {
   this.element = element;

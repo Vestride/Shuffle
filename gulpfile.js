@@ -3,19 +3,23 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var webpack = require('webpack');
+var browserSync = require('browser-sync').create();
+var exec = require('child-process-promise').exec;
+
 var config = {
   watch: true,
   isProduction: false,
 };
 
-function scripts() {
+function compile(mode) {
   var opts = {
     watch: config.watch,
     devtool: 'source-map',
     entry: './src/shuffle.es6.js',
     output: {
-      filename: './dist/shuffle.js',
-      library: 'Shuffle',
+      filename: 'shuffle.js',
+      path: './dist',
+      library: 'shuffle',
       libraryTarget: 'umd',
     },
     module: {
@@ -33,7 +37,7 @@ function scripts() {
     plugins: [],
   };
 
-  if (config.isProduction) {
+  if (mode === 'production') {
     // Search for equal or similar files and deduplicate them in the output.
     opts.plugins.push(new webpack.optimize.DedupePlugin());
 
@@ -48,6 +52,8 @@ function scripts() {
     }));
 
     opts.watch = false;
+
+    opts.output.filename = 'shuffle.min.js';
   }
 
   return new Promise(function (resolve, reject) {
@@ -56,13 +62,64 @@ function scripts() {
           reject(new gutil.PluginError('webpack', err));
         }
 
-        gutil.log('[webpack]', stats.toString({
-
-        }));
+        gutil.log('[webpack]', stats.toString());
 
         resolve();
       });
     });
 }
 
-gulp.task(scripts);
+function scriptsMin() {
+  return compile('production');
+}
+
+function serve() {
+  browserSync.init({
+    server: {
+      baseDir: './_site',
+    },
+    open: false,
+  });
+
+  gulp.watch([
+    '_includes/**/*.*',
+    '_layouts/**/*.*',
+    '_posts/**/*.*',
+    'css/**/*.*',
+    'dist/**/*.*',
+    'js/**/*',
+  ], jekyllIncremental);
+}
+
+function logExec(result) {
+  if (result.stderr) {
+    console.error(result.stderr);
+  }
+
+  console.log(result.stdout);
+}
+
+function jekyll(incremental) {
+  var cmd = 'jekyll build --config _config.yml,_config_dev.yml';
+
+  if (incremental) {
+    cmd += ' --incremental';
+  }
+
+  return exec(cmd).then(logExec);
+}
+
+function jekyllIncremental() {
+  return jekyll(true).then(browserSync.reload);
+}
+
+gulp.task(serve);
+gulp.task('scripts', compile);
+gulp.task('scripts-min', scriptsMin);
+
+gulp.task(jekyll);
+
+gulp.task('watch', gulp.series(
+  gulp.parallel('jekyll', 'scripts', 'scripts-min'),
+  'serve'
+));
