@@ -1,5 +1,123 @@
-jasmine.getFixtures().fixturesPath = 'fixtures';
+/* globals jest, describe, it, expect, beforeEach, afterEach */
 
+'use strict';
+
+// jest.dontMock('../src/shuffle.es6');
+// jest.dontMock('fs');
+jest.autoMockOff();
+var fs = require('fs');
+
+var Shuffle = require('../src/shuffle.es6');
+
+describe('shuffle', function () {
+
+  var fixtures = {};
+  var fixture;
+  var instance;
+
+  function getFixture(id) {
+    return new Promise(function (resolve, reject) {
+      fs.readFile('test/fixtures/' + id + '.html', 'utf-8', function (err, data) {
+        if (err) {
+          reject(err);
+        }
+
+        resolve(data);
+      });
+    });
+  }
+
+  function appendFixture(id) {
+
+    function insert(content) {
+      content = content.trim();
+      var holder = document.createElement('div');
+      holder.innerHTML = content;
+      var element = holder.firstChild;
+      document.body.appendChild(element);
+      fixture = element;
+    }
+
+    if (fixtures[id]) {
+      insert(fixtures[id]);
+      return Promise.resolve(fixture);
+    } else {
+      return getFixture(id).then(function (html) {
+        fixtures[id] = html;
+        insert(html);
+        return fixture;
+      });
+    }
+  }
+
+  function removeFixture() {
+    if (instance) {
+      instance.destroy();
+    }
+
+    if (fixture) {
+      fixture.parentNode.removeChild(fixture);
+    }
+
+    instance = null;
+    fixture = null;
+  }
+
+  describe('regular fixture', function () {
+
+    beforeEach(function (done) {
+      appendFixture('regular').then(done);
+    });
+
+    afterEach(removeFixture);
+
+    it('should have default options', function () {
+      instance = new Shuffle(fixture);
+      expect(instance.items.length).toBe(10);
+      expect(instance.visibleItems).toBe(10);
+      expect(instance.group).toBe('all');
+      expect(instance.speed).toBe(250);
+      expect(instance.itemSelector).toBe('*');
+      expect(instance.sizer).toBe(null);
+      expect(instance.columnWidth).toBe(0);
+      expect(instance.gutterWidth).toBe(0);
+      expect(instance.delimeter).toBe(null);
+      expect(instance.initialSort).toBe(null);
+      expect(instance.throttleTime).toBe(300);
+      expect(instance.sequentialFadeDelay).toBe(150);
+      expect(instance.useSizer).toBe(false);
+      expect(instance.id).toBe('shuffle_0');
+    });
+
+    it('should add classes and default styles', function () {
+      instance = new Shuffle(fixture);
+
+      expect(instance.element.classList.contains('shuffle')).toBe(true);
+
+      // FIXME getComputedStyle isn't working with JSDom.
+      // var styles = window.getComputedStyle(instance.element, null);
+      // expect(styles.position).toEqual('relative');
+      // expect(styles.overflow).toEqual('hidden');
+
+      instance.items.forEach(function (item) {
+        expect(item.element.classList.contains('shuffle-item')).toBe(true);
+        expect(item.element.classList.contains('filtered')).toBe(true);
+        expect(item.element.style.opacity).toBeDefined();
+        expect(item.element.style.position).toBe('absolute');
+        expect(item.element.style.visibility).toBe('visible');
+        expect(item.isVisible).toBe(true);
+        expect(item.scale).toBe(Shuffle.ShuffleItem.Scale.VISIBLE);
+        expect(item.point.x).toBeDefined();
+        expect(item.point.y).toBeDefined();
+      });
+
+      // FIXME failing in JSDom
+      // expect(instance.containerWidth).not.toBe(0);
+    });
+  });
+});
+
+/*
 describe('Shuffle.js', function() {
   var $ = window.jQuery;
   var Modernizr = window.Modernizr;
@@ -754,3 +872,4 @@ describe('Shuffle.js', function() {
   });
 
 });
+*/

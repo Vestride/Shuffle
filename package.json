@@ -17,7 +17,20 @@
   ],
   "main": "dist/shuffle.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "jest"
+  },
+  "jest": {
+    "verbose": true,
+    "scriptPreprocessor": "<rootDir>/test/preprocessor.js",
+    "testDirectoryName": "test",
+    "testPathDirs": [
+      "<rootDir>/test"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "preprocessor.js"
+    ],
+    "testRunner": "<rootDir>/node_modules/jest-cli/src/testRunners/jasmine/jasmine2.js"
   },
   "repository": {
     "type": "git",
@@ -34,13 +47,17 @@
   },
   "devDependencies": {
     "babel-core": "^6.5.2",
+    "babel-jest": "^6.0.1",
     "babel-loader": "^6.2.2",
     "babel-preset-es2015": "^6.5.0",
+    "babel-register": "^6.5.2",
     "browser-sync": "^2.11.1",
     "child-process-promise": "^1.1.0",
     "gulp": "git@github.com:gulpjs/gulp.git#4.0",
     "gulp-sass": "^2.2.0",
     "gulp-util": "^3.0.7",
+    "jest-cli": "^0.8.2",
+    "jest-webpack-alias": "^2.2.0",
     "webpack": "^1.12.13"
   }
 }

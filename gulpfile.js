@@ -1,41 +1,25 @@
 'use strict';
 
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var webpack = require('webpack');
-var browserSync = require('browser-sync').create();
-var exec = require('child-process-promise').exec;
+const gulp = require('gulp');
+const gutil = require('gulp-util');
+const webpack = require('webpack');
+const browserSync = require('browser-sync').create();
+const exec = require('child-process-promise').exec;
+
+// const jasmine = require('gulp-jasmine');
+
+// require('babel-core/register');
 
 var config = {
-  watch: true,
+  watch: false,
   isProduction: false,
 };
 
-function compile(mode) {
-  var opts = {
-    watch: config.watch,
-    devtool: 'source-map',
-    entry: './src/shuffle.es6.js',
-    output: {
-      filename: 'shuffle.js',
-      path: './dist',
-      library: 'shuffle',
-      libraryTarget: 'umd',
-    },
-    module: {
-      loaders: [
-        {
-          test: /\.js$/,
-          exclude: /(node_modules|bower_components)/,
-          loader: 'babel',
-          query: {
-            presets: ['es2015'],
-          },
-        },
-      ],
-    },
-    plugins: [],
-  };
+function compile(done, mode) {
+  var opts = Object.assign({}, require('./webpack.config.js'));
+
+  opts.watch = config.watch;
+  opts.progress = true;
 
   if (mode === 'production') {
     // Search for equal or similar files and deduplicate them in the output.
@@ -56,21 +40,23 @@ function compile(mode) {
     opts.output.filename = 'shuffle.min.js';
   }
 
-  return new Promise(function (resolve, reject) {
-      webpack(opts, function (err, stats) {
-        if (err) {
-          reject(new gutil.PluginError('webpack', err));
-        }
+  var isDone = false;
+  webpack(opts, function (err, stats) {
+    if (err) {
+      throw new Error(err);
+    }
 
-        gutil.log('[webpack]', stats.toString());
+    gutil.log(stats.toString({ colors: true }));
 
-        resolve();
-      });
-    });
+    if (!isDone) {
+      isDone = true;
+      done();
+    }
+  });
 }
 
-function scriptsMin() {
-  return compile('production');
+function scriptsMin(done) {
+  return compile(done, 'production');
 }
 
 function serve() {
@@ -113,13 +99,25 @@ function jekyllIncremental() {
   return jekyll(true).then(browserSync.reload);
 }
 
-gulp.task(serve);
+function setWatching() {
+  config.watch = true;
+}
+
+// function test() {
+//   return gulp.src('test/specs.js')
+//     .pipe(jasmine());
+// }
+// gulp.task(test);
+
 gulp.task('scripts', compile);
 gulp.task('scripts-min', scriptsMin);
+gulp.task('set-watching', setWatching);
 
+gulp.task(serve);
 gulp.task(jekyll);
 
 gulp.task('watch', gulp.series(
+  'set-watching',
   gulp.parallel('jekyll', 'scripts', 'scripts-min'),
   'serve'
 ));
