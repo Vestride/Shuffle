@@ -197,11 +197,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      window.addEventListener('resize', this._onResize);
 	
 	      // Get container css all in one request. Causes reflow
-	      var containerCSS = window.getComputedStyle(this.element, null);
+	      var containerCss = window.getComputedStyle(this.element, null);
 	      var containerWidth = Shuffle.getSize(this.element).width;
 	
 	      // Add styles to the container if it doesn't have them.
-	      this._validateStyles(containerCSS);
+	      this._validateStyles(containerCss);
 	
 	      // We already got the container's width above, no need to cause another
 	      // reflow getting it again... Calculate the number of columns there will be
@@ -533,7 +533,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            // or use the size of the first item
 	          } else if (this.items.length > 0) {
-	              size = Shuffle.getSize(this.items[0], true).width;
+	              size = Shuffle.getSize(this.items[0].element, true).width;
 	
 	              // if there's no items, use size of container
 	            } else {
@@ -1451,7 +1451,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  easing: 'ease',
 	
 	  // e.g. '.picture-item'.
-	  itemSelector: '',
+	  itemSelector: '*',
 	
 	  // Sizer element. Use an element to determine the size of columns and gutters.
 	  sizer: null,

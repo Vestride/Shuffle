@@ -121,3 +121,5 @@ gulp.task('watch', gulp.series(
   gulp.parallel('jekyll', 'scripts', 'scripts-min'),
   'serve'
 ));
+
+gulp.task('default', gulp.series('scripts', 'scripts-min'));

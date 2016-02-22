@@ -53,7 +53,7 @@
     "babel-register": "^6.5.2",
     "browser-sync": "^2.11.1",
     "child-process-promise": "^1.1.0",
-    "gulp": "git@github.com:gulpjs/gulp.git#4.0",
+    "gulp": "gulpjs/gulp.git#4.0",
     "gulp-sass": "^2.2.0",
     "gulp-util": "^3.0.7",
     "jest-cli": "^0.8.2",
