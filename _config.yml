@@ -3,7 +3,21 @@ destination: ./_site
 plugins_dir: ./_plugins
 layouts_dir: ./_layouts
 include:     ['.htaccess']
-exclude:     ['_scss', 'temp', 'node_modules', 'src', 'test']
+exclude:     [
+  '_scss',
+  'coverage',
+  'node_modules',
+  'src',
+  'temp',
+  'test',
+  'bower.json',
+  'CONTRIBUTING.md',
+  'gulpfile.js',
+  'package.json',
+  'README.md',
+  'webpack.config.js',
+  'webpack.config.min.js'
+]
 
 permalink: /:title
 

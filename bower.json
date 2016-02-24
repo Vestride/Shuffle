@@ -39,7 +39,9 @@
     "robots.txt",
     "todo.md",
     "test",
-    "tests"
+    "tests",
+    "webpack.config.js",
+    "webpack.config.min.js"
   ],
   "dependencies": {},
   "devDependencies": {}

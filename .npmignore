@@ -7,7 +7,6 @@ _site
 .jekyll-metadata
 *.scssc
 temp
-.grunt
 *.map
 
 **/.*
@@ -24,3 +23,5 @@ robots.txt
 test
 tests
 CONTRIBUTING.md
+webpack.config.js
+webpack.config.min.js

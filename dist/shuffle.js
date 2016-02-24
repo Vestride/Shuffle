@@ -898,11 +898,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        transitionDelay: (obj.transitionDelay || 0) + 'ms'
 	      };
 	
+	      var x = item.point.x;
+	      var y = item.point.y;
+	
 	      if (this.useTransforms) {
-	        styles.transform = Shuffle._getItemTransformString(item.point, item.scale);
+	        styles.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + item.scale + ')';
 	      } else {
-	        styles.left = item.point.x + 'px';
-	        styles.top = item.point.y + 'px';
+	        styles.left = x + 'px';
+	        styles.top = y + 'px';
 	      }
 	
 	      return styles;
@@ -1325,20 +1328,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * Get the CSS transform based on position and scale.
-	     * @param {Point} point X and Y positions.
-	     * @param {number} scale Scale amount.
-	     * @return {string} A normalized string which can be used with the transform style.
-	     * @private
-	     */
-	
-	  }], [{
-	    key: '_getItemTransformString',
-	    value: function _getItemTransformString(point, scale) {
-	      return 'translate(' + point.x + 'px, ' + point.y + 'px) scale(' + scale + ')';
-	    }
-	
-	    /**
 	     * Returns the outer width of an element, optionally including its margins.
 	     *
 	     * There are a few different methods for getting the width of an element, none of
@@ -1361,7 +1350,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @return {{width: number, height: number}} The width and height.
 	     */
 	
-	  }, {
+	  }], [{
 	    key: 'getSize',
 	    value: function getSize(element, includeMargins) {
 	      // Store the styles so that they can be used by others without asking for it again.

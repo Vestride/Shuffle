@@ -211,8 +211,8 @@ class Shuffle {
    * @private
    */
   _getFilteredSets(category, items) {
-    var filtered = [];
-    var concealed = [];
+    let filtered = [];
+    let concealed = [];
 
     // category === 'all', add filtered class to everything
     if (category === Shuffle.ALL_ITEMS) {
@@ -690,11 +690,14 @@ class Shuffle {
       transitionDelay: (obj.transitionDelay || 0) + 'ms',
     };
 
+    let x = item.point.x;
+    let y = item.point.y;
+
     if (this.useTransforms) {
-      styles.transform = Shuffle._getItemTransformString(item.point, item.scale);
+      styles.transform = `translate(${ x }px, ${ y }px) scale(${ item.scale })`;
     } else {
-      styles.left = item.point.x + 'px';
-      styles.top = item.point.y + 'px';
+      styles.left = x + 'px';
+      styles.top = y + 'px';
     }
 
     return styles;
@@ -1061,17 +1064,6 @@ class Shuffle {
     // Set a flag so if a debounced resize has been triggered,
     // it can first check if it is actually isDestroyed and not doing anything
     this.destroyed = true;
-  }
-
-  /**
-   * Get the CSS transform based on position and scale.
-   * @param {Point} point X and Y positions.
-   * @param {number} scale Scale amount.
-   * @return {string} A normalized string which can be used with the transform style.
-   * @private
-   */
-  static _getItemTransformString(point, scale) {
-    return 'translate(' + point.x + 'px, ' + point.y + 'px) scale(' + scale + ')';
   }
 
   /**
