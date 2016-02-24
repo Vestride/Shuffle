@@ -34,6 +34,29 @@ function arrayMin(array) {
   return Math.min.apply(Math, array);
 }
 
+function arrayIncludes(array, obj) {
+  if (arguments.length === 2) {
+    return arrayIncludes(array)(obj);
+  }
+
+  return function (obj) {
+    return array.indexOf(obj) > -1;
+  };
+}
+
+function arrayUnique(array) {
+  let seen = [];
+  let i = 0;
+  let length = array.length;
+  for (; i < length; i++) {
+    if (!arrayIncludes(seen, array[i])) {
+      seen.push(array[i]);
+    }
+  }
+
+  return seen;
+}
+
 function noop() {}
 
 // Used for unique instance variables
@@ -244,6 +267,7 @@ class Shuffle {
    * @private
    */
   _doesPassFilter(category, item) {
+
     if (typeof category === 'function') {
       return category.call(item.element, item.element, this);
 
@@ -256,19 +280,16 @@ class Shuffle {
           groups;
 
       if (Array.isArray(category)) {
-        return category.some((name) => {
-          return keys.indexOf(name) > -1;
-        });
+        return category.some(arrayIncludes(keys));
       }
 
-      return keys.indexOf(category) > -1;
+      return arrayIncludes(keys, category);
     }
   }
 
   /**
    * Toggles the filtered and concealed class names.
-   * @param {jQuery} $filtered Filtered set.
-   * @param {jQuery} $concealed Concealed set.
+   * @param {{filtered, concealed}} Object with filtered and concealed arrays.
    * @private
    */
   _toggleFilterClasses({ filtered, concealed }) {
@@ -292,6 +313,15 @@ class Shuffle {
   }
 
   /**
+   * Remove element reference and styles.
+   */
+  _disposeItems(items = this.items) {
+    items.forEach((item) => {
+      item.dispose();
+    });
+  }
+
+  /**
    * Updates the filtered item count.
    * @private
    */
@@ -300,7 +330,9 @@ class Shuffle {
   }
 
   /**
-   * Sets css transform transition on a group of elements.
+   * Sets css transform transition on a group of elements. This is not executed
+   * at the same time as `item.init` so that transitions don't occur upon
+   * initialization of Shuffle.
    * @param {ArrayLike.<Element>} $items Elements to set transitions on.
    * @private
    */
@@ -318,9 +350,9 @@ class Shuffle {
         ', opacity ' + speed + 'ms ' + easing;
     }
 
-    each(items, function (item) {
+    items.forEach((item) => {
       item.element.style.transition = str;
-    }, this);
+    });
   }
 
   /**
@@ -827,27 +859,29 @@ class Shuffle {
     this._dispatch(Shuffle.EventType.LAYOUT);
   }
 
-  _addItems($newItems, addToEnd, isSequential) {
+  _addItems(newItems, addToEnd, isSequential) {
+    let items = newItems.map(el => new ShuffleItem(el));
+
     // Add classes and set initial positions.
-    this._initItems($newItems);
+    this._initItems(items);
 
     // Add transition to each item.
-    this._setTransitions($newItems);
+    this._setTransitions(items);
 
-    // Update the list of
-    this.items = this._getItems();
-
-    // Shrink all items (without transitions).
-    this._shrink($newItems);
-    each(this._queue, function (transitionObj) {
-      transitionObj.skipTransition = true;
-    });
-
-    // Apply shrink positions, but do not cause a layout event.
-    this._processQueue(false);
+    // Update the list of items.
+    this.items = this.items.concat(items);
 
     if (addToEnd) {
-      this._addItemsToEnd($newItems, isSequential);
+      this._shrink(items);
+
+      // Shrink all items (without transitions).
+      each(this._queue, function (transitionObj) {
+        transitionObj.skipTransition = true;
+      });
+
+      // Apply shrink positions, but do not cause a layout event.
+      this._processQueue(false);
+      this._addItemsToEnd(items, isSequential);
     } else {
       this.filter(this.lastFilter);
     }
@@ -977,13 +1011,14 @@ class Shuffle {
 
   /**
    * New items have been appended to shuffle. Fade them in sequentially
-   * @param {jQuery} $newItems jQuery collection of new items
+   * @param {Array.<Element>} newItems Collection of new items.
    * @param {boolean} [addToEnd=false] If true, new items will be added to the end / bottom
-   *     of the items. If not true, items will be mixed in with the current sort order.
+   *     of the items. If false, items will be mixed in with the current sort order.
    * @param {boolean} [isSequential=true] If false, new items won't sequentially fade in
    */
-  appended($newItems, addToEnd, isSequential) {
-    this._addItems($newItems, addToEnd === true, isSequential !== false);
+  add(newItems, addToEnd = false, isSequential = true) {
+    newItems = arrayUnique(newItems);
+    this._addItems(newItems, addToEnd, isSequential);
   }
 
   /**
@@ -1006,37 +1041,68 @@ class Shuffle {
 
   /**
    * Remove 1 or more shuffle items
-   * @param {jQuery} $collection A jQuery object containing one or more element in shuffle
+   * @param {Array.<Element>} collection An array containing one or more
+   *     elements in shuffle
    * @return {Shuffle} The shuffle object
    */
-  remove($collection) {
+  remove(collection) {
+    collection = arrayUnique(collection);
 
-    // If this isn't a jquery object, exit
-    if (!$collection.length || !$collection.jquery) {
+    // FIXME unique array.
+    let items = collection
+      .map(element => this.getItemByElement(element))
+      .filter(item => !!item);
+
+    if (!collection.length) {
       return;
     }
 
-    function handleRemoved() {
+    let handleLayout = () => {
+      this.element.removeEventListener(Shuffle.EventType.LAYOUT, handleLayout);
+      this._disposeItems(items);
+
       // Remove the collection in the callback
-      $collection.remove();
+      collection.forEach((element) => {
+        element.parentNode.removeChild(element);
+      });
 
       // Update things now that elements have been removed.
-      this.items = this._getItems();
+      this.items = this.items.filter(item => !arrayIncludes(items, item));
       this._updateItemCount();
 
-      this._dispatch(Shuffle.EventType.REMOVED, $collection);
+      this._dispatch(Shuffle.EventType.REMOVED, { collection });
 
       // Let it get garbage collected
-      $collection = null;
-    }
+      collection = null;
+      items = null;
+    };
 
     // Hide collection first.
-    this._toggleFilterClasses(window.jQuery(), $collection);
-    this._shrink($collection);
+    this._toggleFilterClasses({
+      filtered: [],
+      concealed: items,
+    });
+
+    this._shrink(items);
 
     this.sort();
 
-    this.$el.one(Shuffle.EventType.LAYOUT + '.shuffle', window.jQuery.proxy(handleRemoved, this));
+    this.element.addEventListener(Shuffle.EventType.LAYOUT, handleLayout);
+  }
+
+  /**
+   * Retrieve a shuffle item by its element.
+   * @param {Element} element Element to look for.
+   * @return {?ShuffleItem} A shuffle item or null if it's not found.
+   */
+  getItemByElement(element) {
+    for (var i = this.items.length - 1; i >= 0; i--) {
+      if (this.items[i].element === element) {
+        return this.items[i];
+      }
+    }
+
+    return null;
   }
 
   /**
@@ -1050,9 +1116,7 @@ class Shuffle {
     this.element.removeAttribute('style');
 
     // Reset individual item styles
-    this.items.forEach((item) => {
-      item.dispose();
-    });
+    this._disposeItems();
 
     // Null DOM references
     this.items = null;
@@ -1094,9 +1158,6 @@ class Shuffle {
     var width = getNumberStyle(element, 'width', styles);
     var height = getNumberStyle(element, 'height', styles);
 
-    // Use jQuery here because it uses getComputedStyle internally and is
-    // cross-browser. Using the style property of the element will only work
-    // if there are inline styles.
     if (includeMargins) {
       var marginLeft = getNumberStyle(element, 'marginLeft', styles);
       var marginRight = getNumberStyle(element, 'marginRight', styles);

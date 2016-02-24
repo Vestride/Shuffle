@@ -1,160 +1,142 @@
-window.Manipulator = (function($) {
-  'use strict';
+'use strict';
+var Manipulator = (function (Shuffle) {
 
-  var hasConsole = window.console && typeof window.console.log === 'function';
-
-  var Manipulator = function( element ) {
-    this.$el = $( element );
-    this.init();
+  var Manipulator = function (element) {
+    this.element = element;
+    this.initShuffle();
+    this.setupEvents();
 
     this.addToEnd = true;
     this.sequentialDelay = true;
   };
 
-  Manipulator.prototype.init = function() {
-    this.initShuffle();
-    this.setupEvents();
-  };
-
   // Column width and gutter width options can be functions
-  Manipulator.prototype.initShuffle = function() {
-    this.$el.shuffle({
+  Manipulator.prototype.initShuffle = function () {
+    this.shuffle = new Shuffle(this.element, {
       itemSelector: '.box',
       speed: 250,
       easing: 'ease',
-      columnWidth: function( containerWidth ) {
+      columnWidth: function (containerWidth) {
         // .box's have a width of 18%
         return 0.18 * containerWidth;
       },
-      gutterWidth: function( containerWidth ) {
+
+      gutterWidth: function (containerWidth) {
         // .box's have a margin-left of 2.5%
         return 0.025 * containerWidth;
-      }
+      },
     });
-
-    // Shuffle is stored in the elements data with jQuery.
-    // You can access the class instance here
-    this.shuffle = this.$el.data('shuffle');
   };
 
-  Manipulator.prototype.setupEvents = function() {
-    $('#add').on('click', $.proxy( this.onAddClick, this ));
-    $('#randomize').on('click', $.proxy( this.onRandomize, this ));
-    $('#remove').on('click', $.proxy( this.onRemoveClick, this ));
-    $('#sorter').on('change', $.proxy( this.onSortChange, this ));
-    $('#mode').on('change', $.proxy( this.onModeChange, this ));
+  Manipulator.prototype.setupEvents = function () {
+    document.querySelector('#add').addEventListener('click', this.onAddClick.bind(this));
+    document.querySelector('#randomize').addEventListener('click', this.onRandomize.bind(this));
+    document.querySelector('#remove').addEventListener('click', this.onRemoveClick.bind(this));
+    document.querySelector('#sorter').addEventListener('change', this.onSortChange.bind(this));
+    document.querySelector('#mode').addEventListener('change', this.onModeChange.bind(this));
 
     // Show off some shuffle events
-    this.$el.on('removed.shuffle', function( evt, $collection, shuffle ) {
-
-      // Make sure logs work
-      if ( !hasConsole ) {
-        return;
-      }
-
-      console.log( this, evt, $collection, shuffle );
+    this.element.addEventListener(Shuffle.EventType.REMOVED, function (evt) {
+      var detail = evt.detail;
+      console.log(this, evt, detail.collection, detail.shuffle);
     });
   };
 
-  Manipulator.prototype.onAddClick = function() {
+  Manipulator.prototype.onAddClick = function () {
 
     // Creating random elements. You could use an
     // ajax request or clone elements instead
-    var itemsToCreate = 5,
-        frag = document.createDocumentFragment(),
-        grid = this.$el[0],
-        items = [],
-        $items,
-        classes = ['w2', 'h2', 'w3'],
-        box, i, random, randomClass;
+    var itemsToCreate = 5;
+    var frag = document.createDocumentFragment();
+    var items = [];
+    var classes = ['w2', 'h2', 'w3'];
+    var i = 0;
 
     for (i = 0; i < itemsToCreate; i++) {
-      random = Math.random();
-      box = document.createElement('div');
+      var randomClass;
+      var random = Math.random();
+      var box = document.createElement('div');
       box.className = 'box';
       box.setAttribute('created', this.getRandomInt(1, 150));
 
       // Randomly add a class
-      if ( random > 0.8 ) {
-        randomClass = Math.floor( Math.random() * 3 );
-        box.className = box.className + ' ' + classes[ randomClass ];
+      if (random > 0.8) {
+        randomClass = Math.floor(Math.random() * 3);
+        box.className = box.className + ' ' + classes[randomClass];
       }
-      items.push( box );
-      frag.appendChild( box );
+
+      items.push(box);
+      frag.appendChild(box);
     }
 
-    grid.appendChild( frag );
-    $items = $(items);
-
+    this.element.appendChild(frag);
 
     // Tell shuffle items have been appended.
-    // It expects a jQuery object as the parameter.
-    this.shuffle.appended( $items, this.addToEnd, this.sequentialDelay );
-    // or
-    // this.$el.shuffle('appended', $items );
+    // It expects an array of elements as the parameter.
+    this.shuffle.add(items, this.addToEnd, this.sequentialDelay);
   };
 
-  Manipulator.prototype.getRandomInt = function(min, max) {
+  Manipulator.prototype.getRandomInt = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
   // Randomly choose some elements to remove
-  Manipulator.prototype.onRemoveClick = function() {
-    var total = this.shuffle.visibleItems,
-        numberToRemove = Math.min( 3, total ),
-        indexesToRemove = [],
-        i = 0,
-        $collection = $();
+  Manipulator.prototype.onRemoveClick = function () {
+    var total = this.shuffle.visibleItems;
+    var numberToRemove = Math.min(3, total);
+    var indexesToRemove = [];
+    var i = 0;
 
     // None left
-    if ( !total ) {
+    if (!total) {
       return;
     }
 
     // This has the possibility to choose the same index for more than
     // one in the array, meaning sometimes less than 3 will be removed
-    for ( ; i < numberToRemove; i++ ) {
-      indexesToRemove.push( this.getRandomInt( 0, total - 1 ) );
+    for (; i < numberToRemove; i++) {
+      indexesToRemove.push(this.getRandomInt(0, total - 1));
     }
 
-    // Make a jQuery collection out of the index selections
-    var self = this;
-    $.each(indexesToRemove, function(i, index) {
-      $collection = $collection.add( self.shuffle.$items.eq( index ) );
-    });
+    // Make an array of elements to remove.
+    var collection = indexesToRemove.map(function (index) {
+      return this.shuffle.items[index].element;
+    }, this);
 
     // Tell shuffle to remove them
-    this.shuffle.remove( $collection );
-    // or
-    // this.$el.shuffle('remove', $collection);
+    this.shuffle.remove(collection);
   };
 
-  Manipulator.prototype.onRandomize = function() {
-    $('#sorter').val('random').trigger('change');
+  Manipulator.prototype.onRandomize = function () {
+    document.getElementById('sorter').value = 'random';
+    this.sortBy('random');
   };
 
-  Manipulator.prototype.onSortChange = function(evt) {
-    var value = evt.target.value;
-    var opts = {};
+  Manipulator.prototype.onSortChange = function (evt) {
+    this.sortBy(evt.target.value);
+  };
+
+  Manipulator.prototype.sortBy = function (value) {
+    var sortOptions;
 
     // We're given the element wrapped in jQuery
-    if ( value === 'created' ) {
-      opts = {
-        by: function($el) {
-          return parseInt($el.attr('created'), 10);
-        }
+    if (value === 'created') {
+      sortOptions = {
+        by: function (el) {
+          return parseInt(el.getAttribute('created'), 10);
+        },
       };
-    } else if ( value === 'random' ) {
-      opts = {
-        randomize: true
-      };
+    } else if (value === 'random') {
+      sortOptions = { randomize: true };
+    } else {
+      sortOptions = {};
     }
 
     // Filter elements
-    this.$el.shuffle('sort', opts);
+    this.shuffle.sort(sortOptions);
   };
 
-  Manipulator.prototype.onModeChange = function(evt) {
+  Manipulator.prototype.onModeChange = function (evt) {
     var value = evt.target.value;
 
     if (value === 'end') {
@@ -171,8 +153,6 @@ window.Manipulator = (function($) {
 
   return Manipulator;
 
-}(jQuery));
+}(window.shuffle));
 
-$(document).ready(function() {
-  new window.Manipulator( document.getElementById('my-shuffle') );
-});
+new Manipulator(document.getElementById('my-shuffle'));

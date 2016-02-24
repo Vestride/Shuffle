@@ -56,8 +56,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _matchesSelector = __webpack_require__(1);
@@ -120,6 +118,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function arrayMin(array) {
 	  return Math.min.apply(Math, array);
+	}
+	
+	function arrayIncludes(array, obj) {
+	  if (arguments.length === 2) {
+	    return arrayIncludes(array)(obj);
+	  }
+	
+	  return function (obj) {
+	    return array.indexOf(obj) > -1;
+	  };
+	}
+	
+	function arrayUnique(array) {
+	  var seen = [];
+	  var i = 0;
+	  var length = array.length;
+	  for (; i < length; i++) {
+	    if (!arrayIncludes(seen, array[i])) {
+	      seen.push(array[i]);
+	    }
+	  }
+	
+	  return seen;
 	}
 	
 	function noop() {}
@@ -360,39 +381,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_doesPassFilter',
 	    value: function _doesPassFilter(category, item) {
-	      var _this3 = this;
 	
 	      if (typeof category === 'function') {
 	        return category.call(item.element, item.element, this);
 	
 	        // Check each element's data-groups attribute against the given category.
 	      } else {
-	          var _ret = function () {
-	            var attr = item.element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
-	            var groups = JSON.parse(attr);
-	            var keys = _this3.delimeter && !Array.isArray(groups) ? groups.split(_this3.delimeter) : groups;
+	          var attr = item.element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
+	          var groups = JSON.parse(attr);
+	          var keys = this.delimeter && !Array.isArray(groups) ? groups.split(this.delimeter) : groups;
 	
-	            if (Array.isArray(category)) {
-	              return {
-	                v: category.some(function (name) {
-	                  return keys.indexOf(name) > -1;
-	                })
-	              };
-	            }
+	          if (Array.isArray(category)) {
+	            return category.some(arrayIncludes(keys));
+	          }
 	
-	            return {
-	              v: keys.indexOf(category) > -1
-	            };
-	          }();
-	
-	          if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	          return arrayIncludes(keys, category);
 	        }
 	    }
 	
 	    /**
 	     * Toggles the filtered and concealed class names.
-	     * @param {jQuery} $filtered Filtered set.
-	     * @param {jQuery} $concealed Concealed set.
+	     * @param {{filtered, concealed}} Object with filtered and concealed arrays.
 	     * @private
 	     */
 	
@@ -427,6 +436,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
+	     * Remove element reference and styles.
+	     */
+	
+	  }, {
+	    key: '_disposeItems',
+	    value: function _disposeItems() {
+	      var items = arguments.length <= 0 || arguments[0] === undefined ? this.items : arguments[0];
+	
+	      items.forEach(function (item) {
+	        item.dispose();
+	      });
+	    }
+	
+	    /**
 	     * Updates the filtered item count.
 	     * @private
 	     */
@@ -438,7 +461,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * Sets css transform transition on a group of elements.
+	     * Sets css transform transition on a group of elements. This is not executed
+	     * at the same time as `item.init` so that transitions don't occur upon
+	     * initialization of Shuffle.
 	     * @param {ArrayLike.<Element>} $items Elements to set transitions on.
 	     * @private
 	     */
@@ -458,9 +483,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        str = 'top ' + speed + 'ms ' + easing + ', left ' + speed + 'ms ' + easing + ', opacity ' + speed + 'ms ' + easing;
 	      }
 	
-	      each(items, function (item) {
+	      items.forEach(function (item) {
 	        item.element.style.transition = str;
-	      }, this);
+	      });
 	    }
 	
 	    /**
@@ -483,10 +508,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_getItems',
 	    value: function _getItems() {
-	      var _this4 = this;
+	      var _this3 = this;
 	
 	      return toArray(this.element.children).filter(function (el) {
-	        return (0, _matchesSelector2.default)(el, _this4.itemSelector);
+	        return (0, _matchesSelector2.default)(el, _this3.itemSelector);
 	      }).map(function (el) {
 	        return new _shuffleItem2.default(el);
 	      });
@@ -832,7 +857,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_shrink',
 	    value: function _shrink() {
-	      var _this5 = this;
+	      var _this4 = this;
 	
 	      var collection = arguments.length <= 0 || arguments[0] === undefined ? this._getConcealedItems() : arguments[0];
 	
@@ -846,10 +871,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        item.scale = _shuffleItem2.default.Scale.FILTERED;
 	
-	        _this5._queue.push({
+	        _this4._queue.push({
 	          item: item,
 	          opacity: 0,
-	          transitionDelay: Math.min(i * _this5.staggerAmount, _this5.staggerAmountMax),
+	          transitionDelay: Math.min(i * _this4.staggerAmount, _this4.staggerAmountMax),
 	          callback: function callback() {
 	            item.element.style.visibility = 'hidden';
 	          }
@@ -913,7 +938,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_transition',
 	    value: function _transition(opts) {
-	      var _this6 = this;
+	      var _this5 = this;
 	
 	      var styles = this._getStylesForTransition(opts);
 	      var callfront = opts.callfront || noop;
@@ -942,9 +967,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        item.applyCss(styles);
 	
 	        // Transitions are not set until shuffle has loaded to avoid the initial transition.
-	        if (_this6.isInitialized) {
+	        if (_this5.isInitialized) {
 	          item.element.addEventListener('transitionend', reference.handler);
-	          _this6._transitions.push(reference);
+	          _this5._transitions.push(reference);
 	        } else {
 	          callback();
 	          resolve();
@@ -962,7 +987,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_processQueue',
 	    value: function _processQueue() {
-	      var _this7 = this;
+	      var _this6 = this;
 	
 	      var withLayout = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
 	
@@ -974,7 +999,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var immediates = [];
 	      var transitions = [];
 	      this._queue.forEach(function (obj) {
-	        if (!_this7.isInitialized || _this7.speed === 0) {
+	        if (!_this6.isInitialized || _this6.speed === 0) {
 	          immediates.push(obj);
 	        } else {
 	          transitions.push(obj);
@@ -982,11 +1007,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      });
 	
 	      immediates.forEach(function (obj) {
-	        _this7._styleImmediately(obj);
+	        _this6._styleImmediately(obj);
 	      });
 	
 	      var promises = transitions.map(function (obj) {
-	        return _this7._transition(obj);
+	        return _this6._transition(obj);
 	      });
 	
 	      if (transitions.length > 0 && this.speed > 0) {
@@ -1036,10 +1061,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_styleImmediately',
 	    value: function _styleImmediately(obj) {
-	      var _this8 = this;
+	      var _this7 = this;
 	
 	      Shuffle._skipTransition(obj.item.element, function () {
-	        obj.item.applyCss(_this8._getStylesForTransition(obj));
+	        obj.item.applyCss(_this7._getStylesForTransition(obj));
 	      });
 	    }
 	  }, {
@@ -1055,27 +1080,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: '_addItems',
-	    value: function _addItems($newItems, addToEnd, isSequential) {
-	      // Add classes and set initial positions.
-	      this._initItems($newItems);
-	
-	      // Add transition to each item.
-	      this._setTransitions($newItems);
-	
-	      // Update the list of
-	      this.items = this._getItems();
-	
-	      // Shrink all items (without transitions).
-	      this._shrink($newItems);
-	      each(this._queue, function (transitionObj) {
-	        transitionObj.skipTransition = true;
+	    value: function _addItems(newItems, addToEnd, isSequential) {
+	      var items = newItems.map(function (el) {
+	        return new _shuffleItem2.default(el);
 	      });
 	
-	      // Apply shrink positions, but do not cause a layout event.
-	      this._processQueue(false);
+	      // Add classes and set initial positions.
+	      this._initItems(items);
+	
+	      // Add transition to each item.
+	      this._setTransitions(items);
+	
+	      // Update the list of items.
+	      this.items = this.items.concat(items);
 	
 	      if (addToEnd) {
-	        this._addItemsToEnd($newItems, isSequential);
+	        this._shrink(items);
+	
+	        // Shrink all items (without transitions).
+	        each(this._queue, function (transitionObj) {
+	          transitionObj.skipTransition = true;
+	        });
+	
+	        // Apply shrink positions, but do not cause a layout event.
+	        this._processQueue(false);
+	        this._addItemsToEnd(items, isSequential);
 	      } else {
 	        this.filter(this.lastFilter);
 	      }
@@ -1223,16 +1252,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * New items have been appended to shuffle. Fade them in sequentially
-	     * @param {jQuery} $newItems jQuery collection of new items
+	     * @param {Array.<Element>} newItems Collection of new items.
 	     * @param {boolean} [addToEnd=false] If true, new items will be added to the end / bottom
-	     *     of the items. If not true, items will be mixed in with the current sort order.
+	     *     of the items. If false, items will be mixed in with the current sort order.
 	     * @param {boolean} [isSequential=true] If false, new items won't sequentially fade in
 	     */
 	
 	  }, {
-	    key: 'appended',
-	    value: function appended($newItems, addToEnd, isSequential) {
-	      this._addItems($newItems, addToEnd === true, isSequential !== false);
+	    key: 'add',
+	    value: function add(newItems) {
+	      var addToEnd = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+	      var isSequential = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+	
+	      newItems = arrayUnique(newItems);
+	      this._addItems(newItems, addToEnd, isSequential);
 	    }
 	
 	    /**
@@ -1261,40 +1294,80 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Remove 1 or more shuffle items
-	     * @param {jQuery} $collection A jQuery object containing one or more element in shuffle
+	     * @param {Array.<Element>} collection An array containing one or more
+	     *     elements in shuffle
 	     * @return {Shuffle} The shuffle object
 	     */
 	
 	  }, {
 	    key: 'remove',
-	    value: function remove($collection) {
+	    value: function remove(collection) {
+	      var _this8 = this;
 	
-	      // If this isn't a jquery object, exit
-	      if (!$collection.length || !$collection.jquery) {
+	      collection = arrayUnique(collection);
+	
+	      // FIXME unique array.
+	      var items = collection.map(function (element) {
+	        return _this8.getItemByElement(element);
+	      }).filter(function (item) {
+	        return !!item;
+	      });
+	
+	      if (!collection.length) {
 	        return;
 	      }
 	
-	      function handleRemoved() {
+	      var handleLayout = function handleLayout() {
+	        _this8.element.removeEventListener(Shuffle.EventType.LAYOUT, handleLayout);
+	        _this8._disposeItems(items);
+	
 	        // Remove the collection in the callback
-	        $collection.remove();
+	        collection.forEach(function (element) {
+	          element.parentNode.removeChild(element);
+	        });
 	
 	        // Update things now that elements have been removed.
-	        this.items = this._getItems();
-	        this._updateItemCount();
+	        _this8.items = _this8.items.filter(function (item) {
+	          return !arrayIncludes(items, item);
+	        });
+	        _this8._updateItemCount();
 	
-	        this._dispatch(Shuffle.EventType.REMOVED, $collection);
+	        _this8._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
 	
 	        // Let it get garbage collected
-	        $collection = null;
-	      }
+	        collection = null;
+	        items = null;
+	      };
 	
 	      // Hide collection first.
-	      this._toggleFilterClasses(window.jQuery(), $collection);
-	      this._shrink($collection);
+	      this._toggleFilterClasses({
+	        filtered: [],
+	        concealed: items
+	      });
+	
+	      this._shrink(items);
 	
 	      this.sort();
 	
-	      this.$el.one(Shuffle.EventType.LAYOUT + '.shuffle', window.jQuery.proxy(handleRemoved, this));
+	      this.element.addEventListener(Shuffle.EventType.LAYOUT, handleLayout);
+	    }
+	
+	    /**
+	     * Retrieve a shuffle item by its element.
+	     * @param {Element} element Element to look for.
+	     * @return {?ShuffleItem} A shuffle item or null if it's not found.
+	     */
+	
+	  }, {
+	    key: 'getItemByElement',
+	    value: function getItemByElement(element) {
+	      for (var i = this.items.length - 1; i >= 0; i--) {
+	        if (this.items[i].element === element) {
+	          return this.items[i];
+	        }
+	      }
+	
+	      return null;
 	    }
 	
 	    /**
@@ -1311,9 +1384,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.element.removeAttribute('style');
 	
 	      // Reset individual item styles
-	      this.items.forEach(function (item) {
-	        item.dispose();
-	      });
+	      this._disposeItems();
 	
 	      // Null DOM references
 	      this.items = null;
@@ -1358,9 +1429,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var width = (0, _getNumberStyle2.default)(element, 'width', styles);
 	      var height = (0, _getNumberStyle2.default)(element, 'height', styles);
 	
-	      // Use jQuery here because it uses getComputedStyle internally and is
-	      // cross-browser. Using the style property of the element will only work
-	      // if there are inline styles.
 	      if (includeMargins) {
 	        var marginLeft = (0, _getNumberStyle2.default)(element, 'marginLeft', styles);
 	        var marginRight = (0, _getNumberStyle2.default)(element, 'marginRight', styles);
