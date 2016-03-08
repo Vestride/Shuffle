@@ -4,7 +4,10 @@
       <a href="{{ site.baseurl }}/{{ post.slug }}">
         <figure>
           <div class="keep-ratio four-three">
-            <img src="{{ site.baseurl }}/img/demos/{{ post.slug }}.webp" alt="{{ post.label }}" />
+            <picture>
+              <source srcset="{{ site.baseurl }}/img/demos/{{ post.slug }}.webp" type="image/webp">
+              <img src="{{ site.baseurl }}/img/demos/{{ post.slug }}.jpg" alt="{{ post.label }}">
+            </picture>
           </div>
           <figcaption>{{ post.label }}</figcaption>
         </figure>

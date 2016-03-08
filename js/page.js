@@ -1,6 +1,4 @@
-/**
- * @author Glen Cheney
- */
+'use strict';
 
 /*
  * jQuery throttle / debounce - v1.1 - 3/7/2010
@@ -10,120 +8,33 @@
  * Dual licensed under the MIT and GPL licenses.
  * http://benalman.com/about/license/
  */
-(function(b,c){var $=b.jQuery||b.Cowboy||(b.Cowboy={}),a;$.throttle=a=function(e,f,j,i){var h,d=0;if(typeof f!=="boolean"){i=j;j=f;f=c}function g(){var o=this,m=+new Date()-d,n=arguments;function l(){d=+new Date();j.apply(o,n)}function k(){h=c}if(i&&!h){l()}h&&clearTimeout(h);if(i===c&&m>e){l()}else{if(f!==true){h=setTimeout(i?k:l,i===c?e-m:e)}}}if($.guid){g.guid=j.guid=j.guid||$.guid++}return g};$.debounce=function(d,e,f){return f===c?a(d,e,false):a(d,f,e!==false)}})(this);
+// (function (b, c) {
+//   var $ = b.jQuery || b.Cowboy || (b.Cowboy = {}), a;$.throttle = a = function (e, f, j, i) {
+//     var h, d = 0;if (typeof f !== 'boolean') {
+//       i = j;j = f;f = c;
+//     }function g() {
 
-
+//       var o = this, m = +new Date() - d, n = arguments;function l() {
+//         d = +new Date();j.apply(o, n);
+//       }function k() {h = c;}if (i && !h) {l();}h && clearTimeout(h);if (i === c && m > e) {l();}else {if (f !== true) {h = setTimeout(i ? k : l, i === c ? e - m : e);}}
+//     }if ($.guid) {g.guid = j.guid = j.guid || $.guid++;}return g;
+//   };$.debounce = function (d, e, f) {return f === c ? a(d, e, false) : a(d, f, e !== false);};
+// })(this);
 
 var Modules = {};
 
-Modules.Support = (function( $ ) {
-  'use strict';
+Modules.NavTray = (function () {
 
-  var self = {},
-
-  // some small (2x1 px) test images for each feature
-  webpImages = {
-    basic: 'data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAACyAgCdASoCAAEALmk0mk0iIiIiIgBoSygABc6zbAAA/v56QAAAAA==',
-    lossless: 'data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAQAAAAfQ//73v/+BiOh/AAA='
-  };
-
-  self.webp = function( feature ) {
-    var dfd = $.Deferred();
-
-    $('<img>')
-      .on('load', function() {
-        // the images should have these dimensions
-        if ( this.width === 2 && this.height === 1 ) {
-          dfd.resolve();
-        } else {
-          dfd.reject();
-        }
-      })
-
-      // Reject deferred on error
-      .on('error', function() {
-        dfd.reject();
-      })
-
-      // Set the image src
-      .attr('src', webpImages[ feature || 'basic' ]);
-
-    return dfd.promise();
-  };
-
-  // Fill rAF
-  // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-  // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-
-  // requestAnimationFrame polyfill by Erik Möller
-  // fixes from Paul Irish and Tino Zijdel
-  var lastTime = 0;
-  var vendors = ['ms', 'moz', 'webkit', 'o'];
-  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-    window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-    window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] ||
-        window[vendors[x]+'CancelRequestAnimationFrame'];
-  }
-
-  if (!window.requestAnimationFrame) {
-    window.requestAnimationFrame = function(callback) {
-      var currTime = new Date().getTime();
-      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-      var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
-      lastTime = currTime + timeToCall;
-      return id;
-    };
-  }
-
-  if (!window.cancelAnimationFrame) {
-    window.cancelAnimationFrame = function(id) {
-      clearTimeout(id);
-    };
-  }
-
-  return self;
-}( jQuery ));
-
-
-Modules.Polyfill = (function( $, Support ) {
-  'use strict';
-
-  var init = function() {
-
-    // If the deferred object in webp is rejected, call the webp polyfill function
-    Support.webp().fail( webp );
-  },
-
-  webp = function() {
-    $('img[src$=".webp"]').each(function() {
-      this.src = this.src.replace('.webp', '.jpg');
-    });
-  };
-
-  return {
-    init: init
-  };
-}( jQuery, Modules.Support ));
-
-
-Modules.Nav = (function( $ ) {
-  'use strict';
-
-  function NavTray( element ) {
-    this.$el = $( element );
+  function NavTray(element) {
+    this.element = element;
 
     this.isOpen = false;
-    this.$window = $( window );
-    this.$trigger = this.$el.find('.js-nav-toggle');
-    this.$tray = this.$el.find('.js-tray');
+    this.trigger = element.querySelector('.js-nav-toggle');
+    this.tray = element.querySelector('.js-tray');
 
-    this.openLabel = this.$trigger.text();
-    this.closeLabel = this.$trigger.attr('data-close-label');
+    this.openLabel = this.trigger.textContent;
+    this.closeLabel = this.trigger.getAttribute('data-close-label');
 
-    this.init();
-  }
-
-  NavTray.prototype.init = function() {
     this.setEvenHeights();
     this.listen();
 
@@ -132,253 +43,234 @@ Modules.Nav = (function( $ ) {
     // I've changed the fallback font to Verdana, sans-serif to better
     // represent Ubuntu's wideness.
     // Also this isn't needed on load and could be done on window load
-    setTimeout( $.proxy( this.saveHeight, this ), 100 );
+    setTimeout(this.saveHeight.bind(this), 100);
+  }
+
+  NavTray.initialize = function () {
+    return new NavTray(document.getElementById('nav'));
   };
 
-  NavTray.prototype.saveHeight = function() {
-    this.collapseHeight = this.$tray.children()[0].offsetHeight;
+  NavTray.prototype.saveHeight = function () {
+    this.collapseHeight = this.tray.children[0].offsetHeight;
   };
 
-  NavTray.prototype.listen = function() {
-    this.$trigger.on( 'click', $.proxy( this.toggle, this ) );
-    this.$window.on( 'resize', $.proxy( this.onResize, this ) );
+  NavTray.prototype.listen = function () {
+    this.trigger.addEventListener('click', this.toggle.bind(this));
+    window.addEventListener('resize', this.onResize.bind(this));
   };
 
-  NavTray.prototype.onResize = function() {
-    this.$tray.css( 'height', '' );
+  NavTray.prototype.onResize = function () {
+    this.tray.style.height = '';
     this.setEvenHeights();
     this.saveHeight();
 
-    if ( this.isOpen ) {
-      this.$tray.css( 'height', this.collapseHeight );
+    if (this.isOpen) {
+      this.tray.style.height = this.collapseHeight + 'px';
     }
   };
 
-  NavTray.prototype.toggle = function() {
+  NavTray.prototype.toggle = function () {
     this.toggleBtnText();
 
-    if ( this.isOpen ) {
+    if (this.isOpen) {
       this.close();
     } else {
       this.open();
     }
   };
 
-  NavTray.prototype.open = function() {
-    this.$el.removeClass('collapsed');
-    this.$tray.css( 'height', this.collapseHeight );
+  NavTray.prototype.open = function () {
+    this.element.classList.remove('collapsed');
+    this.tray.style.height = this.collapseHeight + 'px';
     this.isOpen = true;
   };
 
-  NavTray.prototype.close = function() {
-    this.$el.addClass('collapsed');
-    this.$tray.css( 'height', '' );
+  NavTray.prototype.close = function () {
+    this.element.classList.add('collapsed');
+    this.tray.style.height = '';
     this.isOpen = false;
   };
 
-
-  NavTray.prototype.toggleBtnText = function() {
+  NavTray.prototype.toggleBtnText = function () {
     var label = this.isOpen ? this.openLabel : this.closeLabel;
-    this.$trigger.text( label );
+    this.trigger.textContent = label;
   };
 
-  NavTray.prototype.setEvenHeights = function() {
-    var groups = [
-      this.$el.find('.js-demo'),
-      $('#main .js-demo')
-    ];
-    $.evenHeights( groups );
+  NavTray.prototype.setEvenHeights = function () {
+    window.evenHeights([
+      this.element.querySelectorAll('.js-demo'),
+      document.querySelectorAll('#main .js-demo'),
+    ]);
   };
 
-  return {
-    init: function() {
-      return new NavTray( document.getElementById('nav') );
-    }
+  return NavTray;
+}());
+
+Modules.Sprite = (function () {
+  var Sprite = function (context, img, size) {
+    this.ctx = context;
+    this.img = img;
+    this.width = size;
+    this.height = size;
+    this.frameWidth = size;
+    this.frameHeight = size;
   };
 
-}( jQuery ));
+  // Assuming horizontal sprite
+  Sprite.prototype.getFrame = function (frame) {
+    return {
+      x: frame * this.frameWidth,
+      y: 0,
+    };
+  };
 
+  Sprite.prototype.clearCanvas = function () {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+  };
 
-Modules.Favicon = (function( doc ) {
-  'use strict';
+  Sprite.prototype.drawFrame = function (frameNumber) {
+    var frame = this.getFrame(frameNumber);
 
-  var Favicon = function( src, numFrames, framesPerAnimation, animationDelay ) {
-    var self = this;
+    // Clear out the last frame
+    this.clearCanvas();
+
+    // Draw to the context. This method is really confusing...
+    this.ctx.drawImage(
+      this.img,
+      frame.x,
+      frame.y,
+      this.width,
+      this.height,
+      0,
+      0,
+      this.width,
+      this.height
+    );
+  };
+
+  return Sprite;
+}());
+
+Modules.Favicon = (function (doc) {
+
+  var Favicon = function (src, numFrames, framesPerAnimation, animationDelay) {
 
     // Variables based on params
-    self.src = src;
-    self.numFrames = numFrames;
-    self.framesPerAnimation = framesPerAnimation;
-    self.animationDelay = animationDelay;
+    this.src = src;
+    this.numFrames = numFrames;
+    this.framesPerAnimation = framesPerAnimation;
+    this.animationDelay = animationDelay;
 
     // Elements
-    self.canvas = doc.createElement('canvas');
-    self.img = doc.createElement('img');
-    self.html = doc.documentElement;
+    this.canvas = doc.createElement('canvas');
+    this.img = doc.createElement('img');
+    this.html = doc.documentElement;
 
     // Calculations
-    self.size = window.devicePixelRatio > 1 ? 32 : 16;
+    this.size = window.devicePixelRatio > 1 ? 32 : 16;
 
     // If it's not a data url, pick apart the filename and add @2x for retina
-    if ( !self.src.match(/data:/) && window.devicePixelRatio > 1 ) {
-      var dot = self.src.lastIndexOf('.');
-      self.src = self.src.substring( 0, dot ) + '@2x' + self.src.substring( dot );
+    if (!this.src.match(/data:/) && window.devicePixelRatio > 1) {
+      var dot = this.src.lastIndexOf('.');
+      this.src = this.src.substring(0, dot) + '@2x' + this.src.substring(dot);
     }
 
-    self.currentFrame = 0;
+    this.currentFrame = 0;
+
     // Chrome chokes on this. It looks like it can handle 4 frames per second
-    self.fps = 24;
-
-    self.init();
-  };
-
-  Favicon.prototype.init = function() {
-    var self = this;
+    this.fps = 24;
 
     // No #favicon element or browser doesn't support canvas or < IE9, stop
-    if ( !doc.getElementById('favicon') || !self.canvas.getContext || self.html.className.indexOf('lt-ie9') > -1 ) {
+    if (!doc.getElementById('favicon') || !this.canvas.getContext || this.html.className.indexOf('lt-ie9') > -1) {
       return;
     }
 
     // Save context
-    self.ctx = self.canvas.getContext('2d');
+    this.ctx = this.canvas.getContext('2d');
 
     // Set canvas dimensions based on device DPI
-    self.canvas.height = self.canvas.width = self.size;
+    this.canvas.height = this.canvas.width = this.size;
 
     // Create a new sprite 32x32 size with 32x32 sprites
-    self.sprite = new Sprite( self.ctx, self.img, self.size );
+    this.sprite = new Modules.Sprite(this.ctx, this.img, this.size);
 
     // Bind the image load handler
-    self.img.onload = self.onSpriteLoaded.bind( self );
+    this.img.onload = this.onSpriteLoaded.bind(this);
 
     // Trigger image to load
-    self.img.src = self.src;
+    this.img.src = this.src;
   };
 
-  Favicon.prototype.getData = function() {
+  Favicon.prototype.getData = function () {
     return this.canvas.toDataURL('image/png');
   };
 
   // Clone the current #favicon and replace it with a new element
   // which has the updated data URI href
-  Favicon.prototype.setFavicon = function() {
-    var self = this,
-        data = self.getData(),
-        originalFavicon = doc.getElementById('favicon'),
-        clone = originalFavicon.cloneNode( true );
+  Favicon.prototype.setFavicon = function () {
+    var data = this.getData();
+    var originalFavicon = doc.getElementById('favicon');
+    var clone = originalFavicon.cloneNode(true);
 
-    clone.setAttribute( 'href', data );
-    originalFavicon.parentNode.replaceChild( clone, originalFavicon );
+    clone.setAttribute('href', data);
+    originalFavicon.parentNode.replaceChild(clone, originalFavicon);
   };
 
   // Request Animation Frame Loop
-  Favicon.prototype.loop = function( timestamp ) {
-    var self = this;
-
+  Favicon.prototype.loop = function (timestamp) {
     // If not enough time has elapse since the last call
     // immediately call the next rAF
-    if ( timestamp - self.lastExecuted < self.timeToElapse ) {
-      return requestAnimationFrame( self.loop.bind( self ) );
+    if (timestamp - this.lastExecuted < this.timeToElapse) {
+      return requestAnimationFrame(this.loop.bind(this));
     }
 
     // Increment current frame
-    self.currentFrame += 1;
-    if ( self.currentFrame === self.numFrames ) {
-      self.currentFrame = 0;
+    this.currentFrame += 1;
+    if (this.currentFrame === this.numFrames) {
+      this.currentFrame = 0;
     }
 
     // Completed an animation state
-    self.timeToElapse = self.currentFrame % self.framesPerAnimation === 0 ?
-      self.animationDelay :
-      1000 / self.fps;
+    this.timeToElapse = this.currentFrame % this.framesPerAnimation === 0 ?
+      this.animationDelay :
+      1000 / this.fps;
 
     // Draw current frame from sprite
-    self.sprite.drawFrame( self.currentFrame );
+    this.sprite.drawFrame(this.currentFrame);
 
     // Swap <link>
-    self.setFavicon();
+    this.setFavicon();
 
     // Set a timeout to draw again
-    self.lastExecuted = timestamp;
+    this.lastExecuted = timestamp;
 
     // Continue loop
-    return requestAnimationFrame( self.loop.bind( self ) );
+    return requestAnimationFrame(this.loop.bind(this));
   };
 
   // Sprite loaded
-  Favicon.prototype.onSpriteLoaded = function() {
-    var self = this;
-
+  Favicon.prototype.onSpriteLoaded = function () {
     // Draw the first frame when the image loads
-    self.sprite.drawFrame( self.currentFrame );
+    this.sprite.drawFrame(this.currentFrame);
 
     // Swap <link>
-    self.setFavicon();
+    this.setFavicon();
 
     // Start loop
-    requestAnimationFrame( self.loop.bind( self ) );
-  };
-
-
-  var Sprite = function( context, img, size ) {
-    var self = this;
-    self.ctx = context;
-    self.img = img;
-    self.width = size;
-    self.height = size;
-    self.frameWidth = size;
-    self.frameHeight = size;
-  };
-
-  // Assuming horizontal sprite
-  Sprite.prototype.getFrame = function( frame ) {
-    return {
-      x: frame * this.frameWidth,
-      y: 0
-    };
-  };
-
-  Sprite.prototype.clearCanvas = function() {
-    this.ctx.clearRect( 0, 0, this.width, this.height );
-  };
-
-  Sprite.prototype.drawFrame = function( frameNumber ) {
-    var self = this;
-
-    var frame = self.getFrame( frameNumber );
-
-    // Clear out the last frame
-    self.clearCanvas();
-
-    // Draw to the context. This method is really confusing...
-    self.ctx.drawImage(
-      self.img,
-      frame.x,
-      frame.y,
-      self.width,
-      self.height,
-      0,
-      0,
-      self.width,
-      self.height
-    );
+    requestAnimationFrame(this.loop.bind(this));
   };
 
   return Favicon;
-}( document ));
+}(document));
 
+document.addEventListener('DOMContentLoaded', function () {
 
-$(document).ready(function() {
-  'use strict';
-
-  Modules.Nav.init();
-  Modules.Polyfill.init();
+  Modules.NavTray.initialize();
 
   // Only animate the favicon on the homepage so that
   // timeline tests aren't filled with junk
-  if ( window.location.pathname === '/Shuffle/' ) {
+  if (true || window.location.pathname === '/Shuffle/') {
     var src = site_url + '/img/favicon-sprite.png';
-    new Modules.Favicon( src, 21, 7, 3000 * 1 );
+    new Modules.Favicon(src, 21, 7, 3000 * 1);
   }
 });

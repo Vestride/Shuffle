@@ -40,31 +40,24 @@ demos:
   - url: 'demos/2013-05-01-basic'
     slug: basic
     label: Basic masonry layout
-    screenshot: basic.webp
   - url: 'demos/2013-06-19-adding-removing'
     slug: adding-removing
     label: Adding and removing items
-    screenshot: removing.webp
   - url: 'demos/2013-05-02-adaptive'
     slug: adaptive
     label: Adaptive bootstrap grid with compound filters
-    screenshot: adaptive.webp
   - url: 'demos/2013-05-03-images'
     slug: images
     label: Using images
-    screenshot: images.webp
   - url: 'demos/2013-08-25-animated'
     slug: animated
     label: Animated viewport entry
-    screenshot: animated.webp
   - url: 'demos/2014-03-08-bootstrap3-grid'
     slug: bootstrap3-grid
     label: Bootstrap 3 Grid Demo
-    screenshot: bootstrap3grid.webp
   - url: 'demos/2014-04-09-requirejs'
     slug: requirejs
     label: RequireJS with Shuffle
-    screenshot: requirejs.webp
 
 shapes:
   - shape: circle

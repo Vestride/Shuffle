@@ -1,7 +1,8 @@
 @import "variables";
 
-* {
-  -moz-box-sizing: border-box;
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -9,7 +10,12 @@ pre {
   max-height: 30em;
 }
 
+picture {
+  display: block;
+}
+
 img {
+  display: block;
   max-width: 100%;
   height: auto;
 }
