@@ -34,7 +34,7 @@ defaultTitle: 'Shuffle.js'
 defaultDescription: 'Categorize, sort, and filter a responsive grid of items'
 defaultImage: '/img/shuffle.png'
 
-longDescription: 'Shuffle.js is a jQuery plugin for sorting, filtering, and laying out a group of items. It&rsquo;s performant, responsive, and fast. Check out the demos!'
+longDescription: 'Shuffle.js is a package for sorting, filtering, and laying out a group of items. It&rsquo;s performant, responsive, and fast. Check out the demos!'
 
 demos:
   - url: 'demos/2013-05-01-basic'

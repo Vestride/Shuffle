@@ -1,69 +1,59 @@
+(function () {
+  'use strict';
 
-// Requires jQuery and jQuery.debounce
+  var Questions = function () {
+    this.searchInput = document.querySelector('#search');
+    this.questions = document.querySelectorAll('.js-question');
 
-(function( $ ) {
+    if (!this.searchInput) {
+      return;
+    }
 
-  var collapsedClass = 'collapsed',
-      $searchInput = $('#search'),
-      $questions = $('.js-question'),
-      $questionInners = $questions.find('.question__inner'),
-      $questionTitles = $questions.find('.question__title'),
+    var handler = this._handleInput.bind(this);
+    this.searchInput.addEventListener('keyup', handler);
+    this.searchInput.addEventListener('change', handler);
+    window.addEventListener('resize', this.onWindowResize.bind(this));
 
-  keyup = function() {
-    // Value they've entered
-    var val = this.value.toLowerCase();
-
-    // Filter elements based on if their string exists in the product model
-    $questions.each(function( i, el ) {
-      var $el = $( el ),
-          text = $.trim( $questionTitles.eq( i ).text() ).toLowerCase(),
-          passes = text.indexOf( val ) !== -1;
-
-      if ( passes ) {
-        if ( $el.hasClass( collapsedClass ) ) {
-          $el.removeClass( collapsedClass );
-        }
-      } else {
-        if ( !$el.hasClass( collapsedClass ) ) {
-          $el.addClass( collapsedClass );
-        }
-      }
-
-    });
-  },
-
-  debouncedKeyup = $.debounce( 100, keyup ),
-
-  // Height cannot be transitioned from auto to zero, so it must be set.
-  setHeights = function() {
-    var heights = [];
-
-    // Remove current hegith
-    $questions.css( 'height', '' );
-
-    // Get new heights
-    // Inner div needed because setting a height on the elements
-    // self doesn't get the correct new height :\
-    $questionInners.each(function() {
-      heights.push( $( this ).css( 'height' ) );
-    });
-
-    // Set new heights
-    $questions.each(function( i ) {
-      $( this ).css( 'height', heights[ i ] );
-    });
-  },
-
-  onWindowResize = function() {
-    setHeights();
+    this.setHeights();
   };
 
-  if ( !$searchInput.length ) {
-    return;
-  }
+  Questions.prototype._handleInput = function (evt) {
+    var val = evt.target.value.toLowerCase();
 
-  $searchInput.on( 'keyup change', debouncedKeyup );
-  $( window ).on( 'resize', $.debounce( 250, onWindowResize ) );
-  onWindowResize();
+    // Filter elements based on if their string exists in the product model
+    for (var i = 0, len = this.questions.length; i < len; i++) {
+      var el = this.questions[i];
+      var title = el.querySelector('.question__title').textContent;
+      var text = title.trim().toLowerCase();
 
-}( jQuery ));
+      if (text.indexOf(val) === -1) {
+        el.classList.add('question--collapsed');
+      } else {
+        el.classList.remove('question--collapsed');
+      }
+    }
+  };
+
+  Questions.prototype.setHeights = function () {
+    var elements = [].slice.call(this.questions);
+
+    elements.forEach(function (element) {
+      element.style.height = '';
+    });
+
+    var heights = elements.map(function (element) {
+      return element.firstElementChild.offsetHeight;
+    });
+
+    elements.forEach(function (element, i) {
+      element.style.height = heights[i] + 'px';
+    });
+  };
+
+  Questions.prototype.onWindowResize = function () {
+    this.setHeights();
+  };
+
+  new Questions();
+}());
+

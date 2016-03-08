@@ -1,99 +1,77 @@
-var DEMO = (function( $, Viewport ) {
-  'use strict';
+'use strict';
 
-  var $grid = $('#grid'),
-      $gridItems = $grid.find('.picture-item'),
-      $sizer = $grid.find('.shuffle__sizer'),
-      shuffle,
+var Shuffle = window.shuffle;
+var Viewport = window.viewport;
 
-  init = function() {
+function toArray(arrayLike) {
+  if ('from' in Array) {
+    return Array.from(arrayLike);
+  }
 
+  return Array.prototype.slice.call(arrayLike);
+}
 
-    // instantiate the plugin
-    $grid.shuffle({
-      itemSelector: '.picture-item',
-      sizer: $sizer
+var Demo = function () {
+  this.element = document.getElementById('grid');
+  this.gridItems = toArray(this.element.querySelectorAll('.picture-item'));
+  this.sizer = this.element.querySelector('.shuffle__sizer');
+
+  this.shuffle = new Shuffle(this.element, {
+    itemSelector: '.picture-item',
+    sizer: this.sizer,
+  });
+
+  this.addViewportItems();
+
+  setTimeout(function () {
+    this.addTransitionToItems();
+  }.bind(this), 100);
+};
+
+Demo.prototype.addViewportItems = function () {
+  var handler = this.showItemsInViewport;
+
+  this.gridItems.forEach(function () {
+    Viewport.add({
+      element: this,
+      threshold: 130,
+      enter: handler,
     });
+  });
+};
 
-    shuffle = $grid.data('shuffle');
+Demo.prototype.showItemsInViewport = function () {
+  this.classList.add('in');
+};
 
-    addViewportItems();
+/**
+ * Only the items out of the viewport should transition. This way, the first
+ * visible ones will snap into place.
+ */
+Demo.prototype.addTransitionToItems = function () {
+  this.gridItems.forEach(function (item) {
+    item.querySelector('.picture-item__inner').classList.add('picture-item__inner--transition');
+  });
+};
 
-    setTimeout(function() {
-      listen();
-      addTransitionToItems();
-    }, 100);
-  },
+/**
+ * Re-layout shuffle when images load. This is only needed below 768 pixels
+ * because the .picture-item height is auto and therefore the height of the
+ * picture-item is dependent on the image. I recommend using imagesloaded by
+ * desandro to determine when all your images have loaded.
+ */
+Demo.prototype.listenForImageLoads = function () {
+  var imgs = this.element.querySelectorAll('img');
+  var handler = function () {
+    this.shuffle.update();
+    Viewport.refresh();
+  }.bind(this);
 
-  addViewportItems = function() {
-    $gridItems.each(function() {
-      Viewport.add({
-        element: this,
-        threshold: 130,
-        enter: showItemsInViewport
-      });
-    });
-  },
+  for (var i = imgs.length - 1; i >= 0; i--) {
+    imgs[i].addEventListener('load', handler, false);
+  }
+};
 
-  // Only the items out of the viewport should transition. This way, the first visible ones
-  // will snap into place.
-  addTransitionToItems = function() {
-    $gridItems.find('.picture-item__inner').addClass('picture-item__inner--transition');
-  },
-
-  showItemsInViewport = function() {
-    $(this).addClass('in');
-  },
-
-  // Re layout shuffle when images load. This is only needed
-  // below 768 pixels because the .picture-item height is auto and therefore
-  // the height of the picture-item is dependent on the image
-  // I recommend using imagesloaded to determine when an image is loaded
-  // but that doesn't support IE7
-  listen = function() {
-
-    var debouncedLayout = $.throttle( 300, function() {
-      $grid.shuffle('update');
-      Viewport.refresh();
-    });
-
-    var $imgs = $grid.find('img');
-
-    // Get all images inside shuffle
-    $imgs.each(function() {
-      var proxyImage;
-
-      // Image already loaded
-      if ( this.complete && this.naturalWidth !== undefined ) {
-        return;
-      }
-
-      // If none of the checks above matched, simulate loading on detached element.
-      proxyImage = new Image();
-      $( proxyImage ).on('load', function() {
-        $(this).off('load');
-        debouncedLayout();
-      });
-
-      proxyImage.src = this.src;
-    });
-
-    // Because this method doesn't seem to be perfect.
-    setTimeout(function() {
-      debouncedLayout();
-    }, 500);
-  };
-
-  return {
-    init: init,
-    getShuffle: function() {
-      return shuffle;
-    }
-  };
-}( jQuery, window.Viewport ));
-
-
-
-$(document).ready(function() {
-  DEMO.init();
+document.addEventListener('DOMContentLoaded', function () {
+  window.demo = new Demo();
 });

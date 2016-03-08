@@ -4,7 +4,7 @@
   display: inline-block;
 }
 
-
+.aspect,
 .keep-ratio {
   position: relative;
   width: 100%;
@@ -17,15 +17,21 @@
   }
 }
 
+.aspect--4x3 {
+  padding-bottom: 75%;
+}
 
+.aspect--16x9 {
+  padding-bottom: 56.25%;
+}
 
-// Hide from both screenreaders and browsers: h5bp.com/u
+// Hide from both screenreaders and browsers.
 .hidden {
   display: none !important;
   visibility: hidden;
 }
 
-// Hide only visually, but have it available for screenreaders: h5bp.com/v
+// Hide only visually, but have it available for screenreaders.
 .visuallyhidden {
   border: 0;
   clip: rect(0 0 0 0);
@@ -37,40 +43,17 @@
   width: 1px;
 }
 
-/*
- * Clearfix: contain floats
- *
- * For modern browsers
- * 1. The space content is one way to avoid an Opera bug when the
- *    `contenteditable` attribute is included anywhere else in the document.
- *    Otherwise it causes space to appear at the top and bottom of elements
- *    that receive the `clearfix` class.
- * 2. The use of `table` rather than `block` is only necessary if using
- *    `:before` to contain the top-margins of child elements.
- */
-
-.clearfix:before,
-.clearfix:after {
-    content: " "; /* 1 */
-    display: table; /* 2 */
-}
-
-.clearfix:after {
-    clear: both;
-}
-
-/*
- * For IE 6/7 only
- * Include this rule to trigger hasLayout and contain floats.
- */
-
-.clearfix {
-    *zoom: 1;
+.clearfix,
+.clearfix::after {
+  content: " ";
+  display: table;
+  clear: both;
 }
 
 .pull-left {
   float: left;
 }
+
 .pull-right {
   float: right;
 }
@@ -81,12 +64,6 @@
   text-shadow: none;
   background-color: transparent;
   border: 0;
-}
-.input-block-level {
-  display: block;
-  width: 100%;
-  min-height: 30px;
-  box-sizing: border-box;
 }
 
 .table-center-wrap {

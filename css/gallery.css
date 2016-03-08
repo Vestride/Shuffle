@@ -4,10 +4,12 @@
 
 .filter-group .filter-group__label {
   margin: 0 0 5px; }
+
 .filter-group button {
   width: 40px;
   height: 40px;
   padding: 0; }
+
 .filter-group label {
   cursor: pointer; }
 
@@ -19,19 +21,19 @@
   position: relative;
   margin-left: 0;
   margin-top: 10px; }
-.shape .shape__inner {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0; }
-.shape .shape__space {
-  width: 100%;
-  height: 100%;
-  background-color: black;
-  border-style: solid;
-  border-width: 0;
-  border-color: transparent; }
+  .shape .shape__inner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0; }
+  .shape .shape__space {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    border-style: solid;
+    border-width: 0;
+    border-color: transparent; }
 
 .shape--blue .shape__space {
   background-color: #3498DB;
@@ -53,9 +55,7 @@
   border-radius: 50%; }
 
 .shape--diamond .shape__space {
-  -webkit-transform: rotate(45deg) scale(0.70711);
-      -ms-transform: rotate(45deg) scale(0.70711);
-          transform: rotate(45deg) scale(0.70711); }
+  transform: rotate(45deg) scale(0.70711); }
 
 .shape--triangle .shape__space {
   padding-top: 14.5px;
@@ -70,6 +70,7 @@
   height: 250px;
   overflow: visible;
   padding-bottom: 0; }
+
 .lt-ie9 .shape .shape__inner {
   position: static;
   width: 100%;
@@ -81,12 +82,14 @@
     height: 0;
     width: 0;
     border-width: 0 135px 234px 135px; } }
+
 @media (min-width: 768px) and (max-width: 979px) {
   .shape--triangle .shape__space {
     padding-top: 11px;
     height: 0;
     width: 0;
     border-width: 0 83px 144px 83px; } }
+
 @media (max-width: 767px) {
   .shape--triangle .shape__space {
     padding-top: 40px;
@@ -94,18 +97,21 @@
     width: 0;
     border-width: 0 300px 520px 300px;
     margin: auto; } }
+
 @media (max-width: 600px) {
   .shape--triangle .shape__space {
     padding-top: 32px;
     height: 0;
     width: 0;
     border-width: 0 240px 416px 240px; } }
+
 @media (max-width: 480px) {
   .shape--triangle .shape__space {
     padding-top: 21.5px;
     height: 0;
     width: 0;
     border-width: 0 160px 277px 160px; } }
+
 body::before {
   content: 'Default - 940px';
   position: fixed;
@@ -115,21 +121,23 @@ body::before {
   width: 100%;
   height: 25px;
   background-color: rgba(119, 204, 102, 0.6);
-  -webkit-transition: background .2s ease;
-          transition: background .2s ease; }
+  transition: background .2s ease; }
 
 @media (min-width: 1200px) {
   body::before {
     content: 'Large Desktop - 1200px+';
     background-color: rgba(204, 119, 102, 0.6); } }
+
 @media (min-width: 768px) and (max-width: 979px) {
   body::before {
     content: 'Portrait tablet to landscape and desktop - > 768px && < 979px';
     background-color: rgba(204, 187, 102, 0.6); } }
+
 @media (max-width: 767px) {
   body::before {
     content: 'Phones to Tablets - < 767px';
     background-color: rgba(102, 153, 204, 0.6); } }
+
 @media (max-width: 480px) {
   body::before {
     content: 'Phones - < 480px';

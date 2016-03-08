@@ -4,6 +4,7 @@ const gulp = require('gulp');
 const gutil = require('gulp-util');
 const webpack = require('webpack');
 const shell = require('gulp-shell');
+const sass = require('gulp-sass');
 
 let config = {
   watch: false,
@@ -44,7 +45,18 @@ function jekyll() {
 
 function setWatching(done) {
   config.watch = true;
+  gulp.watch('_scss/*.scss', css);
   done();
+}
+
+function css() {
+  return gulp.src([
+    './_scss/gallery.scss',
+    './_scss/shuffle-styles.scss',
+    './_scss/style.scss',
+  ])
+  .pipe(sass())
+  .pipe(gulp.dest('./css/'));
 }
 
 // function test() {
@@ -56,11 +68,12 @@ function setWatching(done) {
 gulp.task('scripts', compile);
 gulp.task('set-watching', setWatching);
 
+gulp.task(css);
 gulp.task(jekyll);
 
 gulp.task('watch', gulp.series(
   'set-watching',
-  'scripts',
+  gulp.parallel('css', 'scripts'),
   'jekyll'
 ));
 

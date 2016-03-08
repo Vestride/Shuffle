@@ -60,6 +60,8 @@ window.evenHeights = (function () {
     groups.forEach(function (elements, i) {
       setAllHeights(elements, tallests[i] + 'px');
     });
+
+    return tallests;
   }
 
   return evenHeights;
