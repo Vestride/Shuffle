@@ -163,7 +163,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    _classCallCheck(this, Shuffle);
 	
-	    (0, _assign2.default)(this, Shuffle.options, options);
+	    this.options = (0, _assign2.default)({}, Shuffle.options, options);
 	
 	    this.useSizer = false;
 	    this.revealAppendedDelay = 300;
@@ -201,9 +201,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function _init() {
 	      this.items = this._getItems();
 	
-	      this.sizer = this._getElementOption(this.sizer);
+	      this.options.sizer = this._getElementOption(this.options.sizer);
 	
-	      if (this.sizer) {
+	      if (this.options.sizer) {
 	        this.useSizer = true;
 	      }
 	
@@ -229,13 +229,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this._setColumns(containerWidth);
 	
 	      // Kick off!
-	      this.filter(this.group, this.initialSort);
+	      this.filter(this.options.group, this.options.initialSort);
 	
 	      // The shuffle items haven't had transitions set on them yet
 	      // so the user doesn't see the first layout. Set them now that the first layout is done.
 	      defer(function () {
 	        this._setTransitions();
-	        this.element.style.transition = 'height ' + this.speed + 'ms ' + this.easing;
+	        this.element.style.transition = 'height ' + this.options.speed + 'ms ' + this.options.easing;
 	      }, this);
 	    }
 	
@@ -249,7 +249,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: '_getResizeFunction',
 	    value: function _getResizeFunction() {
 	      var resizeFunction = this._handleResize.bind(this);
-	      return this.throttle ? this.throttle(resizeFunction, this.throttleTime) : resizeFunction;
+	      return this.options.throttle ? this.options.throttle(resizeFunction, this.options.throttleTime) : resizeFunction;
 	    }
 	
 	    /**
@@ -326,7 +326,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // This is saved mainly because providing a filter function (like searching)
 	      // will overwrite the `lastFilter` property every time its called.
 	      if (typeof category === 'string') {
-	        this.group = category;
+	        this.options.group = category;
 	      }
 	
 	      return set;
@@ -473,11 +473,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function _setTransitions() {
 	      var items = arguments.length <= 0 || arguments[0] === undefined ? this.items : arguments[0];
 	
-	      var speed = this.speed;
-	      var easing = this.easing;
+	      var speed = this.options.speed;
+	      var easing = this.options.easing;
 	
 	      var str;
-	      if (this.useTransforms) {
+	      if (this.options.useTransforms) {
 	        str = 'transform ' + speed + 'ms ' + easing + ', opacity ' + speed + 'ms ' + easing;
 	      } else {
 	        str = 'top ' + speed + 'ms ' + easing + ', left ' + speed + 'ms ' + easing + ', opacity ' + speed + 'ms ' + easing;
@@ -502,7 +502,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // FIXME won't work for noTransforms
 	      each($collection, function (el, i) {
 	        // This works because the transition-property: transform, opacity;
-	        el.style.transitionDelay = '0ms,' + (i + 1) * this.sequentialFadeDelay + 'ms';
+	        el.style.transitionDelay = '0ms,' + (i + 1) * this.options.sequentialFadeDelay + 'ms';
 	      }, this);
 	    }
 	  }, {
@@ -511,7 +511,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this3 = this;
 	
 	      return toArray(this.element.children).filter(function (el) {
-	        return (0, _matchesSelector2.default)(el, _this3.itemSelector);
+	        return (0, _matchesSelector2.default)(el, _this3.options.itemSelector);
 	      }).map(function (el) {
 	        return new _shuffleItem2.default(el);
 	      });
@@ -550,7 +550,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        // columnWidth option isn't a function, are they using a sizing element?
 	      } else if (this.useSizer) {
-	          size = Shuffle.getSize(this.sizer).width;
+	          size = Shuffle.getSize(this.options.sizer).width;
 	
 	          // if not, how about the explicitly set option?
 	        } else if (this.columnWidth) {
@@ -584,12 +584,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: '_getGutterSize',
 	    value: function _getGutterSize(containerWidth) {
 	      var size;
-	      if (typeof this.gutterWidth === 'function') {
-	        size = this.gutterWidth(containerWidth);
+	      if (typeof this.options.gutterWidth === 'function') {
+	        size = this.options.gutterWidth(containerWidth);
 	      } else if (this.useSizer) {
-	        size = (0, _getNumberStyle2.default)(this.sizer, 'marginLeft');
+	        size = (0, _getNumberStyle2.default)(this.options.sizer, 'marginLeft');
 	      } else {
-	        size = this.gutterWidth;
+	        size = this.options.gutterWidth;
 	      }
 	
 	      return size;
@@ -611,7 +611,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var calculatedColumns = (containerWidth + gutter) / columnWidth;
 	
 	      // Widths given from getStyles are not precise enough...
-	      if (Math.abs(Math.round(calculatedColumns) - calculatedColumns) < this.columnThreshold) {
+	      if (Math.abs(Math.round(calculatedColumns) - calculatedColumns) < this.options.columnThreshold) {
 	        // e.g. calculatedColumns = 11.998876
 	        calculatedColumns = Math.round(calculatedColumns);
 	      }
@@ -715,7 +715,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        item: item,
 	        opacity: 1,
 	        visibility: 'visible',
-	        transitionDelay: Math.min(i * this.staggerAmount, this.staggerAmountMax)
+	        transitionDelay: Math.min(i * this.options.staggerAmount, this.options.staggerAmountMax)
 	      });
 	    }
 	
@@ -734,7 +734,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var setY = this._getColumnSet(columnSpan, this.cols);
 	
 	      // Finds the index of the smallest number in the set.
-	      var shortColumnIndex = this._getShortColumn(setY, this.buffer);
+	      var shortColumnIndex = this._getShortColumn(setY, this.options.buffer);
 	
 	      // Position the item
 	      var point = new _point2.default(Math.round(this.colWidth * shortColumnIndex), Math.round(setY[shortColumnIndex]));
@@ -768,7 +768,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // If the difference between the rounded column span number and the
 	      // calculated column span number is really small, round the number to
 	      // make it fit.
-	      if (Math.abs(Math.round(columnSpan) - columnSpan) < this.columnThreshold) {
+	      if (Math.abs(Math.round(columnSpan) - columnSpan) < this.options.columnThreshold) {
 	        // e.g. columnSpan = 4.0089945390298745
 	        columnSpan = Math.round(columnSpan);
 	      }
@@ -874,7 +874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _this4._queue.push({
 	          item: item,
 	          opacity: 0,
-	          transitionDelay: Math.min(i * _this4.staggerAmount, _this4.staggerAmountMax),
+	          transitionDelay: Math.min(i * _this4.options.staggerAmount, _this4.options.staggerAmountMax),
 	          callback: function callback() {
 	            item.element.style.visibility = 'hidden';
 	          }
@@ -926,7 +926,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var x = item.point.x;
 	      var y = item.point.y;
 	
-	      if (this.useTransforms) {
+	      if (this.options.useTransforms) {
 	        styles.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + item.scale + ')';
 	      } else {
 	        styles.left = x + 'px';
@@ -940,11 +940,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function _transition(opts) {
 	      var _this5 = this;
 	
+	      var _this = this;
 	      var styles = this._getStylesForTransition(opts);
 	      var callfront = opts.callfront || noop;
 	      var callback = opts.callback || noop;
 	      var item = opts.item;
-	      var _this = this;
 	
 	      return new Promise(function (resolve) {
 	        var reference = {
@@ -999,22 +999,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var immediates = [];
 	      var transitions = [];
 	      this._queue.forEach(function (obj) {
-	        if (!_this6.isInitialized || _this6.speed === 0) {
+	        if (!_this6.isInitialized || _this6.options.speed === 0) {
 	          immediates.push(obj);
 	        } else {
 	          transitions.push(obj);
 	        }
 	      });
 	
-	      immediates.forEach(function (obj) {
-	        _this6._styleImmediately(obj);
-	      });
+	      this._styleImmediately(immediates);
 	
 	      var promises = transitions.map(function (obj) {
 	        return _this6._transition(obj);
 	      });
 	
-	      if (transitions.length > 0 && this.speed > 0) {
+	      if (transitions.length > 0 && this.options.speed > 0) {
 	        // Set flag that shuffle is currently in motion.
 	        this.isTransitioning = true;
 	
@@ -1054,18 +1052,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Apply styles without a transition.
-	     * @param {Object} opts Transitions options object.
+	     * @param {Array.<Object>} objects Array of transition objects.
 	     * @private
 	     */
 	
 	  }, {
 	    key: '_styleImmediately',
-	    value: function _styleImmediately(obj) {
+	    value: function _styleImmediately(objects) {
 	      var _this7 = this;
 	
-	      Shuffle._skipTransition(obj.item.element, function () {
-	        obj.item.applyCss(_this7._getStylesForTransition(obj));
-	      });
+	      if (objects.length) {
+	        var elements = objects.map(function (obj) {
+	          return obj.item.element;
+	        });
+	
+	        Shuffle._skipTransitions(elements, function () {
+	          objects.forEach(function (obj) {
+	            obj.item.applyCss(_this7._getStylesForTransition(obj));
+	          });
+	        });
+	      }
 	    }
 	  }, {
 	    key: '_movementFinished',
@@ -1264,8 +1270,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var addToEnd = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 	      var isSequential = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 	
-	      newItems = arrayUnique(newItems);
-	      this._addItems(newItems, addToEnd, isSequential);
+	      this._addItems(arrayUnique(newItems), addToEnd, isSequential);
 	    }
 	
 	    /**
@@ -1306,7 +1311,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      collection = arrayUnique(collection);
 	
-	      // FIXME unique array.
 	      var items = collection.map(function (element) {
 	        return _this8.getItemByElement(element);
 	      }).filter(function (item) {
@@ -1389,7 +1393,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Null DOM references
 	      this.items = null;
 	      this.$el = null;
-	      this.sizer = null;
+	      this.options.sizer = null;
 	      this.element = null;
 	      this._transitions = null;
 	
@@ -1446,34 +1450,43 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Change a property or execute a function which will not have a transition
-	     * @param {Element} element DOM element that won't be transitioned
+	     * @param {Array.<Element>} elements DOM elements that won't be transitioned.
 	     * @param {Function} callback A function which will be called while transition
 	     *     is set to 0ms.
 	     * @private
 	     */
 	
 	  }, {
-	    key: '_skipTransition',
-	    value: function _skipTransition(element, callback) {
-	      var style = element.style;
-	      var duration = style.transitionDuration;
-	      var delay = style.transitionDelay;
+	    key: '_skipTransitions',
+	    value: function _skipTransitions(elements, callback) {
+	      var zero = '0ms';
 	
-	      // Set the duration to zero so it happens immediately
-	      style.transitionDuration = '0ms';
-	      style.transitionDelay = '0ms';
+	      // Save current duration and delay.
+	      var data = elements.map(function (element) {
+	        var style = element.style;
+	        var duration = style.transitionDuration;
+	        var delay = style.transitionDelay;
+	
+	        // Set the duration to zero so it happens immediately
+	        style.transitionDuration = zero;
+	        style.transitionDelay = zero;
+	
+	        return {
+	          duration: duration,
+	          delay: delay
+	        };
+	      });
 	
 	      callback();
 	
-	      // Force reflow
-	      var reflow = element.offsetWidth;
-	
-	      // Avoid jshint warnings: unused variables and expressions.
-	      reflow = null;
+	      // Cause reflow.
+	      elements[0].offsetWidth; // jshint ignore:line
 	
 	      // Put the duration back
-	      style.transitionDuration = duration;
-	      style.transitionDelay = delay;
+	      elements.forEach(function (element, i) {
+	        element.style.transitionDuration = data[i].duration;
+	        element.style.transitionDelay = data[i].delay;
+	      });
 	    }
 	  }]);
 	

@@ -1,12 +1,11 @@
 {
   "name": "shufflejs",
-  "version": "3.1.1",
   "homepage": "https://github.com/Vestride/Shuffle",
   "authors": [
     "Glen Cheney <cheney.glen@gmail.com>"
   ],
   "description": "Categorize, sort, and filter a responsive grid of items",
-  "main": "dist/jquery.shuffle.js",
+  "main": "dist/shuffle.js",
   "moduleType": [
     "amd",
     "globals"

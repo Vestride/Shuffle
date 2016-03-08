@@ -168,7 +168,7 @@ Demo.prototype._handleSearchKeyup = function (evt) {
     var groups = JSON.parse(element.getAttribute('data-groups'));
 
     // Only search elements in the current group
-    if (shuffle.group !== 'all' && groups.indexOf(shuffle.group) === -1) {
+    if (shuffle.options.group !== 'all' && groups.indexOf(shuffle.options.group) === -1) {
       return false;
     }
 

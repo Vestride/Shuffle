@@ -72,7 +72,7 @@ class Shuffle {
    * @constructor
    */
   constructor(element, options = {}) {
-    assign(this, Shuffle.options, options);
+    this.options = assign({}, Shuffle.options, options);
 
     this.useSizer = false;
     this.revealAppendedDelay = 300;
@@ -108,9 +108,9 @@ class Shuffle {
   _init() {
     this.items = this._getItems();
 
-    this.sizer = this._getElementOption(this.sizer);
+    this.options.sizer = this._getElementOption(this.options.sizer);
 
-    if (this.sizer) {
+    if (this.options.sizer) {
       this.useSizer = true;
     }
 
@@ -136,13 +136,13 @@ class Shuffle {
     this._setColumns(containerWidth);
 
     // Kick off!
-    this.filter(this.group, this.initialSort);
+    this.filter(this.options.group, this.options.initialSort);
 
     // The shuffle items haven't had transitions set on them yet
     // so the user doesn't see the first layout. Set them now that the first layout is done.
     defer(function () {
       this._setTransitions();
-      this.element.style.transition = 'height ' + this.speed + 'ms ' + this.easing;
+      this.element.style.transition = 'height ' + this.options.speed + 'ms ' + this.options.easing;
     }, this);
   }
 
@@ -153,8 +153,8 @@ class Shuffle {
    */
   _getResizeFunction() {
     var resizeFunction = this._handleResize.bind(this);
-    return this.throttle ?
-        this.throttle(resizeFunction, this.throttleTime) :
+    return this.options.throttle ?
+        this.options.throttle(resizeFunction, this.options.throttleTime) :
         resizeFunction;
   }
 
@@ -220,7 +220,7 @@ class Shuffle {
     // This is saved mainly because providing a filter function (like searching)
     // will overwrite the `lastFilter` property every time its called.
     if (typeof category === 'string') {
-      this.group = category;
+      this.options.group = category;
     }
 
     return set;
@@ -337,11 +337,11 @@ class Shuffle {
    * @private
    */
   _setTransitions(items = this.items) {
-    let speed = this.speed;
-    let easing = this.easing;
+    let speed = this.options.speed;
+    let easing = this.options.easing;
 
     var str;
-    if (this.useTransforms) {
+    if (this.options.useTransforms) {
       str = 'transform ' + speed + 'ms ' + easing +
         ', opacity ' + speed + 'ms ' + easing;
     } else {
@@ -366,13 +366,13 @@ class Shuffle {
     // FIXME won't work for noTransforms
     each($collection, function (el, i) {
       // This works because the transition-property: transform, opacity;
-      el.style.transitionDelay = '0ms,' + ((i + 1) * this.sequentialFadeDelay) + 'ms';
+      el.style.transitionDelay = '0ms,' + ((i + 1) * this.options.sequentialFadeDelay) + 'ms';
     }, this);
   }
 
   _getItems() {
     return toArray(this.element.children)
-      .filter(el => matches(el, this.itemSelector))
+      .filter(el => matches(el, this.options.itemSelector))
       .map(el => new ShuffleItem(el));
   }
 
@@ -400,7 +400,7 @@ class Shuffle {
 
     // columnWidth option isn't a function, are they using a sizing element?
     } else if (this.useSizer) {
-      size = Shuffle.getSize(this.sizer).width;
+      size = Shuffle.getSize(this.options.sizer).width;
 
     // if not, how about the explicitly set option?
     } else if (this.columnWidth) {
@@ -431,12 +431,12 @@ class Shuffle {
    */
   _getGutterSize(containerWidth) {
     var size;
-    if (typeof this.gutterWidth === 'function') {
-      size = this.gutterWidth(containerWidth);
+    if (typeof this.options.gutterWidth === 'function') {
+      size = this.options.gutterWidth(containerWidth);
     } else if (this.useSizer) {
-      size = getNumberStyle(this.sizer, 'marginLeft');
+      size = getNumberStyle(this.options.sizer, 'marginLeft');
     } else {
-      size = this.gutterWidth;
+      size = this.options.gutterWidth;
     }
 
     return size;
@@ -453,7 +453,7 @@ class Shuffle {
     var calculatedColumns = (containerWidth + gutter) / columnWidth;
 
     // Widths given from getStyles are not precise enough...
-    if (Math.abs(Math.round(calculatedColumns) - calculatedColumns) < this.columnThreshold) {
+    if (Math.abs(Math.round(calculatedColumns) - calculatedColumns) < this.options.columnThreshold) {
       // e.g. calculatedColumns = 11.998876
       calculatedColumns = Math.round(calculatedColumns);
     }
@@ -537,7 +537,7 @@ class Shuffle {
       item,
       opacity: 1,
       visibility: 'visible',
-      transitionDelay: Math.min(i * this.staggerAmount, this.staggerAmountMax),
+      transitionDelay: Math.min(i * this.options.staggerAmount, this.options.staggerAmountMax),
     });
   }
 
@@ -553,7 +553,7 @@ class Shuffle {
     var setY = this._getColumnSet(columnSpan, this.cols);
 
     // Finds the index of the smallest number in the set.
-    var shortColumnIndex = this._getShortColumn(setY, this.buffer);
+    var shortColumnIndex = this._getShortColumn(setY, this.options.buffer);
 
     // Position the item
     var point = new Point(
@@ -586,7 +586,7 @@ class Shuffle {
     // If the difference between the rounded column span number and the
     // calculated column span number is really small, round the number to
     // make it fit.
-    if (Math.abs(Math.round(columnSpan) - columnSpan) < this.columnThreshold) {
+    if (Math.abs(Math.round(columnSpan) - columnSpan) < this.options.columnThreshold) {
       // e.g. columnSpan = 4.0089945390298745
       columnSpan = Math.round(columnSpan);
     }
@@ -679,7 +679,7 @@ class Shuffle {
       this._queue.push({
         item,
         opacity: 0,
-        transitionDelay: Math.min(i * this.staggerAmount, this.staggerAmountMax),
+        transitionDelay: Math.min(i * this.options.staggerAmount, this.options.staggerAmountMax),
         callback() {
           item.element.style.visibility = 'hidden';
         },
@@ -725,7 +725,7 @@ class Shuffle {
     let x = item.point.x;
     let y = item.point.y;
 
-    if (this.useTransforms) {
+    if (this.options.useTransforms) {
       styles.transform = `translate(${ x }px, ${ y }px) scale(${ item.scale })`;
     } else {
       styles.left = x + 'px';
@@ -736,11 +736,11 @@ class Shuffle {
   }
 
   _transition(opts) {
+    let _this = this;
     let styles = this._getStylesForTransition(opts);
     let callfront = opts.callfront || noop;
     let callback = opts.callback || noop;
     let item = opts.item;
-    let _this = this;
 
     return new Promise((resolve) => {
       let reference = {
@@ -788,22 +788,20 @@ class Shuffle {
     let immediates = [];
     let transitions = [];
     this._queue.forEach((obj) => {
-      if (!this.isInitialized || this.speed === 0) {
+      if (!this.isInitialized || this.options.speed === 0) {
         immediates.push(obj);
       } else {
         transitions.push(obj);
       }
     });
 
-    immediates.forEach((obj) => {
-      this._styleImmediately(obj);
-    });
+    this._styleImmediately(immediates);
 
     let promises = transitions.map((obj) => {
       return this._transition(obj);
     });
 
-    if (transitions.length > 0 && this.speed > 0) {
+    if (transitions.length > 0 && this.options.speed > 0) {
       // Set flag that shuffle is currently in motion.
       this.isTransitioning = true;
 
@@ -841,13 +839,19 @@ class Shuffle {
 
   /**
    * Apply styles without a transition.
-   * @param {Object} opts Transitions options object.
+   * @param {Array.<Object>} objects Array of transition objects.
    * @private
    */
-  _styleImmediately(obj) {
-    Shuffle._skipTransition(obj.item.element, () => {
-      obj.item.applyCss(this._getStylesForTransition(obj));
-    });
+  _styleImmediately(objects) {
+    if (objects.length) {
+      let elements = objects.map(obj => obj.item.element);
+
+      Shuffle._skipTransitions(elements, () => {
+        objects.forEach((obj) => {
+          obj.item.applyCss(this._getStylesForTransition(obj));
+        });
+      });
+    }
   }
 
   _movementFinished() {
@@ -1017,8 +1021,7 @@ class Shuffle {
    * @param {boolean} [isSequential=true] If false, new items won't sequentially fade in
    */
   add(newItems, addToEnd = false, isSequential = true) {
-    newItems = arrayUnique(newItems);
-    this._addItems(newItems, addToEnd, isSequential);
+    this._addItems(arrayUnique(newItems), addToEnd, isSequential);
   }
 
   /**
@@ -1048,7 +1051,6 @@ class Shuffle {
   remove(collection) {
     collection = arrayUnique(collection);
 
-    // FIXME unique array.
     let items = collection
       .map(element => this.getItemByElement(element))
       .filter(item => !!item);
@@ -1121,7 +1123,7 @@ class Shuffle {
     // Null DOM references
     this.items = null;
     this.$el = null;
-    this.sizer = null;
+    this.options.sizer = null;
     this.element = null;
     this._transitions = null;
 
@@ -1175,31 +1177,40 @@ class Shuffle {
 
   /**
    * Change a property or execute a function which will not have a transition
-   * @param {Element} element DOM element that won't be transitioned
+   * @param {Array.<Element>} elements DOM elements that won't be transitioned.
    * @param {Function} callback A function which will be called while transition
    *     is set to 0ms.
    * @private
    */
-  static _skipTransition(element, callback) {
-    let style = element.style;
-    var duration = style.transitionDuration;
-    var delay = style.transitionDelay;
+  static _skipTransitions(elements, callback) {
+    let zero = '0ms';
 
-    // Set the duration to zero so it happens immediately
-    style.transitionDuration = '0ms';
-    style.transitionDelay = '0ms';
+    // Save current duration and delay.
+    let data = elements.map((element) => {
+      let style = element.style;
+      let duration = style.transitionDuration;
+      let delay = style.transitionDelay;
+
+      // Set the duration to zero so it happens immediately
+      style.transitionDuration = zero;
+      style.transitionDelay = zero;
+
+      return {
+        duration,
+        delay,
+      };
+    });
 
     callback();
 
-    // Force reflow
-    var reflow = element.offsetWidth;
-
-    // Avoid jshint warnings: unused variables and expressions.
-    reflow = null;
+    // Cause reflow.
+    elements[0].offsetWidth; // jshint ignore:line
 
     // Put the duration back
-    style.transitionDuration = duration;
-    style.transitionDelay = delay;
+    elements.forEach((element, i) => {
+      element.style.transitionDuration = data[i].duration;
+      element.style.transitionDelay = data[i].delay;
+    });
   }
 }
 
