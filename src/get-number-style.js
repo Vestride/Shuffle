@@ -12,7 +12,6 @@ import COMPUTED_SIZE_INCLUDES_PADDING from './computed-size';
  * @return {number} The parsed computed value or zero if that fails because IE
  *     will return 'auto' when the element doesn't have margins instead of
  *     the computed style.
- * @private
  */
 export default function getNumberStyle(element, style,
     styles = window.getComputedStyle(element, null)) {

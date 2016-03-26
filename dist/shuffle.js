@@ -58,39 +58,43 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _matchesSelector = __webpack_require__(1);
+	__webpack_require__(1);
+	
+	var _matchesSelector = __webpack_require__(2);
 	
 	var _matchesSelector2 = _interopRequireDefault(_matchesSelector);
 	
-	var _throttle = __webpack_require__(2);
+	var _arrayUniq = __webpack_require__(3);
+	
+	var _arrayUniq2 = _interopRequireDefault(_arrayUniq);
+	
+	var _xtend = __webpack_require__(4);
+	
+	var _xtend2 = _interopRequireDefault(_xtend);
+	
+	var _throttle = __webpack_require__(5);
 	
 	var _throttle2 = _interopRequireDefault(_throttle);
 	
-	var _point = __webpack_require__(3);
+	var _point = __webpack_require__(6);
 	
 	var _point2 = _interopRequireDefault(_point);
 	
-	var _shuffleItem = __webpack_require__(5);
+	var _shuffleItem = __webpack_require__(8);
 	
 	var _shuffleItem2 = _interopRequireDefault(_shuffleItem);
 	
-	var _classes = __webpack_require__(6);
+	var _classes = __webpack_require__(9);
 	
 	var _classes2 = _interopRequireDefault(_classes);
 	
-	var _getNumberStyle = __webpack_require__(7);
+	var _getNumberStyle = __webpack_require__(10);
 	
 	var _getNumberStyle2 = _interopRequireDefault(_getNumberStyle);
 	
-	var _sorter = __webpack_require__(9);
+	var _sorter = __webpack_require__(12);
 	
 	var _sorter2 = _interopRequireDefault(_sorter);
-	
-	var _assign = __webpack_require__(10);
-	
-	var _assign2 = _interopRequireDefault(_assign);
-	
-	__webpack_require__(11);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -130,19 +134,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 	}
 	
-	function arrayUnique(array) {
-	  var seen = [];
-	  var i = 0;
-	  var length = array.length;
-	  for (; i < length; i++) {
-	    if (!arrayIncludes(seen, array[i])) {
-	      seen.push(array[i]);
-	    }
-	  }
-	
-	  return seen;
-	}
-	
 	function noop() {}
 	
 	// Used for unique instance variables
@@ -163,7 +154,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    _classCallCheck(this, Shuffle);
 	
-	    this.options = (0, _assign2.default)({}, Shuffle.options, options);
+	    this.options = (0, _xtend2.default)(Shuffle.options, options);
 	
 	    this.useSizer = false;
 	    this.revealAppendedDelay = 300;
@@ -1270,7 +1261,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var addToEnd = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 	      var isSequential = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 	
-	      this._addItems(arrayUnique(newItems), addToEnd, isSequential);
+	      this._addItems((0, _arrayUniq2.default)(newItems), addToEnd, isSequential);
 	    }
 	
 	    /**
@@ -1309,7 +1300,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function remove(collection) {
 	      var _this8 = this;
 	
-	      collection = arrayUnique(collection);
+	      collection = (0, _arrayUniq2.default)(collection);
 	
 	      var items = collection.map(function (element) {
 	        return _this8.getItemByElement(element);
@@ -1581,6 +1572,37 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 1 */
 /***/ function(module, exports) {
 
+	// Polyfill for creating CustomEvents on IE9/10/11
+	
+	// code pulled from:
+	// https://github.com/d4tocchini/customevent-polyfill
+	// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent#Polyfill
+	
+	try {
+	  new window.CustomEvent("test");
+	} catch(e) {
+	 var CustomEvent = function(event, params) {
+	      var evt;
+	      params = params || {
+	          bubbles: false,
+	          cancelable: false,
+	          detail: undefined
+	      };
+	
+	      evt = document.createEvent("CustomEvent");
+	      evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+	      return evt;
+	  };
+	
+	  CustomEvent.prototype = window.Event.prototype;
+	  window.CustomEvent = CustomEvent; // expose definition to window
+	}
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
 	'use strict';
 	
 	var proto = Element.prototype;
@@ -1612,7 +1634,99 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 2 */
+/* 3 */
+/***/ function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+	
+	// there's 3 implementations written in increasing order of efficiency
+	
+	// 1 - no Set type is defined
+	function uniqNoSet(arr) {
+		var ret = [];
+	
+		for (var i = 0; i < arr.length; i++) {
+			if (ret.indexOf(arr[i]) === -1) {
+				ret.push(arr[i]);
+			}
+		}
+	
+		return ret;
+	}
+	
+	// 2 - a simple Set type is defined
+	function uniqSet(arr) {
+		var seen = new Set();
+		return arr.filter(function (el) {
+			if (!seen.has(el)) {
+				seen.add(el);
+				return true;
+			}
+		});
+	}
+	
+	// 3 - a standard Set type is defined and it has a forEach method
+	function uniqSetWithForEach(arr) {
+		var ret = [];
+	
+		(new Set(arr)).forEach(function (el) {
+			ret.push(el);
+		});
+	
+		return ret;
+	}
+	
+	// V8 currently has a broken implementation
+	// https://github.com/joyent/node/issues/8449
+	function doesForEachActuallyWork() {
+		var ret = false;
+	
+		(new Set([true])).forEach(function (el) {
+			ret = el;
+		});
+	
+		return ret === true;
+	}
+	
+	if ('Set' in global) {
+		if (typeof Set.prototype.forEach === 'function' && doesForEachActuallyWork()) {
+			module.exports = uniqSetWithForEach;
+		} else {
+			module.exports = uniqSet;
+		}
+	} else {
+		module.exports = uniqNoSet;
+	}
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	module.exports = extend
+	
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	
+	function extend() {
+	    var target = {}
+	
+	    for (var i = 0; i < arguments.length; i++) {
+	        var source = arguments[i]
+	
+	        for (var key in source) {
+	            if (hasOwnProperty.call(source, key)) {
+	                target[key] = source[key]
+	            }
+	        }
+	    }
+	
+	    return target
+	}
+
+
+/***/ },
+/* 5 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1661,7 +1775,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 3 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1670,7 +1784,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _getNumber = __webpack_require__(4);
+	var _getNumber = __webpack_require__(7);
 	
 	var _getNumber2 = _interopRequireDefault(_getNumber);
 	
@@ -1699,7 +1813,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Point;
 
 /***/ },
-/* 4 */
+/* 7 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1708,7 +1822,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Always returns a numeric value, given a value. Logic from jQuery's `isNumeric`.
 	 * @param {*} value Possibly numeric value.
 	 * @return {number} `value` or zero if `value` isn't numeric.
-	 * @private
 	 */
 	
 	Object.defineProperty(exports, "__esModule", {
@@ -1726,7 +1839,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 5 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1737,11 +1850,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _point = __webpack_require__(3);
+	var _point = __webpack_require__(6);
 	
 	var _point2 = _interopRequireDefault(_point);
 	
-	var _classes = __webpack_require__(6);
+	var _classes = __webpack_require__(9);
 	
 	var _classes2 = _interopRequireDefault(_classes);
 	
@@ -1835,7 +1948,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ShuffleItem;
 
 /***/ },
-/* 6 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1848,7 +1961,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 7 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1858,11 +1971,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.default = getNumberStyle;
 	
-	var _getNumber = __webpack_require__(4);
+	var _getNumber = __webpack_require__(7);
 	
 	var _getNumber2 = _interopRequireDefault(_getNumber);
 	
-	var _computedSize = __webpack_require__(8);
+	var _computedSize = __webpack_require__(11);
 	
 	var _computedSize2 = _interopRequireDefault(_computedSize);
 	
@@ -1877,7 +1990,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {number} The parsed computed value or zero if that fails because IE
 	 *     will return 'auto' when the element doesn't have margins instead of
 	 *     the computed style.
-	 * @private
 	 */
 	function getNumberStyle(element, style) {
 	  var styles = arguments.length <= 2 || arguments[2] === undefined ? window.getComputedStyle(element, null) : arguments[2];
@@ -1895,7 +2007,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 8 */
+/* 11 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1917,7 +2029,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ret;
 
 /***/ },
-/* 9 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1927,9 +2039,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.default = sorter;
 	
-	var _assign = __webpack_require__(10);
+	var _xtend = __webpack_require__(4);
 	
-	var _assign2 = _interopRequireDefault(_assign);
+	var _xtend2 = _interopRequireDefault(_xtend);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -1970,7 +2082,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	// You can return `undefined` from the `by` function to revert to DOM order.
 	function sorter(arr, options) {
-	  var opts = (0, _assign2.default)({}, defaults, options);
+	  var opts = (0, _xtend2.default)(defaults, options);
 	  var original = [].slice.call(arr);
 	  var revert = false;
 	
@@ -2024,59 +2136,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  return arr;
 	}
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = assign;
-	function assign(target) {
-	  var output = Object(target);
-	  for (var i = 1, length = arguments.length; i < length; i++) {
-	    var source = arguments[i];
-	    if (source !== undefined && source !== null) {
-	      for (var key in source) {
-	        if (source.hasOwnProperty(key)) {
-	          output[key] = source[key];
-	        }
-	      }
-	    }
-	  }
-	
-	  return output;
-	}
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	(function () {
-	  'use strict';
-	
-	  if (typeof window.CustomEvent === 'function') {
-	    return false;
-	  }
-	
-	  function CustomEvent(event, params) {
-	    params = params || { bubbles: false, cancelable: false, detail: undefined };
-	    var evt = document.createEvent('CustomEvent');
-	    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-	    return evt;
-	  }
-	
-	  CustomEvent.prototype = window.Event.prototype;
-	
-	  window.CustomEvent = CustomEvent;
-	})();
 
 /***/ }
 /******/ ])

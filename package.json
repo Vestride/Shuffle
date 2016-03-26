@@ -43,7 +43,10 @@
   },
   "homepage": "https://github.com/Vestride/Shuffle",
   "dependencies": {
-    "matches-selector": "^1.0.0"
+    "array-uniq": "^1.0.2",
+    "custom-event-polyfill": "^0.2.2",
+    "matches-selector": "^1.0.0",
+    "xtend": "^4.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.5.2",

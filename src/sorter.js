@@ -1,6 +1,6 @@
 'use strict';
 
-import assign from './assign';
+import xtend from 'xtend';
 
 // http://stackoverflow.com/a/962890/373422
 function randomize(array) {
@@ -39,7 +39,7 @@ let defaults = {
 
 // You can return `undefined` from the `by` function to revert to DOM order.
 export default function sorter(arr, options) {
-  let opts = assign({}, defaults, options);
+  let opts = xtend(defaults, options);
   let original = [].slice.call(arr);
   let revert = false;
 

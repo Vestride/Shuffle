@@ -1,14 +1,15 @@
 'use strict';
 
+import 'custom-event-polyfill';
 import matches from 'matches-selector';
+import arrayUnique from 'array-uniq';
+import xtend from 'xtend';
 import throttle from './throttle';
 import Point from './point';
 import ShuffleItem from './shuffle-item';
 import Classes from './classes';
 import getNumberStyle from './get-number-style';
 import sorter from './sorter';
-import assign from './assign';
-import './custom-event';
 
 function toArray(arrayLike) {
   return Array.prototype.slice.call(arrayLike);
@@ -44,19 +45,6 @@ function arrayIncludes(array, obj) {
   };
 }
 
-function arrayUnique(array) {
-  let seen = [];
-  let i = 0;
-  let length = array.length;
-  for (; i < length; i++) {
-    if (!arrayIncludes(seen, array[i])) {
-      seen.push(array[i]);
-    }
-  }
-
-  return seen;
-}
-
 function noop() {}
 
 // Used for unique instance variables
@@ -72,7 +60,7 @@ class Shuffle {
    * @constructor
    */
   constructor(element, options = {}) {
-    this.options = assign({}, Shuffle.options, options);
+    this.options = xtend(Shuffle.options, options);
 
     this.useSizer = false;
     this.revealAppendedDelay = 300;
