@@ -1,4 +1,5 @@
 @import "variables";
+@import "mixins";
 
 /*=============================================*\
  Some styles to show off masonry layout
@@ -18,8 +19,8 @@ $itemHeight: 220px;
     height: ($itemHeight * 2) + $pictureGutter; /* 2x the height + 1 gutter */
   }
 
-  // Ehh, i should really use something other than span6 to target this...
-  &.span6:not(.picture-item--h2) {
+  // Ehh, i should really use something other than col-6@sm to target this...
+  &.col-6\@sm:not(.picture-item--h2) {
 
     .picture-item__details {
       position: absolute;
@@ -38,9 +39,10 @@ $itemHeight: 220px;
   }
 
   .picture-item__inner {
-    background: $clouds;
+    position: relative;
     height: 100%;
     overflow: hidden;
+    background: $clouds;
   }
 
   img {
@@ -66,21 +68,14 @@ $itemHeight: 220px;
   .picture-item__tags {
     margin: 0;
   }
-
-  .picture-item__title {
-
-  }
 }
 
 // Autoprefixer misses a parenthesis.
-/* autoprefixer: off */
-@supports (filter: blur(1px)) or (-webkit-filter: blur(1px)) {
+@supports (filter: blur(1px)) {
 
-  .picture-item.span6:not(.picture-item--h2) {
-
+  .picture-item.col-6\@sm:not(.picture-item--h2) {
 
     .picture-item__blur {
-      /* autoprefixer: on */
       position: absolute;
       z-index: 1;
       top: calc(50px - #{$itemHeight}); // Caption is 50px tall.
@@ -140,7 +135,7 @@ $itemHeight: 220px;
 
 
 
-@media ( max-width: 47.9375em ) {
+@include breakpoint(sm, true) {
 
   .picture-item {
     height: auto;
@@ -162,8 +157,8 @@ $itemHeight: 220px;
     }
   }
 
-  .filter > .row-fluid,
-  .filter > .row-fluid > div {
+  .filter > .row,
+  .filter > .row > div {
     margin: 10px 0;
   }
 

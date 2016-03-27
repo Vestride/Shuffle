@@ -293,6 +293,7 @@ class Shuffle {
   /**
    * Set the initial css for each item
    * @param {Array.<ShuffleItem>} [items] Optionally specifiy at set to initialize.
+   * @private
    */
   _initItems(items = this.items) {
     items.forEach((item) => {
@@ -302,6 +303,7 @@ class Shuffle {
 
   /**
    * Remove element reference and styles.
+   * @private
    */
   _disposeItems(items = this.items) {
     items.forEach((item) => {
@@ -441,7 +443,8 @@ class Shuffle {
     var calculatedColumns = (containerWidth + gutter) / columnWidth;
 
     // Widths given from getStyles are not precise enough...
-    if (Math.abs(Math.round(calculatedColumns) - calculatedColumns) < this.options.columnThreshold) {
+    if (Math.abs(Math.round(calculatedColumns) - calculatedColumns) <
+        this.options.columnThreshold) {
       // e.g. calculatedColumns = 11.998876
       calculatedColumns = Math.round(calculatedColumns);
     }
@@ -714,7 +717,7 @@ class Shuffle {
     let y = item.point.y;
 
     if (this.options.useTransforms) {
-      styles.transform = `translate(${ x }px, ${ y }px) scale(${ item.scale })`;
+      styles.transform = `translate(${x}px, ${y}px) scale(${item.scale})`;
     } else {
       styles.left = x + 'px';
       styles.top = y + 'px';
@@ -785,9 +788,7 @@ class Shuffle {
 
     this._styleImmediately(immediates);
 
-    let promises = transitions.map((obj) => {
-      return this._transition(obj);
-    });
+    let promises = transitions.map(obj => this._transition(obj));
 
     if (transitions.length > 0 && this.options.speed > 0) {
       // Set flag that shuffle is currently in motion.

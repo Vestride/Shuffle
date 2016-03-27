@@ -414,6 +414,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Set the initial css for each item
 	     * @param {Array.<ShuffleItem>} [items] Optionally specifiy at set to initialize.
+	     * @private
 	     */
 	
 	  }, {
@@ -428,6 +429,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Remove element reference and styles.
+	     * @private
 	     */
 	
 	  }, {

@@ -7,16 +7,20 @@ includeHeader: true
 prism: true
 ---
 <section id="install">
-  <div class="container-fluid">
-    <h2>Install<a href="#install"></a></h2>
-    <div class="row-fluid">
-      <div class="span12">
-        <pre><code class="language">npm install shufflejs --save</code></pre>
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Install<a href="#install"></a></h2>
+      </div>
+      <div class="col-12@sm">
+        <div class="code-block">
+          <pre><code class="language">npm install shufflejs --save</code></pre>
+        </div>
         <p>Shuffle is also available on bower as <code>shufflejs</code>.</p>
       </div>
     </div>
-    <div class="row-fluid">
-      <nav class="span6" role="secondary">
+    <div class="row">
+      <nav class="col-6@sm" role="secondary">
         <a href="https://github.com/Vestride/Shuffle">View the GitHub repository</a>
         <a href="https://github.com/Vestride/Shuffle/releases">See the latest releases</a>
       </nav>
@@ -26,17 +30,23 @@ prism: true
 
 
 <section id="demo">
-  <div class="container-fluid">
-    <h2>Example<a href="#demo"></a></h2>
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Example<a href="#demo"></a></h2>
+      </div>
+    </div>
   </div>
 
-  <div class="container-fluid filter">
+  <div class="container filter">
 
-    <div class="row-fluid">
-      <input class="filter__search js-shuffle-search" type="search" placeholder="Search..." />
+    <div class="row">
+      <div class="col-12@sm">
+        <input class="filter__search js-shuffle-search" type="search" placeholder="Search..." />
+      </div>
     </div>
-    <div class="row-fluid">
-      <div class="span9">
+    <div class="row">
+      <div class="col-9@sm">
         <p class="filter__label">Filter:</p>
         <div class="filter-options btn-group">
           <button class="btn btn--warning" data-group="wallpaper">Wallpapers</button>
@@ -45,7 +55,7 @@ prism: true
           <button class="btn btn--warning" data-group="3d">3D Renders</button>
         </div>
       </div>
-      <div class="span3">
+      <div class="col-3@sm">
         <div class="m-nofloat pull-right">
           <p class="filter__label">Sort:</p>
           <select class="sort-options">
@@ -59,119 +69,175 @@ prism: true
 
   </div>
 
-  <div class="container-fluid">
-    <div id="grid" class="row-fluid m-row shuffle--container shuffle--fluid">
+  <div class="container">
+    <div id="grid" class="row shuffle--container shuffle--fluid">
       {% for item in site.items %}
           {% assign item = item %}
           {% include picture-item.html %}
       {% endfor %}
-      <div class="span3 m-span3 shuffle__sizer"></div>
+      <div class="col-3@sm col-3@xs shuffle__sizer"></div>
     </div>
   </div>
 </section>
 
 <section id="demos">
-  <div class="container-fluid">
-    <h2>Demos<a href="#demos"></a></h2>
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Demos<a href="#demos"></a></h2>
+      </div>
+    </div>
     {% include demo-list.html %}
   </div>
 </section>
 
 <section id="features">
-  <div class="container-fluid">
-    {% include features.html %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include features.html %}
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="options">
-  <div class="container-fluid">
-    {% include options.html %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include options.html %}
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="usage">
-  <div class="container-fluid">
-    {% include usage.html %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include usage.html %}
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="events">
-  <div class="container-fluid">
-    {% include events.html %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include events.html %}
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="sorting">
-  <div class="container-fluid">
-    {% include sorting.html %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include sorting.html %}
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="advanced-filters">
-  <div class="container-fluid">
-    {% include advanced-filters.html %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include advanced-filters.html %}
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="adding-removing">
-  <div class="container-fluid">
-    {% include adding-removing.html %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include adding-removing.html %}
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="public-methods">
-  <div class="container-fluid">
-    {% include public-methods.html %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include public-methods.html %}
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="extra-features">
-  <div class="container-fluid">
-    <h2>Extra Features<a href="#extra-features"></a></h2>
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Extra Features<a href="#extra-features"></a></h2>
 
-    <p>Shuffle likely will not grow much farther than the current feature set. If you need something with drag and drop, filling in gaps, more layout modes, etc., I suggest looking into <a target="_blank" href="http://packery.metafizzy.co/">packery</a> or <a target="_blank" href="http://isotope.metafizzy.co/">isotope</a>.</p>
+        <p>Shuffle likely will not grow much farther than the current feature set. If you need something with drag and drop, filling in gaps, more layout modes, etc., I suggest looking into <a target="_blank" href="http://packery.metafizzy.co/">packery</a> or <a target="_blank" href="http://isotope.metafizzy.co/">isotope</a>.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="dependencies">
-  <div class="container-fluid">
-    <h2>Dependencies<a href="#dependencies"></a></h2>
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Dependencies<a href="#dependencies"></a></h2>
+      </div>
+    </div>
   </div>
 </section>
 
 
 <section id="browsers">
-  <div class="container-fluid">
-    <h2>Supported Browsers<a href="#browsers"></a></h2>
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Supported Browsers<a href="#browsers"></a></h2>
 
-    <ul>
-      <li>Chrome</li>
-      <li>Firefox</li>
-      <li>IE 11+</li>
-      <li>Safari</li>
-    </ul>
+        <ul>
+          <li>Chrome</li>
+          <li>Firefox</li>
+          <li>IE 11+</li>
+          <li>Safari</li>
+        </ul>
 
-    <p>Many other browsers will likely work as well and support for others may be added with polyfills for ES5 features. If you require broader browser support, use the most recent <code>v3</code> of Shuffle.</p>
+        <p>Many other browsers will likely work as well and support for others may be added with polyfills for ES5 features. If you require broader browser support, use the most recent <code>v3</code> of Shuffle.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="be-social">
-  <div class="container-fluid">
-    <h2>Be Social<a href="#be-social"></a></h2>
-    <div class="text-center">
-      <iframe src="http://ghbtns.com/github-btn.html?user=Vestride&repo=Shuffle&type=watch&count=true&size=large" height="30" width="170" frameborder="0" scrolling="0" style="width:170px; height: 30px;" allowTransparency="true" seamless></iframe>
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Be Social<a href="#be-social"></a></h2>
+        <div class="text-center">
+          <iframe src="http://ghbtns.com/github-btn.html?user=Vestride&repo=Shuffle&type=watch&count=true&size=large" height="30" width="170" frameborder="0" scrolling="0" style="width:170px; height: 30px;" allowTransparency="true" seamless></iframe>
 
-      <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://vestride.github.io/Shuffle/" data-via="Vestride" data-size="large">Tweet</a>
+          <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://vestride.github.io/Shuffle/" data-via="Vestride" data-size="large">Tweet</a>
 
-      <div class="g-plusone" data-href="http://vestride.github.io/Shuffle/" data-size="standard" data-annotation="bubble"></div>
+          <div class="g-plusone" data-href="http://vestride.github.io/Shuffle/" data-size="standard" data-annotation="bubble"></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 
 <section id="changelog">
-  <div class="container-fluid">
-    {% include changelog.html %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include changelog.html %}
+      </div>
+    </div>
   </div>
 </section>
 

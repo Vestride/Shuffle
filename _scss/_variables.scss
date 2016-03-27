@@ -1,3 +1,11 @@
+$breakpoints: (
+  xs: 0px,
+  sm: 768px,
+  md: 1024px,
+  lg: 1392px,
+  xl: 1680px
+);
+
 // Colors from Flat UI
 
 $turqoise: #1ABC9C;
@@ -40,13 +48,3 @@ $gray30: #5D6D77;
 $gray40: $concrete;
 $gray50: $asbestos;
 $white: #FFF;
-
-
-@mixin clearfix() {
-
-  &::after {
-    content: " ";
-    display: table;
-    clear: both;
-  }
-}

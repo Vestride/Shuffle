@@ -5,7 +5,7 @@ description: A demo of how NOT to use images with shuffle
 extraJS: [ "demos/images-broken.js"]
 ---
 
-<div class="container-fluid">
+<div class="container">
   <h2>This probably looks broken.</h2>
   <p>Demo in which shuffle item dimensions are based on images without a fix. <a href="{{ site.baseurl }}{% post_url 2013-05-03-images %}">See here</a> for a solution.</p>
   <p>Resize the window and it'll fix itself.</p>
@@ -28,15 +28,15 @@ extraJS: [ "demos/images-broken.js"]
 
 </style>
 
-<div class="container-fluid">
-  <div class="shuffle--images row-fluid">
+<div class="container">
+  <div class="shuffle--images row">
     {% for item in site.items %}
-    <figure class="js-item img-item span3 m-span3">
+    <figure class="js-item img-item col-3@sm col-3@xs">
       <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="{{item.title}}"/>
       <figcaption>{{ item.groups }}</figcaption>
     </figure>
     {% endfor %}
-    <div class="span3 m-span3" id="js-sizer"></div>
+    <div class="col-3@sm col-3@xs" id="js-sizer"></div>
   </div>
 </div>
 

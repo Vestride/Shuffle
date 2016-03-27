@@ -5,15 +5,15 @@ description: When elements enter the viewport, they transition in from zero opac
 image: /demos/animated.jpg
 extraJS: [ "viewport.js", "demos/animate-in.js" ]
 ---
-<div class="container-fluid">
-  <div class="row-fluid">
+<div class="container">
+  <div class="row">
     <h2>Animated viewport entry</h2>
   </div>
 </div>
 
 
-<div class="container-fluid">
-  <div id="grid" class="row-fluid m-row shuffle--container shuffle--fluid shuffle--animatein">
+<div class="container">
+  <div id="grid" class="row shuffle--container shuffle--fluid shuffle--animatein">
     {% for item in site.items %}
         {% assign item = item %}
         {% include picture-item.html %}
@@ -26,13 +26,13 @@ extraJS: [ "viewport.js", "demos/animate-in.js" ]
         {% assign item = item %}
         {% include picture-item.html %}
     {% endfor %}
-    <div class="span3 m-span3 shuffle__sizer"></div>
+    <div class="col-3@sm col-3@xs shuffle__sizer"></div>
   </div>
 </div>
 
 
-<div class="container-fluid">
-  <div class="row-fluid">
+<div class="container">
+  <div class="row">
     <h2>Shuffle.js</h2>
     <p>{{ site.longDescription }}</p>
     <p>This demo was inspired by <a href="http://tympanus.net/codrops/">codrops</a>&rsquo; demo <a href="http://tympanus.net/codrops/2013/07/02/loading-effects-for-grid-items-with-css-animations/">Loading effects for grid items with css animations</a>.</p>

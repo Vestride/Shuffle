@@ -3,15 +3,20 @@
 <p>You can order the elements based off a function you supply. In the demo above, each item has a <code>data-date-created</code> and <code>data-title</code> attribute. When the select option menu changes, a sort object is passed to shuffle.</p>
 
 
-<pre rel="HTML"><code class="language-markup">&lt;select class="sort-options"&gt;
+<div class="code-block">
+  <pre rel="HTML"><code class="language-markup">&lt;select class="sort-options"&gt;
   &lt;option value=""&gt;Default&lt;/option&gt;
   &lt;option value="title"&gt;Title&lt;/option&gt;
   &lt;option value="date-created"&gt;Date Created&lt;/option&gt;
 &lt;/select&gt;</code></pre>
+</div>
 
-<pre rel="HTML"><code class="language-markup">&lt;figure class="picture-item" data-groups='[&quot;photography&quot;]' data-date-created="2010-09-14" data-title="Baseball"&gt;&hellip;&lt;/figure&gt;</code></pre>
+<div class="code-block">
+  <pre rel="HTML"><code class="language-markup">&lt;figure class="picture-item" data-groups='[&quot;photography&quot;]' data-date-created="2010-09-14" data-title="Baseball"&gt;&hellip;&lt;/figure&gt;</code></pre>
+</div>
 
-<pre rel="JavaScript"><code class="language-javascript">// Sorting options
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">// Sorting options
 $('.sort-options').on('change', function() {
   var sort = this.value,
       opts = {};
@@ -35,6 +40,7 @@ $('.sort-options').on('change', function() {
   // Filter elements
   $grid.shuffle('sort', opts);
 });</code></pre>
+</div>
 
 <p>The <code class="language-javascript">opts</code> parameter can contain two properties. <code class="language-javascript">reverse</code>, a boolean which will reverse the array. <code class="language-javascript">by</code> is a function that is passed the element wrapped in jQuery. In the case above, we&rsquo;re returning the value of the data-date-created or data-title attributes.</p>
 <p>Calling sort with an empty object will reset the elements to DOM order.</p>

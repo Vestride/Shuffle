@@ -1,0 +1,159 @@
+$grid-gutter-width: 16px;
+$grid-columns: 12;
+$grid-container: 'container';
+$grid-row: 'row';
+$grid-prefix: 'col';
+$grid-sizes: (xs, sm, md, lg);
+$grid-ratio-name: 'aspect';
+$grid-ratio-inner-name: 'aspect__inner';
+$grid-container-padding: (
+  xs: 3.5%,
+  sm: 7%
+);
+$grid-max-width--desktop: 1200px;
+$grid-ratios: (
+  (16, 9),
+  (9, 16),
+  (4, 3),
+  (3, 4),
+  (3, 2),
+  (3, 1),
+  (2, 3),
+  (2, 1),
+  (1, 2),
+  (1, 1)
+);
+
+// 7% => 0.07
+$_grid-padding-pct: map-get($grid-container-padding, "sm") / 100%;
+// 0.07 => 0.14 => 0.86
+$_grid-padding-value: 1 - $_grid-padding-pct * 2;
+
+// Size of the window when the grid row has hit max-width.
+$_viewport-at-max-grid-width: $grid-max-width--desktop / $_grid-padding-value;
+$viewport-at-max-grid-width: round($_viewport-at-max-grid-width) + 0px;
+$padding-at-max-grid-width: round($_viewport-at-max-grid-width * $_grid-padding-pct) + 0px;
+
+@function get-column-selector($number, $breakpoint) {
+  @return ".#{$grid-prefix}-#{$number}\\@#{$breakpoint}";
+}
+
+@function get-grid-breakpoint-selectors($breakpoint) {
+  $selectors: ();
+  @for $i from 1 through $grid-columns {
+    $selectors: append($selectors, get-column-selector($i, $breakpoint), comma);
+  }
+
+  @return $selectors;
+}
+
+@function get-all-grid-breakpoint-selectors() {
+  $selectors: ();
+  @each $breakpoint in $grid-sizes {
+    $selectors: append($selectors, get-grid-breakpoint-selectors($breakpoint), comma);
+  }
+
+  @return $selectors;
+}
+
+
+@mixin make-grid-columns() {
+  $selectors: get-all-grid-breakpoint-selectors();
+
+  #{$selectors} {
+    position: relative;
+    box-sizing: border-box;
+    // Prevent columns from collapsing when empty
+    min-height: 1px;
+    // Inner gutter via padding
+    padding-left:  ($grid-gutter-width / 2);
+    padding-right: ($grid-gutter-width / 2);
+  }
+}
+
+
+@mixin float-grid-columns($breakpoint) {
+  $selectors: get-grid-breakpoint-selectors($breakpoint);
+
+  #{$selectors} {
+    float: left;
+  }
+}
+
+
+@mixin grid-ratios($breakpoint: "") {
+  // If there is a grid breakpoint class here, prepend a @.
+  // e.g. "@sm" or "" when there isn't a class.
+  @if $breakpoint != "" {
+    $breakpoint: "\\@" + $breakpoint;
+  }
+
+  // Note @extend isn't used because it cannot be used within @media directives.
+  @each $list in $grid-ratios {
+    $top: nth($list, 1);
+    $bottom: nth($list, 2);
+    $name: "#{$top}x#{$bottom}";
+    .#{$grid-ratio-name}--#{$name}#{$breakpoint} {
+      padding-bottom: percentage($bottom / $top);
+    }
+  }
+
+  // A `none` class (eg `aspect--none@xs`) which removes the aspect ratio
+  .#{$grid-ratio-name}--none#{$breakpoint} {
+    @include no-aspect();
+
+    > .#{$grid-ratio-inner-name} {
+      position: static;
+    }
+  }
+}
+
+@mixin calc-grid-column($index, $columns, $breakpoint, $type) {
+  @if ($type == "width") and ($index > 0) {
+    .#{$grid-prefix}-#{$index}\@#{$breakpoint} {
+      width: percentage(($index / $columns));
+    }
+  }
+  @if ($type == "push") and ($index > 0) {
+    .#{$grid-prefix}-push-#{$index}\@#{$breakpoint} {
+      left: percentage(($index / $columns));
+    }
+  }
+  @if ($type == "push") and ($index == 0) {
+    .#{$grid-prefix}-push-0\@#{$breakpoint} {
+      left: auto;
+    }
+  }
+  @if ($type == "pull") and ($index > 0) {
+    .#{$grid-prefix}-pull-#{$index}\@#{$breakpoint} {
+      right: percentage(($index / $columns));
+    }
+  }
+  @if ($type == "pull") and ($index == 0) {
+    .#{$grid-prefix}-pull-0\@#{$breakpoint} {
+      right: auto;
+    }
+  }
+  @if ($type == "offset") {
+    .#{$grid-prefix}-offset-#{$index}\@#{$breakpoint} {
+      margin-left: percentage(($index / $columns));
+    }
+  }
+}
+
+@mixin loop-grid-columns($columns, $breakpoint, $type) {
+  @for $i from 0 through $columns {
+    @include calc-grid-column($i, $columns, $breakpoint, $type);
+  }
+}
+
+// Create grid for specific class
+@mixin make-grid($breakpoint, $columns: $grid-columns) {
+  @include float-grid-columns($breakpoint);
+  @include grid-ratios($breakpoint);
+
+  @include loop-grid-columns($columns, $breakpoint, "width");
+  @include loop-grid-columns($columns, $breakpoint, "pull");
+  @include loop-grid-columns($columns, $breakpoint, "push");
+  @include loop-grid-columns($columns, $breakpoint, "offset");
+}

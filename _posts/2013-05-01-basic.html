@@ -6,26 +6,26 @@ image: /demos/basic.jpg
 bodyClass: basic
 extraJS: [ "demos/homepage.js" ]
 ---
-<div class="container-fluid">
-  <div class="row-fluid">
+<div class="container">
+  <div class="row">
     <h2>Masonry with a sizer</h2>
   </div>
 </div>
 
 
-<div class="container-fluid">
-  <div id="grid" class="row-fluid m-row shuffle--container shuffle--fluid">
+<div class="container">
+  <div id="grid" class="row shuffle--container shuffle--fluid">
     {% for item in site.items %}
         {% assign item = item %}
         {% include picture-item.html %}
     {% endfor %}
-    <div class="span3 m-span3 shuffle__sizer"></div>
+    <div class="col-3@sm col-3@xs shuffle__sizer"></div>
   </div>
 </div>
 
 
-<div class="container-fluid">
-  <div class="row-fluid">
+<div class="container">
+  <div class="row">
     <h2>Shuffle.js</h2>
     <p>{{ site.longDescription }}</p>
   </div>

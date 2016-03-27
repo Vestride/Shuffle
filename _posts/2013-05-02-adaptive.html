@@ -9,7 +9,7 @@ extraCSS: [ "/css/gallery.css" ]
 
 <section class="container">
   <div class="row">
-    <h2 class="span12">Adaptive Layout with Compound Filters</h2>
+    <h2 class="col-12@sm">Adaptive Layout with Compound Filters</h2>
   </div>
 </section>
 
@@ -17,7 +17,7 @@ extraCSS: [ "/css/gallery.css" ]
 
   <div class="filter-options row">
 
-    <div class="span6">
+    <div class="col-6@sm">
       <div class="filter-group filter--colors js-colors">
         <h5 class="filter__label">Colors</h5>
         <button class="btn btn--go" data-filter-value="green"><span class="visuallyhidden">Green</span></button>
@@ -27,7 +27,7 @@ extraCSS: [ "/css/gallery.css" ]
       </div>
     </div>
 
-    <div class="span6">
+    <div class="col-6@sm">
       <div class="filter-group filter--shapes js-shapes">
         <h5 class="filter-group__label">Shapes</h5>
         <span class="ib">
@@ -49,7 +49,7 @@ extraCSS: [ "/css/gallery.css" ]
 
   <div class="shape-up js-shuffle">
     {% for shape in site.shapes %}
-    <div class="span3 shape shape--{{ shape.shape }} shape--{{ shape.color }}" data-shape="{{ shape.shape }}" data-color="{{ shape.color }}">
+    <div class="col-3@sm shape shape--{{ shape.shape }} shape--{{ shape.color }}" data-shape="{{ shape.shape }}" data-color="{{ shape.color }}">
       <div class="keep-ratio">
         <div class="shape__inner">
           <div class="shape__space">

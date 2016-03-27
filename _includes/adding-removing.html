@@ -2,16 +2,20 @@
 <p>You can add and remove elements from shuffle after it has been created. This also works for infinite scrolling.</p>
 
 <h3>Add a collection</h3>
-<pre rel="JavaScript"><code class="language-javascript">// Adds 2 &lt;div&gt;s to an existing Shuffle instance.
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">// Adds 2 &lt;div&gt;s to an existing Shuffle instance.
 var $item1 = $('&lt;div class="gallery-item item1"&gt;')
 var $item2 = $('&lt;div class="gallery-item item2"&gt;')
 var $items = $item1.add($item2);
 $('#my-shuffle').append($items);
 $('#my-shuffle').shuffle('appended', $items);</code></pre>
+</div>
 
 <h3>Remove a collection</h3>
-<pre rel="JavaScript"><code class="language-javascript">// Remove the 2 &lt;div&gt;s which were just added.
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">// Remove the 2 &lt;div&gt;s which were just added.
 var $items = $('.gallery-item');
 $('#my-shuffle').shuffle('remove', $items);</code></pre>
+</div>
 
 <p class="demo-link-container">Check out the <a href="{{ site.baseurl }}{% post_url 2013-06-19-adding-removing %}">demo</a>.</p>

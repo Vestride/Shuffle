@@ -66,7 +66,7 @@ h4 {
   font-size: 1.25em;
 }
 
-@media ( max-width: 47.9375em ) {
+@include breakpoint(sm, true) {
   h1 {
     font-size: 8vw;
     margin: 3vw 0;
@@ -97,8 +97,6 @@ h3:hover > a {
   text-indent: -999em;
 }
 
-
-
 .unstyled {
   list-style-type: none;
   padding: 0;
@@ -118,5 +116,22 @@ h3:hover > a {
     &:hover {
       color: white;
     }
+  }
+}
+
+:not(pre) > code {
+  padding: 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  font-size: 85%;
+  color: get-color(black);
+  background-color: rgba(0,0,0,0.04);
+  border-radius: 3px;
+
+  &::before,
+  &::after {
+    letter-spacing: -0.2em;
+    content: "\00a0";
   }
 }

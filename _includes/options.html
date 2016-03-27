@@ -1,7 +1,8 @@
 <h2>Options<a href="#options"></a></h2>
 
 <p>Settings you can change (these are the defaults).</p>
-<pre rel="JavaScript"><code class="language-javascript">// Overrideable options
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">// Overrideable options
 Shuffle.options = {
   group: ALL_ITEMS, // Initial filter group.
   speed: 250, // Transition/animation speed (milliseconds).
@@ -19,5 +20,6 @@ Shuffle.options = {
   sequentialFadeDelay: 150, // Delay between each item that fades in when adding items.
   supported: CAN_TRANSITION_TRANSFORMS // Whether to use transforms or absolute positioning.
 };</code></pre>
+</div>
 
 <p>No options <em>need</em> to be specified, but <code>itemSelector</code> should be used. Other common options to change are <code>speed</code>, <code>easing</code>, <code>gutterWidth</code>, and <code>columnWidth</code> (or <code>sizer</code>).</p>

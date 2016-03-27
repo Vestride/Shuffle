@@ -7,7 +7,7 @@
 {% endif %}
 {% if item.cols %}{% assign cols = item.cols %}{% else %}{% assign cols = 3 %}{% endif %}
 {% assign description = item.description %}
-<figure class="span{{ cols }} m-span3 picture-item{{ extras }}" data-groups='{{ groups }}' data-date-created="{{ item.date }}" data-title="{{ item.title }}">
+<figure class="col-{{ cols }}@sm col-3@xs picture-item{{ extras }}" data-groups='{{ groups }}' data-date-created="{{ item.date }}" data-title="{{ item.title }}">
   <div class="picture-item__inner">
     <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="" height="145" width="230" />
     <div class="picture-item__details clearfix">

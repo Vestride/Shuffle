@@ -5,15 +5,16 @@
 
 <p>In this example, shuffle is using the fluid grid from the <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap v2.3</a>. It's also making use of <a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/"><abbr title="Block-Element-Modifier">BEM</abbr></a> class naming.</p>
 
-<pre rel="HTML"><code class="language-markup">&lt;div id="grid" class="row-fluid"&gt;
-  &lt;figure class="span3 picture-item" data-groups='["photography"]'&gt;
+<div class="code-block">
+  <pre rel="HTML"><code class="language-markup">&lt;div id="grid" class="row"&gt;
+  &lt;figure class="col-3@sm picture-item" data-groups='["photography"]'&gt;
     &lt;img src="/img/baseball.png" height="145" width="230" /&gt;
     &lt;div class="picture-item__details"&gt;
       &lt;figcaption class="picture-item__title"&gt;Baseball&lt;/figcaption&gt;
       &lt;p class="picture-item__tags"&gt;photography&lt;/p&gt;
     &lt;/div&gt;
   &lt;/figure&gt;
-  &lt;figure class="span6 picture-item" data-groups='["wallpaper","3d"]'&gt;
+  &lt;figure class="col-6@sm picture-item" data-groups='["wallpaper","3d"]'&gt;
     &lt;img src="/img/tennis-ball.png" height="145" width="230" /&gt;
     &lt;div class="picture-item__details"&gt;
       &lt;figcaption class="picture-item__title"&gt;Tennis&lt;/figcaption&gt;
@@ -21,14 +22,14 @@
     &lt;/div&gt;
     &lt;p class="picture-item__description"&gt;Some description here.&lt;/p&gt;
   &lt;/figure&gt;
-  &lt;figure class="span3 picture-item" data-groups='["wallpaper","3d"]'&gt;
+  &lt;figure class="col-3@sm picture-item" data-groups='["wallpaper","3d"]'&gt;
     &lt;img src="/img/imac.png" height="145" width="230" /&gt;
     &lt;div class="picture-item__details"&gt;
       &lt;figcaption class="picture-item__title"&gt;iMac&lt;/figcaption&gt;
       &lt;p class="picture-item__tags"&gt;wallpaper, 3d&lt;/p&gt;
     &lt;/div&gt;
   &lt;/figure&gt;
-  &lt;figure class="span3 picture-item picture-item--h2" data-groups='["graphics"]'&gt;
+  &lt;figure class="col-3@sm picture-item picture-item--h2" data-groups='["graphics"]'&gt;
     &lt;img src="/img/master-chief.png" height="145" width="230" /&gt;
     &lt;div class="picture-item__details"&gt;
       &lt;figcaption class="picture-item__title"&gt;Master Chief&lt;/figcaption&gt;
@@ -37,6 +38,7 @@
     &lt;p class="picture-item__description"&gt;Some description here.&lt;/p&gt;
   &lt;/figure&gt;
 &lt;/div&gt;</code></pre>
+</div>
 
 <h3 id="columns">How column widths work<a href="#how-column-widths-work"></a></h3>
 <p>The <code>columnWidth</code> option is used to calculate the column width. You have several options:</p>
@@ -49,7 +51,8 @@
 
 <h3>A basic setup example</h3>
 <p>If you want functional buttons, check out <a href="{{ site.baseurl }}/js/demos/homepage.js">the js file</a>.</p>
-<pre rel="JavaScript"><code class="language-javascript">$(document).ready(function() {
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">$(document).ready(function() {
   var $grid = $('#grid'),
       $sizer = $grid.find('.shuffle__sizer');
 
@@ -58,3 +61,4 @@
     sizer: $sizer
   });
 });</code></pre>
+</div>

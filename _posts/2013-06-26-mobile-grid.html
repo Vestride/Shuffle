@@ -4,11 +4,11 @@ title: Mobile Grid Layout Test
 description: Testing out the mobile grid for this site
 ---
 
-<div class="container-fluid">
+<div class="container">
   <h2>Mobile Grid Demo</h2>
 </div>
 
-<style scoped>
+<style>
 
   article {
     height: 30px;
@@ -18,30 +18,30 @@ description: Testing out the mobile grid for this site
 
 </style>
 
-<div class="container-fluid">
-  <div class="row-fluid m-row">
-    <article class="span7 m-span3">
-      span7 | m-span3
+<div class="container">
+  <div class="row">
+    <article class="col-7@sm col-3@xs">
+      col-7@sm | col-3@xs
     </article>
-    <article class="span4 m-span1">
-      span4 | m-span1
+    <article class="col-4@sm col-1@xs">
+      col-4@sm | col-1@xs
     </article>
-    <article class="span1 m-span2">
-      span1 | m-span2
+    <article class="col-1@sm col-2@xs">
+      col-1@sm | col-2@xs
     </article>
   </div>
 
   <hr>
 
-  <div class="row-fluid m-row">
-    <article class="span6 m-span6"></article>
+  <div class="row">
+    <article class="col-6@sm col-6@xs"></article>
   </div>
 
   <hr>
 
-  <div class="row-fluid m-row">
-    <article class="span5 m-span3"></article>
-    <article class="span7 m-span3"></article>
+  <div class="row">
+    <article class="col-5@sm col-3@xs"></article>
+    <article class="col-7@sm col-3@xs"></article>
   </div>
 
   <hr>
