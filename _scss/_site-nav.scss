@@ -56,6 +56,14 @@
   background-color: $wetAsphalt;
 }
 
+.has-code-block .code-block pre {
+  margin-bottom: 0;
+}
+
+.has-code-block + .site-footer {
+  margin-top: 0;
+}
+
 .site-footer__credit {
   margin: 0;
   text-align: right;

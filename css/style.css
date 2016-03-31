@@ -366,7 +366,7 @@ textarea {
 *::after {
   box-sizing: border-box; }
 
-pre {
+pre.max-height {
   max-height: 30em; }
 
 picture {
@@ -916,6 +916,12 @@ h3:hover > a {
   margin-top: 2em;
   padding: 1em 0;
   background-color: #34495E; }
+
+.has-code-block .code-block pre {
+  margin-bottom: 0; }
+
+.has-code-block + .site-footer {
+  margin-top: 0; }
 
 .site-footer__credit {
   margin: 0;

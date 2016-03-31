@@ -3,6 +3,7 @@ layout: default
 title: Animate In Demo
 description: When elements enter the viewport, they transition in from zero opacity and from the bottom.
 image: /demos/animated.jpg
+prism: true
 extraJS: [ "viewport.js", "demos/animate-in.js" ]
 ---
 <div class="container">
@@ -31,11 +32,18 @@ extraJS: [ "viewport.js", "demos/animate-in.js" ]
 </div>
 
 
-<div class="container">
+<div class="container has-code-block">
   <div class="row">
-    <h2>Shuffle.js</h2>
-    <p>{{ site.longDescription }}</p>
-    <p>This demo was inspired by <a href="http://tympanus.net/codrops/">codrops</a>&rsquo; demo <a href="http://tympanus.net/codrops/2013/07/02/loading-effects-for-grid-items-with-css-animations/">Loading effects for grid items with css animations</a>.</p>
+    <div class="col-12@sm">
+      <p>This demo was inspired by <a href="http://tympanus.net/codrops/">codrops</a>&rsquo; demo <a href="http://tympanus.net/codrops/2013/07/02/loading-effects-for-grid-items-with-css-animations/">Loading effects for grid items with css animations</a>.</p>
+    </div>
+    <div class="col-12@sm">
+      <h2>Source code for this demo</h2>
+      <p>Link to <a href="{{ site.baseurl }}/js/demos/animate-in.js">demo source</a></p>
+      <div class="code-block">
+        <pre rel="JavaScript" data-src="{{ site.baseurl }}/js/demos/animate-in.js"></pre>
+      </div>
+    </div>
   </div>
 </div>
 

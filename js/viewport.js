@@ -1,38 +1,4 @@
-// Viewport Helper
-// --------------------------------------------
-//
-// * **Class:** Viewport
-// * **Version:** 1.0
-// * **Modified:** 06/26/2013
-// * **Author:** Glen Cheney
-// * **Dependencies:** jQuery 1.7+, SONY Settings, throttle/debounce
-//
-// *Notes:*
-//
-// If you need to be notified when an element is scrolled into view, use this module.
-// This module keeps track of all elements that want to be watched and caches their offsets
-// and dimensions in order to keep scrolling as smooth as possible.
-//
-// *Example Usage:*
-//
-//      Viewport.add({
-//        element: document.getElementById('some-wrapper'),
-//        threshold: '50%',
-//        enter: function( element ) {
-//          console.log('the top of "element" is 50% in view');
-//        },
-//        leave: function() {
-//          console.log('bottom of element has left the viewport');
-//        }
-//      });
-//
-// *Viewport.add parameters:*
-//
-// * `element` is a DOM element and `callback` is a function. `this` in the callback is the element.
-// * Using an options object, a `threshold` can be set.
-//   It is either an integer value from the bottom of the window, a string percentage, or a float
-//   between 0 and 1 which represents the percent.
-//
+// Legacy Viewport helper.
 
 (function( $ ) {
 
@@ -131,7 +97,7 @@
       $window.on('resize.viewport', $.proxy( self.onResize, self ));
 
       // Throttle scrolling because it doesn't need to be super accurate
-      $window.on('scroll.viewport', $.throttle( self.throttleTime, $.proxy( self.onScroll, self ) ));
+      $window.on('scroll.viewport', $.proxy( self.onScroll, self ));
 
       self.hasActiveHandlers = true;
     },

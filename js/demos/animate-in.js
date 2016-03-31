@@ -1,45 +1,43 @@
 'use strict';
 
 var Shuffle = window.shuffle;
-var Viewport = window.viewport;
-
-function toArray(arrayLike) {
-  if ('from' in Array) {
-    return Array.from(arrayLike);
-  }
-
-  return Array.prototype.slice.call(arrayLike);
-}
+var Viewport = window.Viewport;
 
 var Demo = function () {
   this.element = document.getElementById('grid');
-  this.gridItems = toArray(this.element.querySelectorAll('.picture-item'));
-  this.sizer = this.element.querySelector('.shuffle__sizer');
+  this.gridItems = this.element.querySelectorAll('.picture-item');
+  var sizer = this.element.querySelector('.shuffle__sizer');
 
   this.shuffle = new Shuffle(this.element, {
     itemSelector: '.picture-item',
-    sizer: this.sizer,
+    sizer: sizer,
   });
 
   this.addViewportItems();
 
+  // Add the transition class to the items after ones that are in the viewport
+  // have received the `in` class.
   setTimeout(function () {
     this.addTransitionToItems();
   }.bind(this), 100);
 };
 
+/**
+ * Loop through each grid item and add it to the viewport watcher.
+ */
 Demo.prototype.addViewportItems = function () {
-  var handler = this.showItemsInViewport;
-
-  this.gridItems.forEach(function () {
+  for (var i = 0; i < this.gridItems.length; i++) {
     Viewport.add({
-      element: this,
+      element: this.gridItems[i],
       threshold: 130,
-      enter: handler,
+      enter: this.showItemsInViewport,
     });
-  });
+  }
 };
 
+/**
+ * Add the `in` class to the element after it comes into view.
+ */
 Demo.prototype.showItemsInViewport = function () {
   this.classList.add('in');
 };
@@ -49,9 +47,10 @@ Demo.prototype.showItemsInViewport = function () {
  * visible ones will snap into place.
  */
 Demo.prototype.addTransitionToItems = function () {
-  this.gridItems.forEach(function (item) {
-    item.querySelector('.picture-item__inner').classList.add('picture-item__inner--transition');
-  });
+  for (var i = 0; i < this.gridItems.length; i++) {
+    var inner = this.gridItems[i].querySelector('.picture-item__inner');
+    inner.classList.add('picture-item__inner--transition');
+  }
 };
 
 /**
