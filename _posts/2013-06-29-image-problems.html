@@ -2,34 +2,35 @@
 layout: default
 title: Image based items
 description: A demo of how NOT to use images with shuffle
-extraJS: [ "demos/images-broken.js"]
+extraJS: [ "demos/images.js"]
 ---
 
 <div class="container">
   <h2>This probably looks broken.</h2>
-  <p>Demo in which shuffle item dimensions are based on images without a fix. <a href="{{ site.baseurl }}{% post_url 2013-05-03-images %}">See here</a> for a solution.</p>
+  <p>In this demo, the height of each item in the grid depends on the image. If Shuffle is initialized before the images load, the heights it calculates will be incorrect. <a href="{{ site.baseurl }}{% post_url 2013-05-03-images %}">See here</a> for a solution.</p>
   <p>Resize the window and it'll fix itself.</p>
 </div>
 
 
 <style>
-  .shuffle--images {
+  .my-grid-with-images {
     position: relative;
+    overflow: hidden;
   }
 
-  .shuffle--images .img-item {
+  .my-grid-with-images .img-item {
     margin-top: 10px;
     margin-left: 0;
   }
 
-  .shuffle--images .img-item img {
+  .my-grid-with-images .img-item img {
     width: 100%;
   }
 
 </style>
 
 <div class="container">
-  <div class="shuffle--images row">
+  <div class="my-grid-with-images row">
     {% for item in site.items %}
     <figure class="js-item img-item col-3@sm col-3@xs">
       <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="{{item.title}}"/>

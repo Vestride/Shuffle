@@ -1,62 +1,50 @@
 ---
 layout: default
-title: Using images with imagesloaded.js
-description: A Shuffle.js demo using Desandro's imagesLoaded plugin. This comes in very handy when using shuffle with images affect the layout of shuffle items
+title: Using images with Shuffle
+description: A Shuffle.js demo using aspect ratios to set the size of images.
 image: /demos/images.jpg
-extraJS: [ "imagesloaded.pkgd.js", "demos/images.js"]
+extraJS: ["demos/images.js"]
 prism: true
 ---
 
 <div class="container">
-  <h2>Images!</h2>
+  <h2>Using images with Shuffle</h2>
   <p>You can encounter problems when shuffle item dimensions depend on images. <a href="{{ site.baseurl }}{% post_url 2013-06-29-image-problems %}">Like this demo</a>. There are three good solutions to this.</p>
   <ol>
     <li>Set an explicit height on <code>.shuffle-item</code>s like the <a href="{{ site.baseurl }}{% post_url 2013-05-01-basic %}">basic demo</a>.</li>
-    <li>Similar to number 1, make the height of the image container a percentage of the width. This can be seen in the nav images above with the <code>div.keep-ratio</code>.</li>
-    <li>Get notified when images load (this page). In this case, I'm using <a href="http://desandro.github.io/imagesloaded/">Desandro's images loaded plugin</a>. Please note that imagesloaded does not support IE7.</li>
+    <li>Similar to number 1, make the height of the image container a percentage of the width. If you know the aspect ratio of the images you're using, this is the technique you should use. This demo uses this technique.</li>
+    <li>Get notified when images load and call <code>myShuffleInstance.layout()</code>. I recommend using <a href="http://desandro.github.io/imagesloaded/">Desandro's images loaded plugin</a> to know when your images have finished loading.</li>
   </ol>
 </div>
 
 
 <style>
-  .shuffle-wrap {
+
+  .my-grid-with-images {
     position: relative;
+    overflow: hidden;
   }
 
-  .shuffle--images {
-    position: relative;
-    visibility: hidden;
-  }
-
-  .shuffle--images.images-loaded {
-    visibility: visible;
-  }
-
-  .shuffle--images .img-item {
+  .my-grid-with-images .img-item {
     margin-top: 10px;
     margin-left: 0;
   }
 
-  .shuffle--images .img-item img {
+  .my-grid-with-images .img-item img {
     width: 100%;
-  }
-
-  .loader {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -16px;
-    margin-left: -16px;
   }
 
 </style>
 
 <div class="container shuffle-wrap">
-  <img id="loader" class="loader" alt="Loading..." src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAzMDAgMzAwIgogICAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmVyc2lvbj0iMS4xIj4KICA8cGF0aCBkPSJNIDE1MCwwCiAgICAgICAgICAgYSAxNTAsMTUwIDAgMCwxIDEwNi4wNjYsMjU2LjA2NgogICAgICAgICAgIGwgLTM1LjM1NSwtMzUuMzU1CiAgICAgICAgICAgYSAtMTAwLC0xMDAgMCAwLDAgLTcwLjcxMSwtMTcwLjcxMSB6IgogICAgICAgIGZpbGw9IiMzZDdmZTYiPgogICAgPGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiBhdHRyaWJ1dGVUeXBlPSJYTUwiCiAgICAgICAgICAgdHlwZT0icm90YXRlIiBmcm9tPSIwIDE1MCAxNTAiIHRvPSIzNjAgMTUwIDE1MCIKICAgICAgICAgICBiZWdpbj0iMHMiIGR1cj0iMXMiIGZpbGw9ImZyZWV6ZSIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+CiAgPC9wYXRoPgo8L3N2Zz4K" />
-  <div class="shuffle--images row">
+  <div class="my-grid-with-images row">
     {% for item in site.items %}
     <figure class="js-item img-item col-3@sm col-3@xs">
-      <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="{{item.title}}"/>
+      <div class="aspect aspect--16x9">
+        <div class="aspect__inner">
+          <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="{{item.title}}"/>
+        </div>
+      </div>
       <figcaption>{{ item.groups }}</figcaption>
     </figure>
     {% endfor %}
@@ -65,12 +53,70 @@ prism: true
 </div>
 
 
-<section>
-  <div class="container">
-    <h2>Shuffle.js</h2>
-    <p>{{ site.longDescription }}</p>
+<div class="container has-code-block">
+  <div class="row">
+    <div class="col-12@sm">
+      <h2>Setup</h2>
+    </div>
+    <div class="col-12@sm">
+      <h3>Maintaining aspect ratios</h3>
+      <p>With two elements, you can create a box which will scale with the page. Here's an example:</p>
+      <div style="width:30%;">
+        <div class="aspect aspect--2x1" style="background-color: #3498DB; color: white;">
+          <div class="aspect__inner">
+            <div class="table-center-wrap text-center full-width full-height">
+              <div class="table-center">A 2:1 box</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p>With this knowledge, you can force an image to fit inside this box and, when the image loads, it will not change the size of the box.</p>
+      <div class="code-block">
+        <pre rel="CSS"><code class="language-css">.aspect {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  overflow: hidden;
+}
+
+.aspect__inner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+/* Add more aspect ratios here */
+.aspect--16x9 {
+  padding-bottom: 56.25%;
+}</code></pre>
+      </div>
+    </div>
+    <div class="col-12@sm">
+      <h3>Markup for each item</h3>
+      <p>The most important thing here is that the images are wrapped in two other elements which define its size. This means that the size of the <code>&lt;figure&gt;</code> does not depend on the image.</p>
+      <div class="code-block">
+        <pre data-line="2-6" rel="HTML"><code class="language-markup">&lt;figure class="js-item img-item col-3@sm col-3@xs"&gt;
+  &lt;div class="aspect aspect--16x9"&gt;
+    &lt;div class="aspect__inner"&gt;
+      &lt;img src="/img/tennis-ball.png" alt="3D render of a tennis ball"&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;figcaption&gt;wallpaper3d&lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+      </div>
+    </div>
+    <div class="col-12@sm">
+      <h3>JavaScript used for this demo</h3>
+      <p>Link to <a href="{{ site.baseurl }}/js/demos/images.js">demo source</a></p>
+      <div class="code-block">
+        <pre rel="JavaScript" data-src="{{ site.baseurl }}/js/demos/images.js"></pre>
+      </div>
+    </div>
   </div>
-</section>
+</div>
 
 
 {% include credit-jake.html %}

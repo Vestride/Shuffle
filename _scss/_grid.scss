@@ -25,6 +25,11 @@
   }
 }
 
+// .aspect
+.#{$grid-ratio-name} {
+  @include keep-aspect();
+}
+
 // .aspect--16x9 etc.
 @include grid-ratios();
 

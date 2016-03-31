@@ -37,8 +37,8 @@ pagejs: false
   <div id="grid" class="shuffle--container row">
     {% for item in site.items %}
     <figure class="js-item img-item col-3@sm col-3@xs">
-      <div class="keep-ratio four-three">
-        <div class="keep-ratio-inner">
+      <div class="aspect aspect--4x3">
+        <div class="aspect__inner">
           <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="{{item.title}}"/>
         </div>
       </div>

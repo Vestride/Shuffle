@@ -50,7 +50,7 @@ extraCSS: [ "/css/gallery.css" ]
   <div class="shape-up js-shuffle">
     {% for shape in site.shapes %}
     <div class="col-3@sm shape shape--{{ shape.shape }} shape--{{ shape.color }}" data-shape="{{ shape.shape }}" data-color="{{ shape.color }}">
-      <div class="keep-ratio">
+      <div class="aspect">
         <div class="shape__inner">
           <div class="shape__space">
           </div>

@@ -538,6 +538,13 @@ h3:hover > a {
         -ms-flex-pack: center;
             justify-content: center; }
 
+.aspect {
+  position: relative;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%; }
+
 .aspect--16x9 {
   padding-bottom: 56.25%; }
 
@@ -1171,23 +1178,6 @@ button {
 .ib {
   display: inline-block; }
 
-.aspect,
-.keep-ratio {
-  position: relative;
-  width: 100%;
-  height: 0;
-  overflow: hidden;
-  padding-bottom: 100%; }
-  .aspect.four-three,
-  .keep-ratio.four-three {
-    padding-bottom: 75%; }
-
-.aspect--4x3 {
-  padding-bottom: 75%; }
-
-.aspect--16x9 {
-  padding-bottom: 56.25%; }
-
 .hidden {
   display: none !important;
   visibility: hidden; }
@@ -1213,6 +1203,12 @@ button {
 
 .pull-right {
   float: right; }
+
+.full-width {
+  width: 100%; }
+
+.full-height {
+  height: 100%; }
 
 .hide-text {
   font: 0/0 a;
