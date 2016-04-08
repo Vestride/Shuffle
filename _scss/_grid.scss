@@ -64,6 +64,11 @@
   }
 }
 
+@include breakpoint(md) {
+
+  @include make-grid(md);
+}
+
 @media screen and (min-width: $viewport-at-max-grid-width) {
 
   .#{$grid-container} {

@@ -91,20 +91,20 @@ items:
     title: Baseball
     img: baseball.png
     original: baseball.jpg
-    cols: 3
+    cols: [ 3, 4, 3 ]
   - groups: [ wallpaper, 3d ]
     date: 2011-08-14
     title: Tennis
     img: tennis-ball.png
     original: tennis-ball.jpg
-    description: longDescription
-    cols: 6
+    extras: [ overlay ]
+    cols: [3, 8, 6]
   - groups: [ wallpaper, 3d ]
     date: 2009-05-27
     title: iMac
     img: imac.png
     original: imac.jpg
-    cols: 3
+    cols: [ 3, 4, 3 ]
   - groups: [ graphics ]
     date: 2012-05-14
     title: Master Chief
@@ -112,27 +112,27 @@ items:
     original: Master_Chief_Portrait_by_Eightfold_Studios.jpg
     description: longDescription
     extras: [ h2 ]
-    cols: 3
+    cols: [ 6, 4, 3 ]
   - groups: [ wallpaper, 3d ]
     date: 2009-09-14
     title: Eightfold
     img: es-blue.png
     original: es-blue.jpg
-    cols: 3
+    cols: [ 3, 4, 3 ]
   - groups: [ photography ]
     date: 2012-03-14
     title: Pumpkin
     img: pumpkin.png
     original: pumpkin.jpg
-    description: longDescription
-    cols: 6
+    extras: [ overlay ]
+    cols: [3, 8, 6]
   - groups: [ wallpaper, 3d ]
     date: 2013-05-19
     title: Vestride
     img: vestride-red.png
     original: vestride-red.jpg
     extras: [ h2 ]
-    cols: 6
+    cols: [3, 8, 6]
   - groups: [ graphics ]
     date: 2013-02-01
     title: Newegg
@@ -140,29 +140,29 @@ items:
     original: newegg.jpg
     description: longDescription
     extras: [ h2 ]
-    cols: 3
+    cols: [ 6, 4, 3 ]
   - groups: [ wallpaper ]
     date: 2000-01-01
     title: Arc
     img: eightfoldarc.png
     original: eightfoldarc.jpg
-    cols: 3
+    cols: [ 3, 4, 3 ]
   - groups: [ photography ]
     date: 2012-07-04
     title: Ground
     img: ground.png
     original: ground!.jpg
-    cols: 3
+    cols: [ 3, 4, 3 ]
   - groups: [ wallpaper ]
     date: 2011-08-12
     title: Grass
     img: grassy-hills.png
     original: grassy-hills.tif
-    description: longDescription
-    cols: 6
+    extras: [ overlay ]
+    cols: [3, 8, 6]
   - groups: [ wallpaper, 3d ]
     date: 2013-05-19
     title: Vestride
     img: vestride-classy.png
     original: vestride-classy.jpg
-    cols: 3
+    cols: [ 3, 4, 3 ]

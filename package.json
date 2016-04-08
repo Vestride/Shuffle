@@ -17,6 +17,9 @@
   ],
   "main": "dist/shuffle.js",
   "scripts": {
+    "compile": "gulp scripts",
+    "css": "gulp css",
+    "watch": "gulp watch",
     "test": "jest"
   },
   "jest": {

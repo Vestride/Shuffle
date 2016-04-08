@@ -53,24 +53,6 @@ Demo.prototype.addTransitionToItems = function () {
   }
 };
 
-/**
- * Re-layout shuffle when images load. This is only needed below 768 pixels
- * because the .picture-item height is auto and therefore the height of the
- * picture-item is dependent on the image. I recommend using imagesloaded by
- * desandro to determine when all your images have loaded.
- */
-Demo.prototype.listenForImageLoads = function () {
-  var imgs = this.element.querySelectorAll('img');
-  var handler = function () {
-    this.shuffle.update();
-    Viewport.refresh();
-  }.bind(this);
-
-  for (var i = imgs.length - 1; i >= 0; i--) {
-    imgs[i].addEventListener('load', handler, false);
-  }
-};
-
 document.addEventListener('DOMContentLoaded', function () {
   window.demo = new Demo();
 });

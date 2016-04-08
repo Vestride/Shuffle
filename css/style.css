@@ -855,6 +855,138 @@ h3:hover > a {
   .row {
     max-width: 1200px; } }
 
+@media screen and (min-width: 1024px) {
+  .col-1\@md, .col-2\@md, .col-3\@md, .col-4\@md, .col-5\@md, .col-6\@md, .col-7\@md, .col-8\@md, .col-9\@md, .col-10\@md, .col-11\@md, .col-12\@md {
+    float: left; }
+  .aspect--16x9\@md {
+    padding-bottom: 56.25%; }
+  .aspect--9x16\@md {
+    padding-bottom: 177.77778%; }
+  .aspect--4x3\@md {
+    padding-bottom: 75%; }
+  .aspect--3x4\@md {
+    padding-bottom: 133.33333%; }
+  .aspect--3x2\@md {
+    padding-bottom: 66.66667%; }
+  .aspect--3x1\@md {
+    padding-bottom: 33.33333%; }
+  .aspect--2x3\@md {
+    padding-bottom: 150%; }
+  .aspect--2x1\@md {
+    padding-bottom: 50%; }
+  .aspect--1x2\@md {
+    padding-bottom: 200%; }
+  .aspect--1x1\@md {
+    padding-bottom: 100%; }
+  .aspect--none\@md {
+    height: auto;
+    padding-bottom: 0;
+    overflow: visible; }
+    .aspect--none\@md > .aspect__inner {
+      position: static; }
+  .col-1\@md {
+    width: 8.33333%; }
+  .col-2\@md {
+    width: 16.66667%; }
+  .col-3\@md {
+    width: 25%; }
+  .col-4\@md {
+    width: 33.33333%; }
+  .col-5\@md {
+    width: 41.66667%; }
+  .col-6\@md {
+    width: 50%; }
+  .col-7\@md {
+    width: 58.33333%; }
+  .col-8\@md {
+    width: 66.66667%; }
+  .col-9\@md {
+    width: 75%; }
+  .col-10\@md {
+    width: 83.33333%; }
+  .col-11\@md {
+    width: 91.66667%; }
+  .col-12\@md {
+    width: 100%; }
+  .col-pull-0\@md {
+    right: auto; }
+  .col-pull-1\@md {
+    right: 8.33333%; }
+  .col-pull-2\@md {
+    right: 16.66667%; }
+  .col-pull-3\@md {
+    right: 25%; }
+  .col-pull-4\@md {
+    right: 33.33333%; }
+  .col-pull-5\@md {
+    right: 41.66667%; }
+  .col-pull-6\@md {
+    right: 50%; }
+  .col-pull-7\@md {
+    right: 58.33333%; }
+  .col-pull-8\@md {
+    right: 66.66667%; }
+  .col-pull-9\@md {
+    right: 75%; }
+  .col-pull-10\@md {
+    right: 83.33333%; }
+  .col-pull-11\@md {
+    right: 91.66667%; }
+  .col-pull-12\@md {
+    right: 100%; }
+  .col-push-0\@md {
+    left: auto; }
+  .col-push-1\@md {
+    left: 8.33333%; }
+  .col-push-2\@md {
+    left: 16.66667%; }
+  .col-push-3\@md {
+    left: 25%; }
+  .col-push-4\@md {
+    left: 33.33333%; }
+  .col-push-5\@md {
+    left: 41.66667%; }
+  .col-push-6\@md {
+    left: 50%; }
+  .col-push-7\@md {
+    left: 58.33333%; }
+  .col-push-8\@md {
+    left: 66.66667%; }
+  .col-push-9\@md {
+    left: 75%; }
+  .col-push-10\@md {
+    left: 83.33333%; }
+  .col-push-11\@md {
+    left: 91.66667%; }
+  .col-push-12\@md {
+    left: 100%; }
+  .col-offset-0\@md {
+    margin-left: 0%; }
+  .col-offset-1\@md {
+    margin-left: 8.33333%; }
+  .col-offset-2\@md {
+    margin-left: 16.66667%; }
+  .col-offset-3\@md {
+    margin-left: 25%; }
+  .col-offset-4\@md {
+    margin-left: 33.33333%; }
+  .col-offset-5\@md {
+    margin-left: 41.66667%; }
+  .col-offset-6\@md {
+    margin-left: 50%; }
+  .col-offset-7\@md {
+    margin-left: 58.33333%; }
+  .col-offset-8\@md {
+    margin-left: 66.66667%; }
+  .col-offset-9\@md {
+    margin-left: 75%; }
+  .col-offset-10\@md {
+    margin-left: 83.33333%; }
+  .col-offset-11\@md {
+    margin-left: 91.66667%; }
+  .col-offset-12\@md {
+    margin-left: 100%; } }
+
 .code-block {
   position: relative;
   overflow: visible;
@@ -1177,6 +1309,10 @@ button {
 
 .ib {
   display: inline-block; }
+
+@media screen and (max-width: 767px) {
+  .hidden\@xs {
+    display: none; } }
 
 .hidden {
   display: none !important;

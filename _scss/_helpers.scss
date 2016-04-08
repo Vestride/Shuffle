@@ -4,6 +4,10 @@
   display: inline-block;
 }
 
+@include breakpoint(sm, true) {
+  .hidden\@xs { display: none; }
+}
+
 // Hide from both screenreaders and browsers.
 .hidden {
   display: none !important;

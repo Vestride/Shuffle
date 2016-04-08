@@ -2,60 +2,74 @@
 \*=============================================*/
 .picture-item {
   height: 220px;
-  margin-top: 24px; }
-  .picture-item.shuffle-item {
-    margin-left: 0;
-    /* shuffle items shouldn't have a left margin*/ }
-  .picture-item.picture-item--h2 {
-    height: 464px;
-    /* 2x the height + 1 gutter */ }
-  .picture-item.col-6\@sm:not(.picture-item--h2) .picture-item__details {
+  margin-top: 24px;
+  margin-left: 0;
+  /* shuffle items shouldn't have a left margin*/ }
+  .picture-item img {
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    -o-object-fit: cover;
+       object-fit: cover; }
+  .no-objectfit .picture-item img {
+    height: auto;
+    max-width: 100%; }
+
+.picture-item--h2 {
+  height: 464px;
+  /* 2x the height + 1 gutter */ }
+
+.picture-item__inner {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: #ECF0F1; }
+
+.picture-item__blur {
+  display: none; }
+
+.picture-item__details,
+.picture-item__description {
+  padding: 1em;
+  width: 100%; }
+
+.picture-item__description {
+  margin: 0;
+  padding-top: 0;
+  padding-right: 2em; }
+
+.picture-item__tags {
+  margin: 0; }
+
+@media screen and (min-width: 768px) {
+  .picture-item--overlay .picture-item__details {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #333;
     background-color: rgba(0, 0, 0, 0.6);
     color: white;
     overflow: hidden; }
-  .picture-item.col-6\@sm:not(.picture-item--h2) .picture-item__description {
+  .picture-item--overlay .picture-item__description {
     display: none; }
-  .picture-item .picture-item__inner {
-    position: relative;
-    height: 100%;
-    overflow: hidden;
-    background: #ECF0F1; }
-  .picture-item img {
-    display: block;
-    width: 100%;
-    height: auto; }
-  .picture-item .picture-item__blur {
-    display: none; }
-  .picture-item .picture-item__details,
-  .picture-item .picture-item__description {
-    padding: 1em; }
-  .picture-item .picture-item__description {
-    margin: 0;
-    padding-top: 0;
-    padding-right: 2em; }
-  .picture-item .picture-item__tags {
-    margin: 0; }
-
-@supports ((-webkit-filter: blur(1px)) or (filter: blur(1px))) {
-  .picture-item.col-6\@sm:not(.picture-item--h2) .picture-item__blur {
-    position: absolute;
-    z-index: 1;
-    top: calc(50px - 220px);
-    left: 0;
-    display: block;
-    -webkit-filter: blur(7px);
-            filter: blur(7px); }
-  .picture-item.col-6\@sm:not(.picture-item--h2) .picture-item__details {
-    background: none; }
-  .picture-item.col-6\@sm:not(.picture-item--h2) .picture-item__tags,
-  .picture-item.col-6\@sm:not(.picture-item--h2) .picture-item__title {
-    position: relative;
-    z-index: 2; } }
+  @supports ((-webkit-filter: blur(1px)) or (filter: blur(1px))) {
+    .picture-item--overlay .picture-item__blur {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      display: block;
+      -webkit-filter: blur(7px);
+              filter: blur(7px);
+      -webkit-clip-path: inset(170px 0 0 0);
+              clip-path: inset(170px 0 0 0); }
+    .picture-item--overlay .picture-item__details {
+      background: none; }
+    .picture-item--overlay .picture-item__tags,
+    .picture-item--overlay .picture-item__title {
+      position: relative;
+      z-index: 2; } } }
 
 /*
   Shuffle needs either relative or absolute positioning on the container

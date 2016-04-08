@@ -6,11 +6,5 @@
  * @return {number} `value` or zero if `value` isn't numeric.
  */
 export default function getNumber(value) {
-  let str = value && value.toString();
-  let val = parseFloat(str);
-  if (val + 1 >= 0) {
-    return val;
-  }
-
-  return 0;
+  return parseFloat(value) || 0;
 }

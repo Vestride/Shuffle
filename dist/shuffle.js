@@ -1831,13 +1831,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.default = getNumber;
 	function getNumber(value) {
-	  var str = value && value.toString();
-	  var val = parseFloat(str);
-	  if (val + 1 >= 0) {
-	    return val;
-	  }
-	
-	  return 0;
+	  return parseFloat(value) || 0;
 	}
 
 /***/ },

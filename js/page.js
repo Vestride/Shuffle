@@ -85,6 +85,18 @@ Modules.NavTray = (function () {
   return NavTray;
 }());
 
+Modules.Support = (function () {
+  var objectFit = document.createElement('div').style.objectFit === '';
+
+  if (!objectFit) {
+    document.documentElement.classList.add('no-objectfit');
+  }
+
+  return {
+    objectFit: objectFit,
+  };
+});
+
 Modules.Sprite = (function () {
   var Sprite = function (context, img, size) {
     this.ctx = context;
