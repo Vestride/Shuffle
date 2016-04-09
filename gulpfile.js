@@ -6,6 +6,7 @@ gulp.task('scripts', require('./gulp/tasks/compile'));
 gulp.task('set-watching', require('./gulp/tasks/set-watching'));
 gulp.task('css', require('./gulp/tasks/css'));
 gulp.task('jekyll', require('./gulp/tasks/jekyll'));
+gulp.task('test', require('./gulp/tasks/test'));
 
 gulp.task('watch', gulp.series(
   'set-watching',
@@ -13,4 +14,4 @@ gulp.task('watch', gulp.series(
   'jekyll'
 ));
 
-gulp.task('default', gulp.series('scripts'));
+gulp.task('default', gulp.series('scripts', 'test'));

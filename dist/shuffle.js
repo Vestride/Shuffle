@@ -645,10 +645,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function _dispatch(name) {
 	      var details = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 	
+	      console.log('dispatch:', name);
 	      details.shuffle = this;
 	      return !this.element.dispatchEvent(new CustomEvent(name, {
-	        bubbles: false,
-	        cancelable: true,
+	        bubbles: true,
+	        cancelable: false,
 	        detail: details
 	      }));
 	    }
@@ -701,6 +702,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	      }
 	
+	      console.log('from:', item.point, 'to:', pos, item.element.id);
 	      item.point = pos;
 	      item.scale = _shuffleItem2.default.Scale.VISIBLE;
 	
@@ -862,6 +864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          return;
 	        }
 	
+	        console.log('shrink:', item.element.id);
 	        item.scale = _shuffleItem2.default.Scale.FILTERED;
 	
 	        _this4._queue.push({
@@ -943,6 +946,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var reference = {
 	          item: item,
 	          handler: function handler(evt) {
+	            console.log('transition end handler', evt.target === evt.currentTarget, evt.currentTarget.id);
 	            var element = evt.target;
 	
 	            // Make sure this event handler has not bubbled up from a child.
@@ -1009,6 +1013,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // Set flag that shuffle is currently in motion.
 	        this.isTransitioning = true;
 	
+	        console.log('transitions to wait for:', promises.length);
 	        Promise.all(promises).then(this._movementFinished.bind(this));
 	
 	        // A call to layout happened, but none of the newly filtered items will
@@ -1385,14 +1390,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      // Null DOM references
 	      this.items = null;
-	      this.$el = null;
 	      this.options.sizer = null;
 	      this.element = null;
 	      this._transitions = null;
 	
 	      // Set a flag so if a debounced resize has been triggered,
 	      // it can first check if it is actually isDestroyed and not doing anything
-	      this.destroyed = true;
+	      this.isDestroyed = true;
 	    }
 	
 	    /**

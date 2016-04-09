@@ -476,10 +476,10 @@ class Shuffle {
   _dispatch(name, details = {}) {
     details.shuffle = this;
     return !this.element.dispatchEvent(new CustomEvent(name, {
-        bubbles: false,
-        cancelable: true,
-        detail: details,
-      }));
+      bubbles: true,
+      cancelable: false,
+      detail: details,
+    }));
   }
 
   /**
@@ -1111,14 +1111,13 @@ class Shuffle {
 
     // Null DOM references
     this.items = null;
-    this.$el = null;
     this.options.sizer = null;
     this.element = null;
     this._transitions = null;
 
     // Set a flag so if a debounced resize has been triggered,
     // it can first check if it is actually isDestroyed and not doing anything
-    this.destroyed = true;
+    this.isDestroyed = true;
   }
 
   /**

@@ -3,7 +3,6 @@
   "version": "4.0.0",
   "description": "Categorize, sort, and filter a responsive grid of items",
   "keywords": [
-    "jquery-plugin",
     "gallery",
     "shuffle",
     "layout",
@@ -20,20 +19,7 @@
     "compile": "gulp scripts",
     "css": "gulp css",
     "watch": "gulp watch",
-    "test": "jest"
-  },
-  "jest": {
-    "verbose": true,
-    "scriptPreprocessor": "<rootDir>/test/preprocessor.js",
-    "testDirectoryName": "test",
-    "testPathDirs": [
-      "<rootDir>/test"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "preprocessor.js"
-    ],
-    "testRunner": "<rootDir>/node_modules/jest-cli/src/testRunners/jasmine/jasmine2.js"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -54,17 +40,19 @@
   "devDependencies": {
     "autoprefixer": "^6.3.4",
     "babel-core": "^6.5.2",
-    "babel-jest": "^6.0.1",
     "babel-loader": "^6.2.2",
     "babel-preset-es2015": "^6.5.0",
     "babel-register": "^6.5.2",
+    "chai": "^3.5.0",
+    "chai-dom": "^1.4.0",
+    "es6-promise": "^3.1.2",
     "gulp": "gulpjs/gulp.git#4.0",
+    "gulp-mocha-phantomjs": "^0.11.0",
     "gulp-postcss": "^6.1.0",
     "gulp-sass": "^2.2.0",
     "gulp-shell": "^0.5.2",
     "gulp-util": "^3.0.7",
-    "jest-cli": "^0.8.2",
-    "jest-webpack-alias": "^2.2.0",
+    "mocha": "^2.4.5",
     "webpack": "^1.12.13"
   }
 }

@@ -24,7 +24,7 @@ pagejs: false
   }
 
   #grid .img-item {
-    margin-top: 10px;
+    margin-top: 16px;
     margin-left: 0;
   }
 
@@ -37,7 +37,7 @@ pagejs: false
   <div id="grid" class="shuffle--container row">
     {% for item in site.items %}
     <figure class="js-item img-item col-3@sm col-3@xs">
-      <div class="aspect aspect--4x3">
+      <div class="aspect aspect--16x9">
         <div class="aspect__inner">
           <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="{{item.title}}"/>
         </div>
@@ -61,4 +61,4 @@ pagejs: false
 {% include credit-jake.html %}
 
 
-<script data-main="{{ site.baseurl }}/js/require-main.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>
+<script data-main="{{ site.baseurl }}/js/require-main.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
