@@ -10,6 +10,7 @@ import ShuffleItem from './shuffle-item';
 import Classes from './classes';
 import getNumberStyle from './get-number-style';
 import sorter from './sorter';
+import { onTransitionEnd, cancelTransitionEnd } from './on-transition-end';
 
 function toArray(arrayLike) {
   return Array.prototype.slice.call(arrayLike);
@@ -45,8 +46,6 @@ function arrayIncludes(array, obj) {
   };
 }
 
-function noop() {}
-
 // Used for unique instance variables
 let id = 0;
 
@@ -63,7 +62,6 @@ class Shuffle {
     this.options = xtend(Shuffle.options, options);
 
     this.useSizer = false;
-    this.revealAppendedDelay = 300;
     this.lastSort = {};
     this.lastFilter = Shuffle.ALL_ITEMS;
     this.isEnabled = true;
@@ -191,9 +189,9 @@ class Shuffle {
    * Filter the elements by a category.
    * @param {string} [category] Category to filter by. If it's given, the last
    *     category will be used to filter the items.
-   * @param {ArrayLike} [$collection] Optionally filter a collection. Defaults to
+   * @param {Array} [collection] Optionally filter a collection. Defaults to
    *     all the items.
-   * @return {jQuery} Filtered items.
+   * @return {!{filtered: Array, concealed: Array}}
    * @private
    */
   _filter(category = this.lastFilter, collection = this.items) {
@@ -217,8 +215,8 @@ class Shuffle {
   /**
    * Returns an object containing the filtered and concealed elements.
    * @param {string|Function} category Category or function to filter by.
-   * @param {ArrayLike.<Element>} $items A collection of items to filter.
-   * @return {!{filtered: jQuery, concealed: jQuery}}
+   * @param {Array.<Element>} items A collection of items to filter.
+   * @return {!{filtered: Array, concealed: Array}}
    * @private
    */
   _getFilteredSets(category, items) {
@@ -233,7 +231,7 @@ class Shuffle {
     // whether to hide it or not.
     } else {
       items.forEach((item) => {
-        if (this._doesPassFilter(category, item)) {
+        if (this._doesPassFilter(category, item.element)) {
           filtered.push(item);
         } else {
           concealed.push(item);
@@ -250,18 +248,18 @@ class Shuffle {
   /**
    * Test an item to see if it passes a category.
    * @param {string|Function} category Category or function to filter by.
-   * @param {ShuffleItem} item A single item.
+   * @param {Element} element An element to test.
    * @return {boolean} Whether it passes the category/filter.
    * @private
    */
-  _doesPassFilter(category, item) {
+  _doesPassFilter(category, element) {
 
     if (typeof category === 'function') {
-      return category.call(item.element, item.element, this);
+      return category.call(element, element, this);
 
     // Check each element's data-groups attribute against the given category.
     } else {
-      let attr = item.element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
+      let attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
       let groups = JSON.parse(attr);
       let keys = this.delimeter && !Array.isArray(groups) ?
           groups.split(this.delimeter) :
@@ -323,7 +321,7 @@ class Shuffle {
    * Sets css transform transition on a group of elements. This is not executed
    * at the same time as `item.init` so that transitions don't occur upon
    * initialization of Shuffle.
-   * @param {ArrayLike.<Element>} $items Elements to set transitions on.
+   * @param {Array.<ShuffleItem>} items Shuffle items to set transitions on.
    * @private
    */
   _setTransitions(items = this.items) {
@@ -345,25 +343,23 @@ class Shuffle {
     });
   }
 
-  /**
-   * Sets a transition delay on a collection of elements, making each delay
-   * greater than the last.
-   * @param {ArrayLike.<Element>} $collection Array to iterate over.
-   */
-  _setSequentialDelay($collection) {
-
-    // $collection can be an array of dom elements or jquery object
-    // FIXME won't work for noTransforms
-    each($collection, function (el, i) {
-      // This works because the transition-property: transform, opacity;
-      el.style.transitionDelay = '0ms,' + ((i + 1) * this.options.sequentialFadeDelay) + 'ms';
-    }, this);
-  }
-
   _getItems() {
     return toArray(this.element.children)
       .filter(el => matches(el, this.options.itemSelector))
       .map(el => new ShuffleItem(el));
+  }
+
+  /**
+   * When new elements are added to the shuffle container, update the array of
+   * items because that is the order `_layout` calls them.
+   */
+  _updateItemsOrder() {
+    let children = this.element.children;
+    this.items = sorter(this.items, {
+      by(element) {
+        return Array.prototype.indexOf.call(children, element);
+      },
+    });
   }
 
   _getFilteredItems() {
@@ -497,8 +493,7 @@ class Shuffle {
   /**
    * Loops through each item that should be shown and calculates the x, y position.
    * @param {Array.<Element>} items Array of items that will be shown/layed out in
-   *     order in their array. Because jQuery collection are always ordered in DOM
-   *     order, we can't pass a jq collection.
+   *     order in their array.
    */
   _layout(items) {
     each(items, this._layoutItem, this);
@@ -700,7 +695,7 @@ class Shuffle {
   }
 
   /**
-   * Returns styles for either jQuery animate or transition.
+   * Returns styles which will be applied to the an item for a transition.
    * @param {Object} obj Transition options.
    * @return {!Object} Transforms for transitions, left/top for animate.
    * @private
@@ -726,42 +721,25 @@ class Shuffle {
     return styles;
   }
 
-  _transition(opts) {
-    let _this = this;
-    let styles = this._getStylesForTransition(opts);
-    let callfront = opts.callfront || noop;
-    let callback = opts.callback || noop;
-    let item = opts.item;
-
+  _whenTransitionDone(element, itemCallback) {
+    // TODO what happens when the transition is canceled and the promise never resolves?
     return new Promise((resolve) => {
-      let reference = {
-        item,
-        handler(evt) {
-          let element = evt.target;
+      let id = onTransitionEnd(element, (evt) => {
+        evt.currentTarget.style.transitionDelay = '';
 
-          // Make sure this event handler has not bubbled up from a child.
-          if (element === evt.currentTarget) {
-            element.removeEventListener('transitionend', reference.handler);
-            element.style.transitionDelay = '';
-            _this._removeTransitionReference(reference);
-            callback();
-            resolve();
-          }
-        },
-      };
+        if (itemCallback) {
+          itemCallback();
+        }
 
-      callfront();
-      item.applyCss(styles);
-
-      // Transitions are not set until shuffle has loaded to avoid the initial transition.
-      if (this.isInitialized) {
-        item.element.addEventListener('transitionend', reference.handler);
-        this._transitions.push(reference);
-      } else {
-        callback();
         resolve();
-      }
+      });
+      this._transitions.push(id);
     });
+  }
+
+  _transition(opts) {
+    opts.item.applyCss(this._getStylesForTransition(opts));
+    this._whenTransitionDone(opts.item.element, opts.callback);
   }
 
   /**
@@ -788,13 +766,8 @@ class Shuffle {
 
     this._styleImmediately(immediates);
 
-    let promises = transitions.map(obj => this._transition(obj));
-
     if (transitions.length > 0 && this.options.speed > 0) {
-      // Set flag that shuffle is currently in motion.
-      this.isTransitioning = true;
-
-      Promise.all(promises).then(this._movementFinished.bind(this));
+      this._startTransitions(transitions);
 
     // A call to layout happened, but none of the newly filtered items will
     // change position. Asynchronously fire the callback here.
@@ -806,24 +779,28 @@ class Shuffle {
     this._queue.length = 0;
   }
 
+  /**
+   * Create a promise for each transition and wait for all of them to complete,
+   * then emit the layout event.
+   * @param {Array.<Object>} transitions Array of transition objects.
+   */
+  _startTransitions(transitions) {
+    // Set flag that shuffle is currently in motion.
+    this.isTransitioning = true;
+
+    let promises = transitions.map(obj => this._transition(obj));
+    Promise.all(promises).then(this._movementFinished.bind(this));
+  }
+
   _cancelMovement() {
     // Remove the transition end event for each listener.
-    each(this._transitions, (transition) => {
-      transition.item.element.removeEventListener('transitionend', transition.handler);
-    });
+    each(this._transitions, cancelTransitionEnd);
 
     // Reset the array.
     this._transitions.length = 0;
 
     // Show it's no longer active.
     this.isTransitioning = false;
-  }
-
-  _removeTransitionReference(ref) {
-    let indexInArray = this._transitions.indexOf(ref);
-    if (indexInArray > -1) {
-      this._transitions.splice(indexInArray, 1);
-    }
   }
 
   /**
@@ -838,6 +815,10 @@ class Shuffle {
       Shuffle._skipTransitions(elements, () => {
         objects.forEach((obj) => {
           obj.item.applyCss(this._getStylesForTransition(obj));
+
+          if (obj.callback) {
+            obj.callback();
+          }
         });
       });
     }
@@ -850,76 +831,6 @@ class Shuffle {
 
   _dispatchLayout() {
     this._dispatch(Shuffle.EventType.LAYOUT);
-  }
-
-  _addItems(newItems, addToEnd, isSequential) {
-    let items = newItems.map(el => new ShuffleItem(el));
-
-    // Add classes and set initial positions.
-    this._initItems(items);
-
-    // Add transition to each item.
-    this._setTransitions(items);
-
-    // Update the list of items.
-    this.items = this.items.concat(items);
-
-    if (addToEnd) {
-      this._shrink(items);
-
-      // Shrink all items (without transitions).
-      each(this._queue, function (transitionObj) {
-        transitionObj.skipTransition = true;
-      });
-
-      // Apply shrink positions, but do not cause a layout event.
-      this._processQueue(false);
-      this._addItemsToEnd(items, isSequential);
-    } else {
-      this.filter(this.lastFilter);
-    }
-  }
-
-  _addItemsToEnd($newItems, isSequential) {
-    // Get ones that passed the current filter
-    var $passed = this._filter(null, $newItems).filtered;
-    var passed = $passed.get();
-
-    // How many filtered elements?
-    this._updateItemCount();
-
-    // FIXME won't process queue.
-    this._layout(passed, true);
-
-    if (isSequential) {
-      this._setSequentialDelay(passed);
-    }
-
-    this._revealAppended(passed);
-  }
-
-  /**
-   * Triggers appended elements to fade in.
-   * @param {ArrayLike.<Element>} $newFilteredItems Collection of elements.
-   * @private
-   */
-  _revealAppended(newFilteredItems) {
-    defer(function () {
-      each(newFilteredItems, function (el) {
-        var $item = window.jQuery(el);
-        this._transition({
-          $item: $item,
-          opacity: 1,
-          point: $item.data('point'),
-          scale: ShuffleItem.Scale.VISIBLE,
-        });
-      }, this);
-
-      this._whenCollectionDone(window.jQuery(newFilteredItems), 'transitionend', function () {
-        window.jQuery(newFilteredItems).css('transitionDelay', '0ms');
-        this._movementFinished();
-      });
-    }, this, this.revealAppendedDelay);
   }
 
   /**
@@ -1003,14 +914,23 @@ class Shuffle {
   }
 
   /**
-   * New items have been appended to shuffle. Fade them in sequentially
+   * New items have been appended to shuffle. Mix them in with the current
+   * filter or sort status.
    * @param {Array.<Element>} newItems Collection of new items.
-   * @param {boolean} [addToEnd=false] If true, new items will be added to the end / bottom
-   *     of the items. If false, items will be mixed in with the current sort order.
-   * @param {boolean} [isSequential=true] If false, new items won't sequentially fade in
    */
-  add(newItems, addToEnd = false, isSequential = true) {
-    this._addItems(arrayUnique(newItems), addToEnd, isSequential);
+  add(newItems) {
+    newItems = arrayUnique(newItems).map(el => new ShuffleItem(el));
+
+    // Add classes and set initial positions.
+    this._initItems(newItems);
+
+    // Add transition to each item.
+    this._setTransitions(newItems);
+
+    // Update the list of items.
+    this.items = this.items.concat(newItems);
+    this._updateItemsOrder();
+    this.filter(this.lastFilter);
   }
 
   /**
@@ -1100,6 +1020,7 @@ class Shuffle {
    * Destroys shuffle, removes events, styles, and classes
    */
   destroy() {
+    this._cancelMovement();
     window.removeEventListener('resize', this._onResize);
 
     // Reset container styles
@@ -1129,7 +1050,7 @@ class Shuffle {
    * 1. getBoundingClientRect() `left` and `right` properties.
    *   - Accounts for transform scaled elements, making it useless for Shuffle
    *   elements which have shrunk.
-   * 2. The `offsetWidth` property (or jQuery's CSS).
+   * 2. The `offsetWidth` property.
    *   - This value stays the same regardless of the elements transform property,
    *   however, it does not return subpixel values.
    * 3. getComputedStyle()
@@ -1265,9 +1186,6 @@ Shuffle.options = {
 
   // How often shuffle can be called on resize (in milliseconds).
   throttleTime: 300,
-
-  // Delay between each item that fades in when adding items.
-  sequentialFadeDelay: 150,
 
   // Transition delay offset for each item in milliseconds.
   staggerAmount: 15,

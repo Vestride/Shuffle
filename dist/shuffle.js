@@ -96,6 +96,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _sorter2 = _interopRequireDefault(_sorter);
 	
+	var _onTransitionEnd = __webpack_require__(13);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -134,8 +136,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 	}
 	
-	function noop() {}
-	
 	// Used for unique instance variables
 	var id = 0;
 	
@@ -157,7 +157,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.options = (0, _xtend2.default)(Shuffle.options, options);
 	
 	    this.useSizer = false;
-	    this.revealAppendedDelay = 300;
 	    this.lastSort = {};
 	    this.lastFilter = Shuffle.ALL_ITEMS;
 	    this.isEnabled = true;
@@ -294,9 +293,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Filter the elements by a category.
 	     * @param {string} [category] Category to filter by. If it's given, the last
 	     *     category will be used to filter the items.
-	     * @param {ArrayLike} [$collection] Optionally filter a collection. Defaults to
+	     * @param {Array} [collection] Optionally filter a collection. Defaults to
 	     *     all the items.
-	     * @return {jQuery} Filtered items.
+	     * @return {!{filtered: Array, concealed: Array}}
 	     * @private
 	     */
 	
@@ -326,15 +325,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Returns an object containing the filtered and concealed elements.
 	     * @param {string|Function} category Category or function to filter by.
-	     * @param {ArrayLike.<Element>} $items A collection of items to filter.
-	     * @return {!{filtered: jQuery, concealed: jQuery}}
+	     * @param {Array.<Element>} items A collection of items to filter.
+	     * @return {!{filtered: Array, concealed: Array}}
 	     * @private
 	     */
 	
 	  }, {
 	    key: '_getFilteredSets',
 	    value: function _getFilteredSets(category, items) {
-	      var _this2 = this;
+	      var _this = this;
 	
 	      var filtered = [];
 	      var concealed = [];
@@ -347,7 +346,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // whether to hide it or not.
 	      } else {
 	          items.forEach(function (item) {
-	            if (_this2._doesPassFilter(category, item)) {
+	            if (_this._doesPassFilter(category, item.element)) {
 	              filtered.push(item);
 	            } else {
 	              concealed.push(item);
@@ -364,21 +363,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Test an item to see if it passes a category.
 	     * @param {string|Function} category Category or function to filter by.
-	     * @param {ShuffleItem} item A single item.
+	     * @param {Element} element An element to test.
 	     * @return {boolean} Whether it passes the category/filter.
 	     * @private
 	     */
 	
 	  }, {
 	    key: '_doesPassFilter',
-	    value: function _doesPassFilter(category, item) {
+	    value: function _doesPassFilter(category, element) {
 	
 	      if (typeof category === 'function') {
-	        return category.call(item.element, item.element, this);
+	        return category.call(element, element, this);
 	
 	        // Check each element's data-groups attribute against the given category.
 	      } else {
-	          var attr = item.element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
+	          var attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
 	          var groups = JSON.parse(attr);
 	          var keys = this.delimeter && !Array.isArray(groups) ? groups.split(this.delimeter) : groups;
 	
@@ -457,7 +456,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Sets css transform transition on a group of elements. This is not executed
 	     * at the same time as `item.init` so that transitions don't occur upon
 	     * initialization of Shuffle.
-	     * @param {ArrayLike.<Element>} $items Elements to set transitions on.
+	     * @param {Array.<ShuffleItem>} items Shuffle items to set transitions on.
 	     * @private
 	     */
 	
@@ -480,33 +479,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	        item.element.style.transition = str;
 	      });
 	    }
-	
-	    /**
-	     * Sets a transition delay on a collection of elements, making each delay
-	     * greater than the last.
-	     * @param {ArrayLike.<Element>} $collection Array to iterate over.
-	     */
-	
-	  }, {
-	    key: '_setSequentialDelay',
-	    value: function _setSequentialDelay($collection) {
-	
-	      // $collection can be an array of dom elements or jquery object
-	      // FIXME won't work for noTransforms
-	      each($collection, function (el, i) {
-	        // This works because the transition-property: transform, opacity;
-	        el.style.transitionDelay = '0ms,' + (i + 1) * this.options.sequentialFadeDelay + 'ms';
-	      }, this);
-	    }
 	  }, {
 	    key: '_getItems',
 	    value: function _getItems() {
-	      var _this3 = this;
+	      var _this2 = this;
 	
 	      return toArray(this.element.children).filter(function (el) {
-	        return (0, _matchesSelector2.default)(el, _this3.options.itemSelector);
+	        return (0, _matchesSelector2.default)(el, _this2.options.itemSelector);
 	      }).map(function (el) {
 	        return new _shuffleItem2.default(el);
+	      });
+	    }
+	
+	    /**
+	     * When new elements are added to the shuffle container, update the array of
+	     * items because that is the order `_layout` calls them.
+	     */
+	
+	  }, {
+	    key: '_updateItemsOrder',
+	    value: function _updateItemsOrder() {
+	      var children = this.element.children;
+	      this.items = (0, _sorter2.default)(this.items, {
+	        by: function by(element) {
+	          return Array.prototype.indexOf.call(children, element);
+	        }
 	      });
 	    }
 	  }, {
@@ -645,7 +642,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function _dispatch(name) {
 	      var details = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 	
-	      console.log('dispatch:', name);
 	      details.shuffle = this;
 	      return !this.element.dispatchEvent(new CustomEvent(name, {
 	        bubbles: true,
@@ -672,8 +668,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Loops through each item that should be shown and calculates the x, y position.
 	     * @param {Array.<Element>} items Array of items that will be shown/layed out in
-	     *     order in their array. Because jQuery collection are always ordered in DOM
-	     *     order, we can't pass a jq collection.
+	     *     order in their array.
 	     */
 	
 	  }, {
@@ -702,7 +697,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	      }
 	
-	      console.log('from:', item.point, 'to:', pos, item.element.id);
 	      item.point = pos;
 	      item.scale = _shuffleItem2.default.Scale.VISIBLE;
 	
@@ -852,7 +846,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_shrink',
 	    value: function _shrink() {
-	      var _this4 = this;
+	      var _this3 = this;
 	
 	      var collection = arguments.length <= 0 || arguments[0] === undefined ? this._getConcealedItems() : arguments[0];
 	
@@ -864,13 +858,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	          return;
 	        }
 	
-	        console.log('shrink:', item.element.id);
 	        item.scale = _shuffleItem2.default.Scale.FILTERED;
 	
-	        _this4._queue.push({
+	        _this3._queue.push({
 	          item: item,
 	          opacity: 0,
-	          transitionDelay: Math.min(i * _this4.options.staggerAmount, _this4.options.staggerAmountMax),
+	          transitionDelay: Math.min(i * _this3.options.staggerAmount, _this3.options.staggerAmountMax),
 	          callback: function callback() {
 	            item.element.style.visibility = 'hidden';
 	          }
@@ -903,7 +896,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * Returns styles for either jQuery animate or transition.
+	     * Returns styles which will be applied to the an item for a transition.
 	     * @param {Object} obj Transition options.
 	     * @return {!Object} Transforms for transitions, left/top for animate.
 	     * @private
@@ -932,46 +925,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return styles;
 	    }
 	  }, {
+	    key: '_whenTransitionDone',
+	    value: function _whenTransitionDone(element, itemCallback) {
+	      var _this4 = this;
+	
+	      // TODO what happens when the transition is canceled and the promise never resolves?
+	      return new Promise(function (resolve) {
+	        var id = (0, _onTransitionEnd.onTransitionEnd)(element, function (evt) {
+	          evt.currentTarget.style.transitionDelay = '';
+	
+	          if (itemCallback) {
+	            itemCallback();
+	          }
+	
+	          resolve();
+	        });
+	        _this4._transitions.push(id);
+	      });
+	    }
+	  }, {
 	    key: '_transition',
 	    value: function _transition(opts) {
-	      var _this5 = this;
-	
-	      var _this = this;
-	      var styles = this._getStylesForTransition(opts);
-	      var callfront = opts.callfront || noop;
-	      var callback = opts.callback || noop;
-	      var item = opts.item;
-	
-	      return new Promise(function (resolve) {
-	        var reference = {
-	          item: item,
-	          handler: function handler(evt) {
-	            console.log('transition end handler', evt.target === evt.currentTarget, evt.currentTarget.id);
-	            var element = evt.target;
-	
-	            // Make sure this event handler has not bubbled up from a child.
-	            if (element === evt.currentTarget) {
-	              element.removeEventListener('transitionend', reference.handler);
-	              element.style.transitionDelay = '';
-	              _this._removeTransitionReference(reference);
-	              callback();
-	              resolve();
-	            }
-	          }
-	        };
-	
-	        callfront();
-	        item.applyCss(styles);
-	
-	        // Transitions are not set until shuffle has loaded to avoid the initial transition.
-	        if (_this5.isInitialized) {
-	          item.element.addEventListener('transitionend', reference.handler);
-	          _this5._transitions.push(reference);
-	        } else {
-	          callback();
-	          resolve();
-	        }
-	      });
+	      opts.item.applyCss(this._getStylesForTransition(opts));
+	      this._whenTransitionDone(opts.item.element, opts.callback);
 	    }
 	
 	    /**
@@ -984,7 +960,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_processQueue',
 	    value: function _processQueue() {
-	      var _this6 = this;
+	      var _this5 = this;
 	
 	      var withLayout = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
 	
@@ -996,7 +972,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var immediates = [];
 	      var transitions = [];
 	      this._queue.forEach(function (obj) {
-	        if (!_this6.isInitialized || _this6.options.speed === 0) {
+	        if (!_this5.isInitialized || _this5.options.speed === 0) {
 	          immediates.push(obj);
 	        } else {
 	          transitions.push(obj);
@@ -1005,16 +981,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      this._styleImmediately(immediates);
 	
-	      var promises = transitions.map(function (obj) {
-	        return _this6._transition(obj);
-	      });
-	
 	      if (transitions.length > 0 && this.options.speed > 0) {
-	        // Set flag that shuffle is currently in motion.
-	        this.isTransitioning = true;
-	
-	        console.log('transitions to wait for:', promises.length);
-	        Promise.all(promises).then(this._movementFinished.bind(this));
+	        this._startTransitions(transitions);
 	
 	        // A call to layout happened, but none of the newly filtered items will
 	        // change position. Asynchronously fire the callback here.
@@ -1025,27 +993,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Remove everything in the style queue
 	      this._queue.length = 0;
 	    }
+	
+	    /**
+	     * Create a promise for each transition and wait for all of them to complete,
+	     * then emit the layout event.
+	     * @param {Array.<Object>} transitions Array of transition objects.
+	     */
+	
+	  }, {
+	    key: '_startTransitions',
+	    value: function _startTransitions(transitions) {
+	      var _this6 = this;
+	
+	      // Set flag that shuffle is currently in motion.
+	      this.isTransitioning = true;
+	
+	      var promises = transitions.map(function (obj) {
+	        return _this6._transition(obj);
+	      });
+	      Promise.all(promises).then(this._movementFinished.bind(this));
+	    }
 	  }, {
 	    key: '_cancelMovement',
 	    value: function _cancelMovement() {
 	      // Remove the transition end event for each listener.
-	      each(this._transitions, function (transition) {
-	        transition.item.element.removeEventListener('transitionend', transition.handler);
-	      });
+	      each(this._transitions, _onTransitionEnd.cancelTransitionEnd);
 	
 	      // Reset the array.
 	      this._transitions.length = 0;
 	
 	      // Show it's no longer active.
 	      this.isTransitioning = false;
-	    }
-	  }, {
-	    key: '_removeTransitionReference',
-	    value: function _removeTransitionReference(ref) {
-	      var indexInArray = this._transitions.indexOf(ref);
-	      if (indexInArray > -1) {
-	        this._transitions.splice(indexInArray, 1);
-	      }
 	    }
 	
 	    /**
@@ -1067,6 +1045,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        Shuffle._skipTransitions(elements, function () {
 	          objects.forEach(function (obj) {
 	            obj.item.applyCss(_this7._getStylesForTransition(obj));
+	
+	            if (obj.callback) {
+	              obj.callback();
+	            }
 	          });
 	        });
 	      }
@@ -1081,83 +1063,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: '_dispatchLayout',
 	    value: function _dispatchLayout() {
 	      this._dispatch(Shuffle.EventType.LAYOUT);
-	    }
-	  }, {
-	    key: '_addItems',
-	    value: function _addItems(newItems, addToEnd, isSequential) {
-	      var items = newItems.map(function (el) {
-	        return new _shuffleItem2.default(el);
-	      });
-	
-	      // Add classes and set initial positions.
-	      this._initItems(items);
-	
-	      // Add transition to each item.
-	      this._setTransitions(items);
-	
-	      // Update the list of items.
-	      this.items = this.items.concat(items);
-	
-	      if (addToEnd) {
-	        this._shrink(items);
-	
-	        // Shrink all items (without transitions).
-	        each(this._queue, function (transitionObj) {
-	          transitionObj.skipTransition = true;
-	        });
-	
-	        // Apply shrink positions, but do not cause a layout event.
-	        this._processQueue(false);
-	        this._addItemsToEnd(items, isSequential);
-	      } else {
-	        this.filter(this.lastFilter);
-	      }
-	    }
-	  }, {
-	    key: '_addItemsToEnd',
-	    value: function _addItemsToEnd($newItems, isSequential) {
-	      // Get ones that passed the current filter
-	      var $passed = this._filter(null, $newItems).filtered;
-	      var passed = $passed.get();
-	
-	      // How many filtered elements?
-	      this._updateItemCount();
-	
-	      // FIXME won't process queue.
-	      this._layout(passed, true);
-	
-	      if (isSequential) {
-	        this._setSequentialDelay(passed);
-	      }
-	
-	      this._revealAppended(passed);
-	    }
-	
-	    /**
-	     * Triggers appended elements to fade in.
-	     * @param {ArrayLike.<Element>} $newFilteredItems Collection of elements.
-	     * @private
-	     */
-	
-	  }, {
-	    key: '_revealAppended',
-	    value: function _revealAppended(newFilteredItems) {
-	      defer(function () {
-	        each(newFilteredItems, function (el) {
-	          var $item = window.jQuery(el);
-	          this._transition({
-	            $item: $item,
-	            opacity: 1,
-	            point: $item.data('point'),
-	            scale: _shuffleItem2.default.Scale.VISIBLE
-	          });
-	        }, this);
-	
-	        this._whenCollectionDone(window.jQuery(newFilteredItems), 'transitionend', function () {
-	          window.jQuery(newFilteredItems).css('transitionDelay', '0ms');
-	          this._movementFinished();
-	        });
-	      }, this, this.revealAppendedDelay);
 	    }
 	
 	    /**
@@ -1255,20 +1160,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * New items have been appended to shuffle. Fade them in sequentially
+	     * New items have been appended to shuffle. Mix them in with the current
+	     * filter or sort status.
 	     * @param {Array.<Element>} newItems Collection of new items.
-	     * @param {boolean} [addToEnd=false] If true, new items will be added to the end / bottom
-	     *     of the items. If false, items will be mixed in with the current sort order.
-	     * @param {boolean} [isSequential=true] If false, new items won't sequentially fade in
 	     */
 	
 	  }, {
 	    key: 'add',
 	    value: function add(newItems) {
-	      var addToEnd = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
-	      var isSequential = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+	      newItems = (0, _arrayUniq2.default)(newItems).map(function (el) {
+	        return new _shuffleItem2.default(el);
+	      });
 	
-	      this._addItems((0, _arrayUniq2.default)(newItems), addToEnd, isSequential);
+	      // Add classes and set initial positions.
+	      this._initItems(newItems);
+	
+	      // Add transition to each item.
+	      this._setTransitions(newItems);
+	
+	      // Update the list of items.
+	      this.items = this.items.concat(newItems);
+	      this._updateItemsOrder();
+	      this.filter(this.lastFilter);
 	    }
 	
 	    /**
@@ -1379,6 +1292,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'destroy',
 	    value: function destroy() {
+	      this._cancelMovement();
 	      window.removeEventListener('resize', this._onResize);
 	
 	      // Reset container styles
@@ -1408,7 +1322,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * 1. getBoundingClientRect() `left` and `right` properties.
 	     *   - Accounts for transform scaled elements, making it useless for Shuffle
 	     *   elements which have shrunk.
-	     * 2. The `offsetWidth` property (or jQuery's CSS).
+	     * 2. The `offsetWidth` property.
 	     *   - This value stays the same regardless of the elements transform property,
 	     *   however, it does not return subpixel values.
 	     * 3. getComputedStyle()
@@ -1553,9 +1467,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  // How often shuffle can be called on resize (in milliseconds).
 	  throttleTime: 300,
-	
-	  // Delay between each item that fades in when adding items.
-	  sequentialFadeDelay: 150,
 	
 	  // Transition delay offset for each item in milliseconds.
 	  staggerAmount: 15,
@@ -2135,6 +2046,51 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  return arr;
+	}
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.onTransitionEnd = onTransitionEnd;
+	exports.cancelTransitionEnd = cancelTransitionEnd;
+	var transitions = {};
+	var eventName = 'transitionend';
+	var count = 0;
+	
+	function uniqueId() {
+	  return eventName + count++;
+	}
+	
+	function onTransitionEnd(element, callback) {
+	  var id = uniqueId();
+	  var listener = function listener(evt) {
+	    if (evt.currentTarget === evt.target) {
+	      cancelTransitionEnd(id);
+	      callback(evt);
+	    }
+	  };
+	
+	  element.addEventListener(eventName, listener);
+	
+	  transitions[id] = { element: element, listener: listener };
+	
+	  return id;
+	}
+	
+	function cancelTransitionEnd(id) {
+	  if (transitions[id]) {
+	    transitions[id].element.removeEventListener(eventName, transitions[id].listener);
+	    delete transitions[id];
+	    return true;
+	  }
+	
+	  return false;
 	}
 
 /***/ }
