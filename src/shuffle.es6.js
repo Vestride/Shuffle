@@ -467,6 +467,15 @@ class Shuffle {
   }
 
   /**
+   * Get the clamped stagger amount.
+   * @param {number} index Index of the item to be staggered.
+   * @return {number}
+   */
+  _getStaggerAmount(index) {
+    return Math.min(index * this.options.staggerAmount, this.options.staggerAmountMax);
+  }
+
+  /**
    * @return {boolean} Whether the event was prevented or not.
    */
   _dispatch(name, details = {}) {
@@ -492,38 +501,34 @@ class Shuffle {
 
   /**
    * Loops through each item that should be shown and calculates the x, y position.
-   * @param {Array.<Element>} items Array of items that will be shown/layed out in
-   *     order in their array.
+   * @param {Array.<ShuffleItem>} items Array of items that will be shown/layed
+   *     out in order in their array.
    */
   _layout(items) {
-    each(items, this._layoutItem, this);
-  }
+    let count = 0;
+    each(items, (item) => {
+      var currPos = item.point;
+      var currScale = item.scale;
+      var itemSize = Shuffle.getSize(item.element, true);
+      var pos = this._getItemPosition(itemSize);
 
-  /**
-   * Calculates the position of the item and pushes it onto the style queue.
-   * @param {ShuffleItem} item ShuffleItem which is being positioned.
-   * @private
-   */
-  _layoutItem(item, i) {
-    var currPos = item.point;
-    var currScale = item.scale;
-    var itemSize = Shuffle.getSize(item.element, true);
-    var pos = this._getItemPosition(itemSize);
+      // If the item will not change its position, do not add it to the render
+      // queue. Transitions don't fire when setting a property to the same value.
+      if (Point.equals(currPos, pos) && currScale === ShuffleItem.Scale.VISIBLE) {
+        return;
+      }
 
-    // If the item will not change its position, do not add it to the render
-    // queue. Transitions don't fire when setting a property to the same value.
-    if (Point.equals(currPos, pos) && currScale === ShuffleItem.Scale.VISIBLE) {
-      return;
-    }
+      item.point = pos;
+      item.scale = ShuffleItem.Scale.VISIBLE;
 
-    item.point = pos;
-    item.scale = ShuffleItem.Scale.VISIBLE;
+      this._queue.push({
+        item,
+        opacity: 1,
+        visibility: 'visible',
+        transitionDelay: this._getStaggerAmount(count),
+      });
 
-    this._queue.push({
-      item,
-      opacity: 1,
-      visibility: 'visible',
-      transitionDelay: Math.min(i * this.options.staggerAmount, this.options.staggerAmountMax),
+      count++;
     });
   }
 
@@ -652,7 +657,8 @@ class Shuffle {
    * @private
    */
   _shrink(collection = this._getConcealedItems()) {
-    each(collection, (item, i) => {
+    let count = 0;
+    each(collection, (item) => {
       // Continuing would add a transitionend event listener to the element, but
       // that listener would not execute because the transform and opacity would
       // stay the same.
@@ -665,12 +671,14 @@ class Shuffle {
       this._queue.push({
         item,
         opacity: 0,
-        transitionDelay: Math.min(i * this.options.staggerAmount, this.options.staggerAmountMax),
+        transitionDelay: this._getStaggerAmount(count),
         callback() {
           item.element.style.visibility = 'hidden';
         },
       });
-    }, this);
+
+      count++;
+    });
   }
 
   /**

@@ -634,6 +634,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
+	     * Get the clamped stagger amount.
+	     * @param {number} index Index of the item to be staggered.
+	     * @return {number}
+	     */
+	
+	  }, {
+	    key: '_getStaggerAmount',
+	    value: function _getStaggerAmount(index) {
+	      return Math.min(index * this.options.staggerAmount, this.options.staggerAmountMax);
+	    }
+	
+	    /**
 	     * @return {boolean} Whether the event was prevented or not.
 	     */
 	
@@ -667,44 +679,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Loops through each item that should be shown and calculates the x, y position.
-	     * @param {Array.<Element>} items Array of items that will be shown/layed out in
-	     *     order in their array.
+	     * @param {Array.<ShuffleItem>} items Array of items that will be shown/layed
+	     *     out in order in their array.
 	     */
 	
 	  }, {
 	    key: '_layout',
 	    value: function _layout(items) {
-	      each(items, this._layoutItem, this);
-	    }
+	      var _this3 = this;
 	
-	    /**
-	     * Calculates the position of the item and pushes it onto the style queue.
-	     * @param {ShuffleItem} item ShuffleItem which is being positioned.
-	     * @private
-	     */
+	      var count = 0;
+	      each(items, function (item) {
+	        var currPos = item.point;
+	        var currScale = item.scale;
+	        var itemSize = Shuffle.getSize(item.element, true);
+	        var pos = _this3._getItemPosition(itemSize);
 	
-	  }, {
-	    key: '_layoutItem',
-	    value: function _layoutItem(item, i) {
-	      var currPos = item.point;
-	      var currScale = item.scale;
-	      var itemSize = Shuffle.getSize(item.element, true);
-	      var pos = this._getItemPosition(itemSize);
+	        // If the item will not change its position, do not add it to the render
+	        // queue. Transitions don't fire when setting a property to the same value.
+	        if (_point2.default.equals(currPos, pos) && currScale === _shuffleItem2.default.Scale.VISIBLE) {
+	          return;
+	        }
 	
-	      // If the item will not change its position, do not add it to the render
-	      // queue. Transitions don't fire when setting a property to the same value.
-	      if (_point2.default.equals(currPos, pos) && currScale === _shuffleItem2.default.Scale.VISIBLE) {
-	        return;
-	      }
+	        item.point = pos;
+	        item.scale = _shuffleItem2.default.Scale.VISIBLE;
 	
-	      item.point = pos;
-	      item.scale = _shuffleItem2.default.Scale.VISIBLE;
+	        _this3._queue.push({
+	          item: item,
+	          opacity: 1,
+	          visibility: 'visible',
+	          transitionDelay: _this3._getStaggerAmount(count)
+	        });
 	
-	      this._queue.push({
-	        item: item,
-	        opacity: 1,
-	        visibility: 'visible',
-	        transitionDelay: Math.min(i * this.options.staggerAmount, this.options.staggerAmountMax)
+	        count++;
 	      });
 	    }
 	
@@ -846,11 +853,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_shrink',
 	    value: function _shrink() {
-	      var _this3 = this;
+	      var _this4 = this;
 	
 	      var collection = arguments.length <= 0 || arguments[0] === undefined ? this._getConcealedItems() : arguments[0];
 	
-	      each(collection, function (item, i) {
+	      var count = 0;
+	      each(collection, function (item) {
 	        // Continuing would add a transitionend event listener to the element, but
 	        // that listener would not execute because the transform and opacity would
 	        // stay the same.
@@ -860,15 +868,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        item.scale = _shuffleItem2.default.Scale.FILTERED;
 	
-	        _this3._queue.push({
+	        _this4._queue.push({
 	          item: item,
 	          opacity: 0,
-	          transitionDelay: Math.min(i * _this3.options.staggerAmount, _this3.options.staggerAmountMax),
+	          transitionDelay: _this4._getStaggerAmount(count),
 	          callback: function callback() {
 	            item.element.style.visibility = 'hidden';
 	          }
 	        });
-	      }, this);
+	
+	        count++;
+	      });
 	    }
 	
 	    /**
@@ -927,7 +937,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_whenTransitionDone',
 	    value: function _whenTransitionDone(element, itemCallback) {
-	      var _this4 = this;
+	      var _this5 = this;
 	
 	      // TODO what happens when the transition is canceled and the promise never resolves?
 	      return new Promise(function (resolve) {
@@ -940,7 +950,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	          resolve();
 	        });
-	        _this4._transitions.push(id);
+	        _this5._transitions.push(id);
 	      });
 	    }
 	  }, {
@@ -960,7 +970,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_processQueue',
 	    value: function _processQueue() {
-	      var _this5 = this;
+	      var _this6 = this;
 	
 	      var withLayout = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
 	
@@ -972,7 +982,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var immediates = [];
 	      var transitions = [];
 	      this._queue.forEach(function (obj) {
-	        if (!_this5.isInitialized || _this5.options.speed === 0) {
+	        if (!_this6.isInitialized || _this6.options.speed === 0) {
 	          immediates.push(obj);
 	        } else {
 	          transitions.push(obj);
@@ -1003,13 +1013,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_startTransitions',
 	    value: function _startTransitions(transitions) {
-	      var _this6 = this;
+	      var _this7 = this;
 	
 	      // Set flag that shuffle is currently in motion.
 	      this.isTransitioning = true;
 	
 	      var promises = transitions.map(function (obj) {
-	        return _this6._transition(obj);
+	        return _this7._transition(obj);
 	      });
 	      Promise.all(promises).then(this._movementFinished.bind(this));
 	    }
@@ -1035,7 +1045,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_styleImmediately',
 	    value: function _styleImmediately(objects) {
-	      var _this7 = this;
+	      var _this8 = this;
 	
 	      if (objects.length) {
 	        var elements = objects.map(function (obj) {
@@ -1044,7 +1054,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        Shuffle._skipTransitions(elements, function () {
 	          objects.forEach(function (obj) {
-	            obj.item.applyCss(_this7._getStylesForTransition(obj));
+	            obj.item.applyCss(_this8._getStylesForTransition(obj));
 	
 	            if (obj.callback) {
 	              obj.callback();
@@ -1218,12 +1228,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'remove',
 	    value: function remove(collection) {
-	      var _this8 = this;
+	      var _this9 = this;
 	
 	      collection = (0, _arrayUniq2.default)(collection);
 	
 	      var items = collection.map(function (element) {
-	        return _this8.getItemByElement(element);
+	        return _this9.getItemByElement(element);
 	      }).filter(function (item) {
 	        return !!item;
 	      });
@@ -1233,8 +1243,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	
 	      var handleLayout = function handleLayout() {
-	        _this8.element.removeEventListener(Shuffle.EventType.LAYOUT, handleLayout);
-	        _this8._disposeItems(items);
+	        _this9.element.removeEventListener(Shuffle.EventType.LAYOUT, handleLayout);
+	        _this9._disposeItems(items);
 	
 	        // Remove the collection in the callback
 	        collection.forEach(function (element) {
@@ -1242,12 +1252,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	
 	        // Update things now that elements have been removed.
-	        _this8.items = _this8.items.filter(function (item) {
+	        _this9.items = _this9.items.filter(function (item) {
 	          return !arrayIncludes(items, item);
 	        });
-	        _this8._updateItemCount();
+	        _this9._updateItemCount();
 	
-	        _this8._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
+	        _this9._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
 	
 	        // Let it get garbage collected
 	        collection = null;
