@@ -43,9 +43,9 @@ demos:
   - url: 'demos/2013-06-19-adding-removing'
     slug: adding-removing
     label: Adding and removing items
-  - url: 'demos/2013-05-02-adaptive'
-    slug: adaptive
-    label: Adaptive bootstrap grid with compound filters
+  - url: 'demos/2013-05-02-compound-filters'
+    slug: compound-filters
+    label: Compound filtering
   - url: 'demos/2013-05-03-images'
     slug: images
     label: Using images

@@ -65,24 +65,19 @@
   border-width: 0 110px 191px 110px;
   background-color: transparent; }
 
-.lt-ie9 .shape .aspect {
-  position: static;
-  width: 100%;
-  height: 250px;
-  overflow: visible;
-  padding-bottom: 0; }
-
-.lt-ie9 .shape .shape__inner {
-  position: static;
-  width: 100%;
-  height: 100%; }
-
 @media (min-width: 1200px) {
   .shape--triangle .shape__space {
     padding-top: 18px;
     height: 0;
     width: 0;
     border-width: 0 135px 234px 135px; } }
+
+@media (min-width: 1392px) {
+  .shape--triangle .shape__space {
+    padding-top: 19px;
+    height: 0;
+    width: 0;
+    border-width: 0 142px 246px 142px; } }
 
 @media (min-width: 768px) and (max-width: 979px) {
   .shape--triangle .shape__space {
@@ -112,35 +107,3 @@
     height: 0;
     width: 0;
     border-width: 0 160px 277px 160px; } }
-
-body::before {
-  content: 'Default - 940px';
-  position: fixed;
-  z-index: 5;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 25px;
-  background-color: rgba(119, 204, 102, 0.6);
-  -webkit-transition: background .2s ease;
-  transition: background .2s ease; }
-
-@media (min-width: 1200px) {
-  body::before {
-    content: 'Large Desktop - 1200px+';
-    background-color: rgba(204, 119, 102, 0.6); } }
-
-@media (min-width: 768px) and (max-width: 979px) {
-  body::before {
-    content: 'Portrait tablet to landscape and desktop - > 768px && < 979px';
-    background-color: rgba(204, 187, 102, 0.6); } }
-
-@media (max-width: 767px) {
-  body::before {
-    content: 'Phones to Tablets - < 767px';
-    background-color: rgba(102, 153, 204, 0.6); } }
-
-@media (max-width: 480px) {
-  body::before {
-    content: 'Phones - < 480px';
-    background-color: rgba(204, 102, 204, 0.6); } }
