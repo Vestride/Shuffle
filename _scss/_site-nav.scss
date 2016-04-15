@@ -2,10 +2,10 @@
 
   .site-nav__title {
     color: $clouds;
+  }
 
-    &:first-child {
-      margin-top: 0;
-    }
+  .site-nav__title--first {
+    margin-top: 0;
   }
 
   .btn {
@@ -26,13 +26,7 @@
 
   &.collapsed .site-nav__tray {
     height: 0;
-
-    // IE7 wtf
-    .lt-ie8 & {
-      display: none;
-    }
   }
-
 
   .site-nav__band {
     position: relative;
