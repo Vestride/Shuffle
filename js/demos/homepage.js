@@ -10,7 +10,7 @@ var Demo = function (element) {
 
   this.shuffle = new Shuffle(element, {
     itemSelector: '.picture-item',
-    sizer: element.querySelector('.shuffle__sizer'),
+    sizer: element.querySelector('.my-sizer-element'),
   });
 
   this._activeFilters = [];
@@ -44,8 +44,6 @@ Demo.prototype.addShuffleEventListeners = function () {
     console.log('type: %s', event.type, 'detail:', event.detail);
   };
 
-  this.element.addEventListener(Shuffle.EventType.LOADING, handler, false);
-  this.element.addEventListener(Shuffle.EventType.DONE, handler, false);
   this.element.addEventListener(Shuffle.EventType.LAYOUT, handler, false);
   this.element.addEventListener(Shuffle.EventType.REMOVED, handler, false);
 };

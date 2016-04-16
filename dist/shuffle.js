@@ -114,10 +114,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	}
 	
-	function defer(fn, context, wait) {
-	  return setTimeout(fn.bind(context), wait);
-	}
-	
 	function arrayMax(array) {
 	  return Math.max.apply(Math, array);
 	}
@@ -163,7 +159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.isDestroyed = false;
 	    this.isInitialized = false;
 	    this._transitions = [];
-	    this._isMovementCanceled = false;
+	    this.isTransitioning = false;
 	    this._queue = [];
 	
 	    element = this._getElementOption(element);
@@ -175,15 +171,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.element = element;
 	    this.id = 'shuffle_' + id++;
 	
-	    this._dispatch(Shuffle.EventType.LOADING);
 	    this._init();
-	
-	    // Dispatch the done event asynchronously so that people can bind to it after
-	    // Shuffle has been initialized.
-	    defer(function () {
-	      this.isInitialized = true;
-	      this._dispatch(Shuffle.EventType.DONE);
-	    }, this, 16);
+	    this.isInitialized = true;
 	  }
 	
 	  _createClass(Shuffle, [{
@@ -221,12 +210,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Kick off!
 	      this.filter(this.options.group, this.options.initialSort);
 	
-	      // The shuffle items haven't had transitions set on them yet
-	      // so the user doesn't see the first layout. Set them now that the first layout is done.
-	      defer(function () {
-	        this._setTransitions();
-	        this.element.style.transition = 'height ' + this.options.speed + 'ms ' + this.options.easing;
-	      }, this);
+	      // The shuffle items haven't had transitions set on them yet so the user
+	      // doesn't see the first layout. Set them now that the first layout is done.
+	      // First, however, a synchronous layout must be caused for the previous
+	      // styles to be applied without transitions.
+	      this.element.offsetWidth; // jshint ignore: line
+	      this._setTransitions();
+	      this.element.style.transition = 'height ' + this.options.speed + 'ms ' + this.options.easing;
 	    }
 	
 	    /**
@@ -535,16 +525,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var size;
 	
 	      // If the columnWidth property is a function, then the grid is fluid
-	      if (typeof this.columnWidth === 'function') {
-	        size = this.columnWidth(containerWidth);
+	      if (typeof this.options.columnWidth === 'function') {
+	        size = this.options.columnWidth(containerWidth);
 	
 	        // columnWidth option isn't a function, are they using a sizing element?
 	      } else if (this.useSizer) {
 	          size = Shuffle.getSize(this.options.sizer).width;
 	
 	          // if not, how about the explicitly set option?
-	        } else if (this.columnWidth) {
-	            size = this.columnWidth;
+	        } else if (this.options.columnWidth) {
+	            size = this.options.columnWidth;
 	
 	            // or use the size of the first item
 	          } else if (this.items.length > 0) {
@@ -653,6 +643,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: '_dispatch',
 	    value: function _dispatch(name) {
 	      var details = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	
+	      if (this.isDestroyed) {
+	        return;
+	      }
 	
 	      details.shuffle = this;
 	      return !this.element.dispatchEvent(new CustomEvent(name, {
@@ -957,13 +951,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: '_transition',
 	    value: function _transition(opts) {
 	      opts.item.applyCss(this._getStylesForTransition(opts));
-	      this._whenTransitionDone(opts.item.element, opts.callback);
+	      return this._whenTransitionDone(opts.item.element, opts.callback);
 	    }
 	
 	    /**
 	     * Execute the styles gathered in the style queue. This applies styles to elements,
 	     * triggering transitions.
-	     * @param {boolean} withLayout Whether to trigger a layout event.
 	     * @private
 	     */
 	
@@ -971,8 +964,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: '_processQueue',
 	    value: function _processQueue() {
 	      var _this6 = this;
-	
-	      var withLayout = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
 	
 	      if (this.isTransitioning) {
 	        this._cancelMovement();
@@ -996,8 +987,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        // A call to layout happened, but none of the newly filtered items will
 	        // change position. Asynchronously fire the callback here.
-	      } else if (withLayout) {
-	          defer(this._dispatchLayout, this);
+	      } else {
+	          setTimeout(this._dispatchLayout.bind(this), 0);
 	        }
 	
 	      // Remove everything in the style queue
@@ -1421,8 +1412,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @enum {string}
 	 */
 	Shuffle.EventType = {
-	  LOADING: 'shuffle:loading',
-	  DONE: 'shuffle:done',
 	  LAYOUT: 'shuffle:layout',
 	  REMOVED: 'shuffle:removed'
 	};
@@ -1444,7 +1433,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // e.g. '.picture-item'.
 	  itemSelector: '*',
 	
-	  // Sizer element. Use an element to determine the size of columns and gutters.
+	  // Element or selector string. Use an element to determine the size of columns
+	  // and gutters.
 	  sizer: null,
 	
 	  // A static number or function that tells the plugin how wide the gutters
@@ -1481,7 +1471,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // Transition delay offset for each item in milliseconds.
 	  staggerAmount: 15,
 	
-	  // It can look a little weird when the last element is in the top row
+	  // Maximum stagger delay in milliseconds.
 	  staggerAmountMax: 250,
 	
 	  // Whether to use transforms or absolute positioning.
@@ -2096,7 +2086,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function cancelTransitionEnd(id) {
 	  if (transitions[id]) {
 	    transitions[id].element.removeEventListener(eventName, transitions[id].listener);
-	    delete transitions[id];
+	    transitions[id] = null;
 	    return true;
 	  }
 	

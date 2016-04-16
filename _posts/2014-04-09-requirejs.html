@@ -11,10 +11,14 @@ pagejs: false
 ---
 
 <div class="container">
-  <h2>RequireJS!</h2>
-  <p>
-    Shuffle uses a UMD wrapper, so it is compatible with AMD loaders like <a href="http://requirejs.org">RequireJS</a>. The UMD wrapper also allows Shuffle to work with CommonJS modules. You can take a peek at the <a href="{{ site.baseurl }}/js/require-main.js">config file</a> used on this page.
-  </p>
+  <div class="row">
+    <div class="col-12@sm">
+      <h2>RequireJS!</h2>
+      <p>
+        Shuffle uses a UMD wrapper, so it is compatible with AMD loaders like <a href="http://requirejs.org">RequireJS</a>. The UMD wrapper also allows Shuffle to work with CommonJS modules. You can take a peek at the <a href="{{ site.baseurl }}/js/require-main.js">config file</a> used on this page.
+      </p>
+    </div>
+  </div>
 </div>
 
 
@@ -34,7 +38,7 @@ pagejs: false
 </style>
 
 <div class="container shuffle-wrap">
-  <div id="grid" class="shuffle--container row">
+  <div id="grid" class="my-shuffle-container row">
     {% for item in site.items %}
     <figure class="js-item img-item col-3@sm col-3@xs">
       <div class="aspect aspect--16x9">
@@ -50,10 +54,12 @@ pagejs: false
 </div>
 
 
-<section>
-  <div class="container">
-    <h2>Shuffle.js</h2>
-    <p>{{ site.longDescription }}</p>
+<section class="container">
+  <div class="row">
+    <div class="col-12@sm">
+      <h2>Shuffle.js</h2>
+      <p>{{ site.longDescription }}</p>
+    </div>
   </div>
 </section>
 

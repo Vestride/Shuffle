@@ -997,8 +997,12 @@ h3:hover > a {
   .code-block pre {
     position: relative;
     z-index: 1;
+    min-height: 56px;
+    padding-top: 1em;
+    padding-bottom: 1em;
     padding-left: calc(3.5vw + 8px);
-    padding-right: calc(3.5vw + 8px); }
+    padding-right: calc(3.5vw + 8px);
+    margin: .5em 0; }
 
 @media screen and (min-width: 768px) {
   .code-block {

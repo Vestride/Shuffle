@@ -14,7 +14,7 @@ extraJS: [ "viewport.js", "demos/animate-in.js" ]
 
 
 <div class="container">
-  <div id="grid" class="row shuffle--container shuffle--fluid shuffle--animatein">
+  <div id="grid" class="row my-shuffle-container shuffle--animatein">
     {% for item in site.items %}
         {% assign item = item %}
         {% include picture-item.html %}
@@ -27,7 +27,7 @@ extraJS: [ "viewport.js", "demos/animate-in.js" ]
         {% assign item = item %}
         {% include picture-item.html %}
     {% endfor %}
-    <div class="col-1@sm col-1@xs shuffle__sizer"></div>
+    <div class="col-1@sm col-1@xs my-sizer-element"></div>
   </div>
 </div>
 

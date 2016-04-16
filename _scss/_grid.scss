@@ -87,8 +87,12 @@
   pre {
     position: relative;
     z-index: 1;
+    min-height: 56px;
+    padding-top: 1em;
+    padding-bottom: 1em;
     padding-left: calc(3.5vw + #{($grid-gutter-width / 2)});
     padding-right: calc(3.5vw + #{($grid-gutter-width / 2)});
+    margin: .5em 0;
   }
 }
 

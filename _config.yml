@@ -13,7 +13,6 @@ exclude:     [
   'bower.json',
   'CONTRIBUTING.md',
   'gulpfile.js',
-  'package.json',
   'README.md',
   'webpack.config.js',
   'webpack.config.min.js'

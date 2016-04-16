@@ -1,27 +1,20 @@
 <h2>Events<a href="#events"></a></h2>
-<p>A list of events shuffle triggers:</p>
-<ul class="breathable-list">
-  <li><code class="language-javascript">'loading.shuffle'</code></li>
-  <li><code class="language-javascript">'done.shuffle'</code></li>
-  <li><code class="language-javascript">'layout.shuffle'</code></li>
-  <li><code class="language-javascript">'removed.shuffle'</code></li>
-</ul>
+<p>Shuffle emits an event when a layout happens and when elements are removed. The event names are <code class="language-javascript">Shuffle.EventType.LAYOUT</code> and <code class="language-javascript">Shuffle.EventType.REMOVED</code>.</p>
+<p>Shuffle uses the global <code>CustomEvent</code> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent">create events</a>. A polyfill for IE&lt;=11 is bundled with Shuffle.</p>
 
-<h3>Get notified when shuffle is done with setup</h3>
+<h3>Get notified when a layout happens</h3>
 <div class="code-block">
-  <pre rel="JavaScript"><code class="language-javascript">$grid.on('done.shuffle', function() {
-  console.log('Finished initializing shuffle!');
-});
-
-// Initialize shuffle
-$grid.shuffle( options );</code></pre>
+  <pre rel="JavaScript"><code class="language-javascript">element.addEventListener(Shuffle.EventType.LAYOUT, function () {
+  console.log('Things finished moving!');
+});</code></pre>
 </div>
 
 
 <h3>Do something when an item is removed</h3>
 <div class="code-block">
-  <pre rel="JavaScript"><code class="language-javascript">$grid.on('removed.shuffle', function( evt, $collection, shuffle ) {
-  console.log( this, evt, $collection, shuffle );
+  <pre rel="JavaScript"><code class="language-javascript">element.addEventListener(Shuffle.EventType.REMOVED, function (evt) {
+  var detail = evt.detail;
+  console.log(this, evt, detail.collection, detail.shuffle);
 });</code></pre>
 </div>
 

@@ -27,7 +27,7 @@ export function onTransitionEnd(element, callback) {
 export function cancelTransitionEnd(id) {
   if (transitions[id]) {
     transitions[id].element.removeEventListener(eventName, transitions[id].listener);
-    delete transitions[id];
+    transitions[id] = null;
     return true;
   }
 

@@ -70,12 +70,12 @@ prism: true
   </div>
 
   <div class="container">
-    <div id="grid" class="row shuffle--container shuffle--fluid">
+    <div id="grid" class="row my-shuffle-container">
       {% for item in site.items %}
           {% assign item = item %}
           {% include picture-item.html %}
       {% endfor %}
-      <div class="col-1@sm col-1@xs shuffle__sizer"></div>
+      <div class="col-1@sm col-1@xs my-sizer-element"></div>
     </div>
   </div>
 </section>
@@ -188,6 +188,8 @@ prism: true
     <div class="row">
       <div class="col-12@sm">
         <h2>Dependencies<a href="#dependencies"></a></h2>
+        <p>Shuffle assumes <code>Promise</code> is available globally. If you care about IE11, use a <a href="https://github.com/stefanpenner/es6-promise">polyfill</a>. <a href="http://caniuse.com/#feat=promises">Current support</a>.</p>
+        <p>Shuffle's <a href="{{ site.baseurl }}/package.json">other dependencies</a> are bundled with the dist file.</p>
       </div>
     </div>
   </div>
@@ -219,11 +221,11 @@ prism: true
       <div class="col-12@sm">
         <h2>Be Social<a href="#be-social"></a></h2>
         <div class="text-center">
-          <iframe src="http://ghbtns.com/github-btn.html?user=Vestride&repo=Shuffle&type=watch&count=true&size=large" height="30" width="170" frameborder="0" scrolling="0" style="width:170px; height: 30px;" allowTransparency="true" seamless></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=Vestride&repo=Shuffle&type=star&size=large" frameborder="0" scrolling="0" width="76px" height="30px"></iframe>
 
-          <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://vestride.github.io/Shuffle/" data-via="Vestride" data-size="large">Tweet</a>
+          <a href="https://twitter.com/share" class="twitter-share-button" data-via="Vestride" data-size="large">Tweet</a>
 
-          <div class="g-plusone" data-href="http://vestride.github.io/Shuffle/" data-size="standard" data-annotation="bubble"></div>
+          <div class="g-plusone" data-annotation="none"></div>
         </div>
       </div>
     </div>

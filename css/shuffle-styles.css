@@ -76,11 +76,11 @@
   It will set it for you, but it'll cause another style recalculation and layout.
   AKA worse performance - so just set it here
  */
-.shuffle--container {
+.my-shuffle-container {
   position: relative;
   overflow: hidden; }
 
-.shuffle--fluid .shuffle__sizer {
+.my-sizer-element {
   position: absolute;
   opacity: 0;
   visibility: hidden; }

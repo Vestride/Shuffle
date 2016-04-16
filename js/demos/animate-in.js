@@ -6,7 +6,7 @@ var Viewport = window.Viewport;
 var Demo = function () {
   this.element = document.getElementById('grid');
   this.gridItems = this.element.querySelectorAll('.picture-item');
-  var sizer = this.element.querySelector('.shuffle__sizer');
+  var sizer = this.element.querySelector('.my-sizer-element');
 
   this.shuffle = new Shuffle(this.element, {
     itemSelector: '.picture-item',
