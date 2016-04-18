@@ -99,7 +99,7 @@ Demo.prototype.onAppendBoxes = function () {
   var items = this._getArrayOfElementsToAdd();
 
   items.forEach(function (item) {
-    this.element.appendChild(item);
+    this.shuffle.element.appendChild(item);
   }, this);
 
   // Tell shuffle items have been appended.

@@ -120,11 +120,11 @@ prism: true
   <div class="row">
     <div class="col-12@sm">
       <h3>Adding elements</h3>
-      <p>Wherever you add the element in the DOM is where it will show up in the grid (assuming you're using the default sort-by-dom-order). With this in mind, you can append, prepend, or insert elements wherever you need to get them to show up in the right order.</p>
+      <p>Wherever you add the element in the DOM is where it will show up in the grid (assuming you&rsquo;re using the default sort-by-dom-order). With this in mind, you can append, prepend, or insert elements wherever you need to get them to show up in the right order.</p>
       <div class="code-block">
-        <pre rel="JavaScript"><code class="language-javascript">// Earlier&hellip;
-document.querySelector('#append').addEventListener('click', this.onAppendBoxes.bind(this));
-// &hellip;
+        <pre rel="JavaScript"><code class="language-javascript">Demo.prototype.setupEvents = function () {
+  document.querySelector('#append').addEventListener('click', this.onAppendBoxes.bind(this));
+};
 
 /**
  * Create some DOM elements, append them to the shuffle container, then notify

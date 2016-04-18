@@ -157,20 +157,29 @@ Demo.prototype.addSearchFilter = function () {
   searchInput.addEventListener('keyup', this._handleSearchKeyup.bind(this));
 };
 
+/**
+ * Filter the shuffle instance by items with a title that matches the search input.
+ * @param {Event} evt Event object.
+ */
 Demo.prototype._handleSearchKeyup = function (evt) {
   var searchText = evt.target.value.toLowerCase();
 
   this.shuffle.filter(function (element, shuffle) {
-    // Get the item's groups.
-    var groups = JSON.parse(element.getAttribute('data-groups'));
 
-    // Only search elements in the current group
-    if (shuffle.options.group !== 'all' && groups.indexOf(shuffle.options.group) === -1) {
-      return false;
+    // If there is a current filter applied, ignore elements that don't match it.
+    if (shuffle.options.group !== Shuffle.ALL_ITEMS) {
+      // Get the item's groups.
+      var groups = JSON.parse(element.getAttribute('data-groups'));
+      var isElementInCurrentGroup = groups.indexOf(shuffle.options.group) !== -1;
+
+      // Only search elements in the current group
+      if (!isElementInCurrentGroup) {
+        return false;
+      }
     }
 
-    var title = element.querySelector('.picture-item__title');
-    var titleText = title.textContent.toLowerCase().trim();
+    var titleElement = element.querySelector('.picture-item__title');
+    var titleText = titleElement.textContent.toLowerCase().trim();
 
     return titleText.indexOf(searchText) !== -1;
   });
