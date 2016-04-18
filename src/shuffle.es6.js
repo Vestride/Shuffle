@@ -4,7 +4,7 @@ import 'custom-event-polyfill';
 import matches from 'matches-selector';
 import arrayUnique from 'array-uniq';
 import xtend from 'xtend';
-import throttle from './throttle';
+import throttle from 'throttleit';
 import Point from './point';
 import ShuffleItem from './shuffle-item';
 import Classes from './classes';
@@ -14,14 +14,6 @@ import { onTransitionEnd, cancelTransitionEnd } from './on-transition-end';
 
 function toArray(arrayLike) {
   return Array.prototype.slice.call(arrayLike);
-}
-
-function each(obj, iterator, context) {
-  for (var i = 0, length = obj.length; i < length; i++) {
-    if (iterator.call(context, obj[i], i, obj) === {}) {
-      return;
-    }
-  }
 }
 
 function arrayMax(array) {
@@ -500,7 +492,7 @@ class Shuffle {
    */
   _layout(items) {
     let count = 0;
-    each(items, (item) => {
+    items.forEach((item) => {
       var currPos = item.point;
       var currScale = item.scale;
       var itemSize = Shuffle.getSize(item.element, true);
@@ -652,7 +644,7 @@ class Shuffle {
    */
   _shrink(collection = this._getConcealedItems()) {
     let count = 0;
-    each(collection, (item) => {
+    collection.forEach((item) => {
       // Continuing would add a transitionend event listener to the element, but
       // that listener would not execute because the transform and opacity would
       // stay the same.
@@ -795,7 +787,7 @@ class Shuffle {
 
   _cancelMovement() {
     // Remove the transition end event for each listener.
-    each(this._transitions, cancelTransitionEnd);
+    this._transitions.forEach(cancelTransitionEnd);
 
     // Reset the array.
     this._transitions.length = 0;

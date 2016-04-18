@@ -72,9 +72,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _xtend2 = _interopRequireDefault(_xtend);
 	
-	var _throttle = __webpack_require__(5);
+	var _throttleit = __webpack_require__(5);
 	
-	var _throttle2 = _interopRequireDefault(_throttle);
+	var _throttleit2 = _interopRequireDefault(_throttleit);
 	
 	var _point = __webpack_require__(6);
 	
@@ -104,14 +104,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function toArray(arrayLike) {
 	  return Array.prototype.slice.call(arrayLike);
-	}
-	
-	function each(obj, iterator, context) {
-	  for (var i = 0, length = obj.length; i < length; i++) {
-	    if (iterator.call(context, obj[i], i, obj) === {}) {
-	      return;
-	    }
-	  }
 	}
 	
 	function arrayMax(array) {
@@ -683,7 +675,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this3 = this;
 	
 	      var count = 0;
-	      each(items, function (item) {
+	      items.forEach(function (item) {
 	        var currPos = item.point;
 	        var currScale = item.scale;
 	        var itemSize = Shuffle.getSize(item.element, true);
@@ -852,7 +844,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var collection = arguments.length <= 0 || arguments[0] === undefined ? this._getConcealedItems() : arguments[0];
 	
 	      var count = 0;
-	      each(collection, function (item) {
+	      collection.forEach(function (item) {
 	        // Continuing would add a transitionend event listener to the element, but
 	        // that listener would not execute because the transform and opacity would
 	        // stay the same.
@@ -1018,7 +1010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: '_cancelMovement',
 	    value: function _cancelMovement() {
 	      // Remove the transition end event for each listener.
-	      each(this._transitions, _onTransitionEnd.cancelTransitionEnd);
+	      this._transitions.forEach(_onTransitionEnd.cancelTransitionEnd);
 	
 	      // Reset the array.
 	      this._transitions.length = 0;
@@ -1463,7 +1455,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  // By default, shuffle will throttle resize events. This can be changed or
 	  // removed.
-	  throttle: _throttle2.default,
+	  throttle: _throttleit2.default,
 	
 	  // How often shuffle can be called on resize (in milliseconds).
 	  throttleTime: 300,
@@ -1646,50 +1638,39 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 5 */
 /***/ function(module, exports) {
 
-	'use strict';
+	module.exports = throttle;
 	
-	// Underscore's throttle method.
+	/**
+	 * Returns a new function that, when invoked, invokes `func` at most once per `wait` milliseconds.
+	 *
+	 * @param {Function} func Function to wrap.
+	 * @param {Number} wait Number of milliseconds that must elapse between `func` invocations.
+	 * @return {Function} A new function that wraps the `func` function passed in.
+	 */
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	function throttle (func, wait) {
+	  var ctx, args, rtn, timeoutID; // caching
+	  var last = 0;
 	
-	exports.default = function (func, wait, options) {
-	  var _this;
-	  var args;
-	  var result;
-	  var timeout = null;
-	  var previous = 0;
-	  if (!options) options = {};
-	  var later = function later() {
-	    previous = options.leading === false ? 0 : Date.now();
-	    timeout = null;
-	    result = func.apply(_this, args);
-	    if (!timeout) _this = args = null;
-	  };
-	
-	  return function () {
-	    var now = Date.now();
-	    if (!previous && options.leading === false) previous = now;
-	    var remaining = wait - (now - previous);
-	    _this = this;
+	  return function throttled () {
+	    ctx = this;
 	    args = arguments;
-	    if (remaining <= 0 || remaining > wait) {
-	      if (timeout) {
-	        clearTimeout(timeout);
-	        timeout = null;
-	      }
-	
-	      previous = now;
-	      result = func.apply(_this, args);
-	      if (!timeout) _this = args = null;
-	    } else if (!timeout && options.trailing !== false) {
-	      timeout = setTimeout(later, remaining);
-	    }
-	
-	    return result;
+	    var delta = new Date() - last;
+	    if (!timeoutID)
+	      if (delta >= wait) call();
+	      else timeoutID = setTimeout(call, wait - delta);
+	    return rtn;
 	  };
-	};
+	
+	  function call () {
+	    timeoutID = 0;
+	    last = +new Date();
+	    rtn = func.apply(ctx, args);
+	    ctx = null;
+	    args = null;
+	  }
+	}
+
 
 /***/ },
 /* 6 */
