@@ -1,27 +1,30 @@
 import Point from './point';
 import Classes from './classes';
 
+let id = 0;
+
 class ShuffleItem {
   constructor(element) {
+    this.id = id++;
     this.element = element;
     this.isVisible = true;
   }
 
-  reveal() {
+  show() {
     this.isVisible = true;
-    this.element.classList.remove(Classes.CONCEALED);
-    this.element.classList.add(Classes.FILTERED);
+    this.element.classList.remove(Classes.HIDDEN);
+    this.element.classList.add(Classes.VISIBLE);
   }
 
-  conceal() {
+  hide() {
     this.isVisible = false;
-    this.element.classList.remove(Classes.FILTERED);
-    this.element.classList.add(Classes.CONCEALED);
+    this.element.classList.remove(Classes.VISIBLE);
+    this.element.classList.add(Classes.HIDDEN);
   }
 
   init() {
-    this.addClasses([Classes.SHUFFLE_ITEM, Classes.FILTERED]);
-    this.applyCss(ShuffleItem.css);
+    this.addClasses([Classes.SHUFFLE_ITEM, Classes.VISIBLE]);
+    this.applyCss(ShuffleItem.Css.INITIAL);
     this.scale = ShuffleItem.Scale.VISIBLE;
     this.point = new Point();
   }
@@ -46,8 +49,8 @@ class ShuffleItem {
 
   dispose() {
     this.removeClasses([
-      Classes.CONCEALED,
-      Classes.FILTERED,
+      Classes.HIDDEN,
+      Classes.VISIBLE,
       Classes.SHUFFLE_ITEM,
     ]);
 
@@ -56,17 +59,34 @@ class ShuffleItem {
   }
 }
 
-ShuffleItem.css = {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  visibility: 'visible',
-  'will-change': 'transform',
+ShuffleItem.Css = {
+  INITIAL: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    visibility: 'visible',
+    'will-change': 'transform',
+  },
+  VISIBLE: {
+    before: {
+      opacity: 1,
+      visibility: 'visible',
+    },
+    after: {},
+  },
+  HIDDEN: {
+    before: {
+      opacity: 0,
+    },
+    after: {
+      visibility: 'hidden',
+    },
+  },
 };
 
 ShuffleItem.Scale = {
   VISIBLE: 1,
-  FILTERED: 0.001,
+  HIDDEN: 0.001,
 };
 
 export default ShuffleItem;

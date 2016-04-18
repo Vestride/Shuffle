@@ -179,7 +179,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	
 	      // Add class and invalidate styles
-	      this.element.classList.add(Shuffle.ClassName.BASE);
+	      this.element.classList.add(Shuffle.Classes.BASE);
 	
 	      // Set initial css for each item
 	      this._initItems();
@@ -265,7 +265,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.element.style.position = 'relative';
 	      }
 	
-	      // Overflow has to be hidden
+	      // Overflow has to be hidden.
 	      if (styles.overflow !== 'hidden') {
 	        this.element.style.overflow = 'hidden';
 	      }
@@ -277,7 +277,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *     category will be used to filter the items.
 	     * @param {Array} [collection] Optionally filter a collection. Defaults to
 	     *     all the items.
-	     * @return {!{filtered: Array, concealed: Array}}
+	     * @return {!{visible: Array, hidden: Array}}
 	     * @private
 	     */
 	
@@ -289,7 +289,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      var set = this._getFilteredSets(category, collection);
 	
-	      // Individually add/remove concealed/filtered classes
+	      // Individually add/remove hidden/visible classes
 	      this._toggleFilterClasses(set);
 	
 	      // Save the last filter in case elements are appended.
@@ -305,10 +305,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * Returns an object containing the filtered and concealed elements.
+	     * Returns an object containing the visible and hidden elements.
 	     * @param {string|Function} category Category or function to filter by.
 	     * @param {Array.<Element>} items A collection of items to filter.
-	     * @return {!{filtered: Array, concealed: Array}}
+	     * @return {!{visible: Array, hidden: Array}}
 	     * @private
 	     */
 	
@@ -317,28 +317,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function _getFilteredSets(category, items) {
 	      var _this = this;
 	
-	      var filtered = [];
-	      var concealed = [];
+	      var visible = [];
+	      var hidden = [];
 	
-	      // category === 'all', add filtered class to everything
+	      // category === 'all', add visible class to everything
 	      if (category === Shuffle.ALL_ITEMS) {
-	        filtered = items;
+	        visible = items;
 	
 	        // Loop through each item and use provided function to determine
 	        // whether to hide it or not.
 	      } else {
 	          items.forEach(function (item) {
 	            if (_this._doesPassFilter(category, item.element)) {
-	              filtered.push(item);
+	              visible.push(item);
 	            } else {
-	              concealed.push(item);
+	              hidden.push(item);
 	            }
 	          });
 	        }
 	
 	      return {
-	        filtered: filtered,
-	        concealed: concealed
+	        visible: visible,
+	        hidden: hidden
 	      };
 	    }
 	
@@ -372,23 +372,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * Toggles the filtered and concealed class names.
-	     * @param {{filtered, concealed}} Object with filtered and concealed arrays.
+	     * Toggles the visible and hidden class names.
+	     * @param {{visible, hidden}} Object with visible and hidden arrays.
 	     * @private
 	     */
 	
 	  }, {
 	    key: '_toggleFilterClasses',
 	    value: function _toggleFilterClasses(_ref) {
-	      var filtered = _ref.filtered;
-	      var concealed = _ref.concealed;
+	      var visible = _ref.visible;
+	      var hidden = _ref.hidden;
 	
-	      filtered.forEach(function (item) {
-	        item.reveal();
+	      visible.forEach(function (item) {
+	        item.show();
 	      });
 	
-	      concealed.forEach(function (item) {
-	        item.conceal();
+	      hidden.forEach(function (item) {
+	        item.hide();
 	      });
 	    }
 	
@@ -424,7 +424,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * Updates the filtered item count.
+	     * Updates the visible item count.
 	     * @private
 	     */
 	
@@ -681,20 +681,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var itemSize = Shuffle.getSize(item.element, true);
 	        var pos = _this3._getItemPosition(itemSize);
 	
+	        function callback() {
+	          item.applyCss(_shuffleItem2.default.Css.VISIBLE.after);
+	        }
+	
 	        // If the item will not change its position, do not add it to the render
 	        // queue. Transitions don't fire when setting a property to the same value.
 	        if (_point2.default.equals(currPos, pos) && currScale === _shuffleItem2.default.Scale.VISIBLE) {
+	          callback();
 	          return;
 	        }
 	
 	        item.point = pos;
 	        item.scale = _shuffleItem2.default.Scale.VISIBLE;
 	
+	        var styles = _shuffleItem2.default.Css.VISIBLE.before;
+	        styles.transitionDelay = _this3._getStaggerAmount(count);
+	
 	        _this3._queue.push({
 	          item: item,
-	          opacity: 1,
-	          visibility: 'visible',
-	          transitionDelay: _this3._getStaggerAmount(count)
+	          styles: styles,
+	          callback: callback
 	        });
 	
 	        count++;
@@ -845,22 +852,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      var count = 0;
 	      collection.forEach(function (item) {
+	        function callback() {
+	          item.applyCss(_shuffleItem2.default.Css.HIDDEN.after);
+	        }
+	
 	        // Continuing would add a transitionend event listener to the element, but
 	        // that listener would not execute because the transform and opacity would
 	        // stay the same.
-	        if (item.scale === _shuffleItem2.default.Scale.FILTERED) {
+	        // The callback is executed here because it is not guaranteed to be called
+	        // after the transitionend event because the transitionend could be
+	        // canceled if another animation starts.
+	        if (item.scale === _shuffleItem2.default.Scale.HIDDEN) {
+	          callback();
 	          return;
 	        }
 	
-	        item.scale = _shuffleItem2.default.Scale.FILTERED;
+	        item.scale = _shuffleItem2.default.Scale.HIDDEN;
+	
+	        var styles = _shuffleItem2.default.Css.HIDDEN.before;
+	        styles.transitionDelay = _this4._getStaggerAmount(count);
 	
 	        _this4._queue.push({
 	          item: item,
-	          opacity: 0,
-	          transitionDelay: _this4._getStaggerAmount(count),
-	          callback: function callback() {
-	            item.element.style.visibility = 'hidden';
-	          }
+	          styles: styles,
+	          callback: callback
 	        });
 	
 	        count++;
@@ -900,13 +915,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  }, {
 	    key: '_getStylesForTransition',
-	    value: function _getStylesForTransition(obj) {
-	      var item = obj.item;
-	      var styles = {
-	        opacity: obj.opacity,
-	        visibility: obj.visibility,
-	        transitionDelay: (obj.transitionDelay || 0) + 'ms'
-	      };
+	    value: function _getStylesForTransition(_ref2) {
+	      var item = _ref2.item;
+	      var styles = _ref2.styles;
+	
+	      if (!styles.transitionDelay) {
+	        styles.transitionDelay = '0ms';
+	      }
 	
 	      var x = item.point.x;
 	      var y = item.point.y;
@@ -929,11 +944,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return new Promise(function (resolve) {
 	        var id = (0, _onTransitionEnd.onTransitionEnd)(element, function (evt) {
 	          evt.currentTarget.style.transitionDelay = '';
-	
-	          if (itemCallback) {
-	            itemCallback();
-	          }
-	
+	          itemCallback();
 	          resolve();
 	        });
 	        _this5._transitions.push(id);
@@ -977,7 +988,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (transitions.length > 0 && this.options.speed > 0) {
 	        this._startTransitions(transitions);
 	
-	        // A call to layout happened, but none of the newly filtered items will
+	        // A call to layout happened, but none of the newly visible items will
 	        // change position. Asynchronously fire the callback here.
 	      } else {
 	          setTimeout(this._dispatchLayout.bind(this), 0);
@@ -1038,10 +1049,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        Shuffle._skipTransitions(elements, function () {
 	          objects.forEach(function (obj) {
 	            obj.item.applyCss(_this8._getStylesForTransition(obj));
-	
-	            if (obj.callback) {
-	              obj.callback();
-	            }
+	            obj.callback();
 	          });
 	        });
 	      }
@@ -1063,7 +1071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * The magic. This is what makes the plugin 'shuffle'
 	     * @param {string|Function|Array.<string>} [category] Category to filter by.
 	     *     Can be a function, string, or array of strings.
-	     * @param {Object} [sortObj] A sort object which can sort the filtered set
+	     * @param {Object} [sortObj] A sort object which can sort the visible set
 	     */
 	
 	  }, {
@@ -1079,18 +1087,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      this._filter(category);
 	
-	      // Shrink each concealed item
+	      // Shrink each hidden item
 	      this._shrink();
 	
-	      // How many filtered elements?
+	      // How many visible elements?
 	      this._updateItemCount();
 	
-	      // Update transforms on .filtered elements so they will animate to their new positions
+	      // Update transforms on visible elements so they will animate to their new positions.
 	      this.sort(sortObj);
 	    }
 	
 	    /**
-	     * Gets the .filtered elements, sorts them, and passes them to layout.
+	     * Gets the visible elements, sorts them, and passes them to layout.
 	     * @param {Object} opts the options object for the sorted plugin
 	     */
 	
@@ -1244,8 +1252,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      // Hide collection first.
 	      this._toggleFilterClasses({
-	        filtered: [],
-	        concealed: oldItems
+	        visible: [],
+	        hidden: oldItems
 	      });
 	
 	      this._shrink(oldItems);
@@ -1411,7 +1419,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/** @enum {string} */
-	Shuffle.ClassName = _classes2.default;
+	Shuffle.Classes = _classes2.default;
 	
 	// Overrideable options
 	Shuffle.options = {
@@ -1756,33 +1764,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	var id = 0;
+	
 	var ShuffleItem = function () {
 	  function ShuffleItem(element) {
 	    _classCallCheck(this, ShuffleItem);
 	
+	    this.id = id++;
 	    this.element = element;
 	    this.isVisible = true;
 	  }
 	
 	  _createClass(ShuffleItem, [{
-	    key: 'reveal',
-	    value: function reveal() {
+	    key: 'show',
+	    value: function show() {
 	      this.isVisible = true;
-	      this.element.classList.remove(_classes2.default.CONCEALED);
-	      this.element.classList.add(_classes2.default.FILTERED);
+	      this.element.classList.remove(_classes2.default.HIDDEN);
+	      this.element.classList.add(_classes2.default.VISIBLE);
 	    }
 	  }, {
-	    key: 'conceal',
-	    value: function conceal() {
+	    key: 'hide',
+	    value: function hide() {
 	      this.isVisible = false;
-	      this.element.classList.remove(_classes2.default.FILTERED);
-	      this.element.classList.add(_classes2.default.CONCEALED);
+	      this.element.classList.remove(_classes2.default.VISIBLE);
+	      this.element.classList.add(_classes2.default.HIDDEN);
 	    }
 	  }, {
 	    key: 'init',
 	    value: function init() {
-	      this.addClasses([_classes2.default.SHUFFLE_ITEM, _classes2.default.FILTERED]);
-	      this.applyCss(ShuffleItem.css);
+	      this.addClasses([_classes2.default.SHUFFLE_ITEM, _classes2.default.VISIBLE]);
+	      this.applyCss(ShuffleItem.Css.INITIAL);
 	      this.scale = ShuffleItem.Scale.VISIBLE;
 	      this.point = new _point2.default();
 	    }
@@ -1814,7 +1825,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'dispose',
 	    value: function dispose() {
-	      this.removeClasses([_classes2.default.CONCEALED, _classes2.default.FILTERED, _classes2.default.SHUFFLE_ITEM]);
+	      this.removeClasses([_classes2.default.HIDDEN, _classes2.default.VISIBLE, _classes2.default.SHUFFLE_ITEM]);
 	
 	      this.element.removeAttribute('style');
 	      this.element = null;
@@ -1824,17 +1835,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return ShuffleItem;
 	}();
 	
-	ShuffleItem.css = {
-	  position: 'absolute',
-	  top: 0,
-	  left: 0,
-	  visibility: 'visible',
-	  'will-change': 'transform'
+	ShuffleItem.Css = {
+	  INITIAL: {
+	    position: 'absolute',
+	    top: 0,
+	    left: 0,
+	    visibility: 'visible',
+	    'will-change': 'transform'
+	  },
+	  VISIBLE: {
+	    before: {
+	      opacity: 1,
+	      visibility: 'visible'
+	    },
+	    after: {}
+	  },
+	  HIDDEN: {
+	    before: {
+	      opacity: 0
+	    },
+	    after: {
+	      visibility: 'hidden'
+	    }
+	  }
 	};
 	
 	ShuffleItem.Scale = {
 	  VISIBLE: 1,
-	  FILTERED: 0.001
+	  HIDDEN: 0.001
 	};
 	
 	exports.default = ShuffleItem;
@@ -1848,8 +1876,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = {
 	  BASE: 'shuffle',
 	  SHUFFLE_ITEM: 'shuffle-item',
-	  FILTERED: 'filtered',
-	  CONCEALED: 'concealed'
+	  VISIBLE: 'shuffle-item--visible',
+	  HIDDEN: 'shuffle-item--hidden'
 	};
 
 /***/ },

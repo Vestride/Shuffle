@@ -125,7 +125,7 @@ describe('shuffle', function () {
 
       instance.items.forEach(function (item) {
         expect(item.element).to.have.class('shuffle-item');
-        expect(item.element).to.have.class('filtered');
+        expect(item.element).to.have.class('shuffle-item--visible');
         expect(item.element.style.opacity).to.be.defined;
         expect(item.element.style.position).to.equal('absolute');
         expect(item.element.style.visibility).to.equal('visible');
@@ -217,21 +217,21 @@ describe('shuffle', function () {
 
       function second() {
         expect(instance.visibleItems).to.equal(3);
-        var concealed = [3, 4, 5, 6, 7, 8, 10].map(function (num) {
+        var hidden = [3, 4, 5, 6, 7, 8, 10].map(function (num) {
           return id('item' + num);
         });
 
-        var filtered = [1, 2, 9].map(function (num) {
+        var visible = [1, 2, 9].map(function (num) {
           return id('item' + num);
         });
 
-        concealed.forEach(function (element) {
-          expect(element).to.have.class(Shuffle.ClassName.CONCEALED);
+        hidden.forEach(function (element) {
+          expect(element).to.have.class(Shuffle.Classes.HIDDEN);
           expect(element.style.visibility).to.equal('hidden');
         });
 
-        filtered.forEach(function (element) {
-          expect(element).to.have.class(Shuffle.ClassName.FILTERED);
+        visible.forEach(function (element) {
+          expect(element).to.have.class(Shuffle.Classes.VISIBLE);
           expect(element.style.visibility).to.equal('visible');
         });
 
@@ -243,21 +243,21 @@ describe('shuffle', function () {
 
       function third() {
         expect(instance.visibleItems).to.equal(2);
-        var concealed = [1, 2, 5, 6, 7, 8, 9, 10].map(function (num) {
+        var hidden = [1, 2, 5, 6, 7, 8, 9, 10].map(function (num) {
           return id('item' + num);
         });
 
-        var filtered = [3, 4].map(function (num) {
+        var visible = [3, 4].map(function (num) {
           return id('item' + num);
         });
 
-        concealed.forEach(function (element) {
-          expect(element).to.have.class(Shuffle.ClassName.CONCEALED);
+        hidden.forEach(function (element) {
+          expect(element).to.have.class(Shuffle.Classes.HIDDEN);
           expect(element.style.visibility).to.equal('hidden');
         });
 
-        filtered.forEach(function (element) {
-          expect(element).to.have.class(Shuffle.ClassName.FILTERED);
+        visible.forEach(function (element) {
+          expect(element).to.have.class(Shuffle.Classes.VISIBLE);
           expect(element.style.visibility).to.equal('visible');
         });
 
@@ -389,8 +389,8 @@ describe('shuffle', function () {
 
       toArray(fixture.children).forEach(function (child) {
         expect(child).to.not.have.class('shuffle-item');
-        expect(child).to.not.have.class('filtered');
-        expect(child).to.not.have.class('concealed');
+        expect(child).to.not.have.class('shuffle-item--visible');
+        expect(child).to.not.have.class('shuffle-item--hidden');
       });
     });
 

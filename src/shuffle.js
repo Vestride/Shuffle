@@ -82,7 +82,7 @@ class Shuffle {
     }
 
     // Add class and invalidate styles
-    this.element.classList.add(Shuffle.ClassName.BASE);
+    this.element.classList.add(Shuffle.Classes.BASE);
 
     // Set initial css for each item
     this._initItems();
@@ -161,7 +161,7 @@ class Shuffle {
       this.element.style.position = 'relative';
     }
 
-    // Overflow has to be hidden
+    // Overflow has to be hidden.
     if (styles.overflow !== 'hidden') {
       this.element.style.overflow = 'hidden';
     }
@@ -173,13 +173,13 @@ class Shuffle {
    *     category will be used to filter the items.
    * @param {Array} [collection] Optionally filter a collection. Defaults to
    *     all the items.
-   * @return {!{filtered: Array, concealed: Array}}
+   * @return {!{visible: Array, hidden: Array}}
    * @private
    */
   _filter(category = this.lastFilter, collection = this.items) {
     var set = this._getFilteredSets(category, collection);
 
-    // Individually add/remove concealed/filtered classes
+    // Individually add/remove hidden/visible classes
     this._toggleFilterClasses(set);
 
     // Save the last filter in case elements are appended.
@@ -195,35 +195,35 @@ class Shuffle {
   }
 
   /**
-   * Returns an object containing the filtered and concealed elements.
+   * Returns an object containing the visible and hidden elements.
    * @param {string|Function} category Category or function to filter by.
    * @param {Array.<Element>} items A collection of items to filter.
-   * @return {!{filtered: Array, concealed: Array}}
+   * @return {!{visible: Array, hidden: Array}}
    * @private
    */
   _getFilteredSets(category, items) {
-    let filtered = [];
-    let concealed = [];
+    let visible = [];
+    let hidden = [];
 
-    // category === 'all', add filtered class to everything
+    // category === 'all', add visible class to everything
     if (category === Shuffle.ALL_ITEMS) {
-      filtered = items;
+      visible = items;
 
     // Loop through each item and use provided function to determine
     // whether to hide it or not.
     } else {
       items.forEach((item) => {
         if (this._doesPassFilter(category, item.element)) {
-          filtered.push(item);
+          visible.push(item);
         } else {
-          concealed.push(item);
+          hidden.push(item);
         }
       });
     }
 
     return {
-      filtered,
-      concealed,
+      visible,
+      hidden,
     };
   }
 
@@ -256,17 +256,17 @@ class Shuffle {
   }
 
   /**
-   * Toggles the filtered and concealed class names.
-   * @param {{filtered, concealed}} Object with filtered and concealed arrays.
+   * Toggles the visible and hidden class names.
+   * @param {{visible, hidden}} Object with visible and hidden arrays.
    * @private
    */
-  _toggleFilterClasses({ filtered, concealed }) {
-    filtered.forEach((item) => {
-      item.reveal();
+  _toggleFilterClasses({ visible, hidden }) {
+    visible.forEach((item) => {
+      item.show();
     });
 
-    concealed.forEach((item) => {
-      item.conceal();
+    hidden.forEach((item) => {
+      item.hide();
     });
   }
 
@@ -292,7 +292,7 @@ class Shuffle {
   }
 
   /**
-   * Updates the filtered item count.
+   * Updates the visible item count.
    * @private
    */
   _updateItemCount() {
@@ -498,20 +498,27 @@ class Shuffle {
       var itemSize = Shuffle.getSize(item.element, true);
       var pos = this._getItemPosition(itemSize);
 
+      function callback() {
+        item.applyCss(ShuffleItem.Css.VISIBLE.after);
+      }
+
       // If the item will not change its position, do not add it to the render
       // queue. Transitions don't fire when setting a property to the same value.
       if (Point.equals(currPos, pos) && currScale === ShuffleItem.Scale.VISIBLE) {
+        callback();
         return;
       }
 
       item.point = pos;
       item.scale = ShuffleItem.Scale.VISIBLE;
 
+      let styles = ShuffleItem.Css.VISIBLE.before;
+      styles.transitionDelay = this._getStaggerAmount(count);
+
       this._queue.push({
         item,
-        opacity: 1,
-        visibility: 'visible',
-        transitionDelay: this._getStaggerAmount(count),
+        styles,
+        callback,
       });
 
       count++;
@@ -645,22 +652,30 @@ class Shuffle {
   _shrink(collection = this._getConcealedItems()) {
     let count = 0;
     collection.forEach((item) => {
+      function callback() {
+        item.applyCss(ShuffleItem.Css.HIDDEN.after);
+      }
+
       // Continuing would add a transitionend event listener to the element, but
       // that listener would not execute because the transform and opacity would
       // stay the same.
-      if (item.scale === ShuffleItem.Scale.FILTERED) {
+      // The callback is executed here because it is not guaranteed to be called
+      // after the transitionend event because the transitionend could be
+      // canceled if another animation starts.
+      if (item.scale === ShuffleItem.Scale.HIDDEN) {
+        callback();
         return;
       }
 
-      item.scale = ShuffleItem.Scale.FILTERED;
+      item.scale = ShuffleItem.Scale.HIDDEN;
+
+      let styles = ShuffleItem.Css.HIDDEN.before;
+      styles.transitionDelay = this._getStaggerAmount(count);
 
       this._queue.push({
         item,
-        opacity: 0,
-        transitionDelay: this._getStaggerAmount(count),
-        callback() {
-          item.element.style.visibility = 'hidden';
-        },
+        styles,
+        callback,
       });
 
       count++;
@@ -694,13 +709,10 @@ class Shuffle {
    * @return {!Object} Transforms for transitions, left/top for animate.
    * @private
    */
-  _getStylesForTransition(obj) {
-    let item = obj.item;
-    let styles = {
-      opacity: obj.opacity,
-      visibility: obj.visibility,
-      transitionDelay: (obj.transitionDelay || 0) + 'ms',
-    };
+  _getStylesForTransition({ item, styles }) {
+    if (!styles.transitionDelay) {
+      styles.transitionDelay = '0ms';
+    }
 
     let x = item.point.x;
     let y = item.point.y;
@@ -720,11 +732,7 @@ class Shuffle {
     return new Promise((resolve) => {
       let id = onTransitionEnd(element, (evt) => {
         evt.currentTarget.style.transitionDelay = '';
-
-        if (itemCallback) {
-          itemCallback();
-        }
-
+        itemCallback();
         resolve();
       });
       this._transitions.push(id);
@@ -762,7 +770,7 @@ class Shuffle {
     if (transitions.length > 0 && this.options.speed > 0) {
       this._startTransitions(transitions);
 
-    // A call to layout happened, but none of the newly filtered items will
+    // A call to layout happened, but none of the newly visible items will
     // change position. Asynchronously fire the callback here.
     } else {
       setTimeout(this._dispatchLayout.bind(this), 0);
@@ -808,10 +816,7 @@ class Shuffle {
       Shuffle._skipTransitions(elements, () => {
         objects.forEach((obj) => {
           obj.item.applyCss(this._getStylesForTransition(obj));
-
-          if (obj.callback) {
-            obj.callback();
-          }
+          obj.callback();
         });
       });
     }
@@ -831,7 +836,7 @@ class Shuffle {
    * The magic. This is what makes the plugin 'shuffle'
    * @param {string|Function|Array.<string>} [category] Category to filter by.
    *     Can be a function, string, or array of strings.
-   * @param {Object} [sortObj] A sort object which can sort the filtered set
+   * @param {Object} [sortObj] A sort object which can sort the visible set
    */
   filter(category, sortObj) {
     if (!this.isEnabled) {
@@ -844,18 +849,18 @@ class Shuffle {
 
     this._filter(category);
 
-    // Shrink each concealed item
+    // Shrink each hidden item
     this._shrink();
 
-    // How many filtered elements?
+    // How many visible elements?
     this._updateItemCount();
 
-    // Update transforms on .filtered elements so they will animate to their new positions
+    // Update transforms on visible elements so they will animate to their new positions.
     this.sort(sortObj);
   }
 
   /**
-   * Gets the .filtered elements, sorts them, and passes them to layout.
+   * Gets the visible elements, sorts them, and passes them to layout.
    * @param {Object} opts the options object for the sorted plugin
    */
   sort(opts = this.lastSort) {
@@ -980,8 +985,8 @@ class Shuffle {
 
     // Hide collection first.
     this._toggleFilterClasses({
-      filtered: [],
-      concealed: oldItems,
+      visible: [],
+      hidden: oldItems,
     });
 
     this._shrink(oldItems);
@@ -1130,7 +1135,7 @@ Shuffle.EventType = {
 };
 
 /** @enum {string} */
-Shuffle.ClassName = Classes;
+Shuffle.Classes = Classes;
 
 // Overrideable options
 Shuffle.options = {

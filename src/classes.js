@@ -1,6 +1,6 @@
 module.exports = {
   BASE: 'shuffle',
   SHUFFLE_ITEM: 'shuffle-item',
-  FILTERED: 'filtered',
-  CONCEALED: 'concealed',
+  VISIBLE: 'shuffle-item--visible',
+  HIDDEN: 'shuffle-item--hidden',
 };
