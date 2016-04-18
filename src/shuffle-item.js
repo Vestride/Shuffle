@@ -39,9 +39,9 @@ class ShuffleItem {
   }
 
   applyCss(obj) {
-    Object.keys(obj).forEach((key) => {
+    for (var key in obj) {
       this.element.style[key] = obj[key];
-    });
+    }
   }
 
   dispose() {

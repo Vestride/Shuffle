@@ -818,6 +818,7 @@ class Shuffle {
   }
 
   _movementFinished() {
+    this._transitions.length = 0;
     this.isTransitioning = false;
     this._dispatchLayout();
   }
@@ -951,45 +952,46 @@ class Shuffle {
    * @return {Shuffle} The shuffle object
    */
   remove(collection) {
-    collection = arrayUnique(collection);
-
-    let items = collection
-      .map(element => this.getItemByElement(element))
-      .filter(item => !!item);
-
     if (!collection.length) {
       return;
     }
 
+    collection = arrayUnique(collection);
+
+    let oldItems = collection
+      .map(element => this.getItemByElement(element))
+      .filter(item => !!item);
+
     let handleLayout = () => {
       this.element.removeEventListener(Shuffle.EventType.LAYOUT, handleLayout);
-      this._disposeItems(items);
+      this._disposeItems(oldItems);
 
       // Remove the collection in the callback
       collection.forEach((element) => {
         element.parentNode.removeChild(element);
       });
 
-      // Update things now that elements have been removed.
-      this.items = this.items.filter(item => !arrayIncludes(items, item));
-      this._updateItemCount();
-
       this._dispatch(Shuffle.EventType.REMOVED, { collection });
 
       // Let it get garbage collected
       collection = null;
-      items = null;
+      oldItems = null;
     };
 
     // Hide collection first.
     this._toggleFilterClasses({
       filtered: [],
-      concealed: items,
+      concealed: oldItems,
     });
 
-    this._shrink(items);
+    this._shrink(oldItems);
 
     this.sort();
+
+    // Update the list of items here because `remove` could be called again
+    // with an item that is in the process of being removed.
+    this.items = this.items.filter(item => !arrayIncludes(oldItems, item));
+    this._updateItemCount();
 
     this.element.addEventListener(Shuffle.EventType.LAYOUT, handleLayout);
   }

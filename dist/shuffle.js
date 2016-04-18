@@ -1049,6 +1049,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_movementFinished',
 	    value: function _movementFinished() {
+	      this._transitions.length = 0;
 	      this.isTransitioning = false;
 	      this._dispatchLayout();
 	    }
@@ -1213,49 +1214,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function remove(collection) {
 	      var _this9 = this;
 	
+	      if (!collection.length) {
+	        return;
+	      }
+	
 	      collection = (0, _arrayUniq2.default)(collection);
 	
-	      var items = collection.map(function (element) {
+	      var oldItems = collection.map(function (element) {
 	        return _this9.getItemByElement(element);
 	      }).filter(function (item) {
 	        return !!item;
 	      });
 	
-	      if (!collection.length) {
-	        return;
-	      }
-	
 	      var handleLayout = function handleLayout() {
 	        _this9.element.removeEventListener(Shuffle.EventType.LAYOUT, handleLayout);
-	        _this9._disposeItems(items);
+	        _this9._disposeItems(oldItems);
 	
 	        // Remove the collection in the callback
 	        collection.forEach(function (element) {
 	          element.parentNode.removeChild(element);
 	        });
 	
-	        // Update things now that elements have been removed.
-	        _this9.items = _this9.items.filter(function (item) {
-	          return !arrayIncludes(items, item);
-	        });
-	        _this9._updateItemCount();
-	
 	        _this9._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
 	
 	        // Let it get garbage collected
 	        collection = null;
-	        items = null;
+	        oldItems = null;
 	      };
 	
 	      // Hide collection first.
 	      this._toggleFilterClasses({
 	        filtered: [],
-	        concealed: items
+	        concealed: oldItems
 	      });
 	
-	      this._shrink(items);
+	      this._shrink(oldItems);
 	
 	      this.sort();
+	
+	      // Update the list of items here because `remove` could be called again
+	      // with an item that is in the process of being removed.
+	      this.items = this.items.filter(function (item) {
+	        return !arrayIncludes(oldItems, item);
+	      });
+	      this._updateItemCount();
 	
 	      this.element.addEventListener(Shuffle.EventType.LAYOUT, handleLayout);
 	    }
@@ -1805,11 +1807,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'applyCss',
 	    value: function applyCss(obj) {
-	      var _this3 = this;
-	
-	      Object.keys(obj).forEach(function (key) {
-	        _this3.element.style[key] = obj[key];
-	      });
+	      for (var key in obj) {
+	        this.element.style[key] = obj[key];
+	      }
 	    }
 	  }, {
 	    key: 'dispose',
