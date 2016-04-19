@@ -31,7 +31,6 @@
     "js",
     "node_modules",
     "bower_components",
-    "Gruntfile.js",
     "gulp",
     "gulpfile.js",
     "favicon.png",
@@ -41,7 +40,5 @@
     "tests",
     "webpack.config.js",
     "webpack.config.min.js"
-  ],
-  "dependencies": {},
-  "devDependencies": {}
+  ]
 }

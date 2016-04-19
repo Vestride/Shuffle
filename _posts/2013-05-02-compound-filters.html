@@ -4,7 +4,6 @@ title: Shuffle Compound Filters Demo
 description: A demo with compound filtering
 image: /demos/adaptive.jpg
 extraJS: [ "demos/compound-filters.js" ]
-extraCSS: [ "/css/gallery.css" ]
 prism: true
 ---
 
@@ -14,13 +13,13 @@ prism: true
   </div>
 </section>
 
-<section class="gallery container">
+<section class="container">
 
-  <div class="filter-options row">
+  <div class="filter-options filter-options--compound row">
 
     <div class="col-6@sm">
-      <div class="filter-group filter--colors js-colors">
-        <h5 class="filter__label">Colors</h5>
+      <div class="filter-group filter-group--compound js-colors">
+        <h5 class="filter-group__label filter-group__label--compound">Colors</h5>
         <button class="btn btn--go" data-value="green"><span class="visuallyhidden">Green</span></button>
         <button class="btn btn--primary" data-value="blue"><span class="visuallyhidden">Blue</span></button>
         <button class="btn btn--danger" data-value="red"><span class="visuallyhidden">Red</span></button>
@@ -29,8 +28,8 @@ prism: true
     </div>
 
     <div class="col-6@sm">
-      <div class="filter-group filter--shapes js-shapes">
-        <h5 class="filter-group__label">Shapes</h5>
+      <div class="filter-group filter-group--compound js-shapes">
+        <h5 class="filter-group__label filter-group__label--compound">Shapes</h5>
         <span class="ib">
           <input type="checkbox" value="circle" id="cb-circle"> <label for="cb-circle">Circle</label>
         </span>
@@ -49,11 +48,11 @@ prism: true
   </div>
 
   <div class="row">
-    <div class="shape-up js-shuffle">
+    <div class="shape-shuffle-container js-shuffle">
       {% for shape in site.shapes %}
-      <div class="col-3@sm shape shape--{{ shape.shape }} shape--{{ shape.color }}" data-shape="{{ shape.shape }}" data-color="{{ shape.color }}">
+      <div class="col-3@xs col-3@sm shape shape--{{ shape.shape }} shape--{{ shape.color }}" data-shape="{{ shape.shape }}" data-color="{{ shape.color }}">
         <div class="aspect">
-          <div class="shape__inner">
+          <div class="aspect__inner">
             <div class="shape__space"></div>
           </div>
         </div>

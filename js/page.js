@@ -39,13 +39,15 @@ Modules.NavTray = (function () {
   };
 
   NavTray.prototype.onResize = function () {
-    this.tray.style.height = '';
-    this.setEvenHeights();
-    this.saveHeight();
+    setTimeout(function () {
+      this.tray.style.height = '';
+      this.setEvenHeights();
+      this.saveHeight();
 
-    if (this.isOpen) {
-      this.tray.style.height = this.collapseHeight + 'px';
-    }
+      if (this.isOpen) {
+        this.tray.style.height = this.collapseHeight + 'px';
+      }
+    }.bind(this), 100);
   };
 
   NavTray.prototype.toggle = function () {

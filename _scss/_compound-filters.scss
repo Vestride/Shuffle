@@ -1,16 +1,12 @@
 @import "variables";
 
 
-.filter-options {
+.compound-filter-options {
   margin-top: 20px;
   margin-bottom: 40px;
 }
 
-.filter-group {
-
-  .filter-group__label {
-    margin: 0 0 5px;
-  }
+.filter-group--compound {
 
   button {
     width: 40px;
@@ -21,9 +17,17 @@
   label {
     cursor: pointer;
   }
+
+  .ib + .ib {
+    margin-left: 8px;
+  }
 }
 
-.shape-up {
+.filter-group__label--compound {
+  margin: 0 0 5px;
+}
+
+.shape-shuffle-container {
   position: relative;
   overflow: hidden;
 }
@@ -32,14 +36,6 @@
   position: relative;
   margin-left: 0;
   margin-top: 10px;
-
-  .shape__inner {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
 
   .shape__space {
     width: 100%;
@@ -98,50 +94,43 @@
 }
 
 .shape--triangle .shape__space {
-  @include equilateralTriangle(220px);
+  @include equilateralTriangle(132px);
   background-color: transparent;
+  margin: auto;
+}
+
+@media (min-width: 425px) {
+  .shape--triangle .shape__space {
+    @include equilateralTriangle(180px);
+  }
+}
+
+@media (min-width: 600px) {
+  .shape--triangle .shape__space {
+    @include equilateralTriangle(262px);
+  }
+}
+
+@media (min-width: 768px) {
+  .shape--triangle .shape__space {
+    @include equilateralTriangle(148px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .shape--triangle .shape__space {
+    @include equilateralTriangle(204px);
+  }
 }
 
 @media (min-width: 1200px) {
-
   .shape--triangle .shape__space {
     @include equilateralTriangle(270px);
   }
 }
 
 @media (min-width: 1392px) {
-
   .shape--triangle .shape__space {
     @include equilateralTriangle(284px);
   }
 }
-
-@media (min-width: 768px) and (max-width: 979px) {
-
-  .shape--triangle .shape__space {
-    @include equilateralTriangle(166px);
-  }
-}
-
-@media (max-width: 767px) {
-
-  .shape--triangle .shape__space {
-    @include equilateralTriangle(600px);
-    margin: auto;
-  }
-}
-
-@media (max-width: 600px) {
-
-  .shape--triangle .shape__space {
-    @include equilateralTriangle(480px);
-  }
-}
-
-@media (max-width: 480px) {
-
-  .shape--triangle .shape__space {
-    @include equilateralTriangle(320px);
-  }
-}
-

@@ -19,6 +19,7 @@
     "compile": "gulp scripts",
     "css": "gulp css",
     "watch": "gulp watch",
+    "serve": "gulp jekyll",
     "test": "gulp test"
   },
   "repository": {

@@ -24,7 +24,7 @@ permalink: /:title
 environment: production
 
 # Open graph and twitter cards require absolute urls
-url: http://vestride.github.io
+url: https://vestride.github.io
 
 # jekyll serve --watch --config _config.yml,_config_dev.yml
 baseurl: /Shuffle

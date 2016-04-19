@@ -7,7 +7,6 @@ const autoprefixer = require('autoprefixer');
 
 module.exports = function css() {
   return gulp.src([
-    './_scss/gallery.scss',
     './_scss/shuffle-styles.scss',
     './_scss/style.scss',
   ])
