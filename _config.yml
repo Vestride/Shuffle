@@ -8,7 +8,6 @@ exclude:     [
   'coverage',
   'node_modules',
   'src',
-  'temp',
   'test',
   'bower.json',
   'CONTRIBUTING.md',

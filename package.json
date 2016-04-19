@@ -32,6 +32,10 @@
     "url": "https://github.com/Vestride/Shuffle/issues"
   },
   "homepage": "https://github.com/Vestride/Shuffle",
+  "files": [
+    "dist",
+    "src"
+  ],
   "dependencies": {
     "array-uniq": "^1.0.2",
     "custom-event-polyfill": "^0.2.2",
@@ -56,6 +60,6 @@
     "gulp-util": "^3.0.7",
     "mocha": "^2.4.5",
     "sinon": "^1.17.3",
-    "webpack": "^1.12.13"
+    "webpack": "^1.13.0"
   }
 }
