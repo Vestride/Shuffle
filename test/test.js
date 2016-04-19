@@ -82,9 +82,9 @@ describe('shuffle', function () {
   describe('regular fixture', function () {
 
     beforeEach(function (done) {
-      // Mock the transition end event wrapper to always resolve its promise.
-      sinon.stub(Shuffle.prototype, '_whenTransitionDone', function () {
-        return Promise.resolve();
+      // Mock the transition end event wrapper.
+      sinon.stub(Shuffle.prototype, '_whenTransitionDone', function (element, itemCallback, done) {
+        setTimeout(done, 0);
       });
 
       appendFixture('regular').then(done);
@@ -293,27 +293,26 @@ describe('shuffle', function () {
     });
 
     it('can calculate column spans', function () {
-      instance = new Shuffle(fixture);
-      expect(instance._getColumnSpan(50, 100, 3)).to.equal(1);
-      expect(instance._getColumnSpan(200, 100, 3)).to.equal(2);
-      expect(instance._getColumnSpan(200, 200, 3)).to.equal(1);
-      expect(instance._getColumnSpan(300, 100, 3)).to.equal(3);
+      // itemWidth, columnWidth, columns, threshold
+      expect(Shuffle.__getColumnSpan(50, 100, 3, 0)).to.equal(1);
+      expect(Shuffle.__getColumnSpan(200, 100, 3, 0)).to.equal(2);
+      expect(Shuffle.__getColumnSpan(200, 200, 3, 0)).to.equal(1);
+      expect(Shuffle.__getColumnSpan(300, 100, 3, 0)).to.equal(3);
 
       // Column span should not be larger than the number of columns.
-      expect(instance._getColumnSpan(300, 50, 3)).to.equal(3);
+      expect(Shuffle.__getColumnSpan(300, 50, 3, 0)).to.equal(3);
 
       // Fix for percentage values.
-      expect(instance._getColumnSpan(100.02, 100, 4)).to.equal(1);
-      expect(instance._getColumnSpan(99.98, 100, 4)).to.equal(1);
+      expect(Shuffle.__getColumnSpan(100.02, 100, 4, 0)).to.equal(2);
+      expect(Shuffle.__getColumnSpan(100.02, 100, 4, 0.01)).to.equal(1);
+      expect(Shuffle.__getColumnSpan(99.98, 100, 4, 0.01)).to.equal(1);
     });
 
     it('can calculate column sets', function () {
-      instance = new Shuffle(fixture);
-
-      // _getColumnSet(columnSpan, columns)
-      instance.positions = [150, 0, 0, 0];
-      expect(instance._getColumnSet(1, 4)).to.deep.equal([150, 0, 0, 0]);
-      expect(instance._getColumnSet(2, 4)).to.deep.equal([150, 0, 0]);
+      // getAvailablePositions(positions, columnSpan, columns)
+      var positions = [150, 0, 0, 0];
+      expect(Shuffle.__getAvailablePositions(positions, 1, 4)).to.deep.equal([150, 0, 0, 0]);
+      expect(Shuffle.__getAvailablePositions(positions, 2, 4)).to.deep.equal([150, 0, 0]);
     });
 
     it('can get an element option', function () {
@@ -423,15 +422,14 @@ describe('shuffle', function () {
     });
 
     describe('removing elements', function () {
-      var itemsToRemove;
+      var children;
 
       beforeEach(function () {
-        var children = toArray(fixture.children);
-        itemsToRemove = children.slice(0, 2);
+        children = toArray(fixture.children);
       });
 
       afterEach(function () {
-        itemsToRemove = null;
+        children = null;
       });
 
       it('can remove items', function (done) {
@@ -445,13 +443,11 @@ describe('shuffle', function () {
           expect(detail.collection[0].id).to.equal('item1');
           expect(detail.collection[1].id).to.equal('item2');
           expect(detail.shuffle.element.children).to.have.lengthOf(8);
-          expect(instance.isTransitioning).to.equal(false);
-
-          once(fixture, Shuffle.EventType.LAYOUT, function () {
-            done();
-          });
+          expect(instance.isTransitioning).to.be.false;
+          done();
         });
 
+        var itemsToRemove = children.slice(0, 2);
         instance.remove(itemsToRemove);
       });
 
@@ -464,16 +460,14 @@ describe('shuffle', function () {
         once(fixture, Shuffle.EventType.REMOVED, function (evt) {
           var detail = evt.detail;
           expect(detail.shuffle.visibleItems).to.equal(8);
-          expect(detail.collection[0].id).to.equal('item1');
-          expect(detail.collection[1].id).to.equal('item2');
+          expect(detail.collection[0].id).to.equal('item2');
+          expect(detail.collection[1].id).to.equal('item3');
           expect(detail.shuffle.element.children).to.have.lengthOf(8);
-          expect(detail.shuffle.isTransitioning).to.equal(false);
-
-          once(fixture, Shuffle.EventType.LAYOUT, function () {
-            done();
-          });
+          expect(detail.shuffle.isTransitioning).to.be.false;
+          done();
         });
 
+        var itemsToRemove = children.slice(1, 3);
         instance.remove(itemsToRemove);
       });
     });
@@ -584,15 +578,15 @@ describe('shuffle', function () {
     });
 
     it('will catch empty objects', function () {
-      expect(Shuffle.sorter({})).to.deep.equal([]);
+      expect(Shuffle.__sorter({})).to.deep.equal([]);
     });
 
     it('can randomize the elements', function () {
       expect(items).to.have.lengthOf(10);
-      expect(Shuffle.sorter(items)).to.deep.equal(items);
+      expect(Shuffle.__sorter(items)).to.deep.equal(items);
 
       var clone = toArray(items);
-      expect(Shuffle.sorter(clone, { randomize: true })).to.not.deep.equal(items);
+      expect(Shuffle.__sorter(clone, { randomize: true })).to.not.deep.equal(items);
     });
 
     it('can sort by a function', function () {
@@ -602,7 +596,7 @@ describe('shuffle', function () {
         return age1 - age2;
       });
 
-      var result = Shuffle.sorter(items, {
+      var result = Shuffle.__sorter(items, {
         by: function (element) {
           expect(element).to.exist;
           expect(element.nodeType).to.equal(1);
@@ -620,7 +614,7 @@ describe('shuffle', function () {
         return age1 - age2;
       }).reverse();
 
-      var result = Shuffle.sorter(items, {
+      var result = Shuffle.__sorter(items, {
         reverse: true,
         by: function (element) {
           return parseInt(element.getAttribute('data-age'), 10);
@@ -632,7 +626,7 @@ describe('shuffle', function () {
 
     it('will revert to DOM order if the `by` function returns undefined', function () {
       var count = 0;
-      expect(Shuffle.sorter(items, {
+      expect(Shuffle.__sorter(items, {
         by: function () {
           count++;
           return count < 5 ? Math.random() : undefined;
@@ -643,7 +637,7 @@ describe('shuffle', function () {
     it('can sort things to the top', function () {
       items = items.slice(0, 4);
       var final = [items[1], items[0], items[3], items[2]];
-      expect(Shuffle.sorter(items, {
+      expect(Shuffle.__sorter(items, {
         by: function (element) {
           var age = parseInt(element.getAttribute('data-age'), 10);
           if (age === 50) {
@@ -658,7 +652,7 @@ describe('shuffle', function () {
     it('can sort things to the bottom', function () {
       items = items.slice(0, 4);
       var final = [items[0], items[2], items[1], items[3]];
-      expect(Shuffle.sorter(items, {
+      expect(Shuffle.__sorter(items, {
         by: function (element) {
           var age = parseInt(element.getAttribute('data-age'), 10);
           if (age === 27) {

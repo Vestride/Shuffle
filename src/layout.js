@@ -49,7 +49,7 @@ export function getItemPosition({ itemSize, positions, gridSize, total, threshol
  * @param {number} threshold A buffer value for the size of the column to fit.
  * @return {number}
  */
-function getColumnSpan(itemWidth, columnWidth, columns, threshold) {
+export function getColumnSpan(itemWidth, columnWidth, columns, threshold) {
   var columnSpan = itemWidth / columnWidth;
 
   // If the difference between the rounded column span number and the
@@ -70,7 +70,7 @@ function getColumnSpan(itemWidth, columnWidth, columns, threshold) {
  * @param {number} columns The total columns in the grid.
  * @return {Array.<number>} An array of numbers represeting the column set.
  */
-function getAvailablePositions(positions, columnSpan, columns) {
+export function getAvailablePositions(positions, columnSpan, columns) {
   // The item spans only one column.
   if (columnSpan === 1) {
     return positions;
@@ -117,7 +117,7 @@ function getAvailablePositions(positions, columnSpan, columns) {
  *     is a percentage of the width.
  * @return {number} Index of the short column.
  */
-function getShortColumn(positions, buffer) {
+export function getShortColumn(positions, buffer) {
   var minPosition = arrayMin(positions);
   for (var i = 0, len = positions.length; i < len; i++) {
     if (positions[i] >= minPosition - buffer && positions[i] <= minPosition + buffer) {

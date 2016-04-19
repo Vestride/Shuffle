@@ -5,13 +5,14 @@ import matches from 'matches-selector';
 import arrayUnique from 'array-uniq';
 import xtend from 'xtend';
 import throttle from 'throttleit';
+import parallel from 'array-parallel';
 import Point from './point';
 import ShuffleItem from './shuffle-item';
 import Classes from './classes';
 import getNumberStyle from './get-number-style';
 import sorter from './sorter';
 import { onTransitionEnd, cancelTransitionEnd } from './on-transition-end';
-import { getItemPosition } from './layout';
+import { getItemPosition, getColumnSpan, getAvailablePositions, getShortColumn } from './layout';
 
 function toArray(arrayLike) {
   return Array.prototype.slice.call(arrayLike);
@@ -622,21 +623,34 @@ class Shuffle {
     return styles;
   }
 
-  _whenTransitionDone(element, itemCallback) {
-    // TODO what happens when the transition is canceled and the promise never resolves?
-    return new Promise((resolve) => {
-      let id = onTransitionEnd(element, (evt) => {
-        evt.currentTarget.style.transitionDelay = '';
-        itemCallback();
-        resolve();
-      });
-      this._transitions.push(id);
+  /**
+   * Listen for the transition end on an element and execute the itemCallback
+   * when it finishes.
+   * @param {Element} element Element to listen on.
+   * @param {Function} itemCallback Callback for the item.
+   * @param {Function} done Callback to notify `parallel` that this one is done.
+   */
+  _whenTransitionDone(element, itemCallback, done) {
+    let id = onTransitionEnd(element, (evt) => {
+      evt.currentTarget.style.transitionDelay = '';
+      itemCallback();
+      done(null, evt);
     });
+
+    this._transitions.push(id);
   }
 
-  _transition(opts) {
-    opts.item.applyCss(this._getStylesForTransition(opts));
-    return this._whenTransitionDone(opts.item.element, opts.callback);
+  /**
+   * Return a function which will set CSS styles and call the `done` function
+   * when (if) the transition finishes.
+   * @param {Object} opts Transition object.
+   * @return {Function} A function to be called with a `done` function.
+   */
+  _getTransitionFunction(opts) {
+    return (done) => {
+      opts.item.applyCss(this._getStylesForTransition(opts));
+      this._whenTransitionDone(opts.item.element, opts.callback, done);
+    };
   }
 
   /**
@@ -649,26 +663,29 @@ class Shuffle {
       this._cancelMovement();
     }
 
+    let hasSpeed = this.options.speed > 0;
+
     // Iterate over the queue and keep track of ones that use transitions.
     let immediates = [];
     let transitions = [];
     this._queue.forEach((obj) => {
-      if (!this.isInitialized || this.options.speed === 0) {
-        immediates.push(obj);
-      } else {
+      if (this.isInitialized && hasSpeed) {
         transitions.push(obj);
+      } else {
+        immediates.push(obj);
       }
     });
 
     this._styleImmediately(immediates);
 
-    if (transitions.length > 0 && this.options.speed > 0) {
+    if (transitions.length > 0) {
       this._startTransitions(transitions);
 
     // A call to layout happened, but none of the newly visible items will
-    // change position. Asynchronously fire the callback here.
+    // change position or the transition duration is zero, which will not trigger
+    // the transitionend event.
     } else {
-      setTimeout(this._dispatchLayout.bind(this), 0);
+      this._dispatchLayout();
     }
 
     // Remove everything in the style queue
@@ -676,16 +693,17 @@ class Shuffle {
   }
 
   /**
-   * Create a promise for each transition and wait for all of them to complete,
-   * then emit the layout event.
+   * Wait for each transition to finish, the emit the layout event.
    * @param {Array.<Object>} transitions Array of transition objects.
    */
   _startTransitions(transitions) {
     // Set flag that shuffle is currently in motion.
     this.isTransitioning = true;
 
-    let promises = transitions.map(obj => this._transition(obj));
-    Promise.all(promises).then(this._movementFinished.bind(this));
+    // Create an array of functions to be called.
+    let callbacks = transitions.map(obj => this._getTransitionFunction(obj));
+
+    parallel(callbacks, this._movementFinished.bind(this));
   }
 
   _cancelMovement() {
@@ -1018,6 +1036,8 @@ class Shuffle {
   }
 }
 
+Shuffle.ShuffleItem = ShuffleItem;
+
 Shuffle.ALL_ITEMS = 'all';
 Shuffle.FILTER_ATTRIBUTE_KEY = 'groups';
 
@@ -1091,9 +1111,11 @@ Shuffle.options = {
   useTransforms: true,
 };
 
-// Expose for testing.
-Shuffle.Point = Point;
-Shuffle.ShuffleItem = ShuffleItem;
-Shuffle.sorter = sorter;
+// Expose for testing. Hack at your own risk.
+Shuffle.__Point = Point;
+Shuffle.__sorter = sorter;
+Shuffle.__getColumnSpan = getColumnSpan;
+Shuffle.__getAvailablePositions = getAvailablePositions;
+Shuffle.__getShortColumn = getShortColumn;
 
 module.exports = Shuffle;

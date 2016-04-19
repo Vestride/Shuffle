@@ -76,6 +76,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _throttleit2 = _interopRequireDefault(_throttleit);
 	
+	var _arrayParallel = __webpack_require__(15);
+	
+	var _arrayParallel2 = _interopRequireDefault(_arrayParallel);
+	
 	var _point = __webpack_require__(6);
 	
 	var _point2 = _interopRequireDefault(_point);
@@ -824,26 +828,43 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      return styles;
 	    }
+	
+	    /**
+	     * Listen for the transition end on an element and execute the itemCallback
+	     * when it finishes.
+	     * @param {Element} element Element to listen on.
+	     * @param {Function} itemCallback Callback for the item.
+	     * @param {Function} done Callback to notify `parallel` that this one is done.
+	     */
+	
 	  }, {
 	    key: '_whenTransitionDone',
-	    value: function _whenTransitionDone(element, itemCallback) {
+	    value: function _whenTransitionDone(element, itemCallback, done) {
+	      var id = (0, _onTransitionEnd.onTransitionEnd)(element, function (evt) {
+	        evt.currentTarget.style.transitionDelay = '';
+	        itemCallback();
+	        done(null, evt);
+	      });
+	
+	      this._transitions.push(id);
+	    }
+	
+	    /**
+	     * Return a function which will set CSS styles and call the `done` function
+	     * when (if) the transition finishes.
+	     * @param {Object} opts Transition object.
+	     * @return {Function} A function to be called with a `done` function.
+	     */
+	
+	  }, {
+	    key: '_getTransitionFunction',
+	    value: function _getTransitionFunction(opts) {
 	      var _this5 = this;
 	
-	      // TODO what happens when the transition is canceled and the promise never resolves?
-	      return new Promise(function (resolve) {
-	        var id = (0, _onTransitionEnd.onTransitionEnd)(element, function (evt) {
-	          evt.currentTarget.style.transitionDelay = '';
-	          itemCallback();
-	          resolve();
-	        });
-	        _this5._transitions.push(id);
-	      });
-	    }
-	  }, {
-	    key: '_transition',
-	    value: function _transition(opts) {
-	      opts.item.applyCss(this._getStylesForTransition(opts));
-	      return this._whenTransitionDone(opts.item.element, opts.callback);
+	      return function (done) {
+	        opts.item.applyCss(_this5._getStylesForTransition(opts));
+	        _this5._whenTransitionDone(opts.item.element, opts.callback, done);
+	      };
 	    }
 	
 	    /**
@@ -861,26 +882,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._cancelMovement();
 	      }
 	
+	      var hasSpeed = this.options.speed > 0;
+	
 	      // Iterate over the queue and keep track of ones that use transitions.
 	      var immediates = [];
 	      var transitions = [];
 	      this._queue.forEach(function (obj) {
-	        if (!_this6.isInitialized || _this6.options.speed === 0) {
-	          immediates.push(obj);
-	        } else {
+	        if (_this6.isInitialized && hasSpeed) {
 	          transitions.push(obj);
+	        } else {
+	          immediates.push(obj);
 	        }
 	      });
 	
 	      this._styleImmediately(immediates);
 	
-	      if (transitions.length > 0 && this.options.speed > 0) {
+	      if (transitions.length > 0) {
 	        this._startTransitions(transitions);
 	
 	        // A call to layout happened, but none of the newly visible items will
-	        // change position. Asynchronously fire the callback here.
+	        // change position or the transition duration is zero, which will not trigger
+	        // the transitionend event.
 	      } else {
-	          setTimeout(this._dispatchLayout.bind(this), 0);
+	          this._dispatchLayout();
 	        }
 	
 	      // Remove everything in the style queue
@@ -888,8 +912,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * Create a promise for each transition and wait for all of them to complete,
-	     * then emit the layout event.
+	     * Wait for each transition to finish, the emit the layout event.
 	     * @param {Array.<Object>} transitions Array of transition objects.
 	     */
 	
@@ -901,10 +924,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Set flag that shuffle is currently in motion.
 	      this.isTransitioning = true;
 	
-	      var promises = transitions.map(function (obj) {
-	        return _this7._transition(obj);
+	      // Create an array of functions to be called.
+	      var callbacks = transitions.map(function (obj) {
+	        return _this7._getTransitionFunction(obj);
 	      });
-	      Promise.all(promises).then(this._movementFinished.bind(this));
+	
+	      (0, _arrayParallel2.default)(callbacks, this._movementFinished.bind(this));
 	    }
 	  }, {
 	    key: '_cancelMovement',
@@ -1296,6 +1321,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return Shuffle;
 	}();
 	
+	Shuffle.ShuffleItem = _shuffleItem2.default;
+	
 	Shuffle.ALL_ITEMS = 'all';
 	Shuffle.FILTER_ATTRIBUTE_KEY = 'groups';
 	
@@ -1369,10 +1396,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  useTransforms: true
 	};
 	
-	// Expose for testing.
-	Shuffle.Point = _point2.default;
-	Shuffle.ShuffleItem = _shuffleItem2.default;
-	Shuffle.sorter = _sorter2.default;
+	// Expose for testing. Hack at your own risk.
+	Shuffle.__Point = _point2.default;
+	Shuffle.__sorter = _sorter2.default;
+	Shuffle.__getColumnSpan = _layout2.getColumnSpan;
+	Shuffle.__getAvailablePositions = _layout2.getAvailablePositions;
+	Shuffle.__getShortColumn = _layout2.getShortColumn;
 	
 	module.exports = Shuffle;
 
@@ -2001,6 +2030,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	exports.getItemPosition = getItemPosition;
+	exports.getColumnSpan = getColumnSpan;
+	exports.getAvailablePositions = getAvailablePositions;
+	exports.getShortColumn = getShortColumn;
 	
 	var _point = __webpack_require__(6);
 	
@@ -2138,6 +2170,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  return 0;
 	}
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = function parallel(fns, context, callback) {
+	  if (!callback) {
+	    if (typeof context === 'function') {
+	      callback = context
+	      context = null
+	    } else {
+	      callback = noop
+	    }
+	  }
+	
+	  var pending = fns && fns.length
+	  if (!pending) return callback(null, []);
+	
+	  var finished = false
+	  var results = new Array(pending)
+	
+	  fns.forEach(context ? function (fn, i) {
+	    fn.call(context, maybeDone(i))
+	  } : function (fn, i) {
+	    fn(maybeDone(i))
+	  })
+	
+	  function maybeDone(i) {
+	    return function (err, result) {
+	      if (finished) return;
+	
+	      if (err) {
+	        callback(err, results)
+	        finished = true
+	        return
+	      }
+	
+	      results[i] = result
+	
+	      if (!--pending) callback(null, results);
+	    }
+	  }
+	}
+	
+	function noop() {}
+
 
 /***/ }
 /******/ ])
