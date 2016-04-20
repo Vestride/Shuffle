@@ -173,8 +173,8 @@ Modules.Favicon = (function (doc) {
     // Chrome chokes on this. It looks like it can handle 4 frames per second
     this.fps = 24;
 
-    // No #favicon element or browser doesn't support canvas or < IE9, stop
-    if (!doc.getElementById('favicon') || !this.canvas.getContext || this.html.className.indexOf('lt-ie9') > -1) {
+    // No #favicon element, stop
+    if (!doc.getElementById('favicon')) {
       return;
     }
 
