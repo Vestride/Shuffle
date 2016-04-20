@@ -53,7 +53,7 @@
     overflow: hidden; }
   .picture-item--overlay .picture-item__description {
     display: none; }
-  @supports ((-webkit-filter: blur(1px)) or (filter: blur(1px))) {
+  @supports ((-webkit-filter: blur(1px)) or (filter: blur(1px))) and ((-webkit-clip-path: inset(0 0 0 0)) or (clip-path: inset(0 0 0 0))) {
     .picture-item--overlay .picture-item__blur {
       position: absolute;
       z-index: 1;

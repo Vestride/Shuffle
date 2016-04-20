@@ -75,7 +75,7 @@ $itemHeight: 220px;
     }
   }
 
-  @supports (filter: blur(1px)) {
+  @supports (filter: blur(1px)) and (clip-path: inset(0 0 0 0)) {
 
     .picture-item--overlay {
 

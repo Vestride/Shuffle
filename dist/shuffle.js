@@ -696,6 +696,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var pos = _this3._getItemPosition(itemSize);
 	
 	        function callback() {
+	          item.element.style.transitionDelay = '';
 	          item.applyCss(_shuffleItem2.default.Css.VISIBLE.after);
 	        }
 	
@@ -709,8 +710,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        item.point = pos;
 	        item.scale = _shuffleItem2.default.Scale.VISIBLE;
 	
-	        var styles = _shuffleItem2.default.Css.VISIBLE.before;
-	        styles.transitionDelay = _this3._getStaggerAmount(count);
+	        // Use xtend here to clone the object so that the `before` object isn't
+	        // modified when the transition delay is added.
+	        var styles = (0, _xtend2.default)(_shuffleItem2.default.Css.VISIBLE.before);
+	        styles.transitionDelay = _this3._getStaggerAmount(count) + 'ms';
 	
 	        _this3._queue.push({
 	          item: item,
@@ -774,8 +777,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        item.scale = _shuffleItem2.default.Scale.HIDDEN;
 	
-	        var styles = _shuffleItem2.default.Css.HIDDEN.before;
-	        styles.transitionDelay = _this4._getStaggerAmount(count);
+	        var styles = (0, _xtend2.default)(_shuffleItem2.default.Css.HIDDEN.before);
+	        styles.transitionDelay = _this4._getStaggerAmount(count) + 'ms';
 	
 	        _this4._queue.push({
 	          item: item,
@@ -853,7 +856,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: '_whenTransitionDone',
 	    value: function _whenTransitionDone(element, itemCallback, done) {
 	      var id = (0, _onTransitionEnd.onTransitionEnd)(element, function (evt) {
-	        evt.currentTarget.style.transitionDelay = '';
 	        itemCallback();
 	        done(null, evt);
 	      });
@@ -888,29 +890,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_processQueue',
 	    value: function _processQueue() {
-	      var _this6 = this;
-	
 	      if (this.isTransitioning) {
 	        this._cancelMovement();
 	      }
 	
 	      var hasSpeed = this.options.speed > 0;
+	      var hasQueue = this._queue.length > 0;
 	
-	      // Iterate over the queue and keep track of ones that use transitions.
-	      var immediates = [];
-	      var transitions = [];
-	      this._queue.forEach(function (obj) {
-	        if (_this6.isInitialized && hasSpeed) {
-	          transitions.push(obj);
-	        } else {
-	          immediates.push(obj);
-	        }
-	      });
-	
-	      this._styleImmediately(immediates);
-	
-	      if (transitions.length > 0) {
-	        this._startTransitions(transitions);
+	      if (hasQueue && hasSpeed && this.isInitialized) {
+	        this._startTransitions(this._queue);
+	      } else if (hasQueue) {
+	        this._styleImmediately(this._queue);
+	        this._dispatchLayout();
 	
 	        // A call to layout happened, but none of the newly visible items will
 	        // change position or the transition duration is zero, which will not trigger
@@ -931,14 +922,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_startTransitions',
 	    value: function _startTransitions(transitions) {
-	      var _this7 = this;
+	      var _this6 = this;
 	
 	      // Set flag that shuffle is currently in motion.
 	      this.isTransitioning = true;
 	
 	      // Create an array of functions to be called.
 	      var callbacks = transitions.map(function (obj) {
-	        return _this7._getTransitionFunction(obj);
+	        return _this6._getTransitionFunction(obj);
 	      });
 	
 	      (0, _arrayParallel2.default)(callbacks, this._movementFinished.bind(this));
@@ -965,7 +956,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_styleImmediately',
 	    value: function _styleImmediately(objects) {
-	      var _this8 = this;
+	      var _this7 = this;
 	
 	      if (objects.length) {
 	        var elements = objects.map(function (obj) {
@@ -974,7 +965,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        Shuffle._skipTransitions(elements, function () {
 	          objects.forEach(function (obj) {
-	            obj.item.applyCss(_this8._getStylesForTransition(obj));
+	            obj.item.applyCss(_this7._getStylesForTransition(obj));
 	            obj.callback();
 	          });
 	        });
@@ -1146,7 +1137,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'remove',
 	    value: function remove(collection) {
-	      var _this9 = this;
+	      var _this8 = this;
 	
 	      if (!collection.length) {
 	        return;
@@ -1155,21 +1146,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	      collection = (0, _arrayUniq2.default)(collection);
 	
 	      var oldItems = collection.map(function (element) {
-	        return _this9.getItemByElement(element);
+	        return _this8.getItemByElement(element);
 	      }).filter(function (item) {
 	        return !!item;
 	      });
 	
 	      var handleLayout = function handleLayout() {
-	        _this9.element.removeEventListener(Shuffle.EventType.LAYOUT, handleLayout);
-	        _this9._disposeItems(oldItems);
+	        _this8.element.removeEventListener(Shuffle.EventType.LAYOUT, handleLayout);
+	        _this8._disposeItems(oldItems);
 	
 	        // Remove the collection in the callback
 	        collection.forEach(function (element) {
 	          element.parentNode.removeChild(element);
 	        });
 	
-	        _this9._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
+	        _this8._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
 	
 	        // Let it get garbage collected
 	        collection = null;

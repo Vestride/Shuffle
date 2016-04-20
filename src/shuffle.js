@@ -497,6 +497,7 @@ class Shuffle {
       var pos = this._getItemPosition(itemSize);
 
       function callback() {
+        item.element.style.transitionDelay = '';
         item.applyCss(ShuffleItem.Css.VISIBLE.after);
       }
 
@@ -510,8 +511,10 @@ class Shuffle {
       item.point = pos;
       item.scale = ShuffleItem.Scale.VISIBLE;
 
-      let styles = ShuffleItem.Css.VISIBLE.before;
-      styles.transitionDelay = this._getStaggerAmount(count);
+      // Use xtend here to clone the object so that the `before` object isn't
+      // modified when the transition delay is added.
+      let styles = xtend(ShuffleItem.Css.VISIBLE.before);
+      styles.transitionDelay = this._getStaggerAmount(count) + 'ms';
 
       this._queue.push({
         item,
@@ -565,8 +568,8 @@ class Shuffle {
 
       item.scale = ShuffleItem.Scale.HIDDEN;
 
-      let styles = ShuffleItem.Css.HIDDEN.before;
-      styles.transitionDelay = this._getStaggerAmount(count);
+      let styles = xtend(ShuffleItem.Css.HIDDEN.before);
+      styles.transitionDelay = this._getStaggerAmount(count) + 'ms';
 
       this._queue.push({
         item,
@@ -632,7 +635,6 @@ class Shuffle {
    */
   _whenTransitionDone(element, itemCallback, done) {
     let id = onTransitionEnd(element, (evt) => {
-      evt.currentTarget.style.transitionDelay = '';
       itemCallback();
       done(null, evt);
     });
@@ -664,22 +666,14 @@ class Shuffle {
     }
 
     let hasSpeed = this.options.speed > 0;
+    let hasQueue = this._queue.length > 0;
 
-    // Iterate over the queue and keep track of ones that use transitions.
-    let immediates = [];
-    let transitions = [];
-    this._queue.forEach((obj) => {
-      if (this.isInitialized && hasSpeed) {
-        transitions.push(obj);
-      } else {
-        immediates.push(obj);
-      }
-    });
+    if (hasQueue && hasSpeed && this.isInitialized) {
+      this._startTransitions(this._queue);
 
-    this._styleImmediately(immediates);
-
-    if (transitions.length > 0) {
-      this._startTransitions(transitions);
+    } else if (hasQueue) {
+      this._styleImmediately(this._queue);
+      this._dispatchLayout();
 
     // A call to layout happened, but none of the newly visible items will
     // change position or the transition duration is zero, which will not trigger
