@@ -1118,4 +1118,4 @@ Shuffle.__getColumnSpan = getColumnSpan;
 Shuffle.__getAvailablePositions = getAvailablePositions;
 Shuffle.__getShortColumn = getShortColumn;
 
-module.exports = Shuffle;
+export default Shuffle;

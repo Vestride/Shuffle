@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   name: 'build',
   devtool: 'source-map',
-  entry: './src/shuffle.js',
+  entry: './src/index.js',
   output: {
     filename: 'shuffle.js',
     path: './dist',

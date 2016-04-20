@@ -19,9 +19,10 @@
   "scripts": {
     "compile": "gulp scripts",
     "css": "gulp css",
-    "watch": "gulp watch",
+    "gulp": "gulp && npm run css",
     "serve": "gulp jekyll",
-    "test": "gulp test"
+    "test": "gulp test",
+    "watch": "gulp watch"
   },
   "repository": {
     "type": "git",

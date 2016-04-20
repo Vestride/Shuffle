@@ -56,53 +56,65 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	
+	module.exports = __webpack_require__(1).default;
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	__webpack_require__(1);
+	__webpack_require__(2);
 	
-	var _matchesSelector = __webpack_require__(2);
+	var _matchesSelector = __webpack_require__(3);
 	
 	var _matchesSelector2 = _interopRequireDefault(_matchesSelector);
 	
-	var _arrayUniq = __webpack_require__(3);
+	var _arrayUniq = __webpack_require__(4);
 	
 	var _arrayUniq2 = _interopRequireDefault(_arrayUniq);
 	
-	var _xtend = __webpack_require__(4);
+	var _xtend = __webpack_require__(5);
 	
 	var _xtend2 = _interopRequireDefault(_xtend);
 	
-	var _throttleit = __webpack_require__(5);
+	var _throttleit = __webpack_require__(6);
 	
 	var _throttleit2 = _interopRequireDefault(_throttleit);
 	
-	var _arrayParallel = __webpack_require__(6);
+	var _arrayParallel = __webpack_require__(7);
 	
 	var _arrayParallel2 = _interopRequireDefault(_arrayParallel);
 	
-	var _point = __webpack_require__(7);
+	var _point = __webpack_require__(8);
 	
 	var _point2 = _interopRequireDefault(_point);
 	
-	var _shuffleItem = __webpack_require__(9);
+	var _shuffleItem = __webpack_require__(10);
 	
 	var _shuffleItem2 = _interopRequireDefault(_shuffleItem);
 	
-	var _classes = __webpack_require__(10);
+	var _classes = __webpack_require__(11);
 	
 	var _classes2 = _interopRequireDefault(_classes);
 	
-	var _getNumberStyle = __webpack_require__(11);
+	var _getNumberStyle = __webpack_require__(12);
 	
 	var _getNumberStyle2 = _interopRequireDefault(_getNumberStyle);
 	
-	var _sorter = __webpack_require__(13);
+	var _sorter = __webpack_require__(14);
 	
 	var _sorter2 = _interopRequireDefault(_sorter);
 	
-	var _onTransitionEnd = __webpack_require__(14);
+	var _onTransitionEnd = __webpack_require__(15);
 	
-	var _layout2 = __webpack_require__(15);
+	var _layout2 = __webpack_require__(16);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -1403,10 +1415,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	Shuffle.__getAvailablePositions = _layout2.getAvailablePositions;
 	Shuffle.__getShortColumn = _layout2.getShortColumn;
 	
-	module.exports = Shuffle;
+	exports.default = Shuffle;
 
 /***/ },
-/* 1 */
+/* 2 */
 /***/ function(module, exports) {
 
 	// Polyfill for creating CustomEvents on IE9/10/11
@@ -1437,7 +1449,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1471,7 +1483,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -1538,7 +1550,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	module.exports = extend
@@ -1563,7 +1575,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = throttle;
@@ -1601,7 +1613,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	module.exports = function parallel(fns, context, callback) {
@@ -1647,7 +1659,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1656,7 +1668,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _getNumber = __webpack_require__(8);
+	var _getNumber = __webpack_require__(9);
 	
 	var _getNumber2 = _interopRequireDefault(_getNumber);
 	
@@ -1685,7 +1697,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Point;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1705,7 +1717,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1716,11 +1728,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _point = __webpack_require__(7);
+	var _point = __webpack_require__(8);
 	
 	var _point2 = _interopRequireDefault(_point);
 	
-	var _classes = __webpack_require__(10);
+	var _classes = __webpack_require__(11);
 	
 	var _classes2 = _interopRequireDefault(_classes);
 	
@@ -1832,12 +1844,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ShuffleItem;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	'use strict';
 	
-	module.exports = {
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = {
 	  BASE: 'shuffle',
 	  SHUFFLE_ITEM: 'shuffle-item',
 	  VISIBLE: 'shuffle-item--visible',
@@ -1845,7 +1860,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1855,11 +1870,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.default = getNumberStyle;
 	
-	var _getNumber = __webpack_require__(8);
+	var _getNumber = __webpack_require__(9);
 	
 	var _getNumber2 = _interopRequireDefault(_getNumber);
 	
-	var _computedSize = __webpack_require__(12);
+	var _computedSize = __webpack_require__(13);
 	
 	var _computedSize2 = _interopRequireDefault(_computedSize);
 	
@@ -1891,7 +1906,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1913,7 +1928,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ret;
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1923,7 +1938,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.default = sorter;
 	
-	var _xtend = __webpack_require__(4);
+	var _xtend = __webpack_require__(5);
 	
 	var _xtend2 = _interopRequireDefault(_xtend);
 	
@@ -2022,7 +2037,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2067,7 +2082,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2080,7 +2095,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.getAvailablePositions = getAvailablePositions;
 	exports.getShortColumn = getShortColumn;
 	
-	var _point = __webpack_require__(7);
+	var _point = __webpack_require__(8);
 	
 	var _point2 = _interopRequireDefault(_point);
 	
