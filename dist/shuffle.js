@@ -160,7 +160,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this.useSizer = false;
 	    this.lastSort = {};
-	    this.lastFilter = Shuffle.ALL_ITEMS;
+	    this.group = this.lastFilter = Shuffle.ALL_ITEMS;
 	    this.isEnabled = true;
 	    this.isDestroyed = false;
 	    this.isInitialized = false;
@@ -312,7 +312,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // This is saved mainly because providing a filter function (like searching)
 	      // will overwrite the `lastFilter` property every time its called.
 	      if (typeof category === 'string') {
-	        this.options.group = category;
+	        this.group = category;
 	      }
 	
 	      return set;

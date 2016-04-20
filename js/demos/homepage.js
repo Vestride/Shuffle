@@ -167,10 +167,10 @@ Demo.prototype._handleSearchKeyup = function (evt) {
   this.shuffle.filter(function (element, shuffle) {
 
     // If there is a current filter applied, ignore elements that don't match it.
-    if (shuffle.options.group !== Shuffle.ALL_ITEMS) {
+    if (shuffle.group !== Shuffle.ALL_ITEMS) {
       // Get the item's groups.
       var groups = JSON.parse(element.getAttribute('data-groups'));
-      var isElementInCurrentGroup = groups.indexOf(shuffle.options.group) !== -1;
+      var isElementInCurrentGroup = groups.indexOf(shuffle.group) !== -1;
 
       // Only search elements in the current group
       if (!isElementInCurrentGroup) {
