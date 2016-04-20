@@ -15,6 +15,7 @@
     "tiles"
   ],
   "main": "dist/shuffle.js",
+  "jsnext:main": "src/shuffle.js",
   "scripts": {
     "compile": "gulp scripts",
     "css": "gulp css",

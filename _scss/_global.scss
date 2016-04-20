@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+main {
+  overflow: hidden;
+}
+
 pre.max-height {
   max-height: 30em;
 }
