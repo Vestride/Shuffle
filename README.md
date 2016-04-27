@@ -13,7 +13,7 @@ Shuffle is also available on bower as `shufflejs`.
 ### Usage (with CommonJS)
 
 ```js
-var Shuffle = require('shuffle');
+var Shuffle = require('shufflejs');
 
 var myShuffle = new Shuffle(document.getElementById('grid'), {
   itemSelector: '.js-item',
