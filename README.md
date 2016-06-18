@@ -1,14 +1,14 @@
-# [Shuffle](https://vestride.github.io/Shuffle) [![Build Status](https://travis-ci.org/Vestride/Shuffle.svg?branch=master)](https://travis-ci.org/Vestride/Shuffle)
+# [Shuffle][homepage] [![Build Status][travis-img]][travis-url] [![Dependency Status][david-img]][david-url] [![NPM version][npm-img]][npm-url]
 Categorize, sort, and filter a responsive grid of items.
 
 ```bash
-npm install shufflejs
+npm install shufflejs --save
 ```
 
 Shuffle is also available on bower as `shufflejs`.
 
 ## Docs and Demos
-[All found here](https://vestride.github.io/Shuffle)
+[All found here][homepage]
 
 ### Usage (with CommonJS)
 
@@ -26,3 +26,11 @@ Shuffle 4 removes jQuery as a dependency and is written in ES6.
 
 ## Inspiration
 This project was inspired by [Isotope](http://isotope.metafizzy.co/) and [Packery](http://packery.metafizzy.co/).
+
+[homepage]: https://vestride.github.io/Shuffle/
+[travis-url]: https://travis-ci.org/Vestride/Shuffle
+[travis-img]: https://img.shields.io/travis/Vestride/Shuffle.svg
+[david-url]: https://david-dm.org/Vestride/Shuffle
+[david-img]: https://david-dm.org/Vestride/Shuffle.svg
+[npm-url]: https://www.npmjs.com/package/shufflejs
+[npm-img]: https://img.shields.io/npm/v/shufflejs.svg
