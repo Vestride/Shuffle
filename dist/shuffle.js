@@ -150,7 +150,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {Object} [options=Shuffle.options] Options object.
 	   * @constructor
 	   */
-	
 	  function Shuffle(element) {
 	    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 	
@@ -255,12 +254,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        // Check for an element
 	      } else if (option && option.nodeType && option.nodeType === 1) {
-	          return option;
+	        return option;
 	
-	          // Check for jQuery object
-	        } else if (option && option.jquery) {
-	            return option[0];
-	          }
+	        // Check for jQuery object
+	      } else if (option && option.jquery) {
+	        return option[0];
+	      }
 	
 	      return null;
 	    }
@@ -341,14 +340,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // Loop through each item and use provided function to determine
 	        // whether to hide it or not.
 	      } else {
-	          items.forEach(function (item) {
-	            if (_this._doesPassFilter(category, item.element)) {
-	              visible.push(item);
-	            } else {
-	              hidden.push(item);
-	            }
-	          });
-	        }
+	        items.forEach(function (item) {
+	          if (_this._doesPassFilter(category, item.element)) {
+	            visible.push(item);
+	          } else {
+	            hidden.push(item);
+	          }
+	        });
+	      }
 	
 	      return {
 	        visible: visible,
@@ -373,16 +372,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        // Check each element's data-groups attribute against the given category.
 	      } else {
-	          var attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
-	          var groups = JSON.parse(attr);
-	          var keys = this.delimeter && !Array.isArray(groups) ? groups.split(this.delimeter) : groups;
+	        var attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
+	        var keys = this.options.delimeter ? attr.split(this.options.delimeter) : JSON.parse(attr);
 	
-	          if (Array.isArray(category)) {
-	            return category.some(arrayIncludes(keys));
-	          }
-	
-	          return arrayIncludes(keys, category);
+	        if (Array.isArray(category)) {
+	          return category.some(arrayIncludes(keys));
 	        }
+	
+	        return arrayIncludes(keys, category);
+	      }
 	    }
 	
 	    /**
@@ -536,20 +534,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        // columnWidth option isn't a function, are they using a sizing element?
 	      } else if (this.useSizer) {
-	          size = Shuffle.getSize(this.options.sizer).width;
+	        size = Shuffle.getSize(this.options.sizer).width;
 	
-	          // if not, how about the explicitly set option?
-	        } else if (this.options.columnWidth) {
-	            size = this.options.columnWidth;
+	        // if not, how about the explicitly set option?
+	      } else if (this.options.columnWidth) {
+	        size = this.options.columnWidth;
 	
-	            // or use the size of the first item
-	          } else if (this.items.length > 0) {
-	              size = Shuffle.getSize(this.items[0].element, true).width;
+	        // or use the size of the first item
+	      } else if (this.items.length > 0) {
+	        size = Shuffle.getSize(this.items[0].element, true).width;
 	
-	              // if there's no items, use size of container
-	            } else {
-	                size = containerWidth;
-	              }
+	        // if there's no items, use size of container
+	      } else {
+	        size = containerWidth;
+	      }
 	
 	      // Don't let them set a column width of zero.
 	      if (size === 0) {
@@ -907,8 +905,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // change position or the transition duration is zero, which will not trigger
 	        // the transitionend event.
 	      } else {
-	          this._dispatchLayout();
-	        }
+	        this._dispatchLayout();
+	      }
 	
 	      // Remove everything in the style queue
 	      this._queue.length = 0;
@@ -1502,6 +1500,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				seen.add(el);
 				return true;
 			}
+	
+			return false;
 		});
 	}
 	

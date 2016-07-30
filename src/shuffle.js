@@ -240,10 +240,9 @@ class Shuffle {
     // Check each element's data-groups attribute against the given category.
     } else {
       let attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
-      let groups = JSON.parse(attr);
-      let keys = this.delimeter && !Array.isArray(groups) ?
-          groups.split(this.delimeter) :
-          groups;
+      let keys = this.options.delimeter ?
+          attr.split(this.options.delimeter) :
+          JSON.parse(attr);
 
       if (Array.isArray(category)) {
         return category.some(arrayIncludes(keys));

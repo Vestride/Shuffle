@@ -555,6 +555,31 @@ describe('shuffle', function () {
     });
   });
 
+  describe('delimeter fixture', function () {
+    beforeEach(function (done) {
+      // Mock the transition end event wrapper.
+      sinon.stub(Shuffle.prototype, '_whenTransitionDone', function (element, itemCallback, done) {
+        setTimeout(done, 0);
+      });
+
+      appendFixture('delimeter').then(done);
+    });
+
+    afterEach(function () {
+      Shuffle.prototype._whenTransitionDone.restore();
+      removeFixture();
+    });
+
+    it('can have a custom delimeter', function () {
+      instance = new Shuffle(fixture, {
+        delimeter: ',',
+        group: 'design',
+      });
+
+      expect(instance.visibleItems).to.equal(3);
+    });
+  });
+
   describe('the sorter', function () {
     var items;
     var clone;
