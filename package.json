@@ -61,7 +61,7 @@
     "gulp-sass": "^2.2.0",
     "gulp-shell": "^0.5.2",
     "gulp-util": "^3.0.7",
-    "mocha": "^2.4.5",
+    "mocha": "^3.0.0",
     "sinon": "^1.17.3",
     "webpack": "^1.13.0"
   }
