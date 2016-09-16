@@ -1,0 +1,50 @@
+[
+  {
+    "shape": "circle",
+    "color": "blue"
+  },
+  {
+    "shape": "diamond",
+    "color": "red"
+  },
+  {
+    "shape": "triangle",
+    "color": "green"
+  },
+  {
+    "shape": "triangle",
+    "color": "orange"
+  },
+  {
+    "shape": "square",
+    "color": "red"
+  },
+  {
+    "shape": "diamond",
+    "color": "green"
+  },
+  {
+    "shape": "circle",
+    "color": "red"
+  },
+  {
+    "shape": "square",
+    "color": "green"
+  },
+  {
+    "shape": "circle",
+    "color": "orange"
+  },
+  {
+    "shape": "diamond",
+    "color": "blue"
+  },
+  {
+    "shape": "square",
+    "color": "orange"
+  },
+  {
+    "shape": "square",
+    "color": "blue"
+  }
+]

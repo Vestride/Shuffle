@@ -49,7 +49,7 @@ prism: true
 
   <div class="row">
     <div class="shape-shuffle-container js-shuffle">
-      {% for shape in site.shapes %}
+      {% for shape in site.data.shapes %}
       <div class="col-3@xs col-3@sm shape shape--{{ shape.shape }} shape--{{ shape.color }}" data-shape="{{ shape.shape }}" data-color="{{ shape.color }}">
         <div class="aspect">
           <div class="aspect__inner">

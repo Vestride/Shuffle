@@ -35,7 +35,7 @@ extraJS: [ "demos/images.js"]
 
 <div class="container">
   <div class="my-grid-with-images row">
-    {% for item in site.items %}
+    {% for item in site.data.items %}
     <figure class="js-item img-item col-3@sm col-3@xs">
       <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="{{item.title}}"/>
       <figcaption>{{ item.groups | join: ', ' }}</figcaption>

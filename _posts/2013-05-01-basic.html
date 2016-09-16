@@ -15,7 +15,7 @@ extraJS: [ "demos/homepage.js" ]
 
 <div class="container">
   <div id="grid" class="row my-shuffle-container">
-    {% for item in site.items %}
+    {% for item in site.data.items %}
         {% assign item = item %}
         {% include picture-item.html %}
     {% endfor %}
