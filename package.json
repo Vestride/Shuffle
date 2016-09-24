@@ -56,7 +56,7 @@
     "chai-dom": "^1.4.0",
     "es6-promise": "^3.1.2",
     "gulp": "gulpjs/gulp.git#4.0",
-    "gulp-mocha-phantomjs": "^0.11.0",
+    "gulp-mocha-phantomjs": "^0.12.0",
     "gulp-postcss": "^6.1.0",
     "gulp-sass": "^2.2.0",
     "gulp-shell": "^0.5.2",
