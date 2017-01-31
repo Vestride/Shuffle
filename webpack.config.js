@@ -11,14 +11,17 @@ module.exports = {
     libraryTarget: 'umd',
   },
   resolve: {
-    root: [path.resolve('./src')],
+    modules: [
+      path.resolve('./src'),
+      'node_modules',
+    ],
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel',
+        loader: 'babel-loader',
       },
     ],
   },

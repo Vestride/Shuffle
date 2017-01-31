@@ -1,4 +1,5 @@
-# [Shuffle][homepage] [![Build Status][travis-img]][travis-url] [![Dependency Status][david-img]][david-url] [![NPM version][npm-img]][npm-url]
+# [Shuffle][homepage] [![Build Status][travis-img]][travis-url] [![Dependency Status][david-img]][david-url] [![Greenkeeper badge][greenkeeper-img]][greenkeeper-img] [![NPM version][npm-img]][npm-url]
+
 Categorize, sort, and filter a responsive grid of items.
 
 ```bash
@@ -34,3 +35,5 @@ This project was inspired by [Isotope](http://isotope.metafizzy.co/) and [Packer
 [david-img]: https://david-dm.org/Vestride/Shuffle.svg
 [npm-url]: https://www.npmjs.com/package/shufflejs
 [npm-img]: https://img.shields.io/npm/v/shufflejs.svg
+[greenkeeper-url]: https://greenkeeper.io/
+[greenkeeper-img]: https://badges.greenkeeper.io/Vestride/Shuffle.svg
