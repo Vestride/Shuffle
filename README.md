@@ -1,4 +1,6 @@
 # [Shuffle][homepage] [![Build Status][travis-img]][travis-url] [![Dependency Status][david-img]][david-url] [![NPM version][npm-img]][npm-url]
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/Vestride/Shuffle.svg)](https://greenkeeper.io/)
 Categorize, sort, and filter a responsive grid of items.
 
 ```bash
