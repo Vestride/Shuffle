@@ -5,6 +5,7 @@ layouts_dir: _layouts
 data_dir:    _data
 include:     ['.htaccess']
 exclude:     [
+  '.github',
   '_scss',
   'coverage',
   'node_modules',
