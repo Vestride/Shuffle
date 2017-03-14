@@ -33,5 +33,11 @@
     "url": "demos/2014-04-09-requirejs",
     "slug": "requirejs",
     "label": "RequireJS with Shuffle"
+  },
+  {
+    "external": true,
+    "url": "http://codepen.io/pen?template=qrjOpX",
+    "slug": "codepen-template",
+    "label": "CodePen Template"
   }
 ]

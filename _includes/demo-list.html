@@ -1,7 +1,11 @@
 <div class="row js-demos demo-list">
   {% for post in site.data.demos %}
     <div class="col-3@sm col-3@xs figure-wrap js-demo">
+      {% if post.external %}
+      <a href="{{ post.url }}" target="_blank" rel="noopener">
+      {% else %}
       <a href="{{ site.baseurl }}/{{ post.slug }}">
+      {% endif %}
         <figure>
           <div class="aspect aspect--4x3">
             <picture>
