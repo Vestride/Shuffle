@@ -79,13 +79,15 @@ describe('shuffle', function () {
     return document.getElementById(id);
   }
 
+  function whenTransitionDoneStub(element, itemCallback, done) {
+    setTimeout(done, 0);
+  }
+
   describe('regular fixture', function () {
 
     beforeEach(function (done) {
       // Mock the transition end event wrapper.
-      sinon.stub(Shuffle.prototype, '_whenTransitionDone', function (element, itemCallback, done) {
-        setTimeout(done, 0);
-      });
+      sinon.stub(Shuffle.prototype, '_whenTransitionDone').callsFake(whenTransitionDoneStub);
 
       appendFixture('regular').then(done);
     });
@@ -558,9 +560,7 @@ describe('shuffle', function () {
   describe('delimeter fixture', function () {
     beforeEach(function (done) {
       // Mock the transition end event wrapper.
-      sinon.stub(Shuffle.prototype, '_whenTransitionDone', function (element, itemCallback, done) {
-        setTimeout(done, 0);
-      });
+      sinon.stub(Shuffle.prototype, '_whenTransitionDone').callsFake(whenTransitionDoneStub);
 
       appendFixture('delimeter').then(done);
     });
