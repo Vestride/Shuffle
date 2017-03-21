@@ -503,6 +503,7 @@ class Shuffle {
       // If the item will not change its position, do not add it to the render
       // queue. Transitions don't fire when setting a property to the same value.
       if (Point.equals(currPos, pos) && currScale === ShuffleItem.Scale.VISIBLE) {
+        item.applyCss(ShuffleItem.Css.VISIBLE.before);
         callback();
         return;
       }
@@ -561,6 +562,7 @@ class Shuffle {
       // after the transitionend event because the transitionend could be
       // canceled if another animation starts.
       if (item.scale === ShuffleItem.Scale.HIDDEN) {
+        item.applyCss(ShuffleItem.Css.HIDDEN.before);
         callback();
         return;
       }

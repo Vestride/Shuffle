@@ -789,6 +789,7 @@ var Shuffle = function () {
         // If the item will not change its position, do not add it to the render
         // queue. Transitions don't fire when setting a property to the same value.
         if (__WEBPACK_IMPORTED_MODULE_6__point__["a" /* default */].equals(currPos, pos) && currScale === __WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Scale.VISIBLE) {
+          item.applyCss(__WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Css.VISIBLE.before);
           callback();
           return;
         }
@@ -857,6 +858,7 @@ var Shuffle = function () {
         // after the transitionend event because the transitionend could be
         // canceled if another animation starts.
         if (item.scale === __WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Scale.HIDDEN) {
+          item.applyCss(__WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Css.HIDDEN.before);
           callback();
           return;
         }

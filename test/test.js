@@ -580,6 +580,41 @@ describe('shuffle', function () {
     });
   });
 
+  describe('Custom shuffle item styles', function () {
+    var original = Shuffle.ShuffleItem.Css;
+
+    beforeEach(function (done) {
+      appendFixture('regular').then(done);
+    });
+
+    afterEach(function () {
+      Shuffle.ShuffleItem.Css = original;
+      removeFixture();
+    });
+
+    it('will apply before and after styles even if the item will not move', function () {
+      Shuffle.ShuffleItem.Css.INITIAL.opacity = 0;
+      instance = new Shuffle(fixture, { speed: 0 });
+
+      // The layout method will have already set styles to their 'after' states
+      // upon initialization. Reset them here.
+      instance.items.forEach(function (item) {
+        item.applyCss(Shuffle.ShuffleItem.Css.INITIAL);
+      });
+
+      instance.items.forEach(function (item) {
+        expect(item.element.style.opacity).to.equal('0');
+      });
+
+      instance._layout(instance.items);
+      instance._processQueue();
+
+      instance.items.forEach(function (item) {
+        expect(item.element.style.opacity).to.equal('1');
+      });
+    });
+  });
+
   describe('the sorter', function () {
     var items;
     var clone;
