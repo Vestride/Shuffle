@@ -567,7 +567,7 @@ function cancelTransitionEnd(id) {
   return false;
 }
 
-function arrayMax() {
+function arrayMax(array) {
   return Math.max.apply(Math, array);
 }
 
