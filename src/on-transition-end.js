@@ -1,5 +1,3 @@
-'use strict';
-
 let transitions = {};
 let eventName = 'transitionend';
 let count = 0;

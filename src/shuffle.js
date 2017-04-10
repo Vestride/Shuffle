@@ -1,5 +1,3 @@
-'use strict';
-
 import 'custom-event-polyfill';
 import matches from 'matches-selector';
 import arrayUnique from 'array-uniq';
@@ -13,13 +11,10 @@ import getNumberStyle from './get-number-style';
 import sorter from './sorter';
 import { onTransitionEnd, cancelTransitionEnd } from './on-transition-end';
 import { getItemPosition, getColumnSpan, getAvailablePositions, getShortColumn } from './layout';
+import arrayMax from './array-max';
 
 function toArray(arrayLike) {
   return Array.prototype.slice.call(arrayLike);
-}
-
-function arrayMax(array) {
-  return Math.max.apply(Math, array);
 }
 
 function arrayIncludes(array, obj) {

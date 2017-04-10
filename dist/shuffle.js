@@ -251,7 +251,6 @@ function noop() {}
  * @param {*} value Possibly numeric value.
  * @return {number} `value` or zero if `value` isn't numeric.
  */
-
 function getNumber(value) {
   return parseFloat(value) || 0;
 }
@@ -568,7 +567,7 @@ function cancelTransitionEnd(id) {
   return false;
 }
 
-function arrayMax$1(array) {
+function arrayMax() {
   return Math.max.apply(Math, array);
 }
 
@@ -674,7 +673,7 @@ function getAvailablePositions(positions, columnSpan, columns) {
   // For how many possible positions for this item there are.
   for (var i = 0; i <= columns - columnSpan; i++) {
     // Find the bigger value for each place it could fit.
-    available.push(arrayMax$1(positions.slice(i, i + columnSpan)));
+    available.push(arrayMax(positions.slice(i, i + columnSpan)));
   }
 
   return available;
@@ -701,10 +700,6 @@ function getShortColumn(positions, buffer) {
 
 function toArray$$1(arrayLike) {
   return Array.prototype.slice.call(arrayLike);
-}
-
-function arrayMax(array) {
-  return Math.max.apply(Math, array);
 }
 
 function arrayIncludes(array, obj) {

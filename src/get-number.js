@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Always returns a numeric value, given a value. Logic from jQuery's `isNumeric`.
  * @param {*} value Possibly numeric value.
