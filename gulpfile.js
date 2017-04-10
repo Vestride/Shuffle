@@ -2,7 +2,7 @@
 
 const gulp = require('gulp');
 
-gulp.task('scripts', require('./gulp/tasks/compile'));
+gulp.task('scripts', require('./gulp/tasks/scripts'));
 gulp.task('set-watching', require('./gulp/tasks/set-watching'));
 gulp.task('css', require('./gulp/tasks/css'));
 gulp.task('jekyll', require('./gulp/tasks/jekyll'));

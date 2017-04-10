@@ -1,90 +1,260 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["shuffle"] = factory();
-	else
-		root["shuffle"] = factory();
-})(this, function() {
-return /******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
-/******/ 			return installedModules[moduleId].exports;
-/******/
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 17);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global.shuffle = factory());
+}(this, (function () { 'use strict';
 
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__get_number__ = __webpack_require__(2);
+// Polyfill for creating CustomEvents on IE9/10/11
+
+// code pulled from:
+// https://github.com/d4tocchini/customevent-polyfill
+// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent#Polyfill
+
+try {
+    var ce = new window.CustomEvent('test');
+    ce.preventDefault();
+    if (ce.defaultPrevented !== true) {
+        // IE has problems with .preventDefault() on custom events
+        // http://stackoverflow.com/questions/23349191
+        throw new Error('Could not prevent default');
+    }
+} catch(e) {
+  var CustomEvent$1 = function(event, params) {
+    var evt, origPrevent;
+    params = params || {
+      bubbles: false,
+      cancelable: false,
+      detail: undefined
+    };
+
+    evt = document.createEvent("CustomEvent");
+    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+    origPrevent = evt.preventDefault;
+    evt.preventDefault = function () {
+      origPrevent.call(this);
+      try {
+        Object.defineProperty(this, 'defaultPrevented', {
+          get: function () {
+            return true;
+          }
+        });
+      } catch(e) {
+        this.defaultPrevented = true;
+      }
+    };
+    return evt;
+  };
+
+  CustomEvent$1.prototype = window.Event.prototype;
+  window.CustomEvent = CustomEvent$1; // expose definition to window
+}
+
+var proto = Element.prototype;
+var vendor = proto.matches
+  || proto.matchesSelector
+  || proto.webkitMatchesSelector
+  || proto.mozMatchesSelector
+  || proto.msMatchesSelector
+  || proto.oMatchesSelector;
+
+var index = match;
+
+/**
+ * Match `el` to `selector`.
+ *
+ * @param {Element} el
+ * @param {String} selector
+ * @return {Boolean}
+ * @api public
+ */
+
+function match(el, selector) {
+  if (vendor) return vendor.call(el, selector);
+  var nodes = el.parentNode.querySelectorAll(selector);
+  for (var i = 0; i < nodes.length; i++) {
+    if (nodes[i] == el) return true;
+  }
+  return false;
+}
+
+var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 
 
+
+
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+var index$1 = createCommonjsModule(function (module) {
+'use strict';
+
+// there's 3 implementations written in increasing order of efficiency
+
+// 1 - no Set type is defined
+function uniqNoSet(arr) {
+	var ret = [];
+
+	for (var i = 0; i < arr.length; i++) {
+		if (ret.indexOf(arr[i]) === -1) {
+			ret.push(arr[i]);
+		}
+	}
+
+	return ret;
+}
+
+// 2 - a simple Set type is defined
+function uniqSet(arr) {
+	var seen = new Set();
+	return arr.filter(function (el) {
+		if (!seen.has(el)) {
+			seen.add(el);
+			return true;
+		}
+
+		return false;
+	});
+}
+
+// 3 - a standard Set type is defined and it has a forEach method
+function uniqSetWithForEach(arr) {
+	var ret = [];
+
+	(new Set(arr)).forEach(function (el) {
+		ret.push(el);
+	});
+
+	return ret;
+}
+
+// V8 currently has a broken implementation
+// https://github.com/joyent/node/issues/8449
+function doesForEachActuallyWork() {
+	var ret = false;
+
+	(new Set([true])).forEach(function (el) {
+		ret = el;
+	});
+
+	return ret === true;
+}
+
+if ('Set' in commonjsGlobal) {
+	if (typeof Set.prototype.forEach === 'function' && doesForEachActuallyWork()) {
+		module.exports = uniqSetWithForEach;
+	} else {
+		module.exports = uniqSet;
+	}
+} else {
+	module.exports = uniqNoSet;
+}
+});
+
+var immutable = extend;
+
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+function extend() {
+    var target = {};
+
+    for (var i = 0; i < arguments.length; i++) {
+        var source = arguments[i];
+
+        for (var key in source) {
+            if (hasOwnProperty.call(source, key)) {
+                target[key] = source[key];
+            }
+        }
+    }
+
+    return target
+}
+
+var index$2 = throttle;
+
+/**
+ * Returns a new function that, when invoked, invokes `func` at most once per `wait` milliseconds.
+ *
+ * @param {Function} func Function to wrap.
+ * @param {Number} wait Number of milliseconds that must elapse between `func` invocations.
+ * @return {Function} A new function that wraps the `func` function passed in.
+ */
+
+function throttle (func, wait) {
+  var ctx, args, rtn, timeoutID; // caching
+  var last = 0;
+
+  return function throttled () {
+    ctx = this;
+    args = arguments;
+    var delta = new Date() - last;
+    if (!timeoutID)
+      if (delta >= wait) call();
+      else timeoutID = setTimeout(call, wait - delta);
+    return rtn;
+  };
+
+  function call () {
+    timeoutID = 0;
+    last = +new Date();
+    rtn = func.apply(ctx, args);
+    ctx = null;
+    args = null;
+  }
+}
+
+var index$3 = function parallel(fns, context, callback) {
+  if (!callback) {
+    if (typeof context === 'function') {
+      callback = context;
+      context = null;
+    } else {
+      callback = noop;
+    }
+  }
+
+  var pending = fns && fns.length;
+  if (!pending) return callback(null, []);
+
+  var finished = false;
+  var results = new Array(pending);
+
+  fns.forEach(context ? function (fn, i) {
+    fn.call(context, maybeDone(i));
+  } : function (fn, i) {
+    fn(maybeDone(i));
+  });
+
+  function maybeDone(i) {
+    return function (err, result) {
+      if (finished) return;
+
+      if (err) {
+        callback(err, results);
+        finished = true;
+        return
+      }
+
+      results[i] = result;
+
+      if (!--pending) callback(null, results);
+    }
+  }
+};
+
+function noop() {}
+
+/**
+ * Always returns a numeric value, given a value. Logic from jQuery's `isNumeric`.
+ * @param {*} value Possibly numeric value.
+ * @return {number} `value` or zero if `value` isn't numeric.
+ */
+
+function getNumber(value) {
+  return parseFloat(value) || 0;
+}
 
 /**
  * Represents a coordinate pair.
@@ -92,8 +262,8 @@ return /******/ (function(modules) { // webpackBootstrap
  * @param {number} [y=0] Y.
  */
 var Point = function Point(x, y) {
-  this.x = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__get_number__["a" /* default */])(x);
-  this.y = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__get_number__["a" /* default */])(y);
+  this.x = getNumber(x);
+  this.y = getNumber(y);
 };
 
 /**
@@ -106,109 +276,430 @@ Point.equals = function (a, b) {
   return a.x === b.x && a.y === b.y;
 };
 
-/* harmony default export */ __webpack_exports__["a"] = Point;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony default export */ __webpack_exports__["a"] = {
+var Classes = {
   BASE: 'shuffle',
   SHUFFLE_ITEM: 'shuffle-item',
   VISIBLE: 'shuffle-item--visible',
   HIDDEN: 'shuffle-item--hidden'
 };
 
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
 
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = getNumber;
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
 
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+var id$1 = 0;
+
+var ShuffleItem = function () {
+  function ShuffleItem(element) {
+    classCallCheck(this, ShuffleItem);
+
+    this.id = id$1++;
+    this.element = element;
+    this.isVisible = true;
+  }
+
+  createClass(ShuffleItem, [{
+    key: 'show',
+    value: function show() {
+      this.isVisible = true;
+      this.element.classList.remove(Classes.HIDDEN);
+      this.element.classList.add(Classes.VISIBLE);
+    }
+  }, {
+    key: 'hide',
+    value: function hide() {
+      this.isVisible = false;
+      this.element.classList.remove(Classes.VISIBLE);
+      this.element.classList.add(Classes.HIDDEN);
+    }
+  }, {
+    key: 'init',
+    value: function init() {
+      this.addClasses([Classes.SHUFFLE_ITEM, Classes.VISIBLE]);
+      this.applyCss(ShuffleItem.Css.INITIAL);
+      this.scale = ShuffleItem.Scale.VISIBLE;
+      this.point = new Point();
+    }
+  }, {
+    key: 'addClasses',
+    value: function addClasses(classes) {
+      var _this = this;
+
+      classes.forEach(function (className) {
+        _this.element.classList.add(className);
+      });
+    }
+  }, {
+    key: 'removeClasses',
+    value: function removeClasses(classes) {
+      var _this2 = this;
+
+      classes.forEach(function (className) {
+        _this2.element.classList.remove(className);
+      });
+    }
+  }, {
+    key: 'applyCss',
+    value: function applyCss(obj) {
+      for (var key in obj) {
+        this.element.style[key] = obj[key];
+      }
+    }
+  }, {
+    key: 'dispose',
+    value: function dispose() {
+      this.removeClasses([Classes.HIDDEN, Classes.VISIBLE, Classes.SHUFFLE_ITEM]);
+
+      this.element.removeAttribute('style');
+      this.element = null;
+    }
+  }]);
+  return ShuffleItem;
+}();
+
+ShuffleItem.Css = {
+  INITIAL: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    visibility: 'visible',
+    'will-change': 'transform'
+  },
+  VISIBLE: {
+    before: {
+      opacity: 1,
+      visibility: 'visible'
+    },
+    after: {}
+  },
+  HIDDEN: {
+    before: {
+      opacity: 0
+    },
+    after: {
+      visibility: 'hidden'
+    }
+  }
+};
+
+ShuffleItem.Scale = {
+  VISIBLE: 1,
+  HIDDEN: 0.001
+};
+
+var element = document.body || document.documentElement;
+var e$1 = document.createElement('div');
+e$1.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
+element.appendChild(e$1);
+
+var width = window.getComputedStyle(e$1, null).width;
+var ret = width === '10px';
+
+element.removeChild(e$1);
 
 /**
- * Always returns a numeric value, given a value. Logic from jQuery's `isNumeric`.
- * @param {*} value Possibly numeric value.
- * @return {number} `value` or zero if `value` isn't numeric.
+ * Retrieve the computed style for an element, parsed as a float.
+ * @param {Element} element Element to get style for.
+ * @param {string} style Style property.
+ * @param {CSSStyleDeclaration} [styles] Optionally include clean styles to
+ *     use instead of asking for them again.
+ * @return {number} The parsed computed value or zero if that fails because IE
+ *     will return 'auto' when the element doesn't have margins instead of
+ *     the computed style.
  */
+function getNumberStyle(element, style) {
+  var styles = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : window.getComputedStyle(element, null);
 
-function getNumber(value) {
-  return parseFloat(value) || 0;
+  var value = getNumber(styles[style]);
+
+  // Support IE<=11 and W3C spec.
+  if (!ret && style === 'width') {
+    value += getNumber(styles.paddingLeft) + getNumber(styles.paddingRight) + getNumber(styles.borderLeftWidth) + getNumber(styles.borderRightWidth);
+  } else if (!ret && style === 'height') {
+    value += getNumber(styles.paddingTop) + getNumber(styles.paddingBottom) + getNumber(styles.borderTopWidth) + getNumber(styles.borderBottomWidth);
+  }
+
+  return value;
 }
 
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
+// http://stackoverflow.com/a/962890/373422
+function randomize(array) {
+  var tmp;
+  var current;
+  var top = array.length;
 
-module.exports = extend
+  if (!top) {
+    return array;
+  }
 
-var hasOwnProperty = Object.prototype.hasOwnProperty;
+  while (--top) {
+    current = Math.floor(Math.random() * (top + 1));
+    tmp = array[current];
+    array[current] = array[top];
+    array[top] = tmp;
+  }
 
-function extend() {
-    var target = {}
+  return array;
+}
 
-    for (var i = 0; i < arguments.length; i++) {
-        var source = arguments[i]
+var defaults$1 = {
+  // Use array.reverse() to reverse the results
+  reverse: false,
 
-        for (var key in source) {
-            if (hasOwnProperty.call(source, key)) {
-                target[key] = source[key]
-            }
-        }
+  // Sorting function
+  by: null,
+
+  // If true, this will skip the sorting and return a randomized order in the array
+  randomize: false,
+
+  // Determines which property of each item in the array is passed to the
+  // sorting method.
+  key: 'element'
+};
+
+// You can return `undefined` from the `by` function to revert to DOM order.
+function sorter(arr, options) {
+  var opts = immutable(defaults$1, options);
+  var original = [].slice.call(arr);
+  var revert = false;
+
+  if (!arr.length) {
+    return [];
+  }
+
+  if (opts.randomize) {
+    return randomize(arr);
+  }
+
+  // Sort the elements by the opts.by function.
+  // If we don't have opts.by, default to DOM order
+  if (typeof opts.by === 'function') {
+    arr.sort(function (a, b) {
+
+      // Exit early if we already know we want to revert
+      if (revert) {
+        return 0;
+      }
+
+      var valA = opts.by(a[opts.key]);
+      var valB = opts.by(b[opts.key]);
+
+      // If both values are undefined, use the DOM order
+      if (valA === undefined && valB === undefined) {
+        revert = true;
+        return 0;
+      }
+
+      if (valA < valB || valA === 'sortFirst' || valB === 'sortLast') {
+        return -1;
+      }
+
+      if (valA > valB || valA === 'sortLast' || valB === 'sortFirst') {
+        return 1;
+      }
+
+      return 0;
+    });
+  }
+
+  // Revert to the original array if necessary
+  if (revert) {
+    return original;
+  }
+
+  if (opts.reverse) {
+    arr.reverse();
+  }
+
+  return arr;
+}
+
+var transitions = {};
+var eventName = 'transitionend';
+var count = 0;
+
+function uniqueId() {
+  return eventName + count++;
+}
+
+function onTransitionEnd(element, callback) {
+  var id = uniqueId();
+  var listener = function listener(evt) {
+    if (evt.currentTarget === evt.target) {
+      cancelTransitionEnd(id);
+      callback(evt);
     }
+  };
 
-    return target
+  element.addEventListener(eventName, listener);
+
+  transitions[id] = { element: element, listener: listener };
+
+  return id;
 }
 
+function cancelTransitionEnd(id) {
+  if (transitions[id]) {
+    transitions[id].element.removeEventListener(eventName, transitions[id].listener);
+    transitions[id] = null;
+    return true;
+  }
 
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+  return false;
+}
 
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_custom_event_polyfill__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_custom_event_polyfill___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_custom_event_polyfill__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_matches_selector__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_matches_selector___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_matches_selector__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_array_uniq__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_array_uniq___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_array_uniq__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_xtend__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_xtend___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_xtend__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_throttleit__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_throttleit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_throttleit__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_array_parallel__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_array_parallel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_array_parallel__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__point__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__shuffle_item__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__classes__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__get_number_style__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__sorter__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__on_transition_end__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__layout__ = __webpack_require__(9);
+function arrayMax$1(array) {
+  return Math.max.apply(Math, array);
+}
 
+function arrayMin(array) {
+  return Math.min.apply(Math, array);
+}
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+/**
+ * Determine the location of the next item, based on its size.
+ * @param {Object} itemSize Object with width and height.
+ * @param {Array.<number>} positions Positions of the other current items.
+ * @param {number} gridSize The column width or row height.
+ * @param {number} total The total number of columns or rows.
+ * @param {number} threshold Buffer value for the column to fit.
+ * @param {number} buffer Vertical buffer for the height of items.
+ * @return {Point}
+ */
+function getItemPosition(_ref) {
+  var itemSize = _ref.itemSize,
+      positions = _ref.positions,
+      gridSize = _ref.gridSize,
+      total = _ref.total,
+      threshold = _ref.threshold,
+      buffer = _ref.buffer;
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  var span = getColumnSpan(itemSize.width, gridSize, total, threshold);
+  var setY = getAvailablePositions(positions, span, total);
+  var shortColumnIndex = getShortColumn(setY, buffer);
 
+  // Position the item
+  var point = new Point(Math.round(gridSize * shortColumnIndex), Math.round(setY[shortColumnIndex]));
 
+  // Update the columns array with the new values for each column.
+  // e.g. before the update the columns could be [250, 0, 0, 0] for an item
+  // which spans 2 columns. After it would be [250, itemHeight, itemHeight, 0].
+  var setHeight = setY[shortColumnIndex] + itemSize.height;
+  for (var i = 0; i < span; i++) {
+    positions[shortColumnIndex + i] = setHeight;
+  }
 
+  return point;
+}
 
+/**
+ * Determine the number of columns an items spans.
+ * @param {number} itemWidth Width of the item.
+ * @param {number} columnWidth Width of the column (includes gutter).
+ * @param {number} columns Total number of columns
+ * @param {number} threshold A buffer value for the size of the column to fit.
+ * @return {number}
+ */
+function getColumnSpan(itemWidth, columnWidth, columns, threshold) {
+  var columnSpan = itemWidth / columnWidth;
 
+  // If the difference between the rounded column span number and the
+  // calculated column span number is really small, round the number to
+  // make it fit.
+  if (Math.abs(Math.round(columnSpan) - columnSpan) < threshold) {
+    // e.g. columnSpan = 4.0089945390298745
+    columnSpan = Math.round(columnSpan);
+  }
 
+  // Ensure the column span is not more than the amount of columns in the whole layout.
+  return Math.min(Math.ceil(columnSpan), columns);
+}
 
+/**
+ * Retrieves the column set to use for placement.
+ * @param {number} columnSpan The number of columns this current item spans.
+ * @param {number} columns The total columns in the grid.
+ * @return {Array.<number>} An array of numbers represeting the column set.
+ */
+function getAvailablePositions(positions, columnSpan, columns) {
+  // The item spans only one column.
+  if (columnSpan === 1) {
+    return positions;
+  }
 
+  // The item spans more than one column, figure out how many different
+  // places it could fit horizontally.
+  // The group count is the number of places within the positions this block
+  // could fit, ignoring the current positions of items.
+  // Imagine a 2 column brick as the second item in a 4 column grid with
+  // 10px height each. Find the places it would fit:
+  // [20, 10, 10, 0]
+  //  |   |   |
+  //  *   *   *
+  //
+  // Then take the places which fit and get the bigger of the two:
+  // max([20, 10]), max([10, 10]), max([10, 0]) = [20, 10, 0]
+  //
+  // Next, find the first smallest number (the short column).
+  // [20, 10, 0]
+  //          |
+  //          *
+  //
+  // And that's where it should be placed!
+  //
+  // Another example where the second column's item extends past the first:
+  // [10, 20, 10, 0] => [20, 20, 10] => 10
+  var available = [];
 
+  // For how many possible positions for this item there are.
+  for (var i = 0; i <= columns - columnSpan; i++) {
+    // Find the bigger value for each place it could fit.
+    available.push(arrayMax$1(positions.slice(i, i + columnSpan)));
+  }
 
+  return available;
+}
 
+/**
+ * Find index of short column, the first from the left where this item will go.
+ *
+ * @param {Array.<number>} positions The array to search for the smallest number.
+ * @param {number} buffer Optional buffer which is very useful when the height
+ *     is a percentage of the width.
+ * @return {number} Index of the short column.
+ */
+function getShortColumn(positions, buffer) {
+  var minPosition = arrayMin(positions);
+  for (var i = 0, len = positions.length; i < len; i++) {
+    if (positions[i] >= minPosition - buffer && positions[i] <= minPosition + buffer) {
+      return i;
+    }
+  }
 
+  return 0;
+}
 
-
-
-function toArray(arrayLike) {
+function toArray$$1(arrayLike) {
   return Array.prototype.slice.call(arrayLike);
 }
 
@@ -240,10 +731,9 @@ var Shuffle = function () {
    */
   function Shuffle(element) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    classCallCheck(this, Shuffle);
 
-    _classCallCheck(this, Shuffle);
-
-    this.options = __WEBPACK_IMPORTED_MODULE_3_xtend___default()(Shuffle.options, options);
+    this.options = immutable(Shuffle.options, options);
 
     this.useSizer = false;
     this.lastSort = {};
@@ -268,7 +758,7 @@ var Shuffle = function () {
     this.isInitialized = true;
   }
 
-  _createClass(Shuffle, [{
+  createClass(Shuffle, [{
     key: '_init',
     value: function _init() {
       this.items = this._getItems();
@@ -388,10 +878,10 @@ var Shuffle = function () {
       var category = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.lastFilter;
       var collection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.items;
 
-      var set = this._getFilteredSets(category, collection);
+      var set$$1 = this._getFilteredSets(category, collection);
 
       // Individually add/remove hidden/visible classes
-      this._toggleFilterClasses(set);
+      this._toggleFilterClasses(set$$1);
 
       // Save the last filter in case elements are appended.
       this.lastFilter = category;
@@ -402,7 +892,7 @@ var Shuffle = function () {
         this.group = category;
       }
 
-      return set;
+      return set$$1;
     }
 
     /**
@@ -566,10 +1056,10 @@ var Shuffle = function () {
     value: function _getItems() {
       var _this2 = this;
 
-      return toArray(this.element.children).filter(function (el) {
-        return __WEBPACK_IMPORTED_MODULE_1_matches_selector___default()(el, _this2.options.itemSelector);
+      return toArray$$1(this.element.children).filter(function (el) {
+        return index(el, _this2.options.itemSelector);
       }).map(function (el) {
-        return new __WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */](el);
+        return new ShuffleItem(el);
       });
     }
 
@@ -582,7 +1072,7 @@ var Shuffle = function () {
     key: '_updateItemsOrder',
     value: function _updateItemsOrder() {
       var children = this.element.children;
-      this.items = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__sorter__["a" /* default */])(this.items, {
+      this.items = sorter(this.items, {
         by: function by(element) {
           return Array.prototype.indexOf.call(children, element);
         }
@@ -659,7 +1149,7 @@ var Shuffle = function () {
       if (typeof this.options.gutterWidth === 'function') {
         size = this.options.gutterWidth(containerWidth);
       } else if (this.useSizer) {
-        size = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__get_number_style__["a" /* default */])(this.options.sizer, 'marginLeft');
+        size = getNumberStyle(this.options.sizer, 'marginLeft');
       } else {
         size = this.options.gutterWidth;
       }
@@ -723,8 +1213,8 @@ var Shuffle = function () {
 
   }, {
     key: '_getStaggerAmount',
-    value: function _getStaggerAmount(index) {
-      return Math.min(index * this.options.staggerAmount, this.options.staggerAmountMax);
+    value: function _getStaggerAmount(index$$1) {
+      return Math.min(index$$1 * this.options.staggerAmount, this.options.staggerAmountMax);
     }
 
     /**
@@ -783,23 +1273,23 @@ var Shuffle = function () {
 
         function callback() {
           item.element.style.transitionDelay = '';
-          item.applyCss(__WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Css.VISIBLE.after);
+          item.applyCss(ShuffleItem.Css.VISIBLE.after);
         }
 
         // If the item will not change its position, do not add it to the render
         // queue. Transitions don't fire when setting a property to the same value.
-        if (__WEBPACK_IMPORTED_MODULE_6__point__["a" /* default */].equals(currPos, pos) && currScale === __WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Scale.VISIBLE) {
-          item.applyCss(__WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Css.VISIBLE.before);
+        if (Point.equals(currPos, pos) && currScale === ShuffleItem.Scale.VISIBLE) {
+          item.applyCss(ShuffleItem.Css.VISIBLE.before);
           callback();
           return;
         }
 
         item.point = pos;
-        item.scale = __WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Scale.VISIBLE;
+        item.scale = ShuffleItem.Scale.VISIBLE;
 
         // Use xtend here to clone the object so that the `before` object isn't
         // modified when the transition delay is added.
-        var styles = __WEBPACK_IMPORTED_MODULE_3_xtend___default()(__WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Css.VISIBLE.before);
+        var styles = immutable(ShuffleItem.Css.VISIBLE.before);
         styles.transitionDelay = _this3._getStaggerAmount(count) + 'ms';
 
         _this3._queue.push({
@@ -822,7 +1312,7 @@ var Shuffle = function () {
   }, {
     key: '_getItemPosition',
     value: function _getItemPosition(itemSize) {
-      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__layout__["a" /* getItemPosition */])({
+      return getItemPosition({
         itemSize: itemSize,
         positions: this.positions,
         gridSize: this.colWidth,
@@ -848,7 +1338,7 @@ var Shuffle = function () {
       var count = 0;
       collection.forEach(function (item) {
         function callback() {
-          item.applyCss(__WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Css.HIDDEN.after);
+          item.applyCss(ShuffleItem.Css.HIDDEN.after);
         }
 
         // Continuing would add a transitionend event listener to the element, but
@@ -857,15 +1347,15 @@ var Shuffle = function () {
         // The callback is executed here because it is not guaranteed to be called
         // after the transitionend event because the transitionend could be
         // canceled if another animation starts.
-        if (item.scale === __WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Scale.HIDDEN) {
-          item.applyCss(__WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Css.HIDDEN.before);
+        if (item.scale === ShuffleItem.Scale.HIDDEN) {
+          item.applyCss(ShuffleItem.Css.HIDDEN.before);
           callback();
           return;
         }
 
-        item.scale = __WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Scale.HIDDEN;
+        item.scale = ShuffleItem.Scale.HIDDEN;
 
-        var styles = __WEBPACK_IMPORTED_MODULE_3_xtend___default()(__WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */].Css.HIDDEN.before);
+        var styles = immutable(ShuffleItem.Css.HIDDEN.before);
         styles.transitionDelay = _this4._getStaggerAmount(count) + 'ms';
 
         _this4._queue.push({
@@ -943,7 +1433,7 @@ var Shuffle = function () {
   }, {
     key: '_whenTransitionDone',
     value: function _whenTransitionDone(element, itemCallback, done) {
-      var id = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__on_transition_end__["a" /* onTransitionEnd */])(element, function (evt) {
+      var id = onTransitionEnd(element, function (evt) {
         itemCallback();
         done(null, evt);
       });
@@ -1020,13 +1510,13 @@ var Shuffle = function () {
         return _this6._getTransitionFunction(obj);
       });
 
-      __WEBPACK_IMPORTED_MODULE_5_array_parallel___default()(callbacks, this._movementFinished.bind(this));
+      index$3(callbacks, this._movementFinished.bind(this));
     }
   }, {
     key: '_cancelMovement',
     value: function _cancelMovement() {
       // Remove the transition end event for each listener.
-      this._transitions.forEach(__WEBPACK_IMPORTED_MODULE_11__on_transition_end__["b" /* cancelTransitionEnd */]);
+      this._transitions.forEach(cancelTransitionEnd);
 
       // Reset the array.
       this._transitions.length = 0;
@@ -1119,7 +1609,7 @@ var Shuffle = function () {
       this._resetCols();
 
       var items = this._getFilteredItems();
-      items = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__sorter__["a" /* default */])(items, opts);
+      items = sorter(items, opts);
 
       this._layout(items);
 
@@ -1175,8 +1665,8 @@ var Shuffle = function () {
   }, {
     key: 'add',
     value: function add(newItems) {
-      newItems = __WEBPACK_IMPORTED_MODULE_2_array_uniq___default()(newItems).map(function (el) {
-        return new __WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */](el);
+      newItems = index$1(newItems).map(function (el) {
+        return new ShuffleItem(el);
       });
 
       // Add classes and set initial positions.
@@ -1231,7 +1721,7 @@ var Shuffle = function () {
         return;
       }
 
-      collection = __WEBPACK_IMPORTED_MODULE_2_array_uniq___default()(collection);
+      collection = index$1(collection);
 
       var oldItems = collection.map(function (element) {
         return _this8.getItemByElement(element);
@@ -1349,14 +1839,14 @@ var Shuffle = function () {
     value: function getSize(element, includeMargins) {
       // Store the styles so that they can be used by others without asking for it again.
       var styles = window.getComputedStyle(element, null);
-      var width = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__get_number_style__["a" /* default */])(element, 'width', styles);
-      var height = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__get_number_style__["a" /* default */])(element, 'height', styles);
+      var width = getNumberStyle(element, 'width', styles);
+      var height = getNumberStyle(element, 'height', styles);
 
       if (includeMargins) {
-        var marginLeft = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__get_number_style__["a" /* default */])(element, 'marginLeft', styles);
-        var marginRight = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__get_number_style__["a" /* default */])(element, 'marginRight', styles);
-        var marginTop = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__get_number_style__["a" /* default */])(element, 'marginTop', styles);
-        var marginBottom = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__get_number_style__["a" /* default */])(element, 'marginBottom', styles);
+        var marginLeft = getNumberStyle(element, 'marginLeft', styles);
+        var marginRight = getNumberStyle(element, 'marginRight', styles);
+        var marginTop = getNumberStyle(element, 'marginTop', styles);
+        var marginBottom = getNumberStyle(element, 'marginBottom', styles);
         width += marginLeft + marginRight;
         height += marginTop + marginBottom;
       }
@@ -1408,11 +1898,10 @@ var Shuffle = function () {
       });
     }
   }]);
-
   return Shuffle;
 }();
 
-Shuffle.ShuffleItem = __WEBPACK_IMPORTED_MODULE_7__shuffle_item__["a" /* default */];
+Shuffle.ShuffleItem = ShuffleItem;
 
 Shuffle.ALL_ITEMS = 'all';
 Shuffle.FILTER_ATTRIBUTE_KEY = 'groups';
@@ -1426,7 +1915,7 @@ Shuffle.EventType = {
 };
 
 /** @enum {string} */
-Shuffle.Classes = __WEBPACK_IMPORTED_MODULE_8__classes__["a" /* default */];
+Shuffle.Classes = Classes;
 
 // Overrideable options
 Shuffle.options = {
@@ -1472,7 +1961,7 @@ Shuffle.options = {
 
   // By default, shuffle will throttle resize events. This can be changed or
   // removed.
-  throttle: __WEBPACK_IMPORTED_MODULE_4_throttleit___default.a,
+  throttle: index$2,
 
   // How often shuffle can be called on resize (in milliseconds).
   throttleTime: 300,
@@ -1488,752 +1977,13 @@ Shuffle.options = {
 };
 
 // Expose for testing. Hack at your own risk.
-Shuffle.__Point = __WEBPACK_IMPORTED_MODULE_6__point__["a" /* default */];
-Shuffle.__sorter = __WEBPACK_IMPORTED_MODULE_10__sorter__["a" /* default */];
-Shuffle.__getColumnSpan = __WEBPACK_IMPORTED_MODULE_12__layout__["b" /* getColumnSpan */];
-Shuffle.__getAvailablePositions = __WEBPACK_IMPORTED_MODULE_12__layout__["c" /* getAvailablePositions */];
-Shuffle.__getShortColumn = __WEBPACK_IMPORTED_MODULE_12__layout__["d" /* getShortColumn */];
-
-/* harmony default export */ __webpack_exports__["default"] = Shuffle;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = function parallel(fns, context, callback) {
-  if (!callback) {
-    if (typeof context === 'function') {
-      callback = context
-      context = null
-    } else {
-      callback = noop
-    }
-  }
-
-  var pending = fns && fns.length
-  if (!pending) return callback(null, []);
-
-  var finished = false
-  var results = new Array(pending)
-
-  fns.forEach(context ? function (fn, i) {
-    fn.call(context, maybeDone(i))
-  } : function (fn, i) {
-    fn(maybeDone(i))
-  })
-
-  function maybeDone(i) {
-    return function (err, result) {
-      if (finished) return;
-
-      if (err) {
-        callback(err, results)
-        finished = true
-        return
-      }
-
-      results[i] = result
-
-      if (!--pending) callback(null, results);
-    }
-  }
-}
-
-function noop() {}
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-// there's 3 implementations written in increasing order of efficiency
-
-// 1 - no Set type is defined
-function uniqNoSet(arr) {
-	var ret = [];
-
-	for (var i = 0; i < arr.length; i++) {
-		if (ret.indexOf(arr[i]) === -1) {
-			ret.push(arr[i]);
-		}
-	}
-
-	return ret;
-}
-
-// 2 - a simple Set type is defined
-function uniqSet(arr) {
-	var seen = new Set();
-	return arr.filter(function (el) {
-		if (!seen.has(el)) {
-			seen.add(el);
-			return true;
-		}
-
-		return false;
-	});
-}
-
-// 3 - a standard Set type is defined and it has a forEach method
-function uniqSetWithForEach(arr) {
-	var ret = [];
-
-	(new Set(arr)).forEach(function (el) {
-		ret.push(el);
-	});
-
-	return ret;
-}
-
-// V8 currently has a broken implementation
-// https://github.com/joyent/node/issues/8449
-function doesForEachActuallyWork() {
-	var ret = false;
-
-	(new Set([true])).forEach(function (el) {
-		ret = el;
-	});
-
-	return ret === true;
-}
-
-if ('Set' in global) {
-	if (typeof Set.prototype.forEach === 'function' && doesForEachActuallyWork()) {
-		module.exports = uniqSetWithForEach;
-	} else {
-		module.exports = uniqSet;
-	}
-} else {
-	module.exports = uniqNoSet;
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16)))
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-
-var element = document.body || document.documentElement;
-var e = document.createElement('div');
-e.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
-element.appendChild(e);
-
-var width = window.getComputedStyle(e, null).width;
-var ret = width === '10px';
-
-element.removeChild(e);
-
-/* harmony default export */ __webpack_exports__["a"] = ret;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__get_number__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__computed_size__ = __webpack_require__(7);
-/* harmony export (immutable) */ __webpack_exports__["a"] = getNumberStyle;
-
-
-
-
-
-/**
- * Retrieve the computed style for an element, parsed as a float.
- * @param {Element} element Element to get style for.
- * @param {string} style Style property.
- * @param {CSSStyleDeclaration} [styles] Optionally include clean styles to
- *     use instead of asking for them again.
- * @return {number} The parsed computed value or zero if that fails because IE
- *     will return 'auto' when the element doesn't have margins instead of
- *     the computed style.
- */
-function getNumberStyle(element, style) {
-  var styles = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : window.getComputedStyle(element, null);
-
-  var value = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__get_number__["a" /* default */])(styles[style]);
-
-  // Support IE<=11 and W3C spec.
-  if (!__WEBPACK_IMPORTED_MODULE_1__computed_size__["a" /* default */] && style === 'width') {
-    value += __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__get_number__["a" /* default */])(styles.paddingLeft) + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__get_number__["a" /* default */])(styles.paddingRight) + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__get_number__["a" /* default */])(styles.borderLeftWidth) + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__get_number__["a" /* default */])(styles.borderRightWidth);
-  } else if (!__WEBPACK_IMPORTED_MODULE_1__computed_size__["a" /* default */] && style === 'height') {
-    value += __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__get_number__["a" /* default */])(styles.paddingTop) + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__get_number__["a" /* default */])(styles.paddingBottom) + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__get_number__["a" /* default */])(styles.borderTopWidth) + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__get_number__["a" /* default */])(styles.borderBottomWidth);
-  }
-
-  return value;
-}
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__point__ = __webpack_require__(0);
-/* harmony export (immutable) */ __webpack_exports__["a"] = getItemPosition;
-/* harmony export (immutable) */ __webpack_exports__["b"] = getColumnSpan;
-/* harmony export (immutable) */ __webpack_exports__["c"] = getAvailablePositions;
-/* harmony export (immutable) */ __webpack_exports__["d"] = getShortColumn;
-
-
-
-
-function arrayMax(array) {
-  return Math.max.apply(Math, array);
-}
-
-function arrayMin(array) {
-  return Math.min.apply(Math, array);
-}
-
-/**
- * Determine the location of the next item, based on its size.
- * @param {Object} itemSize Object with width and height.
- * @param {Array.<number>} positions Positions of the other current items.
- * @param {number} gridSize The column width or row height.
- * @param {number} total The total number of columns or rows.
- * @param {number} threshold Buffer value for the column to fit.
- * @param {number} buffer Vertical buffer for the height of items.
- * @return {Point}
- */
-function getItemPosition(_ref) {
-  var itemSize = _ref.itemSize,
-      positions = _ref.positions,
-      gridSize = _ref.gridSize,
-      total = _ref.total,
-      threshold = _ref.threshold,
-      buffer = _ref.buffer;
-
-  var span = getColumnSpan(itemSize.width, gridSize, total, threshold);
-  var setY = getAvailablePositions(positions, span, total);
-  var shortColumnIndex = getShortColumn(setY, buffer);
-
-  // Position the item
-  var point = new __WEBPACK_IMPORTED_MODULE_0__point__["a" /* default */](Math.round(gridSize * shortColumnIndex), Math.round(setY[shortColumnIndex]));
-
-  // Update the columns array with the new values for each column.
-  // e.g. before the update the columns could be [250, 0, 0, 0] for an item
-  // which spans 2 columns. After it would be [250, itemHeight, itemHeight, 0].
-  var setHeight = setY[shortColumnIndex] + itemSize.height;
-  for (var i = 0; i < span; i++) {
-    positions[shortColumnIndex + i] = setHeight;
-  }
-
-  return point;
-}
-
-/**
- * Determine the number of columns an items spans.
- * @param {number} itemWidth Width of the item.
- * @param {number} columnWidth Width of the column (includes gutter).
- * @param {number} columns Total number of columns
- * @param {number} threshold A buffer value for the size of the column to fit.
- * @return {number}
- */
-function getColumnSpan(itemWidth, columnWidth, columns, threshold) {
-  var columnSpan = itemWidth / columnWidth;
-
-  // If the difference between the rounded column span number and the
-  // calculated column span number is really small, round the number to
-  // make it fit.
-  if (Math.abs(Math.round(columnSpan) - columnSpan) < threshold) {
-    // e.g. columnSpan = 4.0089945390298745
-    columnSpan = Math.round(columnSpan);
-  }
-
-  // Ensure the column span is not more than the amount of columns in the whole layout.
-  return Math.min(Math.ceil(columnSpan), columns);
-}
-
-/**
- * Retrieves the column set to use for placement.
- * @param {number} columnSpan The number of columns this current item spans.
- * @param {number} columns The total columns in the grid.
- * @return {Array.<number>} An array of numbers represeting the column set.
- */
-function getAvailablePositions(positions, columnSpan, columns) {
-  // The item spans only one column.
-  if (columnSpan === 1) {
-    return positions;
-  }
-
-  // The item spans more than one column, figure out how many different
-  // places it could fit horizontally.
-  // The group count is the number of places within the positions this block
-  // could fit, ignoring the current positions of items.
-  // Imagine a 2 column brick as the second item in a 4 column grid with
-  // 10px height each. Find the places it would fit:
-  // [20, 10, 10, 0]
-  //  |   |   |
-  //  *   *   *
-  //
-  // Then take the places which fit and get the bigger of the two:
-  // max([20, 10]), max([10, 10]), max([10, 0]) = [20, 10, 0]
-  //
-  // Next, find the first smallest number (the short column).
-  // [20, 10, 0]
-  //          |
-  //          *
-  //
-  // And that's where it should be placed!
-  //
-  // Another example where the second column's item extends past the first:
-  // [10, 20, 10, 0] => [20, 20, 10] => 10
-  var available = [];
-
-  // For how many possible positions for this item there are.
-  for (var i = 0; i <= columns - columnSpan; i++) {
-    // Find the bigger value for each place it could fit.
-    available.push(arrayMax(positions.slice(i, i + columnSpan)));
-  }
-
-  return available;
-}
-
-/**
- * Find index of short column, the first from the left where this item will go.
- *
- * @param {Array.<number>} positions The array to search for the smallest number.
- * @param {number} buffer Optional buffer which is very useful when the height
- *     is a percentage of the width.
- * @return {number} Index of the short column.
- */
-function getShortColumn(positions, buffer) {
-  var minPosition = arrayMin(positions);
-  for (var i = 0, len = positions.length; i < len; i++) {
-    if (positions[i] >= minPosition - buffer && positions[i] <= minPosition + buffer) {
-      return i;
-    }
-  }
-
-  return 0;
-}
-
-/***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = onTransitionEnd;
-/* harmony export (immutable) */ __webpack_exports__["b"] = cancelTransitionEnd;
-
-
-var transitions = {};
-var eventName = 'transitionend';
-var count = 0;
-
-function uniqueId() {
-  return eventName + count++;
-}
-
-function onTransitionEnd(element, callback) {
-  var id = uniqueId();
-  var listener = function listener(evt) {
-    if (evt.currentTarget === evt.target) {
-      cancelTransitionEnd(id);
-      callback(evt);
-    }
-  };
-
-  element.addEventListener(eventName, listener);
-
-  transitions[id] = { element: element, listener: listener };
-
-  return id;
-}
-
-function cancelTransitionEnd(id) {
-  if (transitions[id]) {
-    transitions[id].element.removeEventListener(eventName, transitions[id].listener);
-    transitions[id] = null;
-    return true;
-  }
-
-  return false;
-}
-
-/***/ }),
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__point__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__classes__ = __webpack_require__(1);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-
-
-
-var id = 0;
-
-var ShuffleItem = function () {
-  function ShuffleItem(element) {
-    _classCallCheck(this, ShuffleItem);
-
-    this.id = id++;
-    this.element = element;
-    this.isVisible = true;
-  }
-
-  _createClass(ShuffleItem, [{
-    key: 'show',
-    value: function show() {
-      this.isVisible = true;
-      this.element.classList.remove(__WEBPACK_IMPORTED_MODULE_1__classes__["a" /* default */].HIDDEN);
-      this.element.classList.add(__WEBPACK_IMPORTED_MODULE_1__classes__["a" /* default */].VISIBLE);
-    }
-  }, {
-    key: 'hide',
-    value: function hide() {
-      this.isVisible = false;
-      this.element.classList.remove(__WEBPACK_IMPORTED_MODULE_1__classes__["a" /* default */].VISIBLE);
-      this.element.classList.add(__WEBPACK_IMPORTED_MODULE_1__classes__["a" /* default */].HIDDEN);
-    }
-  }, {
-    key: 'init',
-    value: function init() {
-      this.addClasses([__WEBPACK_IMPORTED_MODULE_1__classes__["a" /* default */].SHUFFLE_ITEM, __WEBPACK_IMPORTED_MODULE_1__classes__["a" /* default */].VISIBLE]);
-      this.applyCss(ShuffleItem.Css.INITIAL);
-      this.scale = ShuffleItem.Scale.VISIBLE;
-      this.point = new __WEBPACK_IMPORTED_MODULE_0__point__["a" /* default */]();
-    }
-  }, {
-    key: 'addClasses',
-    value: function addClasses(classes) {
-      var _this = this;
-
-      classes.forEach(function (className) {
-        _this.element.classList.add(className);
-      });
-    }
-  }, {
-    key: 'removeClasses',
-    value: function removeClasses(classes) {
-      var _this2 = this;
-
-      classes.forEach(function (className) {
-        _this2.element.classList.remove(className);
-      });
-    }
-  }, {
-    key: 'applyCss',
-    value: function applyCss(obj) {
-      for (var key in obj) {
-        this.element.style[key] = obj[key];
-      }
-    }
-  }, {
-    key: 'dispose',
-    value: function dispose() {
-      this.removeClasses([__WEBPACK_IMPORTED_MODULE_1__classes__["a" /* default */].HIDDEN, __WEBPACK_IMPORTED_MODULE_1__classes__["a" /* default */].VISIBLE, __WEBPACK_IMPORTED_MODULE_1__classes__["a" /* default */].SHUFFLE_ITEM]);
-
-      this.element.removeAttribute('style');
-      this.element = null;
-    }
-  }]);
-
-  return ShuffleItem;
-}();
-
-ShuffleItem.Css = {
-  INITIAL: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    visibility: 'visible',
-    'will-change': 'transform'
-  },
-  VISIBLE: {
-    before: {
-      opacity: 1,
-      visibility: 'visible'
-    },
-    after: {}
-  },
-  HIDDEN: {
-    before: {
-      opacity: 0
-    },
-    after: {
-      visibility: 'hidden'
-    }
-  }
-};
-
-ShuffleItem.Scale = {
-  VISIBLE: 1,
-  HIDDEN: 0.001
-};
-
-/* harmony default export */ __webpack_exports__["a"] = ShuffleItem;
-
-/***/ }),
-/* 12 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_xtend__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_xtend___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_xtend__);
-/* harmony export (immutable) */ __webpack_exports__["a"] = sorter;
-
-
-
-
-// http://stackoverflow.com/a/962890/373422
-function randomize(array) {
-  var tmp;
-  var current;
-  var top = array.length;
-
-  if (!top) {
-    return array;
-  }
-
-  while (--top) {
-    current = Math.floor(Math.random() * (top + 1));
-    tmp = array[current];
-    array[current] = array[top];
-    array[top] = tmp;
-  }
-
-  return array;
-}
-
-var defaults = {
-  // Use array.reverse() to reverse the results
-  reverse: false,
-
-  // Sorting function
-  by: null,
-
-  // If true, this will skip the sorting and return a randomized order in the array
-  randomize: false,
-
-  // Determines which property of each item in the array is passed to the
-  // sorting method.
-  key: 'element'
-};
-
-// You can return `undefined` from the `by` function to revert to DOM order.
-function sorter(arr, options) {
-  var opts = __WEBPACK_IMPORTED_MODULE_0_xtend___default()(defaults, options);
-  var original = [].slice.call(arr);
-  var revert = false;
-
-  if (!arr.length) {
-    return [];
-  }
-
-  if (opts.randomize) {
-    return randomize(arr);
-  }
-
-  // Sort the elements by the opts.by function.
-  // If we don't have opts.by, default to DOM order
-  if (typeof opts.by === 'function') {
-    arr.sort(function (a, b) {
-
-      // Exit early if we already know we want to revert
-      if (revert) {
-        return 0;
-      }
-
-      var valA = opts.by(a[opts.key]);
-      var valB = opts.by(b[opts.key]);
-
-      // If both values are undefined, use the DOM order
-      if (valA === undefined && valB === undefined) {
-        revert = true;
-        return 0;
-      }
-
-      if (valA < valB || valA === 'sortFirst' || valB === 'sortLast') {
-        return -1;
-      }
-
-      if (valA > valB || valA === 'sortLast' || valB === 'sortFirst') {
-        return 1;
-      }
-
-      return 0;
-    });
-  }
-
-  // Revert to the original array if necessary
-  if (revert) {
-    return original;
-  }
-
-  if (opts.reverse) {
-    arr.reverse();
-  }
-
-  return arr;
-}
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-// Polyfill for creating CustomEvents on IE9/10/11
-
-// code pulled from:
-// https://github.com/d4tocchini/customevent-polyfill
-// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent#Polyfill
-
-try {
-    var ce = new window.CustomEvent('test');
-    ce.preventDefault();
-    if (ce.defaultPrevented !== true) {
-        // IE has problems with .preventDefault() on custom events
-        // http://stackoverflow.com/questions/23349191
-        throw new Error('Could not prevent default');
-    }
-} catch(e) {
-  var CustomEvent = function(event, params) {
-    var evt, origPrevent;
-    params = params || {
-      bubbles: false,
-      cancelable: false,
-      detail: undefined
-    };
-
-    evt = document.createEvent("CustomEvent");
-    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-    origPrevent = evt.preventDefault;
-    evt.preventDefault = function () {
-      origPrevent.call(this);
-      try {
-        Object.defineProperty(this, 'defaultPrevented', {
-          get: function () {
-            return true;
-          }
-        });
-      } catch(e) {
-        this.defaultPrevented = true;
-      }
-    };
-    return evt;
-  };
-
-  CustomEvent.prototype = window.Event.prototype;
-  window.CustomEvent = CustomEvent; // expose definition to window
-}
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var proto = Element.prototype;
-var vendor = proto.matches
-  || proto.matchesSelector
-  || proto.webkitMatchesSelector
-  || proto.mozMatchesSelector
-  || proto.msMatchesSelector
-  || proto.oMatchesSelector;
-
-module.exports = match;
-
-/**
- * Match `el` to `selector`.
- *
- * @param {Element} el
- * @param {String} selector
- * @return {Boolean}
- * @api public
- */
-
-function match(el, selector) {
-  if (vendor) return vendor.call(el, selector);
-  var nodes = el.parentNode.querySelectorAll(selector);
-  for (var i = 0; i < nodes.length; i++) {
-    if (nodes[i] == el) return true;
-  }
-  return false;
-}
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports) {
-
-module.exports = throttle;
-
-/**
- * Returns a new function that, when invoked, invokes `func` at most once per `wait` milliseconds.
- *
- * @param {Function} func Function to wrap.
- * @param {Number} wait Number of milliseconds that must elapse between `func` invocations.
- * @return {Function} A new function that wraps the `func` function passed in.
- */
-
-function throttle (func, wait) {
-  var ctx, args, rtn, timeoutID; // caching
-  var last = 0;
-
-  return function throttled () {
-    ctx = this;
-    args = arguments;
-    var delta = new Date() - last;
-    if (!timeoutID)
-      if (delta >= wait) call();
-      else timeoutID = setTimeout(call, wait - delta);
-    return rtn;
-  };
-
-  function call () {
-    timeoutID = 0;
-    last = +new Date();
-    rtn = func.apply(ctx, args);
-    ctx = null;
-    args = null;
-  }
-}
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(4).default;
-
-/***/ })
-/******/ ]);
-});
+Shuffle.__Point = Point;
+Shuffle.__sorter = sorter;
+Shuffle.__getColumnSpan = getColumnSpan;
+Shuffle.__getAvailablePositions = getAvailablePositions;
+Shuffle.__getShortColumn = getShortColumn;
+
+return Shuffle;
+
+})));
 //# sourceMappingURL=shuffle.js.map

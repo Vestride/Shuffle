@@ -1148,10 +1148,6 @@ input.faq-search {
     color: #95A5A6;
     -webkit-transition: .15s;
     transition: .15s; }
-  input.faq-search::-moz-placeholder {
-    color: #95A5A6;
-    -webkit-transition: .15s;
-    transition: .15s; }
   input.faq-search:-ms-input-placeholder {
     color: #95A5A6;
     -webkit-transition: .15s;
@@ -1166,8 +1162,6 @@ input.faq-search {
     border-color: #5D6D77; }
     input.faq-search:hover::-webkit-input-placeholder {
       color: #5D6D77; }
-    input.faq-search:hover::-moz-placeholder {
-      color: #5D6D77; }
     input.faq-search:hover:-ms-input-placeholder {
       color: #5D6D77; }
     input.faq-search:hover::placeholder {
@@ -1177,8 +1171,6 @@ input.faq-search {
     color: #27AE60;
     border-color: #27AE60; }
     input.faq-search:focus::-webkit-input-placeholder {
-      color: #27AE60; }
-    input.faq-search:focus::-moz-placeholder {
       color: #27AE60; }
     input.faq-search:focus:-ms-input-placeholder {
       color: #27AE60; }
