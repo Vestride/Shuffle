@@ -1,5 +1,3 @@
-'use strict';
-
 import xtend from 'xtend';
 
 // http://stackoverflow.com/a/962890/373422

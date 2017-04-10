@@ -1,5 +1,3 @@
-'use strict';
-
 import getNumber from './get-number';
 import COMPUTED_SIZE_INCLUDES_PADDING from './computed-size';
 

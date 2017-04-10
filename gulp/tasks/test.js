@@ -1,5 +1,3 @@
-'use strict';
-
 const gulp = require('gulp');
 const mochaPhantomJS = require('gulp-mocha-phantomjs');
 const config = require('../config');

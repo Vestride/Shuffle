@@ -1,14 +1,8 @@
 'use strict';
 
 import Point from './point';
-
-function arrayMax(array) {
-  return Math.max.apply(Math, array);
-}
-
-function arrayMin(array) {
-  return Math.min.apply(Math, array);
-}
+import arrayMax from './array-max';
+import arrayMin from './array-min';
 
 /**
  * Determine the location of the next item, based on its size.
