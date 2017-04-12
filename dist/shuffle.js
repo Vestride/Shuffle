@@ -255,33 +255,6 @@ function getNumber(value) {
   return parseFloat(value) || 0;
 }
 
-/**
- * Represents a coordinate pair.
- * @param {number} [x=0] X.
- * @param {number} [y=0] Y.
- */
-var Point = function Point(x, y) {
-  this.x = getNumber(x);
-  this.y = getNumber(y);
-};
-
-/**
- * Whether two points are equal.
- * @param {Point} a Point A.
- * @param {Point} b Point B.
- * @return {boolean}
- */
-Point.equals = function (a, b) {
-  return a.x === b.x && a.y === b.y;
-};
-
-var Classes = {
-  BASE: 'shuffle',
-  SHUFFLE_ITEM: 'shuffle-item',
-  VISIBLE: 'shuffle-item--visible',
-  HIDDEN: 'shuffle-item--hidden'
-};
-
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -306,13 +279,52 @@ var createClass = function () {
   };
 }();
 
+var Point = function () {
+
+  /**
+   * Represents a coordinate pair.
+   * @param {number} [x=0] X.
+   * @param {number} [y=0] Y.
+   */
+  function Point(x, y) {
+    classCallCheck(this, Point);
+
+    this.x = getNumber(x);
+    this.y = getNumber(y);
+  }
+
+  /**
+   * Whether two points are equal.
+   * @param {Point} a Point A.
+   * @param {Point} b Point B.
+   * @return {boolean}
+   */
+
+
+  createClass(Point, null, [{
+    key: 'equals',
+    value: function equals(a, b) {
+      return a.x === b.x && a.y === b.y;
+    }
+  }]);
+  return Point;
+}();
+
+var Classes = {
+  BASE: 'shuffle',
+  SHUFFLE_ITEM: 'shuffle-item',
+  VISIBLE: 'shuffle-item--visible',
+  HIDDEN: 'shuffle-item--hidden'
+};
+
 var id$1 = 0;
 
 var ShuffleItem = function () {
   function ShuffleItem(element) {
     classCallCheck(this, ShuffleItem);
 
-    this.id = id$1++;
+    id$1 += 1;
+    this.id = id$1;
     this.element = element;
     this.isVisible = true;
   }
@@ -360,9 +372,11 @@ var ShuffleItem = function () {
   }, {
     key: 'applyCss',
     value: function applyCss(obj) {
-      for (var key in obj) {
-        this.element.style[key] = obj[key];
-      }
+      var _this3 = this;
+
+      Object.keys(obj).forEach(function (key) {
+        _this3.element.style[key] = obj[key];
+      });
     }
   }, {
     key: 'dispose',
@@ -441,21 +455,22 @@ function getNumberStyle(element, style) {
   return value;
 }
 
-// http://stackoverflow.com/a/962890/373422
+/**
+ * Fisher-Yates shuffle.
+ * http://stackoverflow.com/a/962890/373422
+ * https://bost.ocks.org/mike/shuffle/
+ * @param {Array} array Array to shuffle.
+ * @return {Array} Randomly sorted array.
+ */
 function randomize(array) {
-  var tmp;
-  var current;
-  var top = array.length;
+  var n = array.length;
 
-  if (!top) {
-    return array;
-  }
-
-  while (--top) {
-    current = Math.floor(Math.random() * (top + 1));
-    tmp = array[current];
-    array[current] = array[top];
-    array[top] = tmp;
+  while (n) {
+    n -= 1;
+    var i = Math.floor(Math.random() * (n + 1));
+    var temp = array[i];
+    array[i] = array[n];
+    array[n] = temp;
   }
 
   return array;
@@ -494,7 +509,6 @@ function sorter(arr, options) {
   // If we don't have opts.by, default to DOM order
   if (typeof opts.by === 'function') {
     arr.sort(function (a, b) {
-
       // Exit early if we already know we want to revert
       if (revert) {
         return 0;
@@ -538,7 +552,18 @@ var eventName = 'transitionend';
 var count = 0;
 
 function uniqueId() {
-  return eventName + count++;
+  count += 1;
+  return eventName + count;
+}
+
+function cancelTransitionEnd(id) {
+  if (transitions[id]) {
+    transitions[id].element.removeEventListener(eventName, transitions[id].listener);
+    transitions[id] = null;
+    return true;
+  }
+
+  return false;
 }
 
 function onTransitionEnd(element, callback) {
@@ -557,58 +582,12 @@ function onTransitionEnd(element, callback) {
   return id;
 }
 
-function cancelTransitionEnd(id) {
-  if (transitions[id]) {
-    transitions[id].element.removeEventListener(eventName, transitions[id].listener);
-    transitions[id] = null;
-    return true;
-  }
-
-  return false;
-}
-
 function arrayMax(array) {
-  return Math.max.apply(Math, array);
+  return Math.max.apply(Math, array); // eslint-disable-line prefer-spread
 }
 
 function arrayMin(array) {
-  return Math.min.apply(Math, array);
-}
-
-/**
- * Determine the location of the next item, based on its size.
- * @param {Object} itemSize Object with width and height.
- * @param {Array.<number>} positions Positions of the other current items.
- * @param {number} gridSize The column width or row height.
- * @param {number} total The total number of columns or rows.
- * @param {number} threshold Buffer value for the column to fit.
- * @param {number} buffer Vertical buffer for the height of items.
- * @return {Point}
- */
-function getItemPosition(_ref) {
-  var itemSize = _ref.itemSize,
-      positions = _ref.positions,
-      gridSize = _ref.gridSize,
-      total = _ref.total,
-      threshold = _ref.threshold,
-      buffer = _ref.buffer;
-
-  var span = getColumnSpan(itemSize.width, gridSize, total, threshold);
-  var setY = getAvailablePositions(positions, span, total);
-  var shortColumnIndex = getShortColumn(setY, buffer);
-
-  // Position the item
-  var point = new Point(Math.round(gridSize * shortColumnIndex), Math.round(setY[shortColumnIndex]));
-
-  // Update the columns array with the new values for each column.
-  // e.g. before the update the columns could be [250, 0, 0, 0] for an item
-  // which spans 2 columns. After it would be [250, itemHeight, itemHeight, 0].
-  var setHeight = setY[shortColumnIndex] + itemSize.height;
-  for (var i = 0; i < span; i++) {
-    positions[shortColumnIndex + i] = setHeight;
-  }
-
-  return point;
+  return Math.min.apply(Math, array); // eslint-disable-line prefer-spread
 }
 
 /**
@@ -698,6 +677,42 @@ function getShortColumn(positions, buffer) {
   return 0;
 }
 
+/**
+ * Determine the location of the next item, based on its size.
+ * @param {Object} itemSize Object with width and height.
+ * @param {Array.<number>} positions Positions of the other current items.
+ * @param {number} gridSize The column width or row height.
+ * @param {number} total The total number of columns or rows.
+ * @param {number} threshold Buffer value for the column to fit.
+ * @param {number} buffer Vertical buffer for the height of items.
+ * @return {Point}
+ */
+function getItemPosition(_ref) {
+  var itemSize = _ref.itemSize,
+      positions = _ref.positions,
+      gridSize = _ref.gridSize,
+      total = _ref.total,
+      threshold = _ref.threshold,
+      buffer = _ref.buffer;
+
+  var span = getColumnSpan(itemSize.width, gridSize, total, threshold);
+  var setY = getAvailablePositions(positions, span, total);
+  var shortColumnIndex = getShortColumn(setY, buffer);
+
+  // Position the item
+  var point = new Point(Math.round(gridSize * shortColumnIndex), Math.round(setY[shortColumnIndex]));
+
+  // Update the columns array with the new values for each column.
+  // e.g. before the update the columns could be [250, 0, 0, 0] for an item
+  // which spans 2 columns. After it would be [250, itemHeight, itemHeight, 0].
+  var setHeight = setY[shortColumnIndex] + itemSize.height;
+  for (var i = 0; i < span; i++) {
+    positions[shortColumnIndex + i] = setHeight;
+  }
+
+  return point;
+}
+
 function toArray$$1(arrayLike) {
   return Array.prototype.slice.call(arrayLike);
 }
@@ -732,7 +747,8 @@ var Shuffle = function () {
 
     this.useSizer = false;
     this.lastSort = {};
-    this.group = this.lastFilter = Shuffle.ALL_ITEMS;
+    this.group = Shuffle.ALL_ITEMS;
+    this.lastFilter = Shuffle.ALL_ITEMS;
     this.isEnabled = true;
     this.isDestroyed = false;
     this.isInitialized = false;
@@ -740,14 +756,15 @@ var Shuffle = function () {
     this.isTransitioning = false;
     this._queue = [];
 
-    element = this._getElementOption(element);
+    var el = this._getElementOption(element);
 
-    if (!element) {
+    if (!el) {
       throw new TypeError('Shuffle needs to be initialized with an element.');
     }
 
-    this.element = element;
-    this.id = 'shuffle_' + id++;
+    this.element = el;
+    this.id = 'shuffle_' + id;
+    id += 1;
 
     this._init();
     this.isInitialized = true;
@@ -792,7 +809,7 @@ var Shuffle = function () {
       // doesn't see the first layout. Set them now that the first layout is done.
       // First, however, a synchronous layout must be caused for the previous
       // styles to be applied without transitions.
-      this.element.offsetWidth; // jshint ignore: line
+      this.element.offsetWidth; // eslint-disable-line no-unused-expressions
       this._setTransitions();
       this.element.style.transition = 'height ' + this.options.speed + 'ms ' + this.options.easing;
     }
@@ -939,21 +956,19 @@ var Shuffle = function () {
   }, {
     key: '_doesPassFilter',
     value: function _doesPassFilter(category, element) {
-
       if (typeof category === 'function') {
         return category.call(element, element, this);
 
         // Check each element's data-groups attribute against the given category.
-      } else {
-        var attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
-        var keys = this.options.delimeter ? attr.split(this.options.delimeter) : JSON.parse(attr);
-
-        if (Array.isArray(category)) {
-          return category.some(arrayIncludes(keys));
-        }
-
-        return arrayIncludes(keys, category);
       }
+      var attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
+      var keys = this.options.delimeter ? attr.split(this.options.delimeter) : JSON.parse(attr);
+
+      if (Array.isArray(category)) {
+        return category.some(arrayIncludes(keys));
+      }
+
+      return arrayIncludes(keys, category);
     }
 
     /**
@@ -1035,12 +1050,7 @@ var Shuffle = function () {
       var speed = this.options.speed;
       var easing = this.options.easing;
 
-      var str;
-      if (this.options.useTransforms) {
-        str = 'transform ' + speed + 'ms ' + easing + ', opacity ' + speed + 'ms ' + easing;
-      } else {
-        str = 'top ' + speed + 'ms ' + easing + ', left ' + speed + 'ms ' + easing + ', opacity ' + speed + 'ms ' + easing;
-      }
+      var str = this.options.useTransforms ? 'transform ' + speed + 'ms ' + easing + ', opacity ' + speed + 'ms ' + easing : 'top ' + speed + 'ms ' + easing + ', left ' + speed + 'ms ' + easing + ', opacity ' + speed + 'ms ' + easing;
 
       items.forEach(function (item) {
         item.element.style.transition = str;
@@ -1099,7 +1109,7 @@ var Shuffle = function () {
   }, {
     key: '_getColumnSize',
     value: function _getColumnSize(containerWidth, gutterSize) {
-      var size;
+      var size = void 0;
 
       // If the columnWidth property is a function, then the grid is fluid
       if (typeof this.options.columnWidth === 'function') {
@@ -1140,7 +1150,7 @@ var Shuffle = function () {
   }, {
     key: '_getGutterSize',
     value: function _getGutterSize(containerWidth) {
-      var size;
+      var size = void 0;
       if (typeof this.options.gutterWidth === 'function') {
         size = this.options.gutterWidth(containerWidth);
       } else if (this.useSizer) {
@@ -1222,7 +1232,7 @@ var Shuffle = function () {
       var details = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       if (this.isDestroyed) {
-        return;
+        return false;
       }
 
       details.shuffle = this;
@@ -1243,7 +1253,8 @@ var Shuffle = function () {
     value: function _resetCols() {
       var i = this.cols;
       this.positions = [];
-      while (i--) {
+      while (i) {
+        i -= 1;
         this.positions.push(0);
       }
     }
@@ -1293,7 +1304,7 @@ var Shuffle = function () {
           callback: callback
         });
 
-        count++;
+        count += 1;
       });
     }
 
@@ -1359,7 +1370,7 @@ var Shuffle = function () {
           callback: callback
         });
 
-        count++;
+        count += 1;
       });
     }
 
@@ -1572,7 +1583,7 @@ var Shuffle = function () {
       }
 
       if (!category || category && category.length === 0) {
-        category = Shuffle.ALL_ITEMS;
+        category = Shuffle.ALL_ITEMS; // eslint-disable-line no-param-reassign
       }
 
       this._filter(category);
@@ -1628,7 +1639,6 @@ var Shuffle = function () {
     key: 'update',
     value: function update(isOnlyLayout) {
       if (this.isEnabled) {
-
         if (!isOnlyLayout) {
           // Get updated colCount
           this._setColumns();
@@ -1660,18 +1670,18 @@ var Shuffle = function () {
   }, {
     key: 'add',
     value: function add(newItems) {
-      newItems = index$1(newItems).map(function (el) {
+      var items = index$1(newItems).map(function (el) {
         return new ShuffleItem(el);
       });
 
       // Add classes and set initial positions.
-      this._initItems(newItems);
+      this._initItems(items);
 
       // Add transition to each item.
-      this._setTransitions(newItems);
+      this._setTransitions(items);
 
       // Update the list of items.
-      this.items = this.items.concat(newItems);
+      this.items = this.items.concat(items);
       this._updateItemsOrder();
       this.filter(this.lastFilter);
     }
@@ -1702,21 +1712,21 @@ var Shuffle = function () {
 
     /**
      * Remove 1 or more shuffle items
-     * @param {Array.<Element>} collection An array containing one or more
+     * @param {Array.<Element>} elements An array containing one or more
      *     elements in shuffle
      * @return {Shuffle} The shuffle object
      */
 
   }, {
     key: 'remove',
-    value: function remove(collection) {
+    value: function remove(elements) {
       var _this8 = this;
 
-      if (!collection.length) {
+      if (!elements.length) {
         return;
       }
 
-      collection = index$1(collection);
+      var collection = index$1(elements);
 
       var oldItems = collection.map(function (element) {
         return _this8.getItemByElement(element);
@@ -1734,10 +1744,6 @@ var Shuffle = function () {
         });
 
         _this8._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
-
-        // Let it get garbage collected
-        collection = null;
-        oldItems = null;
       };
 
       // Hide collection first.
@@ -1884,7 +1890,7 @@ var Shuffle = function () {
       callback();
 
       // Cause reflow.
-      elements[0].offsetWidth; // jshint ignore:line
+      elements[0].offsetWidth; // eslint-disable-line no-unused-expressions
 
       // Put the duration back
       elements.forEach(function (element, i) {

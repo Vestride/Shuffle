@@ -12,8 +12,8 @@ import COMPUTED_SIZE_INCLUDES_PADDING from './computed-size';
  *     the computed style.
  */
 export default function getNumberStyle(element, style,
-    styles = window.getComputedStyle(element, null)) {
-  var value = getNumber(styles[style]);
+  styles = window.getComputedStyle(element, null)) {
+  let value = getNumber(styles[style]);
 
   // Support IE<=11 and W3C spec.
   if (!COMPUTED_SIZE_INCLUDES_PADDING && style === 'width') {

@@ -1,26 +1,27 @@
 import xtend from 'xtend';
 
-// http://stackoverflow.com/a/962890/373422
+/**
+ * Fisher-Yates shuffle.
+ * http://stackoverflow.com/a/962890/373422
+ * https://bost.ocks.org/mike/shuffle/
+ * @param {Array} array Array to shuffle.
+ * @return {Array} Randomly sorted array.
+ */
 function randomize(array) {
-  var tmp;
-  var current;
-  let top = array.length;
+  let n = array.length;
 
-  if (!top) {
-    return array;
-  }
-
-  while (--top) {
-    current = Math.floor(Math.random() * (top + 1));
-    tmp = array[current];
-    array[current] = array[top];
-    array[top] = tmp;
+  while (n) {
+    n -= 1;
+    const i = Math.floor(Math.random() * (n + 1));
+    const temp = array[i];
+    array[i] = array[n];
+    array[n] = temp;
   }
 
   return array;
 }
 
-let defaults = {
+const defaults = {
   // Use array.reverse() to reverse the results
   reverse: false,
 
@@ -37,8 +38,8 @@ let defaults = {
 
 // You can return `undefined` from the `by` function to revert to DOM order.
 export default function sorter(arr, options) {
-  let opts = xtend(defaults, options);
-  let original = [].slice.call(arr);
+  const opts = xtend(defaults, options);
+  const original = [].slice.call(arr);
   let revert = false;
 
   if (!arr.length) {
@@ -52,15 +53,14 @@ export default function sorter(arr, options) {
   // Sort the elements by the opts.by function.
   // If we don't have opts.by, default to DOM order
   if (typeof opts.by === 'function') {
-    arr.sort(function (a, b) {
-
+    arr.sort((a, b) => {
       // Exit early if we already know we want to revert
       if (revert) {
         return 0;
       }
 
-      let valA = opts.by(a[opts.key]);
-      let valB = opts.by(b[opts.key]);
+      const valA = opts.by(a[opts.key]);
+      const valB = opts.by(b[opts.key]);
 
       // If both values are undefined, use the DOM order
       if (valA === undefined && valB === undefined) {

@@ -1,39 +1,6 @@
-'use strict';
-
 import Point from './point';
 import arrayMax from './array-max';
 import arrayMin from './array-min';
-
-/**
- * Determine the location of the next item, based on its size.
- * @param {Object} itemSize Object with width and height.
- * @param {Array.<number>} positions Positions of the other current items.
- * @param {number} gridSize The column width or row height.
- * @param {number} total The total number of columns or rows.
- * @param {number} threshold Buffer value for the column to fit.
- * @param {number} buffer Vertical buffer for the height of items.
- * @return {Point}
- */
-export function getItemPosition({ itemSize, positions, gridSize, total, threshold, buffer }) {
-  var span = getColumnSpan(itemSize.width, gridSize, total, threshold);
-  var setY = getAvailablePositions(positions, span, total);
-  var shortColumnIndex = getShortColumn(setY, buffer);
-
-  // Position the item
-  var point = new Point(
-    Math.round(gridSize * shortColumnIndex),
-    Math.round(setY[shortColumnIndex]));
-
-  // Update the columns array with the new values for each column.
-  // e.g. before the update the columns could be [250, 0, 0, 0] for an item
-  // which spans 2 columns. After it would be [250, itemHeight, itemHeight, 0].
-  var setHeight = setY[shortColumnIndex] + itemSize.height;
-  for (var i = 0; i < span; i++) {
-    positions[shortColumnIndex + i] = setHeight;
-  }
-
-  return point;
-}
 
 /**
  * Determine the number of columns an items spans.
@@ -44,7 +11,7 @@ export function getItemPosition({ itemSize, positions, gridSize, total, threshol
  * @return {number}
  */
 export function getColumnSpan(itemWidth, columnWidth, columns, threshold) {
-  var columnSpan = itemWidth / columnWidth;
+  let columnSpan = itemWidth / columnWidth;
 
   // If the difference between the rounded column span number and the
   // calculated column span number is really small, round the number to
@@ -92,10 +59,10 @@ export function getAvailablePositions(positions, columnSpan, columns) {
   //
   // Another example where the second column's item extends past the first:
   // [10, 20, 10, 0] => [20, 20, 10] => 10
-  var available = [];
+  const available = [];
 
   // For how many possible positions for this item there are.
-  for (var i = 0; i <= columns - columnSpan; i++) {
+  for (let i = 0; i <= columns - columnSpan; i++) {
     // Find the bigger value for each place it could fit.
     available.push(arrayMax(positions.slice(i, i + columnSpan)));
   }
@@ -112,12 +79,43 @@ export function getAvailablePositions(positions, columnSpan, columns) {
  * @return {number} Index of the short column.
  */
 export function getShortColumn(positions, buffer) {
-  var minPosition = arrayMin(positions);
-  for (var i = 0, len = positions.length; i < len; i++) {
+  const minPosition = arrayMin(positions);
+  for (let i = 0, len = positions.length; i < len; i++) {
     if (positions[i] >= minPosition - buffer && positions[i] <= minPosition + buffer) {
       return i;
     }
   }
 
   return 0;
+}
+
+/**
+ * Determine the location of the next item, based on its size.
+ * @param {Object} itemSize Object with width and height.
+ * @param {Array.<number>} positions Positions of the other current items.
+ * @param {number} gridSize The column width or row height.
+ * @param {number} total The total number of columns or rows.
+ * @param {number} threshold Buffer value for the column to fit.
+ * @param {number} buffer Vertical buffer for the height of items.
+ * @return {Point}
+ */
+export function getItemPosition({ itemSize, positions, gridSize, total, threshold, buffer }) {
+  const span = getColumnSpan(itemSize.width, gridSize, total, threshold);
+  const setY = getAvailablePositions(positions, span, total);
+  const shortColumnIndex = getShortColumn(setY, buffer);
+
+  // Position the item
+  const point = new Point(
+    Math.round(gridSize * shortColumnIndex),
+    Math.round(setY[shortColumnIndex]));
+
+  // Update the columns array with the new values for each column.
+  // e.g. before the update the columns could be [250, 0, 0, 0] for an item
+  // which spans 2 columns. After it would be [250, itemHeight, itemHeight, 0].
+  const setHeight = setY[shortColumnIndex] + itemSize.height;
+  for (let i = 0; i < span; i++) {
+    positions[shortColumnIndex + i] = setHeight;
+  }
+
+  return point;
 }

@@ -1,14 +1,25 @@
-let transitions = {};
-let eventName = 'transitionend';
+const transitions = {};
+const eventName = 'transitionend';
 let count = 0;
 
 function uniqueId() {
-  return eventName + count++;
+  count += 1;
+  return eventName + count;
+}
+
+export function cancelTransitionEnd(id) {
+  if (transitions[id]) {
+    transitions[id].element.removeEventListener(eventName, transitions[id].listener);
+    transitions[id] = null;
+    return true;
+  }
+
+  return false;
 }
 
 export function onTransitionEnd(element, callback) {
-  let id = uniqueId();
-  let listener = (evt) => {
+  const id = uniqueId();
+  const listener = (evt) => {
     if (evt.currentTarget === evt.target) {
       cancelTransitionEnd(id);
       callback(evt);
@@ -20,14 +31,4 @@ export function onTransitionEnd(element, callback) {
   transitions[id] = { element, listener };
 
   return id;
-}
-
-export function cancelTransitionEnd(id) {
-  if (transitions[id]) {
-    transitions[id].element.removeEventListener(eventName, transitions[id].listener);
-    transitions[id] = null;
-    return true;
-  }
-
-  return false;
 }

@@ -5,7 +5,8 @@ let id = 0;
 
 class ShuffleItem {
   constructor(element) {
-    this.id = id++;
+    id += 1;
+    this.id = id;
     this.element = element;
     this.isVisible = true;
   }
@@ -42,9 +43,9 @@ class ShuffleItem {
   }
 
   applyCss(obj) {
-    for (var key in obj) {
+    Object.keys(obj).forEach((key) => {
       this.element.style[key] = obj[key];
-    }
+    });
   }
 
   dispose() {

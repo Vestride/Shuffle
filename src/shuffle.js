@@ -22,9 +22,7 @@ function arrayIncludes(array, obj) {
     return arrayIncludes(array)(obj);
   }
 
-  return function (obj) {
-    return array.indexOf(obj) > -1;
-  };
+  return obj => array.indexOf(obj) > -1;
 }
 
 // Used for unique instance variables
@@ -44,7 +42,8 @@ class Shuffle {
 
     this.useSizer = false;
     this.lastSort = {};
-    this.group = this.lastFilter = Shuffle.ALL_ITEMS;
+    this.group = Shuffle.ALL_ITEMS;
+    this.lastFilter = Shuffle.ALL_ITEMS;
     this.isEnabled = true;
     this.isDestroyed = false;
     this.isInitialized = false;
@@ -52,14 +51,15 @@ class Shuffle {
     this.isTransitioning = false;
     this._queue = [];
 
-    element = this._getElementOption(element);
+    const el = this._getElementOption(element);
 
-    if (!element) {
+    if (!el) {
       throw new TypeError('Shuffle needs to be initialized with an element.');
     }
 
-    this.element = element;
-    this.id = 'shuffle_' + id++;
+    this.element = el;
+    this.id = 'shuffle_' + id;
+    id += 1;
 
     this._init();
     this.isInitialized = true;
@@ -85,8 +85,8 @@ class Shuffle {
     window.addEventListener('resize', this._onResize);
 
     // Get container css all in one request. Causes reflow
-    var containerCss = window.getComputedStyle(this.element, null);
-    var containerWidth = Shuffle.getSize(this.element).width;
+    const containerCss = window.getComputedStyle(this.element, null);
+    const containerWidth = Shuffle.getSize(this.element).width;
 
     // Add styles to the container if it doesn't have them.
     this._validateStyles(containerCss);
@@ -102,7 +102,7 @@ class Shuffle {
     // doesn't see the first layout. Set them now that the first layout is done.
     // First, however, a synchronous layout must be caused for the previous
     // styles to be applied without transitions.
-    this.element.offsetWidth; // jshint ignore: line
+    this.element.offsetWidth; // eslint-disable-line no-unused-expressions
     this._setTransitions();
     this.element.style.transition = 'height ' + this.options.speed + 'ms ' + this.options.easing;
   }
@@ -113,7 +113,7 @@ class Shuffle {
    * @private
    */
   _getResizeFunction() {
-    var resizeFunction = this._handleResize.bind(this);
+    const resizeFunction = this._handleResize.bind(this);
     return this.options.throttle ?
         this.options.throttle(resizeFunction, this.options.throttleTime) :
         resizeFunction;
@@ -170,7 +170,7 @@ class Shuffle {
    * @private
    */
   _filter(category = this.lastFilter, collection = this.items) {
-    var set = this._getFilteredSets(category, collection);
+    const set = this._getFilteredSets(category, collection);
 
     // Individually add/remove hidden/visible classes
     this._toggleFilterClasses(set);
@@ -196,7 +196,7 @@ class Shuffle {
    */
   _getFilteredSets(category, items) {
     let visible = [];
-    let hidden = [];
+    const hidden = [];
 
     // category === 'all', add visible class to everything
     if (category === Shuffle.ALL_ITEMS) {
@@ -228,23 +228,21 @@ class Shuffle {
    * @private
    */
   _doesPassFilter(category, element) {
-
     if (typeof category === 'function') {
       return category.call(element, element, this);
 
     // Check each element's data-groups attribute against the given category.
-    } else {
-      let attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
-      let keys = this.options.delimeter ?
+    }
+    const attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
+    const keys = this.options.delimeter ?
           attr.split(this.options.delimeter) :
           JSON.parse(attr);
 
-      if (Array.isArray(category)) {
-        return category.some(arrayIncludes(keys));
-      }
-
-      return arrayIncludes(keys, category);
+    if (Array.isArray(category)) {
+      return category.some(arrayIncludes(keys));
     }
+
+    return arrayIncludes(keys, category);
   }
 
   /**
@@ -299,18 +297,12 @@ class Shuffle {
    * @private
    */
   _setTransitions(items = this.items) {
-    let speed = this.options.speed;
-    let easing = this.options.easing;
+    const speed = this.options.speed;
+    const easing = this.options.easing;
 
-    var str;
-    if (this.options.useTransforms) {
-      str = 'transform ' + speed + 'ms ' + easing +
-        ', opacity ' + speed + 'ms ' + easing;
-    } else {
-      str = 'top ' + speed + 'ms ' + easing +
-        ', left ' + speed + 'ms ' + easing +
-        ', opacity ' + speed + 'ms ' + easing;
-    }
+    const str = this.options.useTransforms ?
+      `transform ${speed}ms ${easing}, opacity ${speed}ms ${easing}` :
+      `top ${speed}ms ${easing}, left ${speed}ms ${easing}, opacity ${speed}ms ${easing}`;
 
     items.forEach((item) => {
       item.element.style.transition = str;
@@ -328,7 +320,7 @@ class Shuffle {
    * items because that is the order `_layout` calls them.
    */
   _updateItemsOrder() {
-    let children = this.element.children;
+    const children = this.element.children;
     this.items = sorter(this.items, {
       by(element) {
         return Array.prototype.indexOf.call(children, element);
@@ -352,7 +344,7 @@ class Shuffle {
    * @private
    */
   _getColumnSize(containerWidth, gutterSize) {
-    var size;
+    let size;
 
     // If the columnWidth property is a function, then the grid is fluid
     if (typeof this.options.columnWidth === 'function') {
@@ -390,7 +382,7 @@ class Shuffle {
    * @private
    */
   _getGutterSize(containerWidth) {
-    var size;
+    let size;
     if (typeof this.options.gutterWidth === 'function') {
       size = this.options.gutterWidth(containerWidth);
     } else if (this.useSizer) {
@@ -408,9 +400,9 @@ class Shuffle {
    *    it's already available.
    */
   _setColumns(containerWidth = Shuffle.getSize(this.element).width) {
-    var gutter = this._getGutterSize(containerWidth);
-    var columnWidth = this._getColumnSize(containerWidth, gutter);
-    var calculatedColumns = (containerWidth + gutter) / columnWidth;
+    const gutter = this._getGutterSize(containerWidth);
+    const columnWidth = this._getColumnSize(containerWidth, gutter);
+    let calculatedColumns = (containerWidth + gutter) / columnWidth;
 
     // Widths given from getStyles are not precise enough...
     if (Math.abs(Math.round(calculatedColumns) - calculatedColumns) <
@@ -454,7 +446,7 @@ class Shuffle {
    */
   _dispatch(name, details = {}) {
     if (this.isDestroyed) {
-      return;
+      return false;
     }
 
     details.shuffle = this;
@@ -470,9 +462,10 @@ class Shuffle {
    * @private
    */
   _resetCols() {
-    var i = this.cols;
+    let i = this.cols;
     this.positions = [];
-    while (i--) {
+    while (i) {
+      i -= 1;
       this.positions.push(0);
     }
   }
@@ -485,10 +478,10 @@ class Shuffle {
   _layout(items) {
     let count = 0;
     items.forEach((item) => {
-      var currPos = item.point;
-      var currScale = item.scale;
-      var itemSize = Shuffle.getSize(item.element, true);
-      var pos = this._getItemPosition(itemSize);
+      const currPos = item.point;
+      const currScale = item.scale;
+      const itemSize = Shuffle.getSize(item.element, true);
+      const pos = this._getItemPosition(itemSize);
 
       function callback() {
         item.element.style.transitionDelay = '';
@@ -508,7 +501,7 @@ class Shuffle {
 
       // Use xtend here to clone the object so that the `before` object isn't
       // modified when the transition delay is added.
-      let styles = xtend(ShuffleItem.Css.VISIBLE.before);
+      const styles = xtend(ShuffleItem.Css.VISIBLE.before);
       styles.transitionDelay = this._getStaggerAmount(count) + 'ms';
 
       this._queue.push({
@@ -517,7 +510,7 @@ class Shuffle {
         callback,
       });
 
-      count++;
+      count += 1;
     });
   }
 
@@ -564,7 +557,7 @@ class Shuffle {
 
       item.scale = ShuffleItem.Scale.HIDDEN;
 
-      let styles = xtend(ShuffleItem.Css.HIDDEN.before);
+      const styles = xtend(ShuffleItem.Css.HIDDEN.before);
       styles.transitionDelay = this._getStaggerAmount(count) + 'ms';
 
       this._queue.push({
@@ -573,7 +566,7 @@ class Shuffle {
         callback,
       });
 
-      count++;
+      count += 1;
     });
   }
 
@@ -588,7 +581,7 @@ class Shuffle {
     }
 
     // Will need to check height in the future if it's layed out horizontaly
-    var containerWidth = Shuffle.getSize(this.element).width;
+    const containerWidth = Shuffle.getSize(this.element).width;
 
     // containerWidth hasn't changed, don't do anything
     if (containerWidth === this.containerWidth) {
@@ -609,8 +602,8 @@ class Shuffle {
       styles.transitionDelay = '0ms';
     }
 
-    let x = item.point.x;
-    let y = item.point.y;
+    const x = item.point.x;
+    const y = item.point.y;
 
     if (this.options.useTransforms) {
       styles.transform = `translate(${x}px, ${y}px) scale(${item.scale})`;
@@ -630,7 +623,7 @@ class Shuffle {
    * @param {Function} done Callback to notify `parallel` that this one is done.
    */
   _whenTransitionDone(element, itemCallback, done) {
-    let id = onTransitionEnd(element, (evt) => {
+    const id = onTransitionEnd(element, (evt) => {
       itemCallback();
       done(null, evt);
     });
@@ -661,12 +654,11 @@ class Shuffle {
       this._cancelMovement();
     }
 
-    let hasSpeed = this.options.speed > 0;
-    let hasQueue = this._queue.length > 0;
+    const hasSpeed = this.options.speed > 0;
+    const hasQueue = this._queue.length > 0;
 
     if (hasQueue && hasSpeed && this.isInitialized) {
       this._startTransitions(this._queue);
-
     } else if (hasQueue) {
       this._styleImmediately(this._queue);
       this._dispatchLayout();
@@ -691,7 +683,7 @@ class Shuffle {
     this.isTransitioning = true;
 
     // Create an array of functions to be called.
-    let callbacks = transitions.map(obj => this._getTransitionFunction(obj));
+    const callbacks = transitions.map(obj => this._getTransitionFunction(obj));
 
     parallel(callbacks, this._movementFinished.bind(this));
   }
@@ -714,7 +706,7 @@ class Shuffle {
    */
   _styleImmediately(objects) {
     if (objects.length) {
-      let elements = objects.map(obj => obj.item.element);
+      const elements = objects.map(obj => obj.item.element);
 
       Shuffle._skipTransitions(elements, () => {
         objects.forEach((obj) => {
@@ -747,7 +739,7 @@ class Shuffle {
     }
 
     if (!category || (category && category.length === 0)) {
-      category = Shuffle.ALL_ITEMS;
+      category = Shuffle.ALL_ITEMS; // eslint-disable-line no-param-reassign
     }
 
     this._filter(category);
@@ -773,7 +765,7 @@ class Shuffle {
 
     this._resetCols();
 
-    var items = this._getFilteredItems();
+    let items = this._getFilteredItems();
     items = sorter(items, opts);
 
     this._layout(items);
@@ -795,7 +787,6 @@ class Shuffle {
    */
   update(isOnlyLayout) {
     if (this.isEnabled) {
-
       if (!isOnlyLayout) {
         // Get updated colCount
         this._setColumns();
@@ -821,16 +812,16 @@ class Shuffle {
    * @param {Array.<Element>} newItems Collection of new items.
    */
   add(newItems) {
-    newItems = arrayUnique(newItems).map(el => new ShuffleItem(el));
+    const items = arrayUnique(newItems).map(el => new ShuffleItem(el));
 
     // Add classes and set initial positions.
-    this._initItems(newItems);
+    this._initItems(items);
 
     // Add transition to each item.
-    this._setTransitions(newItems);
+    this._setTransitions(items);
 
     // Update the list of items.
-    this.items = this.items.concat(newItems);
+    this.items = this.items.concat(items);
     this._updateItemsOrder();
     this.filter(this.lastFilter);
   }
@@ -855,22 +846,22 @@ class Shuffle {
 
   /**
    * Remove 1 or more shuffle items
-   * @param {Array.<Element>} collection An array containing one or more
+   * @param {Array.<Element>} elements An array containing one or more
    *     elements in shuffle
    * @return {Shuffle} The shuffle object
    */
-  remove(collection) {
-    if (!collection.length) {
+  remove(elements) {
+    if (!elements.length) {
       return;
     }
 
-    collection = arrayUnique(collection);
+    const collection = arrayUnique(elements);
 
-    let oldItems = collection
+    const oldItems = collection
       .map(element => this.getItemByElement(element))
       .filter(item => !!item);
 
-    let handleLayout = () => {
+    const handleLayout = () => {
       this.element.removeEventListener(Shuffle.EventType.LAYOUT, handleLayout);
       this._disposeItems(oldItems);
 
@@ -880,10 +871,6 @@ class Shuffle {
       });
 
       this._dispatch(Shuffle.EventType.REMOVED, { collection });
-
-      // Let it get garbage collected
-      collection = null;
-      oldItems = null;
     };
 
     // Hide collection first.
@@ -910,7 +897,7 @@ class Shuffle {
    * @return {?ShuffleItem} A shuffle item or null if it's not found.
    */
   getItemByElement(element) {
-    for (var i = this.items.length - 1; i >= 0; i--) {
+    for (let i = this.items.length - 1; i >= 0; i--) {
       if (this.items[i].element === element) {
         return this.items[i];
       }
@@ -968,15 +955,15 @@ class Shuffle {
    */
   static getSize(element, includeMargins) {
     // Store the styles so that they can be used by others without asking for it again.
-    var styles = window.getComputedStyle(element, null);
-    var width = getNumberStyle(element, 'width', styles);
-    var height = getNumberStyle(element, 'height', styles);
+    const styles = window.getComputedStyle(element, null);
+    let width = getNumberStyle(element, 'width', styles);
+    let height = getNumberStyle(element, 'height', styles);
 
     if (includeMargins) {
-      var marginLeft = getNumberStyle(element, 'marginLeft', styles);
-      var marginRight = getNumberStyle(element, 'marginRight', styles);
-      var marginTop = getNumberStyle(element, 'marginTop', styles);
-      var marginBottom = getNumberStyle(element, 'marginBottom', styles);
+      const marginLeft = getNumberStyle(element, 'marginLeft', styles);
+      const marginRight = getNumberStyle(element, 'marginRight', styles);
+      const marginTop = getNumberStyle(element, 'marginTop', styles);
+      const marginBottom = getNumberStyle(element, 'marginBottom', styles);
       width += marginLeft + marginRight;
       height += marginTop + marginBottom;
     }
@@ -995,13 +982,13 @@ class Shuffle {
    * @private
    */
   static _skipTransitions(elements, callback) {
-    let zero = '0ms';
+    const zero = '0ms';
 
     // Save current duration and delay.
-    let data = elements.map((element) => {
-      let style = element.style;
-      let duration = style.transitionDuration;
-      let delay = style.transitionDelay;
+    const data = elements.map((element) => {
+      const style = element.style;
+      const duration = style.transitionDuration;
+      const delay = style.transitionDelay;
 
       // Set the duration to zero so it happens immediately
       style.transitionDuration = zero;
@@ -1016,7 +1003,7 @@ class Shuffle {
     callback();
 
     // Cause reflow.
-    elements[0].offsetWidth; // jshint ignore:line
+    elements[0].offsetWidth; // eslint-disable-line no-unused-expressions
 
     // Put the duration back
     elements.forEach((element, i) => {
@@ -1086,7 +1073,7 @@ Shuffle.options = {
 
   // By default, shuffle will throttle resize events. This can be changed or
   // removed.
-  throttle: throttle,
+  throttle,
 
   // How often shuffle can be called on resize (in milliseconds).
   throttleTime: 300,
