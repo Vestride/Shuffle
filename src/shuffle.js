@@ -239,7 +239,11 @@ class Shuffle {
           JSON.parse(attr);
 
     if (Array.isArray(category)) {
-      return category.some(arrayIncludes(keys));
+      if(this.options.filterMode!=Shuffle.filterMode.EXCLUSIVE){
+        return category.every(arrayIncludes(keys));
+      } else {
+        return category.some(arrayIncludes(keys));
+      }
     }
 
     return arrayIncludes(keys, category);
@@ -1029,6 +1033,14 @@ Shuffle.EventType = {
 /** @enum {string} */
 Shuffle.Classes = Classes;
 
+/**
+ * @enum {string}
+ */
+Shuffle.filterMode = {
+  EXCLUSIVE: 'exclusive',
+  ADDITIVE: 'additive',
+};
+
 // Overrideable options
 Shuffle.options = {
   // Initial filter group.
@@ -1044,7 +1056,7 @@ Shuffle.options = {
   itemSelector: '*',
 
   // Element or selector string. Use an element to determine the size of columns
-  // and gutters.
+  // and gutters.Shuffle.filterMode
   sizer: null,
 
   // A static number or function that tells the plugin how wide the gutters
@@ -1086,6 +1098,9 @@ Shuffle.options = {
 
   // Whether to use transforms or absolute positioning.
   useTransforms: true,
+
+  // Filters elements with "some" when 'exclusive' and with every on 'additive'
+  filterMode : Shuffle.filterMode.EXCLUSIVE,
 };
 
 // Expose for testing. Hack at your own risk.
