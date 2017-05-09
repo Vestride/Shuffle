@@ -1,6 +1,6 @@
 {
   "name": "shufflejs",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "description": "Categorize, sort, and filter a responsive grid of items",
   "keywords": [
     "gallery",
@@ -21,7 +21,7 @@
     "css": "gulp css",
     "gulp": "gulp && npm run css",
     "serve": "gulp jekyll",
-    "test": "gulp test",
+    "test": "eslint src && gulp test",
     "watch": "gulp watch"
   },
   "repository": {
