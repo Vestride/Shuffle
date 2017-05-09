@@ -239,11 +239,10 @@ class Shuffle {
           JSON.parse(attr);
 
     if (Array.isArray(category)) {
-      if(this.options.filterMode!=Shuffle.filterMode.EXCLUSIVE){
+      if (this.options.filterMode !== Shuffle.filterMode.EXCLUSIVE) {
         return category.every(arrayIncludes(keys));
-      } else {
-        return category.some(arrayIncludes(keys));
       }
+      return category.some(arrayIncludes(keys));
     }
 
     return arrayIncludes(keys, category);
@@ -1100,7 +1099,7 @@ Shuffle.options = {
   useTransforms: true,
 
   // Filters elements with "some" when 'exclusive' and with every on 'additive'
-  filterMode : Shuffle.filterMode.EXCLUSIVE,
+  filterMode: Shuffle.filterMode.EXCLUSIVE,
 };
 
 // Expose for testing. Hack at your own risk.
