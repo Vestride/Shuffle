@@ -1945,7 +1945,7 @@ Shuffle.options = {
   itemSelector: '*',
 
   // Element or selector string. Use an element to determine the size of columns
-  // and gutters.Shuffle.filterMode
+  // and gutters.
   sizer: null,
 
   // A static number or function that tells the plugin how wide the gutters
