@@ -1,6 +1,6 @@
 {
   "name": "shufflejs",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "description": "Categorize, sort, and filter a responsive grid of items",
   "keywords": [
     "gallery",
@@ -21,7 +21,7 @@
     "css": "gulp css",
     "gulp": "gulp && npm run css",
     "serve": "gulp jekyll",
-    "test": "gulp test",
+    "test": "eslint src && gulp test",
     "watch": "gulp watch"
   },
   "repository": {
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@odopod/eslint-config": "^1.0.0",
-    "autoprefixer": "^6.3.4",
+    "autoprefixer": "^7.0.1",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-es2015": "^6.24.1",
     "chai": "^3.5.0",
@@ -57,7 +57,7 @@
     "eslint": "^3.19.0",
     "gulp": "gulpjs/gulp.git#4.0",
     "gulp-mocha-phantomjs": "^0.12.0",
-    "gulp-postcss": "^6.1.0",
+    "gulp-postcss": "^7.0.0",
     "gulp-sass": "^3.1.0",
     "gulp-shell": "^0.6.1",
     "gulp-util": "^3.0.7",
