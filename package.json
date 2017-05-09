@@ -1,7 +1,7 @@
 {
-  "name": "biko2_shufflejs",
+  "name": "shufflejs",
   "version": "4.1.1",
-  "description": "Fork of https://vestride.github.io/Shuffle/ Categorize, sort, and filter a responsive grid of items",
+  "description": "Categorize, sort, and filter a responsive grid of items",
   "keywords": [
     "gallery",
     "shuffle",
@@ -26,14 +26,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/davidgallego/Shuffle.git"
+    "url": "git://github.com/Vestride/Shuffle.git"
   },
   "author": "Glen Cheney <cheney.glen@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/davidgallego/Shuffle/issues"
+    "url": "https://github.com/Vestride/Shuffle/issues"
   },
-  "homepage": "https://github.com/davidgallego/Shuffle",
+  "homepage": "https://github.com/Vestride/Shuffle",
   "files": [
     "dist",
     "src"
