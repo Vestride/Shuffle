@@ -95,7 +95,6 @@
           transform: translate(0, 220px); }
 
 .shuffle--animatein .picture-item__inner--transition {
-  -webkit-transition: all .6s ease;
   transition: all .6s ease; }
 
 .shuffle--animatein .picture-item.in .picture-item__inner {

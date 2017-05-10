@@ -1034,7 +1034,6 @@ h3:hover > a {
   width: 100%; }
 
 .site-nav .site-nav__tray {
-  -webkit-transition: .2s;
   transition: .2s;
   overflow: hidden;
   height: 300px;
@@ -1085,7 +1084,6 @@ h3:hover > a {
 .demo-list .figure-wrap img {
   -webkit-transform: translateZ(0);
           transform: translateZ(0);
-  -webkit-transition: .1s ease;
   transition: .1s ease; }
 
 .demo-list:hover .figure-wrap {
@@ -1142,19 +1140,15 @@ input.faq-search {
   padding: 0.5em;
   font-size: 1.125em;
   color: #95A5A6;
-  -webkit-transition: .15s;
   transition: .15s; }
   input.faq-search::-webkit-input-placeholder {
     color: #95A5A6;
-    -webkit-transition: .15s;
     transition: .15s; }
   input.faq-search:-ms-input-placeholder {
     color: #95A5A6;
-    -webkit-transition: .15s;
     transition: .15s; }
   input.faq-search::placeholder {
     color: #95A5A6;
-    -webkit-transition: .15s;
     transition: .15s; }
   input.faq-search:hover {
     outline: 0;
@@ -1180,7 +1174,6 @@ input.faq-search {
 .question {
   margin: 2em 0;
   overflow: hidden;
-  -webkit-transition: .2s ease-out;
   transition: .2s ease-out; }
 
 .question--collapsed {
@@ -1226,7 +1219,6 @@ button {
   border-radius: .0625em;
   border: 0;
   background-color: #34495E;
-  -webkit-transition: .2s ease-out;
   transition: .2s ease-out; }
   .btn:hover,
   button:hover {
@@ -1239,7 +1231,6 @@ button {
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3); }
   .btn:active,
   button:active {
-    -webkit-transition: none;
     transition: none; }
 
 .btn--warning {
@@ -1282,7 +1273,6 @@ button {
     margin-left: -10px;
     margin-top: -10px;
     opacity: 0;
-    -webkit-transition: .2s;
     transition: .2s; }
   .filter-group .btn:before {
     background-color: #2C3E50;
