@@ -239,6 +239,9 @@ class Shuffle {
           JSON.parse(attr);
 
     if (Array.isArray(category)) {
+      if (this.options.filterMode !== Shuffle.filterMode.EXCLUSIVE) {
+        return category.every(arrayIncludes(keys));
+      }
       return category.some(arrayIncludes(keys));
     }
 
@@ -1029,6 +1032,14 @@ Shuffle.EventType = {
 /** @enum {string} */
 Shuffle.Classes = Classes;
 
+/**
+ * @enum {string}
+ */
+Shuffle.filterMode = {
+  EXCLUSIVE: 'exclusive',
+  ADDITIVE: 'additive',
+};
+
 // Overrideable options
 Shuffle.options = {
   // Initial filter group.
@@ -1086,6 +1097,9 @@ Shuffle.options = {
 
   // Whether to use transforms or absolute positioning.
   useTransforms: true,
+
+  // Filters elements with "some" when 'exclusive' and with every on 'additive'
+  filterMode: Shuffle.filterMode.EXCLUSIVE,
 };
 
 // Expose for testing. Hack at your own risk.

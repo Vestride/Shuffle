@@ -965,7 +965,11 @@ var Shuffle = function () {
       var keys = this.options.delimeter ? attr.split(this.options.delimeter) : JSON.parse(attr);
 
       if (Array.isArray(category)) {
-        return category.some(arrayIncludes(keys));
+        if (this.options.filterMode != Shuffle.filterMode.EXCLUSIVE) {
+          return category.every(arrayIncludes(keys));
+        } else {
+          return category.some(arrayIncludes(keys));
+        }
       }
 
       return arrayIncludes(keys, category);
@@ -1918,6 +1922,14 @@ Shuffle.EventType = {
 /** @enum {string} */
 Shuffle.Classes = Classes;
 
+/**
+ * @enum {string}
+ */
+Shuffle.filterMode = {
+  EXCLUSIVE: 'exclusive',
+  ADDITIVE: 'additive'
+};
+
 // Overrideable options
 Shuffle.options = {
   // Initial filter group.
@@ -1974,7 +1986,10 @@ Shuffle.options = {
   staggerAmountMax: 250,
 
   // Whether to use transforms or absolute positioning.
-  useTransforms: true
+  useTransforms: true,
+
+  // Filters elements with "some" when 'exclusive' and with every on 'additive'
+  filterMode: Shuffle.filterMode.EXCLUSIVE
 };
 
 // Expose for testing. Hack at your own risk.
