@@ -13,7 +13,7 @@ module.exports = function test() {
   }))
 
   // https://github.com/gulpjs/gulp/issues/259#issuecomment-61976830
-  .on('error', (err) => {
+  .on('error', function onerror(err) {
     if (config.watch) {
       console.error(err.message);
       this.emit('end');
