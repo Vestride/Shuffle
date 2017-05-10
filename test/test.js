@@ -346,6 +346,17 @@ describe('shuffle', function () {
       expect(instance._doesPassFilter(function (element) {
         return element.getAttribute('data-age') === '22';
       }, first)).to.equal(false);
+
+      // Arrays.
+      expect(instance._doesPassFilter(['design'], first)).to.be.true;
+      expect(instance._doesPassFilter(['red'], first)).to.be.true;
+      expect(instance._doesPassFilter(['design', 'black'], first)).to.be.true;
+
+      // Change filter mode.
+      instance.options.filterMode = Shuffle.FilterMode.ALL;
+      expect(instance._doesPassFilter(['design'], first)).to.be.true;
+      expect(instance._doesPassFilter(['design', 'red'], first)).to.be.true;
+      expect(instance._doesPassFilter(['design', 'black'], first)).to.be.false;
     });
 
     it('will maintain the last sort object', function () {

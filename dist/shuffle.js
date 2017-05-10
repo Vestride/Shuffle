@@ -718,13 +718,7 @@ function toArray$$1(arrayLike) {
 }
 
 function arrayIncludes(array, obj) {
-  if (arguments.length === 2) {
-    return arrayIncludes(array)(obj);
-  }
-
-  return function (obj) {
-    return array.indexOf(obj) > -1;
-  };
+  return array.indexOf(obj) > -1;
 }
 
 // Used for unique instance variables
@@ -958,18 +952,21 @@ var Shuffle = function () {
     value: function _doesPassFilter(category, element) {
       if (typeof category === 'function') {
         return category.call(element, element, this);
-
-        // Check each element's data-groups attribute against the given category.
       }
+
+      // Check each element's data-groups attribute against the given category.
       var attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
       var keys = this.options.delimeter ? attr.split(this.options.delimeter) : JSON.parse(attr);
 
+      function testCategory(category) {
+        return arrayIncludes(keys, category);
+      }
+
       if (Array.isArray(category)) {
-        if (this.options.filterMode != Shuffle.filterMode.EXCLUSIVE) {
-          return category.every(arrayIncludes(keys));
-        } else {
-          return category.some(arrayIncludes(keys));
+        if (this.options.filterMode === Shuffle.FilterMode.ANY) {
+          return category.some(testCategory);
         }
+        return category.every(testCategory);
       }
 
       return arrayIncludes(keys, category);
@@ -1925,9 +1922,9 @@ Shuffle.Classes = Classes;
 /**
  * @enum {string}
  */
-Shuffle.filterMode = {
-  EXCLUSIVE: 'exclusive',
-  ADDITIVE: 'additive'
+Shuffle.FilterMode = {
+  ANY: 'any',
+  ALL: 'all'
 };
 
 // Overrideable options
@@ -1988,8 +1985,10 @@ Shuffle.options = {
   // Whether to use transforms or absolute positioning.
   useTransforms: true,
 
-  // Filters elements with "some" when 'exclusive' and with every on 'additive'
-  filterMode: Shuffle.filterMode.EXCLUSIVE
+  // Affects using an array with filter. e.g. `filter(['one', 'two'])`. With "any",
+  // the element passes the test if any of its groups are in the array. With "all",
+  // the element only passes if all groups are in the array.
+  filterMode: Shuffle.FilterMode.ANY
 };
 
 // Expose for testing. Hack at your own risk.
