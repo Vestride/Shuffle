@@ -62,7 +62,7 @@
     "gulp-shell": "^0.6.1",
     "gulp-util": "^3.0.7",
     "mocha": "^3.0.0",
-    "rollup": "^0.41.6",
+    "rollup": "^0.42.0",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
