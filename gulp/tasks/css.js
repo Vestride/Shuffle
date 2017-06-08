@@ -3,12 +3,20 @@ const sass = require('gulp-sass');
 const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 
+// This is the support list for the website, not shuffle.
+const browsersList = [
+  '> 1%',
+  'last 2 versions',
+  'not IE < 11',
+  'not BlackBerry <= 10',
+];
+
 module.exports = function css() {
   return gulp.src([
     './_scss/shuffle-styles.scss',
     './_scss/style.scss',
   ])
   .pipe(sass())
-  .pipe(postcss([autoprefixer()]))
+  .pipe(postcss([autoprefixer({ browsers: browsersList })]))
   .pipe(gulp.dest('./css/'));
 };

@@ -713,7 +713,7 @@ function getItemPosition(_ref) {
   return point;
 }
 
-function toArray$$1(arrayLike) {
+function toArray(arrayLike) {
   return Array.prototype.slice.call(arrayLike);
 }
 
@@ -1062,7 +1062,7 @@ var Shuffle = function () {
     value: function _getItems() {
       var _this2 = this;
 
-      return toArray$$1(this.element.children).filter(function (el) {
+      return toArray(this.element.children).filter(function (el) {
         return index(el, _this2.options.itemSelector);
       }).map(function (el) {
         return new ShuffleItem(el);

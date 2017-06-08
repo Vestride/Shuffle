@@ -13,8 +13,6 @@ const babelOptions = {
 
 const uglifyOptions = {
   sourceMap: true,
-  comments: false,
-  screw_ie8: true,
   compress: {
     warnings: true,
     drop_console: true,
