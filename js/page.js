@@ -261,5 +261,5 @@ Modules.NavTray.initialize();
 // Only animate the favicon on the homepage so that
 // timeline tests aren't filled with junk
 if (window.location.pathname === '/Shuffle/') {
-  new Modules.Favicon(site_url + '/img/favicon-sprite.png', 21, 7, 3000 * 1);
+  new Modules.Favicon(window.site_url + '/img/favicon-sprite.png', 21, 7, 3000 * 1);
 }

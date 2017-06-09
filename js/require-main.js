@@ -1,11 +1,15 @@
 requirejs.config({
-  baseUrl: site_url + '/js',
+  baseUrl: window.site_url + '/js',
   paths: {
-    shuffle: '../dist/shuffle',
+    shufflejs: '../dist/shuffle',
+    polyfill: 'https://unpkg.com/core-js/client/shim.min',
   },
 
   // Shimming other page javascript.
   shim: {
+    shufflejs: {
+      deps: ['polyfill'],
+    },
     page: {
       deps: ['evenheights'],
       exports: 'Modules',
@@ -13,15 +17,8 @@ requirejs.config({
   },
 });
 
-define(function (require) {
+requirejs(['shufflejs', 'evenheights', 'page'], function (Shuffle) {
   'use strict';
-
-  // Page-level JavaScript used for the demo pages.
-  require('evenheights');
-  require('page');
-
-  // Get Shuffle.
-  var Shuffle = require('shuffle');
 
   // Create a new shuffle instance.
   var element = document.getElementById('grid');

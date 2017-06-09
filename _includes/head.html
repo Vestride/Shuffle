@@ -32,6 +32,7 @@
   <link rel="dns-prefetch" href="https://themes.googleusercontent.com">
   <link rel="dns-prefetch" href="https://www.google-analytics.com">
   <link rel="dns-prefetch" href="https://ajax.googleapis.com">
+  <link rel="dns-prefetch" href="https://unpkg.com">
 
   {% if page.prism %}<link rel="stylesheet" href="{{ site.baseurl }}/css/prism.css" />{% endif %}
   <link rel="stylesheet" href="{{ site.baseurl }}/css/style.css" />
@@ -47,5 +48,6 @@
   <link rel="stylesheet" href="{{ href }}" />
   {% endfor %}
   {% endif %}
+  <script>window.site_url = "{{ site.baseurl }}";</script>
 </head>
 <body class="{{ page.bodyClass }}">
