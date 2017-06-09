@@ -14,9 +14,8 @@ prism: true
       </div>
       <div class="col-12@sm">
         <div class="code-block">
-          <pre><code class="language">npm install shufflejs --save</code></pre>
+          <pre><code class="language">npm install shufflejs</code></pre>
         </div>
-        <p>Shuffle is also available on bower as <code>shufflejs</code>.</p>
       </div>
     </div>
     <div class="row">
@@ -200,6 +199,7 @@ prism: true
       <div class="col-12@sm">
         <h2>Dependencies<a href="#dependencies"></a></h2>
         <p>Shuffle's <a href="{{ site.baseurl }}/package.json">dependencies</a> are bundled with the dist file.</p>
+        <p>Shuffle does, however, expect the following ES6/7 features: <code>Set</code>, <code>Array.from</code>, <code>Object.assign</code>, and <code>Array.prototype.includes</code>. In order to support browsers like IE11 and Safari 8, you must include a polyfill for these features. You can use a service like <a href="https://polyfill.io">polyfill.io</a> to only load the polyfills that specific browser needs, or a polyfill script like <a href="https://www.npmjs.com/package/babel-polyfill">babel-polyfill</a> (which uses <code>core-js</code> internally).</p>
       </div>
     </div>
   </div>

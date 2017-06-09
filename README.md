@@ -3,27 +3,22 @@
 Categorize, sort, and filter a responsive grid of items.
 
 ```bash
-npm install shufflejs --save
+npm install shufflejs
 ```
-
-Shuffle is also available on bower as `shufflejs`.
 
 ## Docs and Demos
 [All found here][homepage]
 
-### Usage (with CommonJS)
+### Usage (with ES6)
 
 ```js
-var Shuffle = require('shufflejs');
+import Shuffle from 'shufflejs';
 
-var myShuffle = new Shuffle(document.getElementById('grid'), {
+const myShuffle = new Shuffle(document.getElementById('grid'), {
   itemSelector: '.js-item',
   sizer: '.js-shuffle-sizer'
 });
 ```
-
-## Shuffle 4.0
-Shuffle 4 removes jQuery as a dependency and is written in ES6.
 
 ## Inspiration
 This project was inspired by [Isotope](http://isotope.metafizzy.co/) and [Packery](http://packery.metafizzy.co/).
