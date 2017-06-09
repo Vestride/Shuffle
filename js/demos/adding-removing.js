@@ -1,6 +1,6 @@
 'use strict';
 
-var Shuffle = window.shuffle;
+var Shuffle = window.Shuffle;
 
 var Demo = function (element) {
   this.element = element;
@@ -34,9 +34,8 @@ Demo.prototype.setupEvents = function () {
   document.querySelector('#sorter').addEventListener('change', this.onSortChange.bind(this));
 
   // Show off some shuffle events
-  this.element.addEventListener(Shuffle.EventType.REMOVED, function (evt) {
-    var detail = evt.detail;
-    console.log(this, evt, detail.collection, detail.shuffle);
+  this.shuffle.on(Shuffle.EventType.REMOVED, function (data) {
+    console.log(data);
   });
 };
 

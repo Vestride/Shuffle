@@ -1,20 +1,10 @@
 'use strict';
 
-var Shuffle = window.shuffle;
-
-// ES7 will have Array.prototype.includes.
-function arrayIncludes(array, value) {
-  return array.indexOf(value) !== -1;
-}
-
-// Convert an array-like object to a real array.
-function toArray(thing) {
-  return Array.prototype.slice.call(thing);
-}
+var Shuffle = window.Shuffle;
 
 var Demo = function (element) {
-  this.shapes = toArray(document.querySelectorAll('.js-shapes input'));
-  this.colors = toArray(document.querySelectorAll('.js-colors button'));
+  this.shapes = Array.from(document.querySelectorAll('.js-shapes input'));
+  this.colors = Array.from(document.querySelectorAll('.js-colors button'));
 
   this.shuffle = new Shuffle(element, {
     easing: 'cubic-bezier(0.165, 0.840, 0.440, 1.000)', // easeOutQuart
@@ -133,12 +123,12 @@ Demo.prototype.itemPassesFilters = function (element) {
   var color = element.getAttribute('data-color');
 
   // If there are active shape filters and this shape is not in that array.
-  if (shapes.length > 0 && !arrayIncludes(shapes, shape)) {
+  if (shapes.length > 0 && !shapes.includes(shape)) {
     return false;
   }
 
   // If there are active color filters and this color is not in that array.
-  if (colors.length > 0 && !arrayIncludes(colors, color)) {
+  if (colors.length > 0 && !colors.includes(color)) {
     return false;
   }
 

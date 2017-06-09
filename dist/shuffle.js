@@ -1,53 +1,75 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
-	(global.shuffle = factory());
+	(global.Shuffle = factory());
 }(this, (function () { 'use strict';
 
-// Polyfill for creating CustomEvents on IE9/10/11
-
-// code pulled from:
-// https://github.com/d4tocchini/customevent-polyfill
-// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent#Polyfill
-
-try {
-    var ce = new window.CustomEvent('test');
-    ce.preventDefault();
-    if (ce.defaultPrevented !== true) {
-        // IE has problems with .preventDefault() on custom events
-        // http://stackoverflow.com/questions/23349191
-        throw new Error('Could not prevent default');
-    }
-} catch(e) {
-  var CustomEvent$1 = function(event, params) {
-    var evt, origPrevent;
-    params = params || {
-      bubbles: false,
-      cancelable: false,
-      detail: undefined
-    };
-
-    evt = document.createEvent("CustomEvent");
-    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-    origPrevent = evt.preventDefault;
-    evt.preventDefault = function () {
-      origPrevent.call(this);
-      try {
-        Object.defineProperty(this, 'defaultPrevented', {
-          get: function () {
-            return true;
-          }
-        });
-      } catch(e) {
-        this.defaultPrevented = true;
-      }
-    };
-    return evt;
-  };
-
-  CustomEvent$1.prototype = window.Event.prototype;
-  window.CustomEvent = CustomEvent$1; // expose definition to window
+function E () {
+  // Keep this empty so it's easier to inherit from
+  // (via https://github.com/lipsmack from https://github.com/scottcorgan/tiny-emitter/issues/3)
 }
+
+E.prototype = {
+  on: function (name, callback, ctx) {
+    var e = this.e || (this.e = {});
+
+    (e[name] || (e[name] = [])).push({
+      fn: callback,
+      ctx: ctx
+    });
+
+    return this;
+  },
+
+  once: function (name, callback, ctx) {
+    var self = this;
+    function listener () {
+      self.off(name, listener);
+      callback.apply(ctx, arguments);
+    }
+
+    listener._ = callback;
+    return this.on(name, listener, ctx);
+  },
+
+  emit: function (name) {
+    var data = [].slice.call(arguments, 1);
+    var evtArr = ((this.e || (this.e = {}))[name] || []).slice();
+    var i = 0;
+    var len = evtArr.length;
+
+    for (i; i < len; i++) {
+      evtArr[i].fn.apply(evtArr[i].ctx, data);
+    }
+
+    return this;
+  },
+
+  off: function (name, callback) {
+    var e = this.e || (this.e = {});
+    var evts = e[name];
+    var liveEvents = [];
+
+    if (evts && callback) {
+      for (var i = 0, len = evts.length; i < len; i++) {
+        if (evts[i].fn !== callback && evts[i].fn._ !== callback)
+          liveEvents.push(evts[i]);
+      }
+    }
+
+    // Remove event from queue to prevent memory leak
+    // Suggested by https://github.com/lazd
+    // Ref: https://github.com/scottcorgan/tiny-emitter/commit/c6ebfaa9bc973b33d110a84a307742b7cf94c953#commitcomment-5024910
+
+    (liveEvents.length)
+      ? e[name] = liveEvents
+      : delete e[name];
+
+    return this;
+  }
+};
+
+var index = E;
 
 var proto = Element.prototype;
 var vendor = proto.matches
@@ -57,7 +79,7 @@ var vendor = proto.matches
   || proto.msMatchesSelector
   || proto.oMatchesSelector;
 
-var index = match;
+var index$1 = match;
 
 /**
  * Match `el` to `selector`.
@@ -75,101 +97,6 @@ function match(el, selector) {
     if (nodes[i] == el) return true;
   }
   return false;
-}
-
-var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-
-
-
-
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
-}
-
-var index$1 = createCommonjsModule(function (module) {
-'use strict';
-
-// there's 3 implementations written in increasing order of efficiency
-
-// 1 - no Set type is defined
-function uniqNoSet(arr) {
-	var ret = [];
-
-	for (var i = 0; i < arr.length; i++) {
-		if (ret.indexOf(arr[i]) === -1) {
-			ret.push(arr[i]);
-		}
-	}
-
-	return ret;
-}
-
-// 2 - a simple Set type is defined
-function uniqSet(arr) {
-	var seen = new Set();
-	return arr.filter(function (el) {
-		if (!seen.has(el)) {
-			seen.add(el);
-			return true;
-		}
-
-		return false;
-	});
-}
-
-// 3 - a standard Set type is defined and it has a forEach method
-function uniqSetWithForEach(arr) {
-	var ret = [];
-
-	(new Set(arr)).forEach(function (el) {
-		ret.push(el);
-	});
-
-	return ret;
-}
-
-// V8 currently has a broken implementation
-// https://github.com/joyent/node/issues/8449
-function doesForEachActuallyWork() {
-	var ret = false;
-
-	(new Set([true])).forEach(function (el) {
-		ret = el;
-	});
-
-	return ret === true;
-}
-
-if ('Set' in commonjsGlobal) {
-	if (typeof Set.prototype.forEach === 'function' && doesForEachActuallyWork()) {
-		module.exports = uniqSetWithForEach;
-	} else {
-		module.exports = uniqSet;
-	}
-} else {
-	module.exports = uniqNoSet;
-}
-});
-
-var immutable = extend;
-
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-function extend() {
-    var target = {};
-
-    for (var i = 0; i < arguments.length; i++) {
-        var source = arguments[i];
-
-        for (var key in source) {
-            if (hasOwnProperty.call(source, key)) {
-                target[key] = source[key];
-            }
-        }
-    }
-
-    return target
 }
 
 var index$2 = throttle;
@@ -278,6 +205,48 @@ var createClass = function () {
     return Constructor;
   };
 }();
+
+
+
+
+
+
+
+
+
+var inherits = function (subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+};
+
+
+
+
+
+
+
+
+
+
+
+var possibleConstructorReturn = function (self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return call && (typeof call === "object" || typeof call === "function") ? call : self;
+};
 
 var Point = function () {
 
@@ -421,14 +390,14 @@ ShuffleItem.Scale = {
 };
 
 var element = document.body || document.documentElement;
-var e$1 = document.createElement('div');
-e$1.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
-element.appendChild(e$1);
+var e = document.createElement('div');
+e.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
+element.appendChild(e);
 
-var width = window.getComputedStyle(e$1, null).width;
+var width = window.getComputedStyle(e, null).width;
 var ret = width === '10px';
 
-element.removeChild(e$1);
+element.removeChild(e);
 
 /**
  * Retrieve the computed style for an element, parsed as a float.
@@ -493,7 +462,7 @@ var defaults$1 = {
 
 // You can return `undefined` from the `by` function to revert to DOM order.
 function sorter(arr, options) {
-  var opts = immutable(defaults$1, options);
+  var opts = Object.assign({}, defaults$1, options);
   var original = [].slice.call(arr);
   var revert = false;
 
@@ -713,18 +682,15 @@ function getItemPosition(_ref) {
   return point;
 }
 
-function toArray(arrayLike) {
-  return Array.prototype.slice.call(arrayLike);
-}
-
-function arrayIncludes(array, obj) {
-  return array.indexOf(obj) > -1;
+function arrayUnique(x) {
+  return Array.from(new Set(x));
 }
 
 // Used for unique instance variables
 var id = 0;
 
-var Shuffle = function () {
+var Shuffle = function (_TinyEmitter) {
+  inherits(Shuffle, _TinyEmitter);
 
   /**
    * Categorize, sort, and filter a responsive grid of items.
@@ -737,31 +703,34 @@ var Shuffle = function () {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     classCallCheck(this, Shuffle);
 
-    this.options = immutable(Shuffle.options, options);
+    var _this = possibleConstructorReturn(this, (Shuffle.__proto__ || Object.getPrototypeOf(Shuffle)).call(this));
 
-    this.useSizer = false;
-    this.lastSort = {};
-    this.group = Shuffle.ALL_ITEMS;
-    this.lastFilter = Shuffle.ALL_ITEMS;
-    this.isEnabled = true;
-    this.isDestroyed = false;
-    this.isInitialized = false;
-    this._transitions = [];
-    this.isTransitioning = false;
-    this._queue = [];
+    _this.options = Object.assign({}, Shuffle.options, options);
 
-    var el = this._getElementOption(element);
+    _this.useSizer = false;
+    _this.lastSort = {};
+    _this.group = Shuffle.ALL_ITEMS;
+    _this.lastFilter = Shuffle.ALL_ITEMS;
+    _this.isEnabled = true;
+    _this.isDestroyed = false;
+    _this.isInitialized = false;
+    _this._transitions = [];
+    _this.isTransitioning = false;
+    _this._queue = [];
+
+    var el = _this._getElementOption(element);
 
     if (!el) {
       throw new TypeError('Shuffle needs to be initialized with an element.');
     }
 
-    this.element = el;
-    this.id = 'shuffle_' + id;
+    _this.element = el;
+    _this.id = 'shuffle_' + id;
     id += 1;
 
-    this._init();
-    this.isInitialized = true;
+    _this._init();
+    _this.isInitialized = true;
+    return _this;
   }
 
   createClass(Shuffle, [{
@@ -912,7 +881,7 @@ var Shuffle = function () {
   }, {
     key: '_getFilteredSets',
     value: function _getFilteredSets(category, items) {
-      var _this = this;
+      var _this2 = this;
 
       var visible = [];
       var hidden = [];
@@ -925,7 +894,7 @@ var Shuffle = function () {
         // whether to hide it or not.
       } else {
         items.forEach(function (item) {
-          if (_this._doesPassFilter(category, item.element)) {
+          if (_this2._doesPassFilter(category, item.element)) {
             visible.push(item);
           } else {
             hidden.push(item);
@@ -959,7 +928,7 @@ var Shuffle = function () {
       var keys = this.options.delimeter ? attr.split(this.options.delimeter) : JSON.parse(attr);
 
       function testCategory(category) {
-        return arrayIncludes(keys, category);
+        return keys.includes(category);
       }
 
       if (Array.isArray(category)) {
@@ -969,7 +938,7 @@ var Shuffle = function () {
         return category.every(testCategory);
       }
 
-      return arrayIncludes(keys, category);
+      return keys.includes(category);
     }
 
     /**
@@ -1060,10 +1029,10 @@ var Shuffle = function () {
   }, {
     key: '_getItems',
     value: function _getItems() {
-      var _this2 = this;
+      var _this3 = this;
 
-      return toArray(this.element.children).filter(function (el) {
-        return index(el, _this2.options.itemSelector);
+      return Array.from(this.element.children).filter(function (el) {
+        return index$1(el, _this3.options.itemSelector);
       }).map(function (el) {
         return new ShuffleItem(el);
       });
@@ -1224,24 +1193,22 @@ var Shuffle = function () {
     }
 
     /**
-     * @return {boolean} Whether the event was prevented or not.
+     * Emit an event from this instance.
+     * @param {string} name Event name.
+     * @param {Object} [data={}] Optional object data.
      */
 
   }, {
     key: '_dispatch',
     value: function _dispatch(name) {
-      var details = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       if (this.isDestroyed) {
-        return false;
+        return;
       }
 
-      details.shuffle = this;
-      return !this.element.dispatchEvent(new CustomEvent(name, {
-        bubbles: true,
-        cancelable: false,
-        detail: details
-      }));
+      data.shuffle = this;
+      this.emit(name, data);
     }
 
     /**
@@ -1269,14 +1236,14 @@ var Shuffle = function () {
   }, {
     key: '_layout',
     value: function _layout(items) {
-      var _this3 = this;
+      var _this4 = this;
 
       var count = 0;
       items.forEach(function (item) {
         var currPos = item.point;
         var currScale = item.scale;
         var itemSize = Shuffle.getSize(item.element, true);
-        var pos = _this3._getItemPosition(itemSize);
+        var pos = _this4._getItemPosition(itemSize);
 
         function callback() {
           item.element.style.transitionDelay = '';
@@ -1294,12 +1261,12 @@ var Shuffle = function () {
         item.point = pos;
         item.scale = ShuffleItem.Scale.VISIBLE;
 
-        // Use xtend here to clone the object so that the `before` object isn't
-        // modified when the transition delay is added.
-        var styles = immutable(ShuffleItem.Css.VISIBLE.before);
-        styles.transitionDelay = _this3._getStaggerAmount(count) + 'ms';
+        // Clone the object so that the `before` object isn't modified when the
+        // transition delay is added.
+        var styles = Object.assign({}, ShuffleItem.Css.VISIBLE.before);
+        styles.transitionDelay = _this4._getStaggerAmount(count) + 'ms';
 
-        _this3._queue.push({
+        _this4._queue.push({
           item: item,
           styles: styles,
           callback: callback
@@ -1338,7 +1305,7 @@ var Shuffle = function () {
   }, {
     key: '_shrink',
     value: function _shrink() {
-      var _this4 = this;
+      var _this5 = this;
 
       var collection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._getConcealedItems();
 
@@ -1362,10 +1329,10 @@ var Shuffle = function () {
 
         item.scale = ShuffleItem.Scale.HIDDEN;
 
-        var styles = immutable(ShuffleItem.Css.HIDDEN.before);
-        styles.transitionDelay = _this4._getStaggerAmount(count) + 'ms';
+        var styles = Object.assign({}, ShuffleItem.Css.HIDDEN.before);
+        styles.transitionDelay = _this5._getStaggerAmount(count) + 'ms';
 
-        _this4._queue.push({
+        _this5._queue.push({
           item: item,
           styles: styles,
           callback: callback
@@ -1458,11 +1425,11 @@ var Shuffle = function () {
   }, {
     key: '_getTransitionFunction',
     value: function _getTransitionFunction(opts) {
-      var _this5 = this;
+      var _this6 = this;
 
       return function (done) {
-        opts.item.applyCss(_this5._getStylesForTransition(opts));
-        _this5._whenTransitionDone(opts.item.element, opts.callback, done);
+        opts.item.applyCss(_this6._getStylesForTransition(opts));
+        _this6._whenTransitionDone(opts.item.element, opts.callback, done);
       };
     }
 
@@ -1486,13 +1453,13 @@ var Shuffle = function () {
         this._startTransitions(this._queue);
       } else if (hasQueue) {
         this._styleImmediately(this._queue);
-        this._dispatchLayout();
+        this._dispatch(Shuffle.EventType.LAYOUT);
 
         // A call to layout happened, but none of the newly visible items will
         // change position or the transition duration is zero, which will not trigger
         // the transitionend event.
       } else {
-        this._dispatchLayout();
+        this._dispatch(Shuffle.EventType.LAYOUT);
       }
 
       // Remove everything in the style queue
@@ -1507,14 +1474,14 @@ var Shuffle = function () {
   }, {
     key: '_startTransitions',
     value: function _startTransitions(transitions) {
-      var _this6 = this;
+      var _this7 = this;
 
       // Set flag that shuffle is currently in motion.
       this.isTransitioning = true;
 
       // Create an array of functions to be called.
       var callbacks = transitions.map(function (obj) {
-        return _this6._getTransitionFunction(obj);
+        return _this7._getTransitionFunction(obj);
       });
 
       index$3(callbacks, this._movementFinished.bind(this));
@@ -1541,7 +1508,7 @@ var Shuffle = function () {
   }, {
     key: '_styleImmediately',
     value: function _styleImmediately(objects) {
-      var _this7 = this;
+      var _this8 = this;
 
       if (objects.length) {
         var elements = objects.map(function (obj) {
@@ -1550,7 +1517,7 @@ var Shuffle = function () {
 
         Shuffle._skipTransitions(elements, function () {
           objects.forEach(function (obj) {
-            obj.item.applyCss(_this7._getStylesForTransition(obj));
+            obj.item.applyCss(_this8._getStylesForTransition(obj));
             obj.callback();
           });
         });
@@ -1561,11 +1528,6 @@ var Shuffle = function () {
     value: function _movementFinished() {
       this._transitions.length = 0;
       this.isTransitioning = false;
-      this._dispatchLayout();
-    }
-  }, {
-    key: '_dispatchLayout',
-    value: function _dispatchLayout() {
       this._dispatch(Shuffle.EventType.LAYOUT);
     }
 
@@ -1671,7 +1633,7 @@ var Shuffle = function () {
   }, {
     key: 'add',
     value: function add(newItems) {
-      var items = index$1(newItems).map(function (el) {
+      var items = arrayUnique(newItems).map(function (el) {
         return new ShuffleItem(el);
       });
 
@@ -1721,30 +1683,29 @@ var Shuffle = function () {
   }, {
     key: 'remove',
     value: function remove(elements) {
-      var _this8 = this;
+      var _this9 = this;
 
       if (!elements.length) {
         return;
       }
 
-      var collection = index$1(elements);
+      var collection = arrayUnique(elements);
 
       var oldItems = collection.map(function (element) {
-        return _this8.getItemByElement(element);
+        return _this9.getItemByElement(element);
       }).filter(function (item) {
         return !!item;
       });
 
       var handleLayout = function handleLayout() {
-        _this8.element.removeEventListener(Shuffle.EventType.LAYOUT, handleLayout);
-        _this8._disposeItems(oldItems);
+        _this9._disposeItems(oldItems);
 
         // Remove the collection in the callback
         collection.forEach(function (element) {
           element.parentNode.removeChild(element);
         });
 
-        _this8._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
+        _this9._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
       };
 
       // Hide collection first.
@@ -1760,11 +1721,11 @@ var Shuffle = function () {
       // Update the list of items here because `remove` could be called again
       // with an item that is in the process of being removed.
       this.items = this.items.filter(function (item) {
-        return !arrayIncludes(oldItems, item);
+        return !oldItems.includes(item);
       });
       this._updateItemCount();
 
-      this.element.addEventListener(Shuffle.EventType.LAYOUT, handleLayout);
+      this.once(Shuffle.EventType.LAYOUT, handleLayout);
     }
 
     /**
@@ -1901,7 +1862,7 @@ var Shuffle = function () {
     }
   }]);
   return Shuffle;
-}();
+}(index);
 
 Shuffle.ShuffleItem = ShuffleItem;
 

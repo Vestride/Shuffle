@@ -1,9 +1,8 @@
-import 'custom-event-polyfill';
+import TinyEmitter from 'tiny-emitter';
 import matches from 'matches-selector';
-import arrayUnique from 'array-uniq';
-import xtend from 'xtend';
 import throttle from 'throttleit';
 import parallel from 'array-parallel';
+
 import Point from './point';
 import ShuffleItem from './shuffle-item';
 import Classes from './classes';
@@ -13,18 +12,14 @@ import { onTransitionEnd, cancelTransitionEnd } from './on-transition-end';
 import { getItemPosition, getColumnSpan, getAvailablePositions, getShortColumn } from './layout';
 import arrayMax from './array-max';
 
-function toArray(arrayLike) {
-  return Array.prototype.slice.call(arrayLike);
-}
-
-function arrayIncludes(array, obj) {
-  return array.indexOf(obj) > -1;
+function arrayUnique(x) {
+  return Array.from(new Set(x));
 }
 
 // Used for unique instance variables
 let id = 0;
 
-class Shuffle {
+class Shuffle extends TinyEmitter {
 
   /**
    * Categorize, sort, and filter a responsive grid of items.
@@ -34,7 +29,8 @@ class Shuffle {
    * @constructor
    */
   constructor(element, options = {}) {
-    this.options = xtend(Shuffle.options, options);
+    super();
+    this.options = Object.assign({}, Shuffle.options, options);
 
     this.useSizer = false;
     this.lastSort = {};
@@ -235,7 +231,7 @@ class Shuffle {
           JSON.parse(attr);
 
     function testCategory(category) {
-      return arrayIncludes(keys, category);
+      return keys.includes(category);
     }
 
     if (Array.isArray(category)) {
@@ -245,7 +241,7 @@ class Shuffle {
       return category.every(testCategory);
     }
 
-    return arrayIncludes(keys, category);
+    return keys.includes(category);
   }
 
   /**
@@ -313,7 +309,7 @@ class Shuffle {
   }
 
   _getItems() {
-    return toArray(this.element.children)
+    return Array.from(this.element.children)
       .filter(el => matches(el, this.options.itemSelector))
       .map(el => new ShuffleItem(el));
   }
@@ -445,19 +441,17 @@ class Shuffle {
   }
 
   /**
-   * @return {boolean} Whether the event was prevented or not.
+   * Emit an event from this instance.
+   * @param {string} name Event name.
+   * @param {Object} [data={}] Optional object data.
    */
-  _dispatch(name, details = {}) {
+  _dispatch(name, data = {}) {
     if (this.isDestroyed) {
-      return false;
+      return;
     }
 
-    details.shuffle = this;
-    return !this.element.dispatchEvent(new CustomEvent(name, {
-      bubbles: true,
-      cancelable: false,
-      detail: details,
-    }));
+    data.shuffle = this;
+    this.emit(name, data);
   }
 
   /**
@@ -502,9 +496,9 @@ class Shuffle {
       item.point = pos;
       item.scale = ShuffleItem.Scale.VISIBLE;
 
-      // Use xtend here to clone the object so that the `before` object isn't
-      // modified when the transition delay is added.
-      const styles = xtend(ShuffleItem.Css.VISIBLE.before);
+      // Clone the object so that the `before` object isn't modified when the
+      // transition delay is added.
+      const styles = Object.assign({}, ShuffleItem.Css.VISIBLE.before);
       styles.transitionDelay = this._getStaggerAmount(count) + 'ms';
 
       this._queue.push({
@@ -560,7 +554,7 @@ class Shuffle {
 
       item.scale = ShuffleItem.Scale.HIDDEN;
 
-      const styles = xtend(ShuffleItem.Css.HIDDEN.before);
+      const styles = Object.assign({}, ShuffleItem.Css.HIDDEN.before);
       styles.transitionDelay = this._getStaggerAmount(count) + 'ms';
 
       this._queue.push({
@@ -664,13 +658,13 @@ class Shuffle {
       this._startTransitions(this._queue);
     } else if (hasQueue) {
       this._styleImmediately(this._queue);
-      this._dispatchLayout();
+      this._dispatch(Shuffle.EventType.LAYOUT);
 
     // A call to layout happened, but none of the newly visible items will
     // change position or the transition duration is zero, which will not trigger
     // the transitionend event.
     } else {
-      this._dispatchLayout();
+      this._dispatch(Shuffle.EventType.LAYOUT);
     }
 
     // Remove everything in the style queue
@@ -723,10 +717,6 @@ class Shuffle {
   _movementFinished() {
     this._transitions.length = 0;
     this.isTransitioning = false;
-    this._dispatchLayout();
-  }
-
-  _dispatchLayout() {
     this._dispatch(Shuffle.EventType.LAYOUT);
   }
 
@@ -865,7 +855,6 @@ class Shuffle {
       .filter(item => !!item);
 
     const handleLayout = () => {
-      this.element.removeEventListener(Shuffle.EventType.LAYOUT, handleLayout);
       this._disposeItems(oldItems);
 
       // Remove the collection in the callback
@@ -888,10 +877,10 @@ class Shuffle {
 
     // Update the list of items here because `remove` could be called again
     // with an item that is in the process of being removed.
-    this.items = this.items.filter(item => !arrayIncludes(oldItems, item));
+    this.items = this.items.filter(item => !oldItems.includes(item));
     this._updateItemCount();
 
-    this.element.addEventListener(Shuffle.EventType.LAYOUT, handleLayout);
+    this.once(Shuffle.EventType.LAYOUT, handleLayout);
   }
 
   /**

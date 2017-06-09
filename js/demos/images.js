@@ -1,4 +1,4 @@
-var Shuffle = window.shuffle;
+var Shuffle = window.Shuffle;
 
 window.myShuffle = new Shuffle(document.querySelector('.my-grid-with-images'), {
   itemSelector: '.js-item',

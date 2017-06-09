@@ -1,6 +1,6 @@
 'use strict';
 
-var Shuffle = window.shuffle;
+var Shuffle = window.Shuffle;
 var Viewport = window.Viewport;
 
 var Demo = function () {

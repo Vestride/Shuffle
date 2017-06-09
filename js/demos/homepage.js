@@ -1,17 +1,17 @@
 'use strict';
 
-var Shuffle = window.shuffle;
+var Shuffle = window.Shuffle;
 
 var Demo = function (element) {
   this.element = element;
-
-  // Log out events.
-  this.addShuffleEventListeners();
 
   this.shuffle = new Shuffle(element, {
     itemSelector: '.picture-item',
     sizer: element.querySelector('.my-sizer-element'),
   });
+
+  // Log events.
+  this.addShuffleEventListeners();
 
   this._activeFilters = [];
 
@@ -36,16 +36,16 @@ Demo.prototype.toggleMode = function () {
 
 /**
  * Shuffle uses the CustomEvent constructor to dispatch events. You can listen
- * for them like you normally would (with jQuery for example). The extra event
- * data is in the `detail` property.
+ * for them like you normally would (with jQuery for example).
  */
 Demo.prototype.addShuffleEventListeners = function () {
-  var handler = function (event) {
-    console.log('type: %s', event.type, 'detail:', event.detail);
-  };
+  this.shuffle.on(Shuffle.EventType.LAYOUT, function (data) {
+    console.log('layout. data:', data);
+  });
 
-  this.element.addEventListener(Shuffle.EventType.LAYOUT, handler, false);
-  this.element.addEventListener(Shuffle.EventType.REMOVED, handler, false);
+  this.shuffle.on(Shuffle.EventType.REMOVED, function (data) {
+    console.log('removed. data:', data);
+  });
 };
 
 Demo.prototype.addFilterButtons = function () {

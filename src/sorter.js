@@ -1,5 +1,3 @@
-import xtend from 'xtend';
-
 /**
  * Fisher-Yates shuffle.
  * http://stackoverflow.com/a/962890/373422
@@ -38,7 +36,7 @@ const defaults = {
 
 // You can return `undefined` from the `by` function to revert to DOM order.
 export default function sorter(arr, options) {
-  const opts = xtend(defaults, options);
+  const opts = Object.assign({}, defaults, options);
   const original = [].slice.call(arr);
   let revert = false;
 

@@ -8,7 +8,7 @@ var sinon = window.sinon;
 
 describe('shuffle', function () {
 
-  var Shuffle = window.shuffle;
+  var Shuffle = window.Shuffle;
   var fixtures = {};
   var fixture;
   var instance;
@@ -60,19 +60,6 @@ describe('shuffle', function () {
 
     instance = null;
     fixture = null;
-  }
-
-  function once(element, eventType, fn) {
-    var handler = function (e) {
-      element.removeEventListener(eventType, handler);
-      fn(e);
-    };
-
-    element.addEventListener(eventType, handler);
-  }
-
-  function toArray(thing) {
-    return Array.prototype.slice.call(thing);
   }
 
   function id(id) {
@@ -128,13 +115,13 @@ describe('shuffle', function () {
       instance.items.forEach(function (item) {
         expect(item.element).to.have.class('shuffle-item');
         expect(item.element).to.have.class('shuffle-item--visible');
-        expect(item.element.style.opacity).to.be.defined;
+        expect(item.element.style.opacity).to.be.exist;
         expect(item.element.style.position).to.equal('absolute');
         expect(item.element.style.visibility).to.equal('visible');
         expect(item.isVisible).to.equal(true);
         expect(item.scale).to.equal(Shuffle.ShuffleItem.Scale.VISIBLE);
-        expect(item.point.x).to.be.defined;
-        expect(item.point.y).to.be.defined;
+        expect(item.point.x).to.be.exist;
+        expect(item.point.y).to.be.exist;
       });
     });
 
@@ -237,7 +224,7 @@ describe('shuffle', function () {
           expect(element.style.visibility).to.equal('visible');
         });
 
-        once(fixture, Shuffle.EventType.LAYOUT, third);
+        instance.once(Shuffle.EventType.LAYOUT, third);
 
         // Filter by green.
         instance.filter('green');
@@ -266,7 +253,7 @@ describe('shuffle', function () {
         done();
       }
 
-      once(fixture, Shuffle.EventType.LAYOUT, second);
+      instance.once(Shuffle.EventType.LAYOUT, second);
       instance.filter('design');
     });
 
@@ -399,7 +386,7 @@ describe('shuffle', function () {
 
       expect(fixture).to.not.have.class('shuffle');
 
-      toArray(fixture.children).forEach(function (child) {
+      Array.from(fixture.children).forEach(function (child) {
         expect(child).to.not.have.class('shuffle-item');
         expect(child).to.not.have.class('shuffle-item--visible');
         expect(child).to.not.have.class('shuffle-item--hidden');
@@ -438,7 +425,7 @@ describe('shuffle', function () {
       var children;
 
       beforeEach(function () {
-        children = toArray(fixture.children);
+        children = Array.from(fixture.children);
       });
 
       afterEach(function () {
@@ -450,12 +437,11 @@ describe('shuffle', function () {
           speed: 16,
         });
 
-        once(fixture, Shuffle.EventType.REMOVED, function (evt) {
-          var detail = evt.detail;
-          expect(detail.shuffle.visibleItems).to.equal(8);
-          expect(detail.collection[0].id).to.equal('item1');
-          expect(detail.collection[1].id).to.equal('item2');
-          expect(detail.shuffle.element.children).to.have.lengthOf(8);
+        instance.once(Shuffle.EventType.REMOVED, function (data) {
+          expect(data.shuffle.visibleItems).to.equal(8);
+          expect(data.collection[0].id).to.equal('item1');
+          expect(data.collection[1].id).to.equal('item2');
+          expect(data.shuffle.element.children).to.have.lengthOf(8);
           expect(instance.isTransitioning).to.be.false;
           done();
         });
@@ -470,13 +456,12 @@ describe('shuffle', function () {
           useTransforms: false,
         });
 
-        once(fixture, Shuffle.EventType.REMOVED, function (evt) {
-          var detail = evt.detail;
-          expect(detail.shuffle.visibleItems).to.equal(8);
-          expect(detail.collection[0].id).to.equal('item2');
-          expect(detail.collection[1].id).to.equal('item3');
-          expect(detail.shuffle.element.children).to.have.lengthOf(8);
-          expect(detail.shuffle.isTransitioning).to.be.false;
+        instance.once(Shuffle.EventType.REMOVED, function (data) {
+          expect(data.shuffle.visibleItems).to.equal(8);
+          expect(data.collection[0].id).to.equal('item2');
+          expect(data.collection[1].id).to.equal('item3');
+          expect(data.shuffle.element.children).to.have.lengthOf(8);
+          expect(data.shuffle.isTransitioning).to.be.false;
           done();
         });
 
@@ -539,7 +524,7 @@ describe('shuffle', function () {
       });
 
       afterEach(function (done) {
-        once(fixture, Shuffle.EventType.LAYOUT, function () {
+        instance.once(Shuffle.EventType.LAYOUT, function () {
           items.length = 0;
           done();
         });
@@ -632,11 +617,11 @@ describe('shuffle', function () {
 
     beforeEach(function (done) {
       appendFixture('regular').then(function () {
-        items = toArray(fixture.children).map(function (element) {
+        items = Array.from(fixture.children).map(function (element) {
           return { element: element };
         });
 
-        clone = toArray(items);
+        clone = Array.from(items);
 
         done();
       });
@@ -656,7 +641,7 @@ describe('shuffle', function () {
       expect(items).to.have.lengthOf(10);
       expect(Shuffle.__sorter(items)).to.deep.equal(items);
 
-      var clone = toArray(items);
+      var clone = Array.from(items);
       expect(Shuffle.__sorter(clone, { randomize: true })).to.not.deep.equal(items);
     });
 

@@ -22,7 +22,7 @@ Demo.prototype.onAppendBoxes = function () {
 </div>
 
 <h3>Removing elements</h3>
-<p>Shuffle will animate the element away and then remove it from the DOM once it's finished. It will then emit the <code>Shuffle.EventType.REMOVED</code> custom event with the array of elements in <code>event.detail.collection</code>.</p>
+<p>Shuffle will animate the element away and then remove it from the DOM once it's finished. It will then emit the <code>Shuffle.EventType.REMOVED</code> event with the array of elements in <code>event.collection</code>.</p>
 <div class="code-block">
   <pre rel="JavaScript"><code class="language-javascript">this.shuffle.remove([element1, element2]);</code></pre>
 </div>
