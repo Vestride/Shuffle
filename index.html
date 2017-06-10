@@ -28,7 +28,6 @@ prism: true
   </div>
 </section>
 
-
 <section id="demo">
   <div class="container">
     <div class="row">
@@ -199,18 +198,17 @@ prism: true
       <div class="col-12@sm">
         <h2>Dependencies<a href="#dependencies"></a></h2>
         <p>Shuffle's <a href="{{ site.baseurl }}/package.json">dependencies</a> are bundled with the dist file.</p>
-        <p>Shuffle does, however, expect the following ES6/7 features: <code>Set</code>, <code>Array.from</code>, <code>Object.assign</code>, and <code>Array.prototype.includes</code>. In order to support browsers like IE11 and Safari 8, you must include a polyfill for these features. You can use a service like <a href="https://polyfill.io">polyfill.io</a> to only load the polyfills that specific browser needs, or a polyfill script like <a href="https://www.npmjs.com/package/babel-polyfill">babel-polyfill</a> (which uses <code>core-js</code> internally).</p>
+        <p id="polyfills">Shuffle does, however, expect the following ES6/7 features: <code>Set</code>, <code>Array.from</code>, <code>Object.assign</code>, and <code>Array.prototype.includes</code>. In order to support browsers like IE11 and Safari 8, you must include a polyfill for these features. You can use a service like <a href="https://polyfill.io">polyfill.io</a> to only load the polyfills that specific browser needs, or a polyfill script like <a href="https://www.npmjs.com/package/babel-polyfill">babel-polyfill</a> (which uses <code>core-js</code> internally).</p>
       </div>
     </div>
   </div>
 </section>
 
-
-<section id="browsers">
+<section id="supported-browsers">
   <div class="container">
     <div class="row">
       <div class="col-12@sm">
-        <h2>Supported Browsers<a href="#browsers"></a></h2>
+        <h2>Supported Browsers<a href="#supported-browsers"></a></h2>
 
         <ul>
           <li>Chrome</li>
@@ -220,7 +218,7 @@ prism: true
           <li>Safari</li>
         </ul>
 
-        <p>Support for other browsers may be added with polyfills for ES5 features. If you require broader browser support, use the most recent <code>v3</code> release of Shuffle.</p>
+        <p>Depending on what browsers you support, you may <a href="#polyfills">need to polyfill features</a>.</p>
       </div>
     </div>
   </div>
@@ -242,7 +240,6 @@ prism: true
     </div>
   </div>
 </section>
-
 
 <section id="changelog">
   <div class="container">

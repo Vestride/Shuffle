@@ -76,6 +76,15 @@ class Shuffle extends TinyEmitter {
     this._onResize = this._getResizeFunction();
     window.addEventListener('resize', this._onResize);
 
+    // If the page has not already emitted the `load` event, call layout on load.
+    if (document.readyState !== 'complete') {
+      const layout = this.layout.bind(this);
+      window.addEventListener('load', function onLoad() {
+        window.removeEventListener('load', onLoad);
+        layout();
+      });
+    }
+
     // Get container css all in one request. Causes reflow
     const containerCss = window.getComputedStyle(this.element, null);
     const containerWidth = Shuffle.getSize(this.element).width;
@@ -921,6 +930,7 @@ class Shuffle extends TinyEmitter {
     // Set a flag so if a debounced resize has been triggered,
     // it can first check if it is actually isDestroyed and not doing anything
     this.isDestroyed = true;
+    this.isEnabled = false;
   }
 
   /**
