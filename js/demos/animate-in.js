@@ -1,7 +1,6 @@
 'use strict';
 
 var Shuffle = window.Shuffle;
-var Viewport = window.Viewport;
 
 var Demo = function () {
   this.element = document.getElementById('grid');
@@ -13,7 +12,15 @@ var Demo = function () {
     sizer: sizer,
   });
 
-  this.addViewportItems();
+  var callback = this.showItemsInViewport.bind(this);
+  this.observer = new window.IntersectionObserver(callback, {
+    threshold: 0.5,
+  });
+
+  // Loop through each grid item and add it to the viewport watcher.
+  for (var i = 0; i < this.gridItems.length; i++) {
+    this.observer.observe(this.gridItems[i]);
+  }
 
   // Add the transition class to the items after ones that are in the viewport
   // have received the `in` class.
@@ -23,23 +30,14 @@ var Demo = function () {
 };
 
 /**
- * Loop through each grid item and add it to the viewport watcher.
- */
-Demo.prototype.addViewportItems = function () {
-  for (var i = 0; i < this.gridItems.length; i++) {
-    Viewport.add({
-      element: this.gridItems[i],
-      threshold: 130,
-      enter: this.showItemsInViewport,
-    });
-  }
-};
-
-/**
  * Add the `in` class to the element after it comes into view.
  */
-Demo.prototype.showItemsInViewport = function () {
-  this.classList.add('in');
+Demo.prototype.showItemsInViewport = function (changes) {
+  changes.forEach(function (change) {
+    if (change.isIntersecting) {
+      change.target.classList.add('in');
+    }
+  });
 };
 
 /**
