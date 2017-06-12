@@ -586,14 +586,6 @@ class Shuffle extends TinyEmitter {
       return;
     }
 
-    // Will need to check height in the future if it's layed out horizontaly
-    const containerWidth = Shuffle.getSize(this.element).width;
-
-    // containerWidth hasn't changed, don't do anything
-    if (containerWidth === this.containerWidth) {
-      return;
-    }
-
     this.update();
   }
 

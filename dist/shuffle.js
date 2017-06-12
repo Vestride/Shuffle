@@ -1364,14 +1364,6 @@ var Shuffle = function (_TinyEmitter) {
         return;
       }
 
-      // Will need to check height in the future if it's layed out horizontaly
-      var containerWidth = Shuffle.getSize(this.element).width;
-
-      // containerWidth hasn't changed, don't do anything
-      if (containerWidth === this.containerWidth) {
-        return;
-      }
-
       this.update();
     }
 

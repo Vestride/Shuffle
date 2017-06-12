@@ -30,6 +30,11 @@
     "label": "Bootstrap 3 Grid Demo"
   },
   {
+    "url": "demos/2017-06-12-flexbox-grid",
+    "slug": "flexbox-grid",
+    "label": "Flexbox Grid (Bootstrap 4)"
+  },
+  {
     "url": "demos/2014-04-09-requirejs",
     "slug": "requirejs",
     "label": "RequireJS with Shuffle"

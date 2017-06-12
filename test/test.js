@@ -412,13 +412,13 @@ describe('shuffle', function () {
       expect(update.called).to.be.false;
     });
 
-    it('should not update when the container is the same size', function () {
+    it('should still update when the container is the same size', function () {
       instance = new Shuffle(fixture);
       var update = sinon.spy(instance, 'update');
 
       instance._onResize();
 
-      expect(update.called).to.be.false;
+      expect(update.called).to.be.true;
     });
 
     describe('removing elements', function () {
