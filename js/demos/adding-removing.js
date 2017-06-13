@@ -32,6 +32,7 @@ Demo.prototype.setupEvents = function () {
   document.querySelector('#randomize').addEventListener('click', this.onRandomize.bind(this));
   document.querySelector('#remove').addEventListener('click', this.onRemoveClick.bind(this));
   document.querySelector('#sorter').addEventListener('change', this.onSortChange.bind(this));
+  this.shuffle.element.addEventListener('click', this.onContainerClick.bind(this));
 
   // Show off some shuffle events
   this.shuffle.on(Shuffle.EventType.REMOVED, function (data) {
@@ -45,14 +46,12 @@ Demo.prototype.setupEvents = function () {
  * @return {Array.<Element>} Array of elements.
  */
 Demo.prototype._generateBoxes = function (itemsToCreate) {
-  // Creating random elements. You could use an
-  // ajax request or clone elements instead
+  // Creating random elements. You could use an ajax request or clone elements instead.
   var items = [];
-  var classes = ['w2', 'h2', 'w3'];
+  var modifierClasses = ['w2', 'h2', 'w3'];
   var i = 0;
 
   for (i = 0; i < itemsToCreate; i++) {
-    var randomClass;
     var random = Math.random();
     var box = document.createElement('div');
     box.className = 'box';
@@ -61,8 +60,8 @@ Demo.prototype._generateBoxes = function (itemsToCreate) {
 
     // Randomly add a class
     if (random > 0.8) {
-      randomClass = Math.floor(Math.random() * 3);
-      box.className = box.className + ' ' + classes[randomClass];
+      var randomClass = Math.floor(Math.random() * 3);
+      box.className = box.className + ' ' + modifierClasses[randomClass];
     }
 
     items.push(box);
@@ -71,6 +70,10 @@ Demo.prototype._generateBoxes = function (itemsToCreate) {
   return items;
 };
 
+/**
+ * Return an array of elements which have already been added to the DOM.
+ * @return {Array.<Element>}
+ */
 Demo.prototype._getArrayOfElementsToAdd = function () {
   return this._generateBoxes(5);
 };
@@ -135,18 +138,18 @@ Demo.prototype.getRandomColor = function () {
 // Randomly choose some elements to remove
 Demo.prototype.onRemoveClick = function () {
   var total = this.shuffle.visibleItems;
-  var numberToRemove = Math.min(3, total);
-  var indexesToRemove = [];
-  var i = 0;
 
   // None left
   if (!total) {
     return;
   }
 
+  var numberToRemove = Math.min(3, total);
+  var indexesToRemove = [];
+
   // This has the possibility to choose the same index for more than
   // one in the array, meaning sometimes less than 3 will be removed
-  for (; i < numberToRemove; i++) {
+  for (var i = 0; i < numberToRemove; i++) {
     indexesToRemove.push(this.getRandomInt(0, total - 1));
   }
 
@@ -195,6 +198,22 @@ Demo.prototype.sortBy = function (value) {
 
   // Filter elements
   this.shuffle.sort(sortOptions);
+};
+
+/**
+ * Remove a shuffle item when it's clicked.
+ * @param {Object} event Event object.
+ */
+Demo.prototype.onContainerClick = function (event) {
+  // Bail in older browsers. https://caniuse.com/#feat=element-closest
+  if (typeof event.target.closest !== 'function') {
+    return;
+  }
+
+  var element = event.target.closest('.box');
+  if (element !== null) {
+    this.shuffle.remove([element]);
+  }
 };
 
 document.addEventListener('DOMContentLoaded', function () {
