@@ -304,6 +304,7 @@ var ShuffleItem = function () {
       this.isVisible = true;
       this.element.classList.remove(Classes.HIDDEN);
       this.element.classList.add(Classes.VISIBLE);
+      this.element.removeAttribute('aria-hidden');
     }
   }, {
     key: 'hide',
@@ -311,6 +312,7 @@ var ShuffleItem = function () {
       this.isVisible = false;
       this.element.classList.remove(Classes.VISIBLE);
       this.element.classList.add(Classes.HIDDEN);
+      this.element.setAttribute('aria-hidden', true);
     }
   }, {
     key: 'init',
@@ -463,7 +465,7 @@ var defaults$1 = {
 // You can return `undefined` from the `by` function to revert to DOM order.
 function sorter(arr, options) {
   var opts = Object.assign({}, defaults$1, options);
-  var original = [].slice.call(arr);
+  var original = Array.from(arr);
   var revert = false;
 
   if (!arr.length) {
@@ -748,13 +750,15 @@ var Shuffle = function (_TinyEmitter) {
       this.element.classList.add(Shuffle.Classes.BASE);
 
       // Set initial css for each item
-      this._initItems();
+      this._initItems(this.items);
 
       // Bind resize events
       this._onResize = this._getResizeFunction();
       window.addEventListener('resize', this._onResize);
 
       // If the page has not already emitted the `load` event, call layout on load.
+      // This avoids layout issues caused by images and fonts loading after the
+      // instance has been initialized.
       if (document.readyState !== 'complete') {
         var layout = this.layout.bind(this);
         window.addEventListener('load', function onLoad() {
@@ -782,7 +786,7 @@ var Shuffle = function (_TinyEmitter) {
       // First, however, a synchronous layout must be caused for the previous
       // styles to be applied without transitions.
       this.element.offsetWidth; // eslint-disable-line no-unused-expressions
-      this._setTransitions();
+      this.setItemTransitions(this.items);
       this.element.style.transition = 'height ' + this.options.speed + 'ms ' + this.options.easing;
     }
 
@@ -973,15 +977,13 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Set the initial css for each item
-     * @param {Array.<ShuffleItem>} [items] Optionally specifiy at set to initialize.
+     * @param {Array.<ShuffleItem>} items Set to initialize.
      * @private
      */
 
   }, {
     key: '_initItems',
-    value: function _initItems() {
-      var items = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.items;
-
+    value: function _initItems(items) {
       items.forEach(function (item) {
         item.init();
       });
@@ -989,14 +991,13 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Remove element reference and styles.
+     * @param {Array.<ShuffleItem>} items Set to dispose.
      * @private
      */
 
   }, {
     key: '_disposeItems',
-    value: function _disposeItems() {
-      var items = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.items;
-
+    value: function _disposeItems(items) {
       items.forEach(function (item) {
         item.dispose();
       });
@@ -1018,14 +1019,12 @@ var Shuffle = function (_TinyEmitter) {
      * at the same time as `item.init` so that transitions don't occur upon
      * initialization of Shuffle.
      * @param {Array.<ShuffleItem>} items Shuffle items to set transitions on.
-     * @private
+     * @protected
      */
 
   }, {
-    key: '_setTransitions',
-    value: function _setTransitions() {
-      var items = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.items;
-
+    key: 'setItemTransitions',
+    value: function setItemTransitions(items) {
       var speed = this.options.speed;
       var easing = this.options.easing;
 
@@ -1050,15 +1049,16 @@ var Shuffle = function (_TinyEmitter) {
     /**
      * When new elements are added to the shuffle container, update the array of
      * items because that is the order `_layout` calls them.
+     * @param {Array.<ShuffleItem>} items Items to track.
      */
 
   }, {
-    key: '_updateItemsOrder',
-    value: function _updateItemsOrder() {
-      var children = this.element.children;
-      this.items = sorter(this.items, {
+    key: '_saveNewItems',
+    value: function _saveNewItems(items) {
+      var children = Array.from(this.element.children);
+      this.items = sorter(this.items.concat(items), {
         by: function by(element) {
-          return Array.prototype.indexOf.call(children, element);
+          return children.indexOf(element);
         }
       });
     }
@@ -1371,12 +1371,12 @@ var Shuffle = function (_TinyEmitter) {
      * Returns styles which will be applied to the an item for a transition.
      * @param {Object} obj Transition options.
      * @return {!Object} Transforms for transitions, left/top for animate.
-     * @private
+     * @protected
      */
 
   }, {
-    key: '_getStylesForTransition',
-    value: function _getStylesForTransition(_ref2) {
+    key: 'getStylesForTransition',
+    value: function getStylesForTransition(_ref2) {
       var item = _ref2.item,
           styles = _ref2.styles;
 
@@ -1429,7 +1429,7 @@ var Shuffle = function (_TinyEmitter) {
       var _this6 = this;
 
       return function (done) {
-        opts.item.applyCss(_this6._getStylesForTransition(opts));
+        opts.item.applyCss(_this6.getStylesForTransition(opts));
         _this6._whenTransitionDone(opts.item.element, opts.callback, done);
       };
     }
@@ -1518,7 +1518,7 @@ var Shuffle = function (_TinyEmitter) {
 
         Shuffle._skipTransitions(elements, function () {
           objects.forEach(function (obj) {
-            obj.item.applyCss(_this8._getStylesForTransition(obj));
+            obj.item.applyCss(_this8.getStylesForTransition(obj));
             obj.callback();
           });
         });
@@ -1564,13 +1564,13 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Gets the visible elements, sorts them, and passes them to layout.
-     * @param {Object} opts the options object for the sorted plugin
+     * @param {Object} sortOptions The options object to pass to `sorter`.
      */
 
   }, {
     key: 'sort',
     value: function sort() {
-      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.lastSort;
+      var sortOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.lastSort;
 
       if (!this.isEnabled) {
         return;
@@ -1578,8 +1578,7 @@ var Shuffle = function (_TinyEmitter) {
 
       this._resetCols();
 
-      var items = this._getFilteredItems();
-      items = sorter(items, opts);
+      var items = sorter(this._getFilteredItems(), sortOptions);
 
       this._layout(items);
 
@@ -1590,7 +1589,7 @@ var Shuffle = function (_TinyEmitter) {
       // Adjust the height of the container.
       this._setContainerSize();
 
-      this.lastSort = opts;
+      this.lastSort = sortOptions;
     }
 
     /**
@@ -1642,11 +1641,12 @@ var Shuffle = function (_TinyEmitter) {
       this._initItems(items);
 
       // Add transition to each item.
-      this._setTransitions(items);
+      this.setItemTransitions(items);
 
       // Update the list of items.
-      this.items = this.items.concat(items);
-      this._updateItemsOrder();
+      this._saveNewItems(items);
+
+      // Update layout/visibility of new and old items.
       this.filter(this.lastFilter);
     }
 
@@ -1738,13 +1738,9 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'getItemByElement',
     value: function getItemByElement(element) {
-      for (var i = this.items.length - 1; i >= 0; i--) {
-        if (this.items[i].element === element) {
-          return this.items[i];
-        }
-      }
-
-      return null;
+      return this.items.find(function (item) {
+        return item.element === element;
+      });
     }
 
     /**
@@ -1762,13 +1758,14 @@ var Shuffle = function (_TinyEmitter) {
       this.element.removeAttribute('style');
 
       // Reset individual item styles
-      this._disposeItems();
+      this._disposeItems(this.items);
+
+      this.items.length = 0;
+      this._transitions.length = 0;
 
       // Null DOM references
-      this.items = null;
       this.options.sizer = null;
       this.element = null;
-      this._transitions = null;
 
       // Set a flag so if a debounced resize has been triggered,
       // it can first check if it is actually isDestroyed and not doing anything
@@ -1853,7 +1850,7 @@ var Shuffle = function (_TinyEmitter) {
 
       callback();
 
-      // Cause reflow.
+      // Cause forced synchronous layout.
       elements[0].offsetWidth; // eslint-disable-line no-unused-expressions
 
       // Put the duration back

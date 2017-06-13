@@ -37,7 +37,7 @@ const defaults = {
 // You can return `undefined` from the `by` function to revert to DOM order.
 export default function sorter(arr, options) {
   const opts = Object.assign({}, defaults, options);
-  const original = [].slice.call(arr);
+  const original = Array.from(arr);
   let revert = false;
 
   if (!arr.length) {

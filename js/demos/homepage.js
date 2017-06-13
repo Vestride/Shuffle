@@ -22,10 +22,6 @@ var Demo = function (element) {
   this.mode = 'exclusive';
 };
 
-Demo.prototype.toArray = function (arrayLike) {
-  return Array.prototype.slice.call(arrayLike);
-};
-
 Demo.prototype.toggleMode = function () {
   if (this.mode === 'additive') {
     this.mode = 'exclusive';
@@ -55,9 +51,7 @@ Demo.prototype.addFilterButtons = function () {
     return;
   }
 
-  var filterButtons = this.toArray(
-    options.children
-  );
+  var filterButtons = Array.prototype.slice.call(options.children);
 
   filterButtons.forEach(function (button) {
     button.addEventListener('click', this._handleFilterClick.bind(this), false);

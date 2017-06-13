@@ -380,7 +380,7 @@ describe('shuffle', function () {
       instance.destroy();
 
       expect(instance.element).to.be.null;
-      expect(instance.items).to.be.null;
+      expect(instance.items).to.have.lengthOf(0);
       expect(instance.options.sizer).to.be.null;
       expect(instance.isDestroyed).to.be.true;
 

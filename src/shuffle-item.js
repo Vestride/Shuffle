@@ -15,12 +15,14 @@ class ShuffleItem {
     this.isVisible = true;
     this.element.classList.remove(Classes.HIDDEN);
     this.element.classList.add(Classes.VISIBLE);
+    this.element.removeAttribute('aria-hidden');
   }
 
   hide() {
     this.isVisible = false;
     this.element.classList.remove(Classes.VISIBLE);
     this.element.classList.add(Classes.HIDDEN);
+    this.element.setAttribute('aria-hidden', true);
   }
 
   init() {

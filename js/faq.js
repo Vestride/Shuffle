@@ -35,7 +35,7 @@
   };
 
   Questions.prototype.setHeights = function () {
-    var elements = [].slice.call(this.questions);
+    var elements = Array.prototype.slice.call(this.questions);
 
     elements.forEach(function (element) {
       element.style.height = '';
@@ -56,4 +56,3 @@
 
   new Questions();
 }());
-
