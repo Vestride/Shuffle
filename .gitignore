@@ -5,3 +5,6 @@ _site
 .sass-cache
 .jekyll-metadata
 *.scssc
+
+# https://github.com/sindresorhus/ama/issues/479#issuecomment-310661514
+package-lock.json
