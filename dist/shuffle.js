@@ -71,7 +71,7 @@ E.prototype = {
 
 var index = E;
 
-var proto = Element.prototype;
+var proto = typeof Element !== 'undefined' ? Element.prototype : {};
 var vendor = proto.matches
   || proto.matchesSelector
   || proto.webkitMatchesSelector
@@ -91,6 +91,7 @@ var index$1 = match;
  */
 
 function match(el, selector) {
+  if (!el || el.nodeType !== 1) return false;
   if (vendor) return vendor.call(el, selector);
   var nodes = el.parentNode.querySelectorAll(selector);
   for (var i = 0; i < nodes.length; i++) {
@@ -1667,9 +1668,11 @@ var Shuffle = function (_TinyEmitter) {
 
   }, {
     key: 'enable',
-    value: function enable(isUpdateLayout) {
+    value: function enable() {
+      var isUpdateLayout = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
       this.isEnabled = true;
-      if (isUpdateLayout !== false) {
+      if (isUpdateLayout) {
         this.update();
       }
     }
@@ -1741,6 +1744,36 @@ var Shuffle = function (_TinyEmitter) {
       return this.items.find(function (item) {
         return item.element === element;
       });
+    }
+
+    /**
+     * Dump the elements currently stored and reinitialize all child elements which
+     * match the `itemSelector`.
+     */
+
+  }, {
+    key: 'resetItems',
+    value: function resetItems() {
+      var _this10 = this;
+
+      // Remove refs to current items.
+      this._disposeItems(this.items);
+      this.isInitialized = false;
+
+      // Find new items in the DOM.
+      this.items = this._getItems();
+
+      // Set initial styles on the new items.
+      this._initItems(this.items);
+
+      this.once(Shuffle.EventType.LAYOUT, function () {
+        // Add transition to each item.
+        _this10.setItemTransitions(_this10.items);
+        _this10.isInitialized = true;
+      });
+
+      // Lay out all items.
+      this.sort();
     }
 
     /**

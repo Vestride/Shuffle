@@ -19,7 +19,8 @@
   "scripts": {
     "compile": "gulp scripts",
     "css": "gulp css",
-    "gulp": "gulp && npm run css",
+    "gulp": "gulp",
+    "build": "npm run gulp && npm run css",
     "serve": "gulp jekyll",
     "test": "eslint src && gulp test",
     "watch": "gulp watch"

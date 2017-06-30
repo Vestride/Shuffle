@@ -18,7 +18,7 @@
 
 {% if page.extraJS && page.extraJS.length %}
 {% for src in page.extraJS %}
-<script src="{{ site.baseurl }}/js/{{ src }}"></script>
+<script src="{{ site.baseurl }}/js/{{ src }}"{% if page.jsType %} type="{{ page.jsType }}"{% endif %}></script>
 {% endfor %}
 {% endif %}
 

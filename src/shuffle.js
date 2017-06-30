@@ -835,9 +835,9 @@ class Shuffle extends TinyEmitter {
    * Enables shuffle again
    * @param {boolean} [isUpdateLayout=true] if undefined, shuffle will update columns and gutters
    */
-  enable(isUpdateLayout) {
+  enable(isUpdateLayout = true) {
     this.isEnabled = true;
-    if (isUpdateLayout !== false) {
+    if (isUpdateLayout) {
       this.update();
     }
   }
@@ -895,6 +895,31 @@ class Shuffle extends TinyEmitter {
    */
   getItemByElement(element) {
     return this.items.find(item => item.element === element);
+  }
+
+  /**
+   * Dump the elements currently stored and reinitialize all child elements which
+   * match the `itemSelector`.
+   */
+  resetItems() {
+    // Remove refs to current items.
+    this._disposeItems(this.items);
+    this.isInitialized = false;
+
+    // Find new items in the DOM.
+    this.items = this._getItems();
+
+    // Set initial styles on the new items.
+    this._initItems(this.items);
+
+    this.once(Shuffle.EventType.LAYOUT, () => {
+      // Add transition to each item.
+      this.setItemTransitions(this.items);
+      this.isInitialized = true;
+    });
+
+    // Lay out all items.
+    this.sort();
   }
 
   /**

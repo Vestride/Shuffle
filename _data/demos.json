@@ -37,7 +37,12 @@
   {
     "url": "demos/2014-04-09-requirejs",
     "slug": "requirejs",
-    "label": "RequireJS with Shuffle"
+    "label": "Shuffle with RequireJS"
+  },
+  {
+    "url": "demos/2017-06-29-shuffle-with-react",
+    "slug": "shuffle-with-react",
+    "label": "Shuffle with React"
   },
   {
     "external": true,

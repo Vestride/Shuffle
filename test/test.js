@@ -523,14 +523,11 @@ describe('shuffle', function () {
         });
       });
 
-      afterEach(function (done) {
-        instance.once(Shuffle.EventType.LAYOUT, function () {
-          items.length = 0;
-          done();
-        });
+      afterEach(function () {
+        items.length = 0;
       });
 
-      it('can add items', function () {
+      it('can add items', function (done) {
         fixture.appendChild(items[0]);
         fixture.appendChild(items[1]);
         instance.add(items);
@@ -538,9 +535,13 @@ describe('shuffle', function () {
         // Already 2 in the items, plus number 11.
         expect(instance.visibleItems).to.equal(3);
         expect(instance.items).to.have.lengthOf(12);
+
+        instance.once(Shuffle.EventType.LAYOUT, function () {
+          done();
+        });
       });
 
-      it('can prepend items', function () {
+      it('can prepend items', function (done) {
         fixture.insertBefore(items[1], fixture.firstElementChild);
         fixture.insertBefore(items[0], fixture.firstElementChild);
         instance.add(items);
@@ -548,6 +549,23 @@ describe('shuffle', function () {
         expect(instance.items[0].element).to.equal(items[0]);
         expect(instance.items[1].element).to.equal(items[1]);
         expect(instance.items).to.have.lengthOf(12);
+
+        instance.once(Shuffle.EventType.LAYOUT, function () {
+          done();
+        });
+      });
+
+      it('can reset items', function () {
+        fixture.textContent = '';
+        fixture.appendChild(items[0]);
+        fixture.appendChild(items[1]);
+
+        instance.resetItems();
+
+        expect(instance.isInitialized).to.be.true;
+        expect(instance.items[0].element).to.equal(items[0]);
+        expect(instance.items[1].element).to.equal(items[1]);
+        expect(instance.items).to.have.lengthOf(2);
       });
 
     });
