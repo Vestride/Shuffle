@@ -731,6 +731,105 @@ function getItemPosition(_ref) {
   return point;
 }
 
+/**
+ * This method attempts to center items. This method could potentially be slow
+ * with a large number of items because it must place items, then check every
+ * previous item to ensure there is no overlap.
+ * @param {Array.<Rect>} itemRects Item data objects.
+ * @param {number} containerWidth Width of the containing element.
+ * @return {Array.<Point>}
+ */
+function getCenteredPositions(itemRects, containerWidth) {
+  var rowMap = {};
+
+  // Populate rows by their offset because items could jump between rows like:
+  // a   c
+  //  bbb
+  itemRects.forEach(function (itemRect) {
+    if (rowMap[itemRect.top]) {
+      // Push the point to the last row array.
+      rowMap[itemRect.top].push(itemRect);
+    } else {
+      // Start of a new row.
+      rowMap[itemRect.top] = [itemRect];
+    }
+  });
+
+  // For each row, find the end of the last item, then calculate
+  // the remaining space by dividing it by 2. Then add that
+  // offset to the x position of each point.
+  var rects = [];
+  var rows = [];
+  var centeredRows = [];
+  Object.keys(rowMap).forEach(function (key) {
+    var itemRects = rowMap[key];
+    rows.push(itemRects);
+    var lastItem = itemRects[itemRects.length - 1];
+    var end = lastItem.left + lastItem.width;
+    var offset = Math.round((containerWidth - end) / 2);
+
+    var finalRects = itemRects;
+    var canMove = false;
+    if (offset > 0) {
+      var newRects = [];
+      canMove = itemRects.every(function (r) {
+        var newRect = new Rect(r.left + offset, r.top, r.width, r.height, r.id);
+
+        // Check all current rects to make sure none overlap.
+        var noOverlap = !rects.some(function (r) {
+          return Rect.intersects(newRect, r);
+        });
+
+        newRects.push(newRect);
+        return noOverlap;
+      });
+
+      // If none of the rectangles overlapped, the whole group can be centered.
+      if (canMove) {
+        finalRects = newRects;
+      }
+    }
+
+    // If the items are not going to be offset, ensure that the original
+    // placement for this row will not overlap previous rows (row-spanning
+    // elements could be in the way).
+    if (!canMove) {
+      var intersectingRect = void 0;
+      var hasOverlap = itemRects.some(function (itemRect) {
+        return rects.some(function (r) {
+          var intersects = Rect.intersects(itemRect, r);
+          if (intersects) {
+            intersectingRect = r;
+          }
+          return intersects;
+        });
+      });
+
+      // If there is any overlap, replace the overlapping row with the original.
+      if (hasOverlap) {
+        var rowIndex = centeredRows.findIndex(function (items) {
+          return items.includes(intersectingRect);
+        });
+        centeredRows.splice(rowIndex, 1, rows[rowIndex]);
+      }
+    }
+
+    rects = rects.concat(finalRects);
+    centeredRows.push(finalRects);
+  });
+
+  // Reduce array of arrays to a single array of points.
+  // https://stackoverflow.com/a/10865042/373422
+  // Then reset sort back to how the items were passed to this method.
+  // Remove the wrapper object with index, map to a Point.
+  return [].concat.apply([], centeredRows) // eslint-disable-line prefer-spread
+  .sort(function (a, b) {
+    return a.id - b.id;
+  }).map(function (itemRect) {
+    return new Point(itemRect.left, itemRect.top);
+  });
+}
+
 function arrayUnique(x) {
   return Array.from(new Set(x));
 }
@@ -1355,7 +1454,7 @@ var Shuffle = function (_TinyEmitter) {
           return new Rect(point.x, point.y, itemSize.width, itemSize.height, i);
         });
 
-        return this.getTransformedPositions(itemsData);
+        return this.getTransformedPositions(itemsData, this.containerWidth);
       }
 
       // If no transforms are going to happen, simply return an array of the
@@ -1386,81 +1485,17 @@ var Shuffle = function (_TinyEmitter) {
     }
 
     /**
-     * Mutate positions before they're applied. This method attempts to center
-     * items, however, it does not work with column-spanning items.
+     * Mutate positions before they're applied.
      * @param {Array.<Rect>} itemRects Item data objects.
+     * @param {number} containerWidth Width of the containing element.
      * @return {Array.<Point>}
      * @protected
      */
 
   }, {
     key: 'getTransformedPositions',
-    value: function getTransformedPositions(itemRects) {
-      var _this6 = this;
-
-      var rows = {};
-
-      // Populate rows by their offset because items could jump between rows like:
-      // a   c
-      //  bbb
-      itemRects.forEach(function (itemRect) {
-        if (rows[itemRect.top]) {
-          // Push the point to the last row array.
-          rows[itemRect.top].push(itemRect);
-        } else {
-          // Start of a new row.
-          rows[itemRect.top] = [itemRect];
-        }
-      });
-
-      // For each row, find the end of the last item, then calculate
-      // the remaining space by dividing it by 2. Then add that
-      // offset to the x position of each point.
-      var rects = [];
-      var centered = Object.keys(rows).map(function (key) {
-        var itemRects = rows[key];
-        var lastItem = itemRects[itemRects.length - 1];
-        var end = lastItem.left + lastItem.width;
-        var offset = Math.round((_this6.containerWidth - end) / 2);
-
-        var newRects = [];
-        var ok = itemRects.every(function (r) {
-          var newRect = new Rect(r.left + offset, r.top, r.width, r.height, r.id);
-
-          // Check all current rects to make sure none overlap.
-          var noOverlap = rects.every(function (rect) {
-            return !Rect.intersects(newRect, rect);
-          });
-
-          if (noOverlap) {
-            newRects.push(newRect);
-          }
-
-          return noOverlap;
-        });
-
-        // This assumes that the original position will be okay, even if other
-        // items are moved above it, which can lead to overlaps. In order to fix
-        // this, getItemPosition would need to realize when it goes to a new row
-        // and adjust the items above it before choosing a position for the current
-        // item...
-
-        // If none of the rectangles overlapped, the whole group can be centered.
-        var finalRects = ok ? newRects : itemRects;
-        rects = rects.concat(finalRects);
-        return finalRects;
-      });
-
-      // Reduce array of arrays to a single array of points.
-      // https://stackoverflow.com/a/10865042/373422
-      // Then reset sort back to how the items were passed to this method.
-      // Remove the wrapper object with index, map to a Point.
-      return [].concat.apply([], centered) // eslint-disable-line prefer-spread
-      .sort(function (a, b) {
-        return a.id - b.id;
-      }).map(function (itemRect) {
-        return new Point(itemRect.left, itemRect.top);
-      });
+    value: function getTransformedPositions(itemRects, containerWidth) {
+      return getCenteredPositions(itemRects, containerWidth);
     }
 
     /**
@@ -1472,7 +1507,7 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: '_shrink',
     value: function _shrink() {
-      var _this7 = this;
+      var _this6 = this;
 
       var collection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._getConcealedItems();
 
@@ -1497,9 +1532,9 @@ var Shuffle = function (_TinyEmitter) {
         item.scale = ShuffleItem.Scale.HIDDEN;
 
         var styles = Object.assign({}, ShuffleItem.Css.HIDDEN.before);
-        styles.transitionDelay = _this7._getStaggerAmount(count) + 'ms';
+        styles.transitionDelay = _this6._getStaggerAmount(count) + 'ms';
 
-        _this7._queue.push({
+        _this6._queue.push({
           item: item,
           styles: styles,
           callback: callback
@@ -1584,11 +1619,11 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: '_getTransitionFunction',
     value: function _getTransitionFunction(opts) {
-      var _this8 = this;
+      var _this7 = this;
 
       return function (done) {
-        opts.item.applyCss(_this8.getStylesForTransition(opts));
-        _this8._whenTransitionDone(opts.item.element, opts.callback, done);
+        opts.item.applyCss(_this7.getStylesForTransition(opts));
+        _this7._whenTransitionDone(opts.item.element, opts.callback, done);
       };
     }
 
@@ -1633,14 +1668,14 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: '_startTransitions',
     value: function _startTransitions(transitions) {
-      var _this9 = this;
+      var _this8 = this;
 
       // Set flag that shuffle is currently in motion.
       this.isTransitioning = true;
 
       // Create an array of functions to be called.
       var callbacks = transitions.map(function (obj) {
-        return _this9._getTransitionFunction(obj);
+        return _this8._getTransitionFunction(obj);
       });
 
       index$3(callbacks, this._movementFinished.bind(this));
@@ -1667,7 +1702,7 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: '_styleImmediately',
     value: function _styleImmediately(objects) {
-      var _this10 = this;
+      var _this9 = this;
 
       if (objects.length) {
         var elements = objects.map(function (obj) {
@@ -1676,7 +1711,7 @@ var Shuffle = function (_TinyEmitter) {
 
         Shuffle._skipTransitions(elements, function () {
           objects.forEach(function (obj) {
-            obj.item.applyCss(_this10.getStylesForTransition(obj));
+            obj.item.applyCss(_this9.getStylesForTransition(obj));
             obj.callback();
           });
         });
@@ -1844,7 +1879,7 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'remove',
     value: function remove(elements) {
-      var _this11 = this;
+      var _this10 = this;
 
       if (!elements.length) {
         return;
@@ -1853,20 +1888,20 @@ var Shuffle = function (_TinyEmitter) {
       var collection = arrayUnique(elements);
 
       var oldItems = collection.map(function (element) {
-        return _this11.getItemByElement(element);
+        return _this10.getItemByElement(element);
       }).filter(function (item) {
         return !!item;
       });
 
       var handleLayout = function handleLayout() {
-        _this11._disposeItems(oldItems);
+        _this10._disposeItems(oldItems);
 
         // Remove the collection in the callback
         collection.forEach(function (element) {
           element.parentNode.removeChild(element);
         });
 
-        _this11._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
+        _this10._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
       };
 
       // Hide collection first.
@@ -1911,7 +1946,7 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'resetItems',
     value: function resetItems() {
-      var _this12 = this;
+      var _this11 = this;
 
       // Remove refs to current items.
       this._disposeItems(this.items);
@@ -1925,8 +1960,8 @@ var Shuffle = function (_TinyEmitter) {
 
       this.once(Shuffle.EventType.LAYOUT, function () {
         // Add transition to each item.
-        _this12.setItemTransitions(_this12.items);
-        _this12.isInitialized = true;
+        _this11.setItemTransitions(_this11.items);
+        _this11.isInitialized = true;
       });
 
       // Lay out all items.
@@ -2151,6 +2186,7 @@ Shuffle.__sorter = sorter;
 Shuffle.__getColumnSpan = getColumnSpan;
 Shuffle.__getAvailablePositions = getAvailablePositions;
 Shuffle.__getShortColumn = getShortColumn;
+Shuffle.__getCenteredPositions = getCenteredPositions;
 
 return Shuffle;
 

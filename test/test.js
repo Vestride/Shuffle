@@ -304,6 +304,42 @@ describe('shuffle', function () {
       expect(Shuffle.__getAvailablePositions(positions, 2, 4)).to.deep.equal([150, 0, 0]);
     });
 
+    it('can center already-positioned items', function() {
+      // 4-2-1 even heights
+      expect(Shuffle.__getCenteredPositions([
+        new Shuffle.__Rect(0, 0, 250, 100, 0),
+        new Shuffle.__Rect(250, 0, 250, 100, 1),
+        new Shuffle.__Rect(500, 0, 250, 100, 2),
+        new Shuffle.__Rect(750, 0, 250, 100, 3),
+        new Shuffle.__Rect(0, 100, 600, 100, 4),
+        new Shuffle.__Rect(600, 100, 300, 100, 5),
+        new Shuffle.__Rect(0, 200, 250, 100, 6),
+      ], 1000)).to.deep.equal([
+        new Shuffle.__Point(0, 0),
+        new Shuffle.__Point(250, 0),
+        new Shuffle.__Point(500, 0),
+        new Shuffle.__Point(750, 0),
+        new Shuffle.__Point(50, 100),
+        new Shuffle.__Point(650, 100),
+        new Shuffle.__Point(375, 200),
+      ]);
+
+      // 4 columns:
+      // 2x2 1x1
+      // 2x1
+      // Centers the first row, but then finds that the 3rd item will overlap
+      // the 2x2 and resets the first row.
+      expect(Shuffle.__getCenteredPositions([
+        new Shuffle.__Rect(0, 0, 500, 200, 0),
+        new Shuffle.__Rect(500, 0, 250, 100, 1),
+        new Shuffle.__Rect(500, 100, 500, 100, 2),
+      ], 1000)).to.deep.equal([
+        new Shuffle.__Point(0, 0),
+        new Shuffle.__Point(500, 0),
+        new Shuffle.__Point(500, 100),
+      ]);
+    });
+
     it('can get an element option', function () {
       instance = new Shuffle(fixture);
       var first = fixture.firstElementChild;
