@@ -4,6 +4,7 @@ import throttle from 'throttleit';
 import parallel from 'array-parallel';
 
 import Point from './point';
+import Rect from './rect';
 import ShuffleItem from './shuffle-item';
 import Classes from './classes';
 import getNumberStyle from './get-number-style';
@@ -486,12 +487,13 @@ class Shuffle extends TinyEmitter {
    *     out in order in their array.
    */
   _layout(items) {
+    const itemPositions = this._getNextPositions(items);
+
     let count = 0;
-    items.forEach((item) => {
+    items.forEach((item, i) => {
       const currPos = item.point;
       const currScale = item.scale;
-      const itemSize = Shuffle.getSize(item.element, true);
-      const pos = this._getItemPosition(itemSize);
+      const nextPosition = itemPositions[i];
 
       function callback() {
         item.element.style.transitionDelay = '';
@@ -500,13 +502,13 @@ class Shuffle extends TinyEmitter {
 
       // If the item will not change its position, do not add it to the render
       // queue. Transitions don't fire when setting a property to the same value.
-      if (Point.equals(currPos, pos) && currScale === ShuffleItem.Scale.VISIBLE) {
+      if (Point.equals(currPos, nextPosition) && currScale === ShuffleItem.Scale.VISIBLE) {
         item.applyCss(ShuffleItem.Css.VISIBLE.before);
         callback();
         return;
       }
 
-      item.point = pos;
+      item.point = nextPosition;
       item.scale = ShuffleItem.Scale.VISIBLE;
 
       // Clone the object so that the `before` object isn't modified when the
@@ -525,6 +527,31 @@ class Shuffle extends TinyEmitter {
   }
 
   /**
+   * Return an array of Point instances representing the future positions of
+   * each item.
+   * @param {Array.<ShuffleItem>} items Array of sorted shuffle items.
+   * @return {Array.<Point>}
+   * @private
+   */
+  _getNextPositions(items) {
+    // If position data is going to be changed, add the item's size to the
+    // transformer to allow for calculations.
+    if (this.options.isCentered) {
+      const itemsData = items.map((item, i) => {
+        const itemSize = Shuffle.getSize(item.element, true);
+        const point = this._getItemPosition(itemSize);
+        return new Rect(point.x, point.y, itemSize.width, itemSize.height, i);
+      });
+
+      return this.getTransformedPositions(itemsData);
+    }
+
+    // If no transforms are going to happen, simply return an array of the
+    // future points of each item.
+    return items.map(item => this._getItemPosition(Shuffle.getSize(item.element, true)));
+  }
+
+  /**
    * Determine the location of the next item, based on its size.
    * @param {{width: number, height: number}} itemSize Object with width and height.
    * @return {Point}
@@ -539,6 +566,74 @@ class Shuffle extends TinyEmitter {
       threshold: this.options.columnThreshold,
       buffer: this.options.buffer,
     });
+  }
+
+  /**
+   * Mutate positions before they're applied. This method attempts to center
+   * items, however, it does not work with column-spanning items.
+   * @param {Array.<Rect>} itemRects Item data objects.
+   * @return {Array.<Point>}
+   * @protected
+   */
+  getTransformedPositions(itemRects) {
+    const rows = {};
+
+    // Populate rows by their offset because items could jump between rows like:
+    // a   c
+    //  bbb
+    itemRects.forEach((itemRect) => {
+      if (rows[itemRect.top]) {
+        // Push the point to the last row array.
+        rows[itemRect.top].push(itemRect);
+      } else {
+        // Start of a new row.
+        rows[itemRect.top] = [itemRect];
+      }
+    });
+
+    // For each row, find the end of the last item, then calculate
+    // the remaining space by dividing it by 2. Then add that
+    // offset to the x position of each point.
+    let rects = [];
+    const centered = Object.keys(rows).map((key) => {
+      const itemRects = rows[key];
+      const lastItem = itemRects[itemRects.length - 1];
+      const end = lastItem.left + lastItem.width;
+      const offset = Math.round((this.containerWidth - end) / 2);
+
+      const newRects = [];
+      const ok = itemRects.every((r) => {
+        const newRect = new Rect(r.left + offset, r.top, r.width, r.height, r.id);
+
+        // Check all current rects to make sure none overlap.
+        const noOverlap = rects.every(rect => !Rect.intersects(newRect, rect));
+
+        if (noOverlap) {
+          newRects.push(newRect);
+        }
+
+        return noOverlap;
+      });
+
+      // This assumes that the original position will be okay, even if other
+      // items are moved above it, which can lead to overlaps. In order to fix
+      // this, getItemPosition would need to realize when it goes to a new row
+      // and adjust the items above it before choosing a position for the current
+      // item...
+
+      // If none of the rectangles overlapped, the whole group can be centered.
+      const finalRects = ok ? newRects : itemRects;
+      rects = rects.concat(finalRects);
+      return finalRects;
+    });
+
+    // Reduce array of arrays to a single array of points.
+    // https://stackoverflow.com/a/10865042/373422
+    // Then reset sort back to how the items were passed to this method.
+    // Remove the wrapper object with index, map to a Point.
+    return [].concat.apply([], centered) // eslint-disable-line prefer-spread
+      .sort((a, b) => (a.id - b.id))
+      .map(itemRect => new Point(itemRect.left, itemRect.top));
   }
 
   /**
@@ -1117,10 +1212,14 @@ Shuffle.options = {
   // the element passes the test if any of its groups are in the array. With "all",
   // the element only passes if all groups are in the array.
   filterMode: Shuffle.FilterMode.ANY,
+
+  // Whether to center grid items in the row with the leftover space.
+  isCentered: false,
 };
 
 // Expose for testing. Hack at your own risk.
 Shuffle.__Point = Point;
+Shuffle.__Rect = Rect;
 Shuffle.__sorter = sorter;
 Shuffle.__getColumnSpan = getColumnSpan;
 Shuffle.__getAvailablePositions = getAvailablePositions;
