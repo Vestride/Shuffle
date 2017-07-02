@@ -39,7 +39,6 @@ class Shuffle extends TinyEmitter {
     super();
     this.options = Object.assign({}, Shuffle.options, options);
 
-    this.useSizer = false;
     this.lastSort = {};
     this.group = Shuffle.ALL_ITEMS;
     this.lastFilter = Shuffle.ALL_ITEMS;
@@ -68,10 +67,6 @@ class Shuffle extends TinyEmitter {
     this.items = this._getItems();
 
     this.options.sizer = this._getElementOption(this.options.sizer);
-
-    if (this.options.sizer) {
-      this.useSizer = true;
-    }
 
     // Add class and invalidate styles
     this.element.classList.add(Shuffle.Classes.BASE);
@@ -200,7 +195,7 @@ class Shuffle extends TinyEmitter {
   /**
    * Returns an object containing the visible and hidden elements.
    * @param {string|Function} category Category or function to filter by.
-   * @param {Array.<Element>} items A collection of items to filter.
+   * @param {Element[]} items A collection of items to filter.
    * @return {!{visible: Array, hidden: Array}}
    * @private
    */
@@ -279,7 +274,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Set the initial css for each item
-   * @param {Array.<ShuffleItem>} items Set to initialize.
+   * @param {ShuffleItem[]} items Set to initialize.
    * @private
    */
   _initItems(items) {
@@ -290,7 +285,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Remove element reference and styles.
-   * @param {Array.<ShuffleItem>} items Set to dispose.
+   * @param {ShuffleItem[]} items Set to dispose.
    * @private
    */
   _disposeItems(items) {
@@ -311,7 +306,7 @@ class Shuffle extends TinyEmitter {
    * Sets css transform transition on a group of elements. This is not executed
    * at the same time as `item.init` so that transitions don't occur upon
    * initialization of Shuffle.
-   * @param {Array.<ShuffleItem>} items Shuffle items to set transitions on.
+   * @param {ShuffleItem[]} items Shuffle items to set transitions on.
    * @protected
    */
   setItemTransitions(items) {
@@ -336,7 +331,7 @@ class Shuffle extends TinyEmitter {
   /**
    * When new elements are added to the shuffle container, update the array of
    * items because that is the order `_layout` calls them.
-   * @param {Array.<ShuffleItem>} items Items to track.
+   * @param {ShuffleItem[]} items Items to track.
    */
   _saveNewItems(items) {
     const children = Array.from(this.element.children);
@@ -370,7 +365,7 @@ class Shuffle extends TinyEmitter {
       size = this.options.columnWidth(containerWidth);
 
     // columnWidth option isn't a function, are they using a sizing element?
-    } else if (this.useSizer) {
+    } else if (this.options.sizer) {
       size = Shuffle.getSize(this.options.sizer).width;
 
     // if not, how about the explicitly set option?
@@ -404,7 +399,7 @@ class Shuffle extends TinyEmitter {
     let size;
     if (typeof this.options.gutterWidth === 'function') {
       size = this.options.gutterWidth(containerWidth);
-    } else if (this.useSizer) {
+    } else if (this.options.sizer) {
       size = getNumberStyle(this.options.sizer, 'marginLeft');
     } else {
       size = this.options.gutterWidth;
@@ -489,7 +484,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Loops through each item that should be shown and calculates the x, y position.
-   * @param {Array.<ShuffleItem>} items Array of items that will be shown/layed
+   * @param {ShuffleItem[]} items Array of items that will be shown/layed
    *     out in order in their array.
    */
   _layout(items) {
@@ -535,8 +530,8 @@ class Shuffle extends TinyEmitter {
   /**
    * Return an array of Point instances representing the future positions of
    * each item.
-   * @param {Array.<ShuffleItem>} items Array of sorted shuffle items.
-   * @return {Array.<Point>}
+   * @param {ShuffleItem[]} items Array of sorted shuffle items.
+   * @return {Point[]}
    * @private
    */
   _getNextPositions(items) {
@@ -576,9 +571,9 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Mutate positions before they're applied.
-   * @param {Array.<Rect>} itemRects Item data objects.
+   * @param {Rect[]} itemRects Item data objects.
    * @param {number} containerWidth Width of the containing element.
-   * @return {Array.<Point>}
+   * @return {Point[]}
    * @protected
    */
   getTransformedPositions(itemRects, containerWidth) {
@@ -587,7 +582,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Hides the elements that don't match our filter.
-   * @param {Array.<ShuffleItem>} collection Collection to shrink.
+   * @param {ShuffleItem[]} collection Collection to shrink.
    * @private
    */
   _shrink(collection = this._getConcealedItems()) {
@@ -722,7 +717,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Wait for each transition to finish, the emit the layout event.
-   * @param {Array.<Object>} transitions Array of transition objects.
+   * @param {Object[]} transitions Array of transition objects.
    */
   _startTransitions(transitions) {
     // Set flag that shuffle is currently in motion.
@@ -747,7 +742,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Apply styles without a transition.
-   * @param {Array.<Object>} objects Array of transition objects.
+   * @param {Object[]} objects Array of transition objects.
    * @private
    */
   _styleImmediately(objects) {
@@ -771,7 +766,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * The magic. This is what makes the plugin 'shuffle'
-   * @param {string|Function|Array.<string>} [category] Category to filter by.
+   * @param {string|Function|string[]} [category] Category to filter by.
    *     Can be a function, string, or array of strings.
    * @param {Object} [sortObj] A sort object which can sort the visible set
    */
@@ -823,10 +818,9 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Reposition everything.
-   * @param {boolean} isOnlyLayout If true, column and gutter widths won't be
-   *     recalculated.
+   * @param {boolean} [isOnlyLayout=false] If true, column and gutter widths won't be recalculated.
    */
-  update(isOnlyLayout) {
+  update(isOnlyLayout = false) {
     if (this.isEnabled) {
       if (!isOnlyLayout) {
         // Get updated colCount
@@ -850,7 +844,7 @@ class Shuffle extends TinyEmitter {
   /**
    * New items have been appended to shuffle. Mix them in with the current
    * filter or sort status.
-   * @param {Array.<Element>} newItems Collection of new items.
+   * @param {Element[]} newItems Collection of new items.
    */
   add(newItems) {
     const items = arrayUnique(newItems).map(el => new ShuffleItem(el));
@@ -887,10 +881,10 @@ class Shuffle extends TinyEmitter {
   }
 
   /**
-   * Remove 1 or more shuffle items
-   * @param {Array.<Element>} elements An array containing one or more
+   * Remove 1 or more shuffle items.
+   * @param {Element[]} elements An array containing one or more
    *     elements in shuffle
-   * @return {Shuffle} The shuffle object
+   * @return {Shuffle} The shuffle instance.
    */
   remove(elements) {
     if (!elements.length) {
@@ -935,7 +929,7 @@ class Shuffle extends TinyEmitter {
   /**
    * Retrieve a shuffle item by its element.
    * @param {Element} element Element to look for.
-   * @return {?ShuffleItem} A shuffle item or null if it's not found.
+   * @return {?ShuffleItem} A shuffle item or undefined if it's not found.
    */
   getItemByElement(element) {
     return this.items.find(item => item.element === element);
@@ -1012,10 +1006,10 @@ class Shuffle extends TinyEmitter {
    *   follow the W3C spec here.
    *
    * @param {Element} element The element.
-   * @param {boolean} [includeMargins] Whether to include margins. Default is false.
+   * @param {boolean} [includeMargins=false] Whether to include margins.
    * @return {{width: number, height: number}} The width and height.
    */
-  static getSize(element, includeMargins) {
+  static getSize(element, includeMargins = false) {
     // Store the styles so that they can be used by others without asking for it again.
     const styles = window.getComputedStyle(element, null);
     let width = getNumberStyle(element, 'width', styles);
@@ -1038,7 +1032,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Change a property or execute a function which will not have a transition
-   * @param {Array.<Element>} elements DOM elements that won't be transitioned.
+   * @param {Element[]} elements DOM elements that won't be transitioned.
    * @param {Function} callback A function which will be called while transition
    *     is set to 0ms.
    * @private
@@ -1080,9 +1074,7 @@ Shuffle.ShuffleItem = ShuffleItem;
 Shuffle.ALL_ITEMS = 'all';
 Shuffle.FILTER_ATTRIBUTE_KEY = 'groups';
 
-/**
- * @enum {string}
- */
+/** @enum {string} */
 Shuffle.EventType = {
   LAYOUT: 'shuffle:layout',
   REMOVED: 'shuffle:removed',
@@ -1091,9 +1083,7 @@ Shuffle.EventType = {
 /** @enum {string} */
 Shuffle.Classes = Classes;
 
-/**
- * @enum {string}
- */
+/** @enum {string} */
 Shuffle.FilterMode = {
   ANY: 'any',
   ALL: 'all',
@@ -1166,9 +1156,10 @@ Shuffle.options = {
   isCentered: false,
 };
 
+Shuffle.Point = Point;
+Shuffle.Rect = Rect;
+
 // Expose for testing. Hack at your own risk.
-Shuffle.__Point = Point;
-Shuffle.__Rect = Rect;
 Shuffle.__sorter = sorter;
 Shuffle.__getColumnSpan = getColumnSpan;
 Shuffle.__getAvailablePositions = getAvailablePositions;

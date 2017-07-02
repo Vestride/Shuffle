@@ -16,6 +16,7 @@
   ],
   "main": "dist/shuffle.js",
   "moduleSource": "src/shuffle.js",
+  "types": "index.d.ts",
   "scripts": {
     "compile": "gulp scripts",
     "css": "gulp css",
@@ -37,7 +38,8 @@
   "homepage": "https://github.com/Vestride/Shuffle",
   "files": [
     "dist",
-    "src"
+    "src",
+    "index.d.ts"
   ],
   "dependencies": {
     "array-parallel": "^0.1.3",

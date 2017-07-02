@@ -855,7 +855,6 @@ var Shuffle = function (_TinyEmitter) {
 
     _this.options = Object.assign({}, Shuffle.options, options);
 
-    _this.useSizer = false;
     _this.lastSort = {};
     _this.group = Shuffle.ALL_ITEMS;
     _this.lastFilter = Shuffle.ALL_ITEMS;
@@ -887,10 +886,6 @@ var Shuffle = function (_TinyEmitter) {
       this.items = this._getItems();
 
       this.options.sizer = this._getElementOption(this.options.sizer);
-
-      if (this.options.sizer) {
-        this.useSizer = true;
-      }
 
       // Add class and invalidate styles
       this.element.classList.add(Shuffle.Classes.BASE);
@@ -1032,7 +1027,7 @@ var Shuffle = function (_TinyEmitter) {
     /**
      * Returns an object containing the visible and hidden elements.
      * @param {string|Function} category Category or function to filter by.
-     * @param {Array.<Element>} items A collection of items to filter.
+     * @param {Element[]} items A collection of items to filter.
      * @return {!{visible: Array, hidden: Array}}
      * @private
      */
@@ -1123,7 +1118,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Set the initial css for each item
-     * @param {Array.<ShuffleItem>} items Set to initialize.
+     * @param {ShuffleItem[]} items Set to initialize.
      * @private
      */
 
@@ -1137,7 +1132,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Remove element reference and styles.
-     * @param {Array.<ShuffleItem>} items Set to dispose.
+     * @param {ShuffleItem[]} items Set to dispose.
      * @private
      */
 
@@ -1164,7 +1159,7 @@ var Shuffle = function (_TinyEmitter) {
      * Sets css transform transition on a group of elements. This is not executed
      * at the same time as `item.init` so that transitions don't occur upon
      * initialization of Shuffle.
-     * @param {Array.<ShuffleItem>} items Shuffle items to set transitions on.
+     * @param {ShuffleItem[]} items Shuffle items to set transitions on.
      * @protected
      */
 
@@ -1195,7 +1190,7 @@ var Shuffle = function (_TinyEmitter) {
     /**
      * When new elements are added to the shuffle container, update the array of
      * items because that is the order `_layout` calls them.
-     * @param {Array.<ShuffleItem>} items Items to track.
+     * @param {ShuffleItem[]} items Items to track.
      */
 
   }, {
@@ -1241,7 +1236,7 @@ var Shuffle = function (_TinyEmitter) {
         size = this.options.columnWidth(containerWidth);
 
         // columnWidth option isn't a function, are they using a sizing element?
-      } else if (this.useSizer) {
+      } else if (this.options.sizer) {
         size = Shuffle.getSize(this.options.sizer).width;
 
         // if not, how about the explicitly set option?
@@ -1278,7 +1273,7 @@ var Shuffle = function (_TinyEmitter) {
       var size = void 0;
       if (typeof this.options.gutterWidth === 'function') {
         size = this.options.gutterWidth(containerWidth);
-      } else if (this.useSizer) {
+      } else if (this.options.sizer) {
         size = getNumberStyle(this.options.sizer, 'marginLeft');
       } else {
         size = this.options.gutterWidth;
@@ -1384,7 +1379,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Loops through each item that should be shown and calculates the x, y position.
-     * @param {Array.<ShuffleItem>} items Array of items that will be shown/layed
+     * @param {ShuffleItem[]} items Array of items that will be shown/layed
      *     out in order in their array.
      */
 
@@ -1435,8 +1430,8 @@ var Shuffle = function (_TinyEmitter) {
     /**
      * Return an array of Point instances representing the future positions of
      * each item.
-     * @param {Array.<ShuffleItem>} items Array of sorted shuffle items.
-     * @return {Array.<Point>}
+     * @param {ShuffleItem[]} items Array of sorted shuffle items.
+     * @return {Point[]}
      * @private
      */
 
@@ -1486,9 +1481,9 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Mutate positions before they're applied.
-     * @param {Array.<Rect>} itemRects Item data objects.
+     * @param {Rect[]} itemRects Item data objects.
      * @param {number} containerWidth Width of the containing element.
-     * @return {Array.<Point>}
+     * @return {Point[]}
      * @protected
      */
 
@@ -1500,7 +1495,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Hides the elements that don't match our filter.
-     * @param {Array.<ShuffleItem>} collection Collection to shrink.
+     * @param {ShuffleItem[]} collection Collection to shrink.
      * @private
      */
 
@@ -1662,7 +1657,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Wait for each transition to finish, the emit the layout event.
-     * @param {Array.<Object>} transitions Array of transition objects.
+     * @param {Object[]} transitions Array of transition objects.
      */
 
   }, {
@@ -1695,7 +1690,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Apply styles without a transition.
-     * @param {Array.<Object>} objects Array of transition objects.
+     * @param {Object[]} objects Array of transition objects.
      * @private
      */
 
@@ -1727,7 +1722,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * The magic. This is what makes the plugin 'shuffle'
-     * @param {string|Function|Array.<string>} [category] Category to filter by.
+     * @param {string|Function|string[]} [category] Category to filter by.
      *     Can be a function, string, or array of strings.
      * @param {Object} [sortObj] A sort object which can sort the visible set
      */
@@ -1787,13 +1782,14 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Reposition everything.
-     * @param {boolean} isOnlyLayout If true, column and gutter widths won't be
-     *     recalculated.
+     * @param {boolean} [isOnlyLayout=false] If true, column and gutter widths won't be recalculated.
      */
 
   }, {
     key: 'update',
-    value: function update(isOnlyLayout) {
+    value: function update() {
+      var isOnlyLayout = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
       if (this.isEnabled) {
         if (!isOnlyLayout) {
           // Get updated colCount
@@ -1820,7 +1816,7 @@ var Shuffle = function (_TinyEmitter) {
     /**
      * New items have been appended to shuffle. Mix them in with the current
      * filter or sort status.
-     * @param {Array.<Element>} newItems Collection of new items.
+     * @param {Element[]} newItems Collection of new items.
      */
 
   }, {
@@ -1870,10 +1866,10 @@ var Shuffle = function (_TinyEmitter) {
     }
 
     /**
-     * Remove 1 or more shuffle items
-     * @param {Array.<Element>} elements An array containing one or more
+     * Remove 1 or more shuffle items.
+     * @param {Element[]} elements An array containing one or more
      *     elements in shuffle
-     * @return {Shuffle} The shuffle object
+     * @return {Shuffle} The shuffle instance.
      */
 
   }, {
@@ -1927,7 +1923,7 @@ var Shuffle = function (_TinyEmitter) {
     /**
      * Retrieve a shuffle item by its element.
      * @param {Element} element Element to look for.
-     * @return {?ShuffleItem} A shuffle item or null if it's not found.
+     * @return {?ShuffleItem} A shuffle item or undefined if it's not found.
      */
 
   }, {
@@ -2017,13 +2013,15 @@ var Shuffle = function (_TinyEmitter) {
      *   follow the W3C spec here.
      *
      * @param {Element} element The element.
-     * @param {boolean} [includeMargins] Whether to include margins. Default is false.
+     * @param {boolean} [includeMargins=false] Whether to include margins.
      * @return {{width: number, height: number}} The width and height.
      */
 
   }], [{
     key: 'getSize',
-    value: function getSize(element, includeMargins) {
+    value: function getSize(element) {
+      var includeMargins = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
       // Store the styles so that they can be used by others without asking for it again.
       var styles = window.getComputedStyle(element, null);
       var width = getNumberStyle(element, 'width', styles);
@@ -2046,7 +2044,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Change a property or execute a function which will not have a transition
-     * @param {Array.<Element>} elements DOM elements that won't be transitioned.
+     * @param {Element[]} elements DOM elements that won't be transitioned.
      * @param {Function} callback A function which will be called while transition
      *     is set to 0ms.
      * @private
@@ -2093,9 +2091,7 @@ Shuffle.ShuffleItem = ShuffleItem;
 Shuffle.ALL_ITEMS = 'all';
 Shuffle.FILTER_ATTRIBUTE_KEY = 'groups';
 
-/**
- * @enum {string}
- */
+/** @enum {string} */
 Shuffle.EventType = {
   LAYOUT: 'shuffle:layout',
   REMOVED: 'shuffle:removed'
@@ -2104,9 +2100,7 @@ Shuffle.EventType = {
 /** @enum {string} */
 Shuffle.Classes = Classes;
 
-/**
- * @enum {string}
- */
+/** @enum {string} */
 Shuffle.FilterMode = {
   ANY: 'any',
   ALL: 'all'
@@ -2179,9 +2173,10 @@ Shuffle.options = {
   isCentered: false
 };
 
+Shuffle.Point = Point;
+Shuffle.Rect = Rect;
+
 // Expose for testing. Hack at your own risk.
-Shuffle.__Point = Point;
-Shuffle.__Rect = Rect;
 Shuffle.__sorter = sorter;
 Shuffle.__getColumnSpan = getColumnSpan;
 Shuffle.__getAvailablePositions = getAvailablePositions;
