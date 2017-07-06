@@ -1191,13 +1191,14 @@ var Shuffle = function (_TinyEmitter) {
      * When new elements are added to the shuffle container, update the array of
      * items because that is the order `_layout` calls them.
      * @param {ShuffleItem[]} items Items to track.
+     * @return {Shuffle[]}
      */
 
   }, {
-    key: '_saveNewItems',
-    value: function _saveNewItems(items) {
+    key: '_mergeNewItems',
+    value: function _mergeNewItems(items) {
       var children = Array.from(this.element.children);
-      this.items = sorter(this.items.concat(items), {
+      return sorter(this.items.concat(items), {
         by: function by(element) {
           return children.indexOf(element);
         }
@@ -1822,6 +1823,8 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'add',
     value: function add(newItems) {
+      var _this10 = this;
+
       var items = arrayUnique(newItems).map(function (el) {
         return new ShuffleItem(el);
       });
@@ -1829,11 +1832,33 @@ var Shuffle = function (_TinyEmitter) {
       // Add classes and set initial positions.
       this._initItems(items);
 
+      // Determine which items will go with the current filter.
+      this._resetCols();
+      var newItemSet = this._filter(this.lastFilter, items);
+      var willBeVisible = this._mergeNewItems(newItemSet.visible);
+      var sortedVisibleItems = sorter(willBeVisible, this.lastSort);
+
+      // Layout all items again so that new items get positions.
+      // Synchonously apply positions.
+      var itemPositions = this._getNextPositions(sortedVisibleItems);
+      sortedVisibleItems.forEach(function (item, i) {
+        if (newItemSet.visible.includes(item)) {
+          item.point = itemPositions[i];
+          item.scale = ShuffleItem.Scale.HIDDEN;
+          item.applyCss(ShuffleItem.Css.HIDDEN.before);
+          item.applyCss(ShuffleItem.Css.HIDDEN.after);
+          item.applyCss(_this10.getStylesForTransition({ item: item, styles: {} }));
+        }
+      });
+
+      // Cause layout so that the styles above are applied.
+      this.element.offsetWidth; // eslint-disable-line no-unused-expressions
+
       // Add transition to each item.
       this.setItemTransitions(items);
 
       // Update the list of items.
-      this._saveNewItems(items);
+      this.items = this._mergeNewItems(items);
 
       // Update layout/visibility of new and old items.
       this.filter(this.lastFilter);
@@ -1875,7 +1900,7 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'remove',
     value: function remove(elements) {
-      var _this10 = this;
+      var _this11 = this;
 
       if (!elements.length) {
         return;
@@ -1884,20 +1909,20 @@ var Shuffle = function (_TinyEmitter) {
       var collection = arrayUnique(elements);
 
       var oldItems = collection.map(function (element) {
-        return _this10.getItemByElement(element);
+        return _this11.getItemByElement(element);
       }).filter(function (item) {
         return !!item;
       });
 
       var handleLayout = function handleLayout() {
-        _this10._disposeItems(oldItems);
+        _this11._disposeItems(oldItems);
 
         // Remove the collection in the callback
         collection.forEach(function (element) {
           element.parentNode.removeChild(element);
         });
 
-        _this10._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
+        _this11._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
       };
 
       // Hide collection first.
@@ -1942,7 +1967,7 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'resetItems',
     value: function resetItems() {
-      var _this11 = this;
+      var _this12 = this;
 
       // Remove refs to current items.
       this._disposeItems(this.items);
@@ -1956,8 +1981,8 @@ var Shuffle = function (_TinyEmitter) {
 
       this.once(Shuffle.EventType.LAYOUT, function () {
         // Add transition to each item.
-        _this11.setItemTransitions(_this11.items);
-        _this11.isInitialized = true;
+        _this12.setItemTransitions(_this12.items);
+        _this12.isInitialized = true;
       });
 
       // Lay out all items.
@@ -2159,7 +2184,7 @@ Shuffle.options = {
   staggerAmount: 15,
 
   // Maximum stagger delay in milliseconds.
-  staggerAmountMax: 250,
+  staggerAmountMax: 150,
 
   // Whether to use transforms or absolute positioning.
   useTransforms: true,
@@ -2169,7 +2194,7 @@ Shuffle.options = {
   // the element only passes if all groups are in the array.
   filterMode: Shuffle.FilterMode.ANY,
 
-  // Whether to center grid items in the row with the leftover space.
+  // Attempt to center grid items in each row.
   isCentered: false
 };
 

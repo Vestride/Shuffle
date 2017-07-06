@@ -332,10 +332,11 @@ class Shuffle extends TinyEmitter {
    * When new elements are added to the shuffle container, update the array of
    * items because that is the order `_layout` calls them.
    * @param {ShuffleItem[]} items Items to track.
+   * @return {Shuffle[]}
    */
-  _saveNewItems(items) {
+  _mergeNewItems(items) {
     const children = Array.from(this.element.children);
-    this.items = sorter(this.items.concat(items), {
+    return sorter(this.items.concat(items), {
       by(element) {
         return children.indexOf(element);
       },
@@ -852,11 +853,33 @@ class Shuffle extends TinyEmitter {
     // Add classes and set initial positions.
     this._initItems(items);
 
+    // Determine which items will go with the current filter.
+    this._resetCols();
+    const newItemSet = this._filter(this.lastFilter, items);
+    const willBeVisible = this._mergeNewItems(newItemSet.visible);
+    const sortedVisibleItems = sorter(willBeVisible, this.lastSort);
+
+    // Layout all items again so that new items get positions.
+    // Synchonously apply positions.
+    const itemPositions = this._getNextPositions(sortedVisibleItems);
+    sortedVisibleItems.forEach((item, i) => {
+      if (newItemSet.visible.includes(item)) {
+        item.point = itemPositions[i];
+        item.scale = ShuffleItem.Scale.HIDDEN;
+        item.applyCss(ShuffleItem.Css.HIDDEN.before);
+        item.applyCss(ShuffleItem.Css.HIDDEN.after);
+        item.applyCss(this.getStylesForTransition({ item, styles: {} }));
+      }
+    });
+
+    // Cause layout so that the styles above are applied.
+    this.element.offsetWidth; // eslint-disable-line no-unused-expressions
+
     // Add transition to each item.
     this.setItemTransitions(items);
 
     // Update the list of items.
-    this._saveNewItems(items);
+    this.items = this._mergeNewItems(items);
 
     // Update layout/visibility of new and old items.
     this.filter(this.lastFilter);
@@ -1142,7 +1165,7 @@ Shuffle.options = {
   staggerAmount: 15,
 
   // Maximum stagger delay in milliseconds.
-  staggerAmountMax: 250,
+  staggerAmountMax: 150,
 
   // Whether to use transforms or absolute positioning.
   useTransforms: true,
@@ -1152,7 +1175,7 @@ Shuffle.options = {
   // the element only passes if all groups are in the array.
   filterMode: Shuffle.FilterMode.ANY,
 
-  // Whether to center grid items in the row with the leftover space.
+  // Attempt to center grid items in each row.
   isCentered: false,
 };
 
