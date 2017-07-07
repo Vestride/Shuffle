@@ -13,10 +13,10 @@ const browsersList = [
 
 module.exports = function css() {
   return gulp.src([
-    './_scss/shuffle-styles.scss',
-    './_scss/style.scss',
+    './docs/_scss/shuffle-styles.scss',
+    './docs/_scss/style.scss',
   ])
   .pipe(sass())
   .pipe(postcss([autoprefixer({ browsers: browsersList })]))
-  .pipe(gulp.dest('./css/'));
+  .pipe(gulp.dest('./docs/css/'));
 };

@@ -14,8 +14,9 @@ prism: true
       <p>You can encounter problems when shuffle item dimensions depend on images. <a href="{{ site.baseurl }}{% post_url 2013-06-29-image-problems %}">Like this demo</a>. There are three good solutions to this.</p>
       <ol>
         <li>Set an explicit height on <code>.shuffle-item</code>s like the <a href="{{ site.baseurl }}{% post_url 2013-05-01-basic %}">basic demo</a>.</li>
-        <li>Similar to number 1, make the height of the image container a percentage of the width. If you know the aspect ratio of the images you're using, this is the technique you should use. This demo uses this technique.</li>
+        <li>Similar to number 1, make the height of the image container a percentage of the width. If you know the aspect ratio of the images you're using, this is the technique you should use. This demo uses that technique.</li>
         <li>Get notified when images load and call <code>myShuffleInstance.layout()</code>. I recommend using <a href="http://desandro.github.io/imagesloaded/">Desandro's images loaded plugin</a> to know when your images have finished loading.</li>
+        <li>Do nothing and let your shuffle instance call <code>layout()</code> on the <code>window</code>'s <code>load</code> event. This will the item layout to change on page load.</li>
       </ol>
     </div>
   </div>

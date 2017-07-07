@@ -3,19 +3,9 @@ destination: _site
 plugins_dir: _plugins
 layouts_dir: _layouts
 data_dir:    _data
-include:     ['.htaccess']
+include:     ["dist"]
 exclude:     [
-  '.github',
-  '_scss',
-  'coverage',
-  'node_modules',
-  'src',
-  'test',
-  'CONTRIBUTING.md',
-  'gulpfile.js',
-  'README.md',
-  'webpack.config.js',
-  'webpack.config.min.js'
+  './_scss',
 ]
 
 permalink: /:title
