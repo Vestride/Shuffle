@@ -15,7 +15,9 @@
       opacity: 1,
       visibility: 'visible',
     },
-    after: {},
+    after: {
+      transitionDelay: '',
+    },
   },
   HIDDEN: {
     before: {
@@ -23,6 +25,7 @@
     },
     after: {
       visibility: 'hidden',
+      transitionDelay: '',
     },
   },
 };
@@ -43,7 +46,7 @@ ShuffleItem.Scale = {
   <pre rel="JavaScript"><code class="language-javascript">Shuffle.ShuffleItem.Css.VISIBLE.after.color = 'teal';</code></pre>
 </div>
 
-<p>You can also customize the scaling effect with visible or hidden items, <strong>however</strong>, the <code>VISIBLE</code> and <code>HIDDEN</code> values <em>cannot</em> be the exact same.</p>
+<p>You can also customize the scaling effect with visible or hidden items.</p>
 
 <div class="code-block">
   <pre rel="JavaScript"><code class="language-javascript">Shuffle.ShuffleItem.Scale.HIDDEN = 0.5;</code></pre>

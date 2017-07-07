@@ -114,7 +114,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Returns a throttled and proxied function for the resize handler.
-   * @return {Function}
+   * @return {function}
    * @private
    */
   _getResizeFunction() {
@@ -167,11 +167,11 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Filter the elements by a category.
-   * @param {string} [category] Category to filter by. If it's given, the last
-   *     category will be used to filter the items.
+   * @param {string|string[]|function(Element):boolean} [category] Category to
+   *     filter by. If it's given, the last category will be used to filter the items.
    * @param {Array} [collection] Optionally filter a collection. Defaults to
    *     all the items.
-   * @return {!{visible: Array, hidden: Array}}
+   * @return {{visible: ShuffleItem[], hidden: ShuffleItem[]}}
    * @private
    */
   _filter(category = this.lastFilter, collection = this.items) {
@@ -194,9 +194,9 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Returns an object containing the visible and hidden elements.
-   * @param {string|Function} category Category or function to filter by.
-   * @param {Element[]} items A collection of items to filter.
-   * @return {!{visible: Array, hidden: Array}}
+   * @param {string|string[]|function(Element):boolean} category Category or function to filter by.
+   * @param {ShuffleItem[]} items A collection of items to filter.
+   * @return {{visible: ShuffleItem[], hidden: ShuffleItem[]}}
    * @private
    */
   _getFilteredSets(category, items) {
@@ -227,7 +227,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Test an item to see if it passes a category.
-   * @param {string|Function} category Category or function to filter by.
+   * @param {string|string[]|function():boolean} category Category or function to filter by.
    * @param {Element} element An element to test.
    * @return {boolean} Whether it passes the category/filter.
    * @private
@@ -305,17 +305,12 @@ class Shuffle extends TinyEmitter {
   /**
    * Sets css transform transition on a group of elements. This is not executed
    * at the same time as `item.init` so that transitions don't occur upon
-   * initialization of Shuffle.
+   * initialization of a new Shuffle instance.
    * @param {ShuffleItem[]} items Shuffle items to set transitions on.
    * @protected
    */
   setItemTransitions(items) {
-    const speed = this.options.speed;
-    const easing = this.options.easing;
-
-    const str = this.options.useTransforms ?
-      `transform ${speed}ms ${easing}, opacity ${speed}ms ${easing}` :
-      `top ${speed}ms ${easing}, left ${speed}ms ${easing}, opacity ${speed}ms ${easing}`;
+    const str = `all ${this.options.speed}ms ${this.options.easing}`;
 
     items.forEach((item) => {
       item.element.style.transition = str;
@@ -493,29 +488,25 @@ class Shuffle extends TinyEmitter {
 
     let count = 0;
     items.forEach((item, i) => {
-      const currPos = item.point;
-      const currScale = item.scale;
-      const nextPosition = itemPositions[i];
-
       function callback() {
-        item.element.style.transitionDelay = '';
         item.applyCss(ShuffleItem.Css.VISIBLE.after);
       }
 
       // If the item will not change its position, do not add it to the render
       // queue. Transitions don't fire when setting a property to the same value.
-      if (Point.equals(currPos, nextPosition) && currScale === ShuffleItem.Scale.VISIBLE) {
+      if (Point.equals(item.point, itemPositions[i]) && !item.isHidden) {
         item.applyCss(ShuffleItem.Css.VISIBLE.before);
         callback();
         return;
       }
 
-      item.point = nextPosition;
+      item.point = itemPositions[i];
       item.scale = ShuffleItem.Scale.VISIBLE;
+      item.isHidden = false;
 
       // Clone the object so that the `before` object isn't modified when the
       // transition delay is added.
-      const styles = Object.assign({}, ShuffleItem.Css.VISIBLE.before);
+      const styles = this.getStylesForTransition(item, ShuffleItem.Css.VISIBLE.before);
       styles.transitionDelay = this._getStaggerAmount(count) + 'ms';
 
       this._queue.push({
@@ -599,15 +590,16 @@ class Shuffle extends TinyEmitter {
       // The callback is executed here because it is not guaranteed to be called
       // after the transitionend event because the transitionend could be
       // canceled if another animation starts.
-      if (item.scale === ShuffleItem.Scale.HIDDEN) {
+      if (item.isHidden) {
         item.applyCss(ShuffleItem.Css.HIDDEN.before);
         callback();
         return;
       }
 
       item.scale = ShuffleItem.Scale.HIDDEN;
+      item.isHidden = true;
 
-      const styles = Object.assign({}, ShuffleItem.Css.HIDDEN.before);
+      const styles = this.getStylesForTransition(item, ShuffleItem.Css.HIDDEN.before);
       styles.transitionDelay = this._getStaggerAmount(count) + 'ms';
 
       this._queue.push({
@@ -635,23 +627,21 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Returns styles which will be applied to the an item for a transition.
-   * @param {Object} obj Transition options.
+   * @param {ShuffleItem} item Item to get styles for. Should have updated
+   *   scale and point properties.
+   * @param {Object} styleObject Extra styles that will be used in the transition.
    * @return {!Object} Transforms for transitions, left/top for animate.
    * @protected
    */
-  getStylesForTransition({ item, styles }) {
-    if (!styles.transitionDelay) {
-      styles.transitionDelay = '0ms';
-    }
-
-    const x = item.point.x;
-    const y = item.point.y;
+  getStylesForTransition(item, styleObject) {
+    // Clone the object to avoid mutating the original.
+    const styles = Object.assign({}, styleObject);
 
     if (this.options.useTransforms) {
-      styles.transform = `translate(${x}px, ${y}px) scale(${item.scale})`;
+      styles.transform = `translate(${item.point.x}px, ${item.point.y}px) scale(${item.scale})`;
     } else {
-      styles.left = x + 'px';
-      styles.top = y + 'px';
+      styles.left = item.point.x + 'px';
+      styles.top = item.point.y + 'px';
     }
 
     return styles;
@@ -661,8 +651,8 @@ class Shuffle extends TinyEmitter {
    * Listen for the transition end on an element and execute the itemCallback
    * when it finishes.
    * @param {Element} element Element to listen on.
-   * @param {Function} itemCallback Callback for the item.
-   * @param {Function} done Callback to notify `parallel` that this one is done.
+   * @param {function} itemCallback Callback for the item.
+   * @param {function} done Callback to notify `parallel` that this one is done.
    */
   _whenTransitionDone(element, itemCallback, done) {
     const id = onTransitionEnd(element, (evt) => {
@@ -677,11 +667,11 @@ class Shuffle extends TinyEmitter {
    * Return a function which will set CSS styles and call the `done` function
    * when (if) the transition finishes.
    * @param {Object} opts Transition object.
-   * @return {Function} A function to be called with a `done` function.
+   * @return {function} A function to be called with a `done` function.
    */
   _getTransitionFunction(opts) {
     return (done) => {
-      opts.item.applyCss(this.getStylesForTransition(opts));
+      opts.item.applyCss(opts.styles);
       this._whenTransitionDone(opts.item.element, opts.callback, done);
     };
   }
@@ -752,7 +742,7 @@ class Shuffle extends TinyEmitter {
 
       Shuffle._skipTransitions(elements, () => {
         objects.forEach((obj) => {
-          obj.item.applyCss(this.getStylesForTransition(obj));
+          obj.item.applyCss(obj.styles);
           obj.callback();
         });
       });
@@ -767,7 +757,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * The magic. This is what makes the plugin 'shuffle'
-   * @param {string|Function|string[]} [category] Category to filter by.
+   * @param {string|string[]|function(Element):boolean} [category] Category to filter by.
    *     Can be a function, string, or array of strings.
    * @param {Object} [sortObj] A sort object which can sort the visible set
    */
@@ -794,7 +784,7 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Gets the visible elements, sorts them, and passes them to layout.
-   * @param {Object} sortOptions The options object to pass to `sorter`.
+   * @param {Object} [sortOptions] The options object to pass to `sorter`.
    */
   sort(sortOptions = this.lastSort) {
     if (!this.isEnabled) {
@@ -868,7 +858,7 @@ class Shuffle extends TinyEmitter {
         item.scale = ShuffleItem.Scale.HIDDEN;
         item.applyCss(ShuffleItem.Css.HIDDEN.before);
         item.applyCss(ShuffleItem.Css.HIDDEN.after);
-        item.applyCss(this.getStylesForTransition({ item, styles: {} }));
+        item.applyCss(this.getStylesForTransition(item, {}));
       }
     });
 
@@ -1056,7 +1046,7 @@ class Shuffle extends TinyEmitter {
   /**
    * Change a property or execute a function which will not have a transition
    * @param {Element[]} elements DOM elements that won't be transitioned.
-   * @param {Function} callback A function which will be called while transition
+   * @param {function} callback A function which will be called while transition
    *     is set to 0ms.
    * @private
    */

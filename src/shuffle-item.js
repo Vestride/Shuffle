@@ -8,7 +8,19 @@ class ShuffleItem {
     id += 1;
     this.id = id;
     this.element = element;
+
+    /**
+     * Used to separate items for layout and shrink.
+     */
     this.isVisible = true;
+
+    /**
+     * Used to determine if a transition will happen. By the time the _layout
+     * and _shrink methods get the ShuffleItem instances, the `isVisible` value
+     * has already been changed by the separation methods, so this property is
+     * needed to know if the item was visible/hidden before the shrink/layout.
+     */
+    this.isHidden = false;
   }
 
   show() {
@@ -75,7 +87,9 @@ ShuffleItem.Css = {
       opacity: 1,
       visibility: 'visible',
     },
-    after: {},
+    after: {
+      transitionDelay: '',
+    },
   },
   HIDDEN: {
     before: {
@@ -83,6 +97,7 @@ ShuffleItem.Css = {
     },
     after: {
       visibility: 'hidden',
+      transitionDelay: '',
     },
   },
 };

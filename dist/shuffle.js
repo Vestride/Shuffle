@@ -342,7 +342,19 @@ var ShuffleItem = function () {
     id$1 += 1;
     this.id = id$1;
     this.element = element;
+
+    /**
+     * Used to separate items for layout and shrink.
+     */
     this.isVisible = true;
+
+    /**
+     * Used to determine if a transition will happen. By the time the _layout
+     * and _shrink methods get the ShuffleItem instances, the `isVisible` value
+     * has already been changed by the separation methods, so this property is
+     * needed to know if the item was visible/hidden before the shrink/layout.
+     */
+    this.isHidden = false;
   }
 
   createClass(ShuffleItem, [{
@@ -421,14 +433,17 @@ ShuffleItem.Css = {
       opacity: 1,
       visibility: 'visible'
     },
-    after: {}
+    after: {
+      transitionDelay: ''
+    }
   },
   HIDDEN: {
     before: {
       opacity: 0
     },
     after: {
-      visibility: 'hidden'
+      visibility: 'hidden',
+      transitionDelay: ''
     }
   }
 };
@@ -933,7 +948,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Returns a throttled and proxied function for the resize handler.
-     * @return {Function}
+     * @return {function}
      * @private
      */
 
@@ -993,11 +1008,11 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Filter the elements by a category.
-     * @param {string} [category] Category to filter by. If it's given, the last
-     *     category will be used to filter the items.
+     * @param {string|string[]|function(Element):boolean} [category] Category to
+     *     filter by. If it's given, the last category will be used to filter the items.
      * @param {Array} [collection] Optionally filter a collection. Defaults to
      *     all the items.
-     * @return {!{visible: Array, hidden: Array}}
+     * @return {{visible: ShuffleItem[], hidden: ShuffleItem[]}}
      * @private
      */
 
@@ -1026,9 +1041,9 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Returns an object containing the visible and hidden elements.
-     * @param {string|Function} category Category or function to filter by.
-     * @param {Element[]} items A collection of items to filter.
-     * @return {!{visible: Array, hidden: Array}}
+     * @param {string|string[]|function(Element):boolean} category Category or function to filter by.
+     * @param {ShuffleItem[]} items A collection of items to filter.
+     * @return {{visible: ShuffleItem[], hidden: ShuffleItem[]}}
      * @private
      */
 
@@ -1064,7 +1079,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Test an item to see if it passes a category.
-     * @param {string|Function} category Category or function to filter by.
+     * @param {string|string[]|function():boolean} category Category or function to filter by.
      * @param {Element} element An element to test.
      * @return {boolean} Whether it passes the category/filter.
      * @private
@@ -1158,7 +1173,7 @@ var Shuffle = function (_TinyEmitter) {
     /**
      * Sets css transform transition on a group of elements. This is not executed
      * at the same time as `item.init` so that transitions don't occur upon
-     * initialization of Shuffle.
+     * initialization of a new Shuffle instance.
      * @param {ShuffleItem[]} items Shuffle items to set transitions on.
      * @protected
      */
@@ -1166,10 +1181,7 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'setItemTransitions',
     value: function setItemTransitions(items) {
-      var speed = this.options.speed;
-      var easing = this.options.easing;
-
-      var str = this.options.useTransforms ? 'transform ' + speed + 'ms ' + easing + ', opacity ' + speed + 'ms ' + easing : 'top ' + speed + 'ms ' + easing + ', left ' + speed + 'ms ' + easing + ', opacity ' + speed + 'ms ' + easing;
+      var str = 'all ' + this.options.speed + 'ms ' + this.options.easing;
 
       items.forEach(function (item) {
         item.element.style.transition = str;
@@ -1393,29 +1405,25 @@ var Shuffle = function (_TinyEmitter) {
 
       var count = 0;
       items.forEach(function (item, i) {
-        var currPos = item.point;
-        var currScale = item.scale;
-        var nextPosition = itemPositions[i];
-
         function callback() {
-          item.element.style.transitionDelay = '';
           item.applyCss(ShuffleItem.Css.VISIBLE.after);
         }
 
         // If the item will not change its position, do not add it to the render
         // queue. Transitions don't fire when setting a property to the same value.
-        if (Point.equals(currPos, nextPosition) && currScale === ShuffleItem.Scale.VISIBLE) {
+        if (Point.equals(item.point, itemPositions[i]) && !item.isHidden) {
           item.applyCss(ShuffleItem.Css.VISIBLE.before);
           callback();
           return;
         }
 
-        item.point = nextPosition;
+        item.point = itemPositions[i];
         item.scale = ShuffleItem.Scale.VISIBLE;
+        item.isHidden = false;
 
         // Clone the object so that the `before` object isn't modified when the
         // transition delay is added.
-        var styles = Object.assign({}, ShuffleItem.Css.VISIBLE.before);
+        var styles = _this4.getStylesForTransition(item, ShuffleItem.Css.VISIBLE.before);
         styles.transitionDelay = _this4._getStaggerAmount(count) + 'ms';
 
         _this4._queue.push({
@@ -1519,15 +1527,16 @@ var Shuffle = function (_TinyEmitter) {
         // The callback is executed here because it is not guaranteed to be called
         // after the transitionend event because the transitionend could be
         // canceled if another animation starts.
-        if (item.scale === ShuffleItem.Scale.HIDDEN) {
+        if (item.isHidden) {
           item.applyCss(ShuffleItem.Css.HIDDEN.before);
           callback();
           return;
         }
 
         item.scale = ShuffleItem.Scale.HIDDEN;
+        item.isHidden = true;
 
-        var styles = Object.assign({}, ShuffleItem.Css.HIDDEN.before);
+        var styles = _this6.getStylesForTransition(item, ShuffleItem.Css.HIDDEN.before);
         styles.transitionDelay = _this6._getStaggerAmount(count) + 'ms';
 
         _this6._queue.push({
@@ -1558,29 +1567,24 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Returns styles which will be applied to the an item for a transition.
-     * @param {Object} obj Transition options.
+     * @param {ShuffleItem} item Item to get styles for. Should have updated
+     *   scale and point properties.
+     * @param {Object} styleObject Extra styles that will be used in the transition.
      * @return {!Object} Transforms for transitions, left/top for animate.
      * @protected
      */
 
   }, {
     key: 'getStylesForTransition',
-    value: function getStylesForTransition(_ref2) {
-      var item = _ref2.item,
-          styles = _ref2.styles;
-
-      if (!styles.transitionDelay) {
-        styles.transitionDelay = '0ms';
-      }
-
-      var x = item.point.x;
-      var y = item.point.y;
+    value: function getStylesForTransition(item, styleObject) {
+      // Clone the object to avoid mutating the original.
+      var styles = Object.assign({}, styleObject);
 
       if (this.options.useTransforms) {
-        styles.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + item.scale + ')';
+        styles.transform = 'translate(' + item.point.x + 'px, ' + item.point.y + 'px) scale(' + item.scale + ')';
       } else {
-        styles.left = x + 'px';
-        styles.top = y + 'px';
+        styles.left = item.point.x + 'px';
+        styles.top = item.point.y + 'px';
       }
 
       return styles;
@@ -1590,8 +1594,8 @@ var Shuffle = function (_TinyEmitter) {
      * Listen for the transition end on an element and execute the itemCallback
      * when it finishes.
      * @param {Element} element Element to listen on.
-     * @param {Function} itemCallback Callback for the item.
-     * @param {Function} done Callback to notify `parallel` that this one is done.
+     * @param {function} itemCallback Callback for the item.
+     * @param {function} done Callback to notify `parallel` that this one is done.
      */
 
   }, {
@@ -1609,7 +1613,7 @@ var Shuffle = function (_TinyEmitter) {
      * Return a function which will set CSS styles and call the `done` function
      * when (if) the transition finishes.
      * @param {Object} opts Transition object.
-     * @return {Function} A function to be called with a `done` function.
+     * @return {function} A function to be called with a `done` function.
      */
 
   }, {
@@ -1618,7 +1622,7 @@ var Shuffle = function (_TinyEmitter) {
       var _this7 = this;
 
       return function (done) {
-        opts.item.applyCss(_this7.getStylesForTransition(opts));
+        opts.item.applyCss(opts.styles);
         _this7._whenTransitionDone(opts.item.element, opts.callback, done);
       };
     }
@@ -1698,8 +1702,6 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: '_styleImmediately',
     value: function _styleImmediately(objects) {
-      var _this9 = this;
-
       if (objects.length) {
         var elements = objects.map(function (obj) {
           return obj.item.element;
@@ -1707,7 +1709,7 @@ var Shuffle = function (_TinyEmitter) {
 
         Shuffle._skipTransitions(elements, function () {
           objects.forEach(function (obj) {
-            obj.item.applyCss(_this9.getStylesForTransition(obj));
+            obj.item.applyCss(obj.styles);
             obj.callback();
           });
         });
@@ -1723,7 +1725,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * The magic. This is what makes the plugin 'shuffle'
-     * @param {string|Function|string[]} [category] Category to filter by.
+     * @param {string|string[]|function(Element):boolean} [category] Category to filter by.
      *     Can be a function, string, or array of strings.
      * @param {Object} [sortObj] A sort object which can sort the visible set
      */
@@ -1753,7 +1755,7 @@ var Shuffle = function (_TinyEmitter) {
 
     /**
      * Gets the visible elements, sorts them, and passes them to layout.
-     * @param {Object} sortOptions The options object to pass to `sorter`.
+     * @param {Object} [sortOptions] The options object to pass to `sorter`.
      */
 
   }, {
@@ -1823,7 +1825,7 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'add',
     value: function add(newItems) {
-      var _this10 = this;
+      var _this9 = this;
 
       var items = arrayUnique(newItems).map(function (el) {
         return new ShuffleItem(el);
@@ -1847,7 +1849,7 @@ var Shuffle = function (_TinyEmitter) {
           item.scale = ShuffleItem.Scale.HIDDEN;
           item.applyCss(ShuffleItem.Css.HIDDEN.before);
           item.applyCss(ShuffleItem.Css.HIDDEN.after);
-          item.applyCss(_this10.getStylesForTransition({ item: item, styles: {} }));
+          item.applyCss(_this9.getStylesForTransition(item, {}));
         }
       });
 
@@ -1900,7 +1902,7 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'remove',
     value: function remove(elements) {
-      var _this11 = this;
+      var _this10 = this;
 
       if (!elements.length) {
         return;
@@ -1909,20 +1911,20 @@ var Shuffle = function (_TinyEmitter) {
       var collection = arrayUnique(elements);
 
       var oldItems = collection.map(function (element) {
-        return _this11.getItemByElement(element);
+        return _this10.getItemByElement(element);
       }).filter(function (item) {
         return !!item;
       });
 
       var handleLayout = function handleLayout() {
-        _this11._disposeItems(oldItems);
+        _this10._disposeItems(oldItems);
 
         // Remove the collection in the callback
         collection.forEach(function (element) {
           element.parentNode.removeChild(element);
         });
 
-        _this11._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
+        _this10._dispatch(Shuffle.EventType.REMOVED, { collection: collection });
       };
 
       // Hide collection first.
@@ -1967,7 +1969,7 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'resetItems',
     value: function resetItems() {
-      var _this12 = this;
+      var _this11 = this;
 
       // Remove refs to current items.
       this._disposeItems(this.items);
@@ -1981,8 +1983,8 @@ var Shuffle = function (_TinyEmitter) {
 
       this.once(Shuffle.EventType.LAYOUT, function () {
         // Add transition to each item.
-        _this12.setItemTransitions(_this12.items);
-        _this12.isInitialized = true;
+        _this11.setItemTransitions(_this11.items);
+        _this11.isInitialized = true;
       });
 
       // Lay out all items.
@@ -2070,7 +2072,7 @@ var Shuffle = function (_TinyEmitter) {
     /**
      * Change a property or execute a function which will not have a transition
      * @param {Element[]} elements DOM elements that won't be transitioned.
-     * @param {Function} callback A function which will be called while transition
+     * @param {function} callback A function which will be called while transition
      *     is set to 0ms.
      * @private
      */

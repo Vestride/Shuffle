@@ -103,7 +103,7 @@ declare class Shuffle {
 
   /**
    * Gets the visible elements, sorts them, and passes them to layout.
-   * @param {Object} sortOptions The options object to pass to `sorter`.
+   * @param {Object} [sortOptions] The options object to pass to `sorter`.
    */
   sort(sortOptions?): void;
 
