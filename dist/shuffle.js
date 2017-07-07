@@ -845,6 +845,18 @@ function getCenteredPositions(itemRects, containerWidth) {
   });
 }
 
+/**
+ * Hyphenates a javascript style string to a css one. For example:
+ * MozBoxSizing -> -moz-box-sizing.
+ * @param {string} str The string to hyphenate.
+ * @return {string} The hyphenated string.
+ */
+function hyphenate(str) {
+  return str.replace(/([A-Z])/g, function (str, m1) {
+    return "-" + m1.toLowerCase();
+  });
+}
+
 function arrayUnique(x) {
   return Array.from(new Set(x));
 }
@@ -1181,10 +1193,20 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'setItemTransitions',
     value: function setItemTransitions(items) {
-      var str = 'all ' + this.options.speed + 'ms ' + this.options.easing;
+      var speed = this.options.speed;
+      var easing = this.options.easing;
+      var positionProps = this.options.useTransforms ? ['transform'] : ['top', 'left'];
+
+      // Allow users to transtion other properties if they exist in the `before`
+      // css mapping of the shuffle item.
+      var properties = positionProps.concat(Object.keys(ShuffleItem.Css.HIDDEN.before).map(function (k) {
+        return hyphenate(k);
+      })).join();
 
       items.forEach(function (item) {
-        item.element.style.transition = str;
+        item.element.style.transitionDuration = speed + 'ms';
+        item.element.style.transitionTimingFunction = easing;
+        item.element.style.transitionProperty = properties;
       });
     }
   }, {

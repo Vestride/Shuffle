@@ -18,6 +18,7 @@ import {
   getCenteredPositions,
 } from './layout';
 import arrayMax from './array-max';
+import hyphenate from './hyphenate';
 
 function arrayUnique(x) {
   return Array.from(new Set(x));
@@ -109,7 +110,7 @@ class Shuffle extends TinyEmitter {
     // styles to be applied without transitions.
     this.element.offsetWidth; // eslint-disable-line no-unused-expressions
     this.setItemTransitions(this.items);
-    this.element.style.transition = 'height ' + this.options.speed + 'ms ' + this.options.easing;
+    this.element.style.transition = `height ${this.options.speed}ms ${this.options.easing}`;
   }
 
   /**
@@ -310,10 +311,20 @@ class Shuffle extends TinyEmitter {
    * @protected
    */
   setItemTransitions(items) {
-    const str = `all ${this.options.speed}ms ${this.options.easing}`;
+    const speed = this.options.speed;
+    const easing = this.options.easing;
+    const positionProps = this.options.useTransforms ? ['transform'] : ['top', 'left'];
+
+    // Allow users to transtion other properties if they exist in the `before`
+    // css mapping of the shuffle item.
+    const properties = positionProps.concat(
+      Object.keys(ShuffleItem.Css.HIDDEN.before).map(k => hyphenate(k)),
+    ).join();
 
     items.forEach((item) => {
-      item.element.style.transition = str;
+      item.element.style.transitionDuration = speed + 'ms';
+      item.element.style.transitionTimingFunction = easing;
+      item.element.style.transitionProperty = properties;
     });
   }
 
