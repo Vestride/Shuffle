@@ -867,6 +867,7 @@ class Shuffle extends TinyEmitter {
       if (newItemSet.visible.includes(item)) {
         item.point = itemPositions[i];
         item.scale = ShuffleItem.Scale.HIDDEN;
+        item.isHidden = true;
         item.applyCss(ShuffleItem.Css.HIDDEN.before);
         item.applyCss(ShuffleItem.Css.HIDDEN.after);
         item.applyCss(this.getStylesForTransition(item, {}));
