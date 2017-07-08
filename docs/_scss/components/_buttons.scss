@@ -1,5 +1,3 @@
-
-
 .btn-group {
   @include clearfix();
 
@@ -17,8 +15,7 @@
   }
 }
 
-.btn,
-button {
+.btn {
   display: inline-block;
   padding: .75em .375em;
   -webkit-appearance: none;
@@ -26,11 +23,11 @@ button {
   color: white;
   border-radius: .0625em;
   border: 0;
-  background-color: $wetAsphalt;
+  background-color: $gray20;
   transition: .2s ease-out;
 
   &:hover {
-    background-color: lighten($wetAsphalt, 12);
+    background-color: lighten($gray20, 12);
     text-decoration: none;
   }
 
@@ -140,34 +137,3 @@ button {
     opacity: 1;
   }
 }
-
-
-@media ( max-width: 47.9375em ) {
-
-  .btn,
-  button {
-    font-size: .875em;
-  }
-}
-
-@media ( max-width: 30em ) {
-
-  .btn,
-  button {
-    font-size: .75em;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-

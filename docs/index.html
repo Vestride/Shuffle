@@ -2,28 +2,14 @@
 layout: default
 title: Shuffle.js
 bodyClass: home
-extraJS: [ "demos/homepage.js" ]
+extraJS: [ "demos/homepage.js", "animated-favicon.js" ]
 includeHeader: true
 prism: true
 ---
 <section id="install">
   <div class="container">
     <div class="row">
-      <div class="col-12@sm">
-        <h2>Install<a href="#install"></a></h2>
-      </div>
-      <div class="col-12@sm">
-        <div class="code-block">
-          <pre><code class="language">npm install shufflejs</code></pre>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <nav class="col-6@sm" role="secondary">
-        <a href="http://codepen.io/pen?template=qrjOpX" target="_blank" rel="noopener">Start a CodePen with a Shuffle template <span style="font-family:monospace;">↗</span></a>
-        <a href="https://github.com/Vestride/Shuffle">View the GitHub repository</a>
-        <a href="https://github.com/Vestride/Shuffle/releases">See the latest releases</a>
-      </nav>
+      {% include install.html %}
     </div>
   </div>
 </section>
@@ -41,12 +27,12 @@ prism: true
 
     <div class="row">
       <div class="col-12@sm">
-        <input class="filter__search js-shuffle-search" type="search" placeholder="Search..." />
+        <input class="textfield filter__search js-shuffle-search" type="search" placeholder="Search..." />
       </div>
     </div>
     <div class="row">
       <div class="col-9@sm">
-        <p class="filter__label">Filter:</p>
+        <p class="filter__label">Filter</p>
         <div class="filter-options btn-group">
           <button class="btn btn--warning" data-group="wallpaper">Wallpapers</button>
           <button class="btn btn--warning" data-group="graphics">Graphic Design</button>
@@ -56,7 +42,7 @@ prism: true
       </div>
       <div class="col-3@sm">
         <div class="m-nofloat pull-right">
-          <p class="filter__label">Sort:</p>
+          <p class="filter__label">Sort</p>
           <select class="sort-options">
             <option value>Default</option>
             <option value="title">Title</option>

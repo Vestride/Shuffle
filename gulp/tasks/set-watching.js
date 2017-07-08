@@ -6,7 +6,7 @@ const scriptsTask = require('./scripts');
 
 module.exports = function setWatching(done) {
   config.watch = true;
-  gulp.watch('docs/_scss/*.scss', cssTask);
+  gulp.watch('docs/_scss/**/*.scss', cssTask);
   gulp.watch('test/*', testTask);
 
   // Since Jekyll doesn't watch sym-linked directories, copy the files manually.

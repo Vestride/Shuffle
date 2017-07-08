@@ -27,12 +27,12 @@
   {
     "url": "demos/2014-03-08-bootstrap3-grid",
     "slug": "bootstrap3-grid",
-    "label": "Bootstrap 3 Grid Demo"
+    "label": "Bootstrap 3 grid"
   },
   {
     "url": "demos/2017-06-12-flexbox-grid",
     "slug": "flexbox-grid",
-    "label": "Flexbox Grid (Bootstrap 4)"
+    "label": "Flexbox grid"
   },
   {
     "url": "demos/2014-04-09-requirejs",
@@ -48,6 +48,6 @@
     "external": true,
     "url": "http://codepen.io/pen?template=qrjOpX",
     "slug": "codepen-template",
-    "label": "CodePen Template"
+    "label": "CodePen template"
   }
 ]

@@ -1,11 +1,16 @@
-@import "variables";
-@import "mixins";
-@import "global";
-@import "type";
-@import "grid";
-@import "site-nav";
-@import "demo-list";
-@import "faq";
-@import "buttons";
-@import "helpers";
-@import "compound-filters";
+@import "./extensions/variables";
+@import "./extensions/mixins";
+
+@import "./global-rules/global";
+@import "./global-rules/type";
+@import "./global-rules/grid";
+@import "./global-rules/forms";
+@import "./global-rules/helpers";
+
+@import "./components/buttons";
+@import "./components/demo-list";
+@import "./components/site-nav";
+
+@import "./pages/homepage-filters";
+@import "./pages/compound-filters";
+@import "./pages/faq";

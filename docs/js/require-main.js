@@ -10,19 +10,11 @@ requirejs.config({
     shufflejs: {
       deps: ['polyfill'],
     },
-    page: {
-      deps: ['evenheights'],
-      exports: 'Modules',
-    },
   },
 });
 
-requirejs(['shufflejs', 'evenheights', 'page'], function (Shuffle) {
-  'use strict';
-
-  // Create a new shuffle instance.
-  var element = document.getElementById('grid');
-  window.myShuffle = new Shuffle(element, {
+requirejs(['shufflejs'], function (Shuffle) {
+  window.myShuffle = new Shuffle(document.getElementById('grid'), {
     itemSelector: '.js-item',
     sizer: document.getElementById('js-sizer'),
   });

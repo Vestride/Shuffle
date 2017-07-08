@@ -1,40 +1,40 @@
-@import "variables";
-@import "mixins";
+@import "./extensions/variables";
+@import "./extensions/mixins";
 
 /*=============================================*\
  Some styles to show off masonry layout
 \*=============================================*/
 
-$pictureGutter: 24px;
-$itemHeight: 220px;
+$picture-gutter: 24px;
+$item-height: 220px;
 .picture-item {
   height: 220px;
-  margin-top: $pictureGutter;
+  margin-top: $picture-gutter;
   margin-left: 0; /* shuffle items shouldn't have a left margin*/
 
   img {
     display: block;
     width: 100%;
+  }
+}
+
+@supports (object-fit: cover) {
+  .picture-item img {
     max-width: none;
     height: 100%;
     object-fit: cover;
   }
-
-  .no-objectfit & img {
-    height: auto;
-    max-width: 100%;
-  }
 }
 
 .picture-item--h2 {
-  height: ($itemHeight * 2) + $pictureGutter; /* 2x the height + 1 gutter */
+  height: ($item-height * 2) + $picture-gutter; /* 2x the height + 1 gutter */
 }
 
 .picture-item__inner {
   position: relative;
   height: 100%;
   overflow: hidden;
-  background: $clouds;
+  background: $gray95;
 }
 
 .picture-item__blur {
@@ -86,7 +86,7 @@ $itemHeight: 220px;
         left: 0;
         display: block;
         filter: blur(7px);
-        clip-path: inset(#{$itemHeight - 50px} 0 0 0);
+        clip-path: inset(#{$item-height - 50px} 0 0 0);
       }
 
       .picture-item__details {

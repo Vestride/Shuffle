@@ -1,0 +1,10 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414">
+  <title>Shuffle.js logo</title>
+  <rect x="2" y="2" width="8" height="18" fill="#2DCB71"/>
+  <rect x="12" y="2" width="8" height="8" fill="#9B59B5"/>
+  <rect x="2" y="22" width="8" height="8" fill="#E74B3B"/>
+  <rect x="22" y="2" width="8" height="12" fill="#F39B11"/>
+  <rect x="12" y="22" width="18" height="8" fill="#33495D"/>
+  <rect x="12" y="12" width="8" height="8" fill="#3397DB"/>
+  <rect x="22" y="16" width="8" height="4" fill="#1ABB9B"/>
+</svg>

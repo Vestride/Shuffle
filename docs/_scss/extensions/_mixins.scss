@@ -18,6 +18,14 @@
   }
 }
 
+// https://caniuse.com/#feat=css-media-interaction
+// https://bugzilla.mozilla.org/show_bug.cgi?id=1035774#c9
+@mixin with-fine-pointer() {
+  @media (-moz-touch-enabled: 0), (pointer: fine) {
+    @content;
+  }
+}
+
 @mixin clearfix() {
   &::before,
   &::after {

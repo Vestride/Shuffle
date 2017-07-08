@@ -1,5 +1,5 @@
 body {
-  font-family: 'Lato', 'Helvetica Neue', Helvetica, sans-serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, sans-serif;
   color: $gray30;
 }
 
@@ -21,22 +21,23 @@ a {
   }
 }
 
+h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  color: $wetAsphalt;
+  color: $gray20;
+  font-weight: 400;
 }
 
 
 // Headers
 h1 {
-  margin: 20px 0;
+  margin: 0.5em 0 0.25em;
   font-weight: 300;
-  font-size: 4em;
+  font-size: 3.5em;
   line-height: 1;
-  color: $emerald;
 }
 
 h2 {
@@ -98,26 +99,15 @@ h3:hover > a {
   text-indent: -999em;
 }
 
+.intro-text {
+  margin: 0.7em 0;
+  font-size: 1.25em;
+}
+
 .unstyled {
   list-style-type: none;
   padding: 0;
   margin: 0;
-}
-
-
-.light-text-dark-box {
-
-  p {
-    color: $clouds;
-  }
-
-  a {
-    color: $clouds;
-
-    &:hover {
-      color: white;
-    }
-  }
 }
 
 :not(pre) > code {

@@ -1,44 +1,49 @@
-
-<nav class="site-nav collapsed" id="nav" role="primary">
-
-  <div class="js-tray site-nav__tray light-text-dark-box">
-    <div class="container site-nav__tray-inner">
-
-      <div class="row">
-        <div class="col-12@sm">
-          <h3 class="site-nav__title site-nav__title--first">Shuffle.js</h3>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-3@sm">
-          <a class="btn btn--primary" href="{{ site.baseurl }}/">Home</a>
-        </div>
-        <div class="col-3@sm">
-          <a class="btn btn--primary" href="https://github.com/Vestride/Shuffle">GitHub Repo</a>
-        </div>
-        <div class="col-3@sm">
-          <a class="btn btn--primary" href="https://twitter.com/Vestride">@Vestride</a>
-        </div>
-        <div class="col-3@sm">
-          <a class="btn btn--primary" href="{{ site.baseurl }}/faq">FAQ</a>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12@sm">
-          <h3 class="site-nav__title">Demos</h3>
-        </div>
-      </div>
-      {% include demo-list.html %}
-    </div>
-  </div>
-
-  <div class="site-nav__band">
-    <div class="container">
-      <div class="row">
-        <div class="col-12@sm">
-          <button class="js-nav-toggle pull-right" data-close-label="Close Menu">Open Menu</button>
+<nav class="site-nav">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm site-nav__content">
+        <a class="site-nav__logo" href="{{ site.baseurl }}/">
+          <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414">
+            <title>Shuffle.js logo</title>
+            <rect x="2" y="2" width="8" height="18" fill="#2dcb71"/>
+            <rect x="12" y="2" width="8" height="8" fill="#9b59b5"/>
+            <rect x="22" y="2" width="8" height="12" fill="#f39b11"/>
+            <rect x="2" y="22" width="8" height="8" fill="#e74b3b"/>
+            <rect x="12" y="12" width="8" height="8" fill="#3397db"/>
+            <rect x="22" y="16" width="8" height="4" fill="#1abb9b"/>
+            <rect x="12" y="22" width="18" height="8" fill="#33495d"/>
+          </svg>
+          <span class="site-nav__name">Shuffle.js</span>
+        </a>
+        <div class="site-nav__links">
+          <div class="site-nav__link site-nav__link--dropdown">
+            <button class="site-nav__link-toggle" id="demos-dropdown-btn" aria-label="Click to reveal list of Shuffle demos" aria-haspopup="true" aria-controls="demos-dropdown" aria-expanded="false">Demos</button>
+            <div class="site-nav__dropdown" id="demos-dropdown" aria-labelledby="demos-dropdown-btn">
+              <ul class="unstyled">
+                {% for post in site.data.demos %}
+                  <li class="">
+                    {% if post.external %}
+                    <a href="{{ post.url }}" target="_blank" rel="noopener">
+                    {% else %}
+                    <a href="{{ site.baseurl }}/{{ post.slug }}">
+                    {% endif %}
+                      <figure>
+                        <picture>
+                          <source srcset="{{ site.baseurl }}/img/demos/{{ post.slug }}.webp" type="image/webp">
+                          <img src="{{ site.baseurl }}/img/demos/{{ post.slug }}.jpg" alt="{{ post.label }}">
+                        </picture>
+                        <figcaption>{{ post.label }}</figcaption>
+                      </figure>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <a class="site-nav__link" href="{{ site.baseurl }}/faq">FAQ</a>
+          <a class="site-nav__link" href="https://github.com/Vestride/Shuffle">
+            <img class="site-nav__link-img" src="{{ site.baseurl }}/img/github.svg" alt="View Shuffle on GitHub" title="View Shuffle on GitHub" width="16" height="16">
+          </a>
         </div>
       </div>
     </div>
