@@ -163,11 +163,28 @@ Demo.prototype.onRemoveClick = function () {
 };
 
 Demo.prototype.onRandomize = function () {
-  document.getElementById('sorter').value = 'random';
+  var label = document.getElementById('sorter').querySelector('label.btn.active');
+  if (label) {
+    var radio = label.querySelector('input');
+    radio.checked = false;
+    label.classList.remove('active');
+  }
+
   this.sortBy('random');
 };
 
 Demo.prototype.onSortChange = function (evt) {
+  // Add and remove `active` class from buttons.
+  var wrapper = evt.currentTarget;
+  var buttons = Array.from(wrapper.querySelector('.btn-group').children);
+  buttons.forEach(function (button) {
+    if (button.querySelector('input').value === evt.target.value) {
+      button.classList.add('active');
+    } else {
+      button.classList.remove('active');
+    }
+  });
+
   this.sortBy(evt.target.value);
 };
 

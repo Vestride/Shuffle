@@ -71,9 +71,11 @@ prism: true
 
 <section class="container">
   <div class="row">
-    <h2 class="col-12@sm">Adding and Removing Items</h2>
-    <p>When you add elements to the Shuffle container, notify the Shuffle instance with the <code>add</code> method. You must add the elements to the DOM yourself. This lets you control the default (DOM) sort order.</p>
-    <p>When you want to remove item(s), use <code>remove</code>. This will fade out the item(s) then remove it from the DOM.</p>
+    <div class="col-12@sm">
+      <h2>Adding and Removing Items</h2>
+      <p>When you add elements to the Shuffle container, notify the Shuffle instance with the <code>add</code> method. You must add the elements to the DOM yourself. This lets you control the default (DOM) sort order.</p>
+      <p>When you want to remove item(s), use <code>remove</code>. This will fade out the item(s) then remove it from the DOM.</p>
+    </div>
   </div>
 </section>
 
@@ -81,21 +83,30 @@ prism: true
   <div class="row">
     <div class="col-12@sm">
 
-      <div class="pull-left">
-        <button id="prepend">Prepend 5 Boxes</button>
-        <button id="append">Append 5 Boxes</button>
-        <button id="remove">Remove Some Boxes</button>
-        <button id="randomize">Randomize</button>
+      <div id="sorter">
+        <p class="filter__label">Sort</p>
+        <div class="btn-group">
+          <label class="btn active">
+            <input type="radio" name="sort-value" value="dom" /> DOM Order
+          </label>
+          <label class="btn">
+            <input type="radio" name="sort-value" value="most-reviews" /> Most Reviews
+          </label>
+          <label class="btn">
+            <input type="radio" name="sort-value" value="least-reviews" /> Least Reviews
+          </label>
+        </div>
       </div>
 
-      <div class="pull-right">
-        <span class="filter__label">Sort:</span>
-        <select id="sorter" class="sort-options">
-          <option value="dom">DOM Order</option>
-          <option value="most-reviews">Most Reviews</option>
-          <option value="least-reviews">Least Reviews</option>
-          <option value="random">Randomize</option>
-        </select>
+      <div>
+        <br>
+        <p class="filter__label">Actions</p>
+        <div class="btn-group">
+          <button class="btn" id="prepend">Prepend 5 Boxes</button>
+          <button class="btn" id="append">Append 5 Boxes</button>
+          <button class="btn" id="remove">Remove Some Boxes</button>
+          <button class="btn" id="randomize">Randomize</button>
+        </div>
       </div>
     </div>
   </div>
