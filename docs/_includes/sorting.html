@@ -46,12 +46,12 @@ Demo.prototype._handleSortChange = function (evt) {
 };</code>
 </div>
 
-<p>The <code class="language-javascript">options</code> object can contain three properties:</p>
+<p>The <code>options</code> object can contain three properties:</p>
 <ul>
-  <li><code class="language-javascript">reverse</code>: a boolean which will reverse the resulting order.</li>
-  <li><code class="language-javascript">by</code>: a function with an element as the parameter. Above, we&rsquo;re returning the value of the <code class="language-markup">data-date-created</code> or <code class="language-markup">data-title</code> attribute.</li>
-  <li><code class="language-javascript">randomize</code>: Make the order random.</li>
+  <li><code>reverse</code>: a boolean which will reverse the resulting order.</li>
+  <li><code>by</code>: a function with an element as the parameter. Above, we&rsquo;re returning the value of the <code>data-date-created</code> or <code>data-title</code> attribute.</li>
+  <li><code>randomize</code>: Make the order random.</li>
 </ul>
-<p>Returning <code class="language-javascript">undefined</code> from the <code class="language-javascript">by</code> function will reset the order to DOM order.</p>
+<p>Returning <code>undefined</code> from the <code>by</code> function will reset the order to DOM order.</p>
 <p>Calling sort with an empty object will reset the elements to DOM order.</p>
 <p class="demo-link-container">Check out the <a href="#demo">demo</a>.</p>

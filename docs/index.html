@@ -23,31 +23,40 @@ prism: true
     </div>
   </div>
 
-  <div class="container filter">
+  <div class="container">
 
     <div class="row">
-      <div class="col-12@sm">
-        <input class="textfield filter__search js-shuffle-search" type="search" placeholder="Search..." />
+
+      <div class="col-4@sm col-3@md filters-group">
+        <label for="filters-search-input" class="filter-label">Search</label>
+        <input class="textfield filter__search js-shuffle-search" type="search" id="filters-search-input" />
       </div>
+
     </div>
     <div class="row">
-      <div class="col-9@sm">
-        <p class="filter__label">Filter</p>
-        <div class="filter-options btn-group">
-          <button class="btn btn--warning" data-group="wallpaper">Wallpapers</button>
-          <button class="btn btn--warning" data-group="graphics">Graphic Design</button>
-          <button class="btn btn--warning" data-group="photography">Photos</button>
-          <button class="btn btn--warning" data-group="3d">3D Renders</button>
+
+      <div class="col-12@sm col-9@md filters-group">
+        <p class="filter-label">Filter</p>
+        <div class="btn-group filter-options">
+          <button class="btn btn--primary" data-group="wallpaper">Wallpapers</button>
+          <button class="btn btn--primary" data-group="graphics">Graphic Design</button>
+          <button class="btn btn--primary" data-group="photography">Photos</button>
+          <button class="btn btn--primary" data-group="3d">3D Renders</button>
         </div>
       </div>
-      <div class="col-3@sm">
-        <div class="m-nofloat pull-right">
-          <p class="filter__label">Sort</p>
-          <select class="sort-options">
-            <option value>Default</option>
-            <option value="title">Title</option>
-            <option value="date-created">Date Created</option>
-          </select>
+
+      <div class="col-12@sm col-3@md filters-group">
+        <p class="filter-label">Sort</p>
+        <div class="btn-group sort-options">
+          <label class="btn active">
+            <input type="radio" name="sort-value" value="dom" /> Default
+          </label>
+          <label class="btn">
+            <input type="radio" name="sort-value" value="title" /> Title
+          </label>
+          <label class="btn">
+            <input type="radio" name="sort-value" value="date-created" /> Date Created
+          </label>
         </div>
       </div>
     </div>

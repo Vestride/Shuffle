@@ -28,14 +28,15 @@
 .btn {
   display: inline-block;
   padding: .75em .8em;
-  -webkit-appearance: none;
   text-align: center;
   border-radius: 3px;
   border: 1px solid $gray20;
   color: $gray20;
+  font-size: 1rem;
   background-color: rgba($gray20, 0);
   transition: .2s ease-out;
   cursor: pointer;
+  -webkit-appearance: none;
 
   &:hover {
     color: white;

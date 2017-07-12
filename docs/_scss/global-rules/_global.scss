@@ -36,17 +36,15 @@ li {
   line-height: 1.4;
 }
 
+li + li {
+  margin-top: 4px;
+}
+
 nav > a {
   display: block;
   margin: 5px 0;
 }
 
-.breathable-list li {
-  line-height: 1.7;
-}
-
-#be-social {
-  h2 {
-    margin-bottom: 32px;
-  }
+#demos {
+  margin-top: 1em;
 }

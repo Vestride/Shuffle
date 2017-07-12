@@ -1,15 +1,12 @@
 
 // Filters
-.filter__label {
-  color: $gray80;
-  margin: 0 0 3px;
+.filter-label {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 4px;
+  color: $gray60;
 }
 
-.filter__search {
-  margin: 5px 0;
-}
-
-
-.sort-options {
-  margin-top: 10px;
+.filters-group {
+  margin-bottom: 4px;
 }

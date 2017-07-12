@@ -31,77 +31,76 @@ h6 {
   font-weight: 400;
 }
 
-
-// Headers
 h1 {
-  margin: 0.5em 0 0.25em;
+  margin: 3vw 0;
+  font-size: 10vw;
   font-weight: 300;
-  font-size: 3.5em;
   line-height: 1;
 }
 
 h2 {
   position: relative;
-  font-size: 2.5em;
-  margin-bottom: 18px;
-
-  // Bottom border BEHIND the descenders!
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0.1em;
-    left: 0;
-    z-index: -1;
-    width: 100%;
-    height: 2px;
-    background-color: $emerald;
-    transform: translateZ(0);
-  }
+  font-size: 7vw;
+  margin: 3vw 0;
 }
 
 h3 {
-  margin: .6667em 0 0.5em;
-  font-size: 1.5em;
+  font-size: 6vw;
+  margin: 2vw 0;
 }
 
 h4 {
   font-size: 1.25em;
 }
 
-@include breakpoint(sm, true) {
-  h1 {
-    font-size: 8vw;
-    margin: 3vw 0;
-  }
-  h2 {
-    font-size: 6vw;
-    margin: 2vw 0;
-  }
-}
-
-h1 > a,
-h2 > a,
-h3 > a {
-  display: none;
-}
-
-h1:hover > a,
-h2:hover > a,
-h3:hover > a {
-  position: absolute;
-  display: block;
-  top: 0;
-  left: -40px;
-  height: 50px;
-  width: 50px;
-  background: url('../img/link.svg') no-repeat;
-  overflow: hidden;
-  text-indent: -999em;
+p {
+  margin: 1em 0;
+  line-height: 1.4;
 }
 
 .intro-text {
   margin: 0.7em 0;
-  font-size: 1.25em;
+  font-size: 1.125em;
+}
+
+@include breakpoint(sm) {
+  h1 {
+    margin: 0.5em 0 0.25em;
+    font-size: 3.5em;
+  }
+
+  h2 {
+    margin: 0.45em 0;
+    font-size: 2.5em;
+  }
+
+  h3 {
+    margin: 0.8em 0 0.5em;
+    font-size: 1.5em;
+  }
+
+  h1 > a,
+  h2 > a,
+  h3 > a {
+    display: none;
+  }
+
+  h1:hover > a,
+  h2:hover > a,
+  h3:hover > a {
+    position: absolute;
+    display: inline-block;
+    top: 0;
+    height: 50px;
+    width: 50px;
+    background: url('../img/link.svg') no-repeat;
+    overflow: hidden;
+    text-indent: -999em;
+  }
+
+  .intro-text {
+    font-size: 1.25em;
+  }
 }
 
 .unstyled {
@@ -110,19 +109,20 @@ h3:hover > a {
   margin: 0;
 }
 
-:not(pre) > code {
+code:not([class*="language"]) {
   padding: 0;
   padding-top: 0.2em;
   padding-bottom: 0.2em;
   margin: 0;
   font-size: 85%;
-  color: get-color(black);
-  background-color: rgba(0,0,0,0.04);
+  color: $gray10;
+  background-color: rgba(27,31,35,0.05);
   border-radius: 3px;
+  font-family: Menlo, Consolas, "Liberation Mono", Courier, monospace;
+}
 
-  &::before,
-  &::after {
-    letter-spacing: -0.2em;
-    content: "\00a0";
-  }
+code:not([class*="language"])::before,
+code:not([class*="language"])::after {
+  content: "\00a0";
+  letter-spacing: -.2em;
 }

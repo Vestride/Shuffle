@@ -81,8 +81,10 @@
 .code-block {
   position: relative;
   overflow: visible;
-  margin-left: calc(-3.5vw - #{($grid-gutter-width / 2)});
+  margin-top: 0.5em;
   margin-right: calc(-3.5vw - #{($grid-gutter-width / 2)});
+  margin-bottom: 0.5em;
+  margin-left: calc(-3.5vw - #{($grid-gutter-width / 2)});
 
   pre {
     position: relative;
@@ -92,7 +94,7 @@
     padding-bottom: 1em;
     padding-left: calc(3.5vw + #{($grid-gutter-width / 2)});
     padding-right: calc(3.5vw + #{($grid-gutter-width / 2)});
-    margin: .5em 0;
+    margin: 0;
   }
 }
 

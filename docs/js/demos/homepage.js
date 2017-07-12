@@ -105,16 +105,28 @@ Demo.prototype._removeActiveClassFromChildren = function (parent) {
 };
 
 Demo.prototype.addSorting = function () {
-  var menu = document.querySelector('.sort-options');
+  var buttonGroup = document.querySelector('.sort-options');
 
-  if (!menu) {
+  if (!buttonGroup) {
     return;
   }
 
-  menu.addEventListener('change', this._handleSortChange.bind(this));
+  buttonGroup.addEventListener('change', this._handleSortChange.bind(this));
 };
 
 Demo.prototype._handleSortChange = function (evt) {
+  // Add and remove `active` class from buttons.
+  var wrapper = evt.currentTarget;
+  var buttons = Array.from(evt.currentTarget.children);
+  buttons.forEach(function (button) {
+    if (button.querySelector('input').value === evt.target.value) {
+      button.classList.add('active');
+    } else {
+      button.classList.remove('active');
+    }
+  });
+
+  // Create the sort options to give to Shuffle.
   var value = evt.target.value;
   var options = {};
 
