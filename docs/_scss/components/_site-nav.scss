@@ -292,6 +292,19 @@
   margin-top: 2em;
   padding: 1em 0;
   background-color: $gray20;
+
+  p {
+    color: $gray95;
+  }
+
+  a {
+    color: white;
+    text-decoration: underline;
+
+    &:hover {
+      color: $river;
+    }
+  }
 }
 
 .has-code-block .code-block pre {
@@ -305,19 +318,4 @@
 .site-footer__credit {
   margin: 0;
   text-align: right;
-}
-
-.light-text-dark-box {
-
-  p {
-    color: $gray95;
-  }
-
-  a {
-    color: $gray95;
-
-    &:hover {
-      color: white;
-    }
-  }
 }

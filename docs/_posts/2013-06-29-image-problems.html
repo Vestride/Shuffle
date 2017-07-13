@@ -38,7 +38,7 @@ extraJS: [ "demos/images.js"]
   <div class="my-grid-with-images row">
     {% for item in site.data.items %}
     <figure class="js-item img-item col-3@sm col-3@xs">
-      <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="{{item.title}}"/>
+      <img src="{{ item.images.small }}" srcset="{{ item.images.small }} 1x, {{ item.images.small-2x }} 2x" alt="{{ item.description }}" />
       <figcaption>{{ item.groups | join: ', ' }}</figcaption>
     </figure>
     {% endfor %}
@@ -46,4 +46,4 @@ extraJS: [ "demos/images.js"]
   </div>
 </div>
 
-{% include credit-jake.html %}
+{% include photo-credit.html %}

@@ -38,10 +38,10 @@ prism: true
       <div class="col-12@sm col-9@md filters-group">
         <p class="filter-label">Filter</p>
         <div class="btn-group filter-options">
-          <button class="btn btn--primary" data-group="wallpaper">Wallpapers</button>
-          <button class="btn btn--primary" data-group="graphics">Graphic Design</button>
-          <button class="btn btn--primary" data-group="photography">Photos</button>
-          <button class="btn btn--primary" data-group="3d">3D Renders</button>
+          <button class="btn btn--primary" data-group="space">Space</button>
+          <button class="btn btn--primary" data-group="nature">Nature</button>
+          <button class="btn btn--primary" data-group="animal">Animal</button>
+          <button class="btn btn--primary" data-group="city">City</button>
         </div>
       </div>
 
@@ -65,10 +65,10 @@ prism: true
 
   <div class="container">
     <div id="grid" class="row my-shuffle-container">
-      {% for item in site.data.items %}
-          {% assign item = item %}
-          {% include picture-item.html %}
-      {% endfor %}
+      {%- for item in site.data.items -%}
+          {%- assign item = item -%}
+          {%- include picture-item.html -%}
+      {%- endfor -%}
       <div class="col-1@sm col-1@xs my-sizer-element"></div>
     </div>
   </div>
@@ -247,7 +247,7 @@ prism: true
 </section>
 
 
-{% include credit-jake.html %}
+{% include photo-credit.html %}
 
 <script>
 

@@ -40,7 +40,7 @@ requirejs: true
     <figure class="js-item img-item col-3@sm col-3@xs">
       <div class="aspect aspect--16x9">
         <div class="aspect__inner">
-          <img src="{{ site.baseurl }}/img/{{ item.img }}" alt="{{item.title}}"/>
+          <img src="{{ item.images.small }}" srcset="{{ item.images.small }} 1x, {{ item.images.small-2x }} 2x" alt="{{ item.description }}" />
         </div>
       </div>
       <figcaption>{{ item.groups }}</figcaption>
@@ -61,4 +61,4 @@ requirejs: true
 </section>
 
 
-{% include credit-jake.html %}
+{% include photo-credit.html %}
