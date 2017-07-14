@@ -1,38 +1,38 @@
 <h2>Usage<a href="#usage"></a></h2>
 
 <h3>The HTML Structure</h3>
-<p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings. Optionally, it can be a string delimeted by a value you provide. See <code>delimeter</code> in the <a href="#options">options</a>.</p>
+<p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings. It can also be a string delimeted by a value you provide with the <code>delimeter</code> option.</p>
 
 <p>This example is using this site's grid. Each item would be 4 columns at the "sm" breakpoint (768px).</p>
 
 <h3>Images</h3>
-<p>To see why the images are wrapped in <code>.aspect</code> elements, check out the <a href="{{ site.baseurl }}{% post_url 2013-05-03-images %}">images demo</a>.</p>
+<p>Images are wrapped in <code>.aspect</code> elements to take up the same amount of space the image will when it loads. For details, check out the <a href="{{ site.baseurl }}{% post_url 2013-05-03-images %}">images demo</a>.</p>
 
 <div class="code-block">
-  <pre rel="HTML"><code class="language-markup">&lt;div id="grid" class="row my-shuffle-container"&gt;
-  &lt;figure class="col-4@sm picture-item" data-groups='[&quot;photography&quot;]' data-date-created="2010-09-14" data-title="Baseball"&gt;
+  <pre rel="HTML"><code class="language-markup">&lt;div class="row my-shuffle-container"&gt;
+  &lt;figure class="col-4@sm picture-item" data-groups='["animal"]' data-date-created="2016-08-12" data-title="Crocodile"&gt;
     &lt;div class="aspect aspect--16x9"&gt;
       &lt;div class="aspect__inner"&gt;
-        &lt;img src="/img/baseball.png" alt="" height="145" width="230"&gt;
+        &lt;img src="crocodile.jpg" alt="A close, profile view of a crocodile looking directly into the camera" /&gt;
       &lt;/div&gt;
     &lt;/div&gt;
-    &lt;figcaption&gt;Baseball&lt;/figcaption&gt;
+    &lt;figcaption&gt;Crocodile&lt;/figcaption&gt;
   &lt;/figure&gt;
-  &lt;figure class="col-4@sm picture-item" data-groups='[&quot;wallpaper&quot;,&quot;3d&quot;]' data-date-created="2011-08-14" data-title="Tennis"&gt;
+  &lt;figure class="col-4@sm picture-item" data-groups='["city"]' data-date-created="2016-06-09" data-title="Crossroads"&gt;
     &lt;div class="aspect aspect--16x9"&gt;
       &lt;div class="aspect__inner"&gt;
-        &lt;img src="/img/tennis-ball.png" alt="" height="145" width="230"&gt;
+        &lt;img src="crossroads.jpg" alt="A multi-level highway stack interchange in Puxi, Shanghai" /&gt;
       &lt;/div&gt;
     &lt;/div&gt;
-    &lt;figcaption&gt;Tennis&lt;/figcaption&gt;
+    &lt;figcaption&gt;Crossroads&lt;/figcaption&gt;
   &lt;/figure&gt;
-  &lt;figure class="col-4@sm picture-item" data-groups='[&quot;wallpaper&quot;,&quot;3d&quot;]' data-date-created="2009-05-27" data-title="iMac"&gt;
+  &lt;figure class="col-4@sm picture-item" data-groups='["nature","city"]' data-date-created="2015-10-20" data-title="Central Park"&gt;
     &lt;div class="aspect aspect--16x9"&gt;
       &lt;div class="aspect__inner"&gt;
-        &lt;img src="/img/imac.png" alt="" height="145" width="230"&gt;
+        &lt;img src="central-park.jpg" alt="Looking down on central park and the surrounding builds from the Rockefellar Center" /&gt;
       &lt;/div&gt;
     &lt;/div&gt;
-    &lt;figcaption&gt;iMac&lt;/figcaption&gt;
+    &lt;figcaption&gt;Central Park&lt;/figcaption&gt;
   &lt;/figure&gt;
   &lt;div class="col-1@sm my-sizer-element"&gt;&lt;/div&gt;
 &lt;/div&gt;</code></pre>
@@ -52,7 +52,7 @@
 <p>Shuffle uses a UMD definition so that you can use it with globals, AMD, or CommonJS.</p>
 <div class="code-block">
   <pre rel="JavaScript"><code class="language-javascript">var Shuffle = window.Shuffle;
-var element = document.getElementById('grid');
+var element = document.querySelector('.my-shuffle-container');
 var sizer = element.querySelector('.my-sizer-element');
 
 var shuffle = new Shuffle(element, {

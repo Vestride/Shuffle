@@ -45,12 +45,8 @@
   z-index: 3;
 }
 
-.site-nav__link:not(:last-child) {
+.site-nav__link:not(:last-of-type) {
   margin-right: 8px;
-}
-
-.site-nav__link--dropdown {
-  position: relative;
 }
 
 .site-nav__dropdown {
@@ -64,6 +60,7 @@
   transition: 300ms cubic-bezier(0.165, 0.84, 0.44, 1);
   background-color: white;
   transform: translateY(10px);
+  box-shadow: 0 7px 10px -1px rgba(0, 0, 0, 0.12);
 
   // Triangle.
   &::before {
@@ -109,12 +106,18 @@
   }
 }
 
+.site-nav__dropdown--simple-links {
+  a {
+    padding: 8px 16px;
+  }
+
+  li + li {
+    margin-top: 0;
+  }
+}
+
 .site-nav__link-toggle {
-  padding: 5px;
-  border: 1px solid transparent;
-  background: none;
-  border-radius: 3px;
-  cursor: pointer;
+  padding: 6px 8px;
 }
 
 // Dropdown link triangle.
@@ -123,18 +126,14 @@
   display: inline-block;
   vertical-align: middle;
   margin-top: -1px;
-  margin-left: 2px;
-  border-top: 6px solid $gray20;
+  margin-left: 4px;
+  border-top: 6px solid currentColor;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   transition: transform 180ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .site-nav__link--dropdown-active {
-  .site-nav__link-toggle {
-    border-color: $gray80;
-  }
-
   // Dropdown link triangle.
   .site-nav__link-toggle::after {
     transform: rotate(-180deg);
@@ -237,6 +236,10 @@
     margin-right: 16px;
   }
 
+  .site-nav__link--dropdown:not(:last-child) {
+    margin-right: 12px;
+  }
+
   .site-nav__dropdown {
     max-height: none !important; // override inline style.
     right: -100px;
@@ -274,6 +277,19 @@
     width: 24px;
     height: 24px;
   }
+
+  .site-nav__dropdown--simple-links {
+    right: 0;
+    padding: 0;
+
+    &::before {
+      right: 24px;
+    }
+
+    a {
+      width: 200px;
+    }
+  }
 }
 
 @include breakpoint(md) {
@@ -282,6 +298,13 @@
 
     &::before {
       right: 32px;
+    }
+  }
+
+  .site-nav__dropdown--simple-links {
+
+    &::before {
+      right: 24px;
     }
   }
 }
@@ -316,6 +339,11 @@
 }
 
 .site-footer__credit {
-  margin: 0;
-  text-align: right;
+  // margin: 0;
+}
+
+@include breakpoint(sm) {
+  .site-footer__credit {
+    text-align: right;
+  }
 }

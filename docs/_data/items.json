@@ -59,7 +59,7 @@
     "description": "SpaceX launches a Falcon 9 rocket from Cape Canaveral Air Force Station",
     "extras": ["h2"],
     "type": "tall",
-    "cols": [6, 4, 3]
+    "cols": [3, 4, 3]
   },
   {
     "groups": ["city"],
@@ -90,7 +90,7 @@
     "description": "Dimly lit mountains give way to a starry night showing the Milky Way",
     "extras": ["overlay"],
     "type": "wide",
-    "cols": [3, 8, 6]
+    "cols": [6, 8, 6]
   },
   {
     "groups": ["space"],
@@ -106,7 +106,7 @@
     "description": "NASA Satellite view of Earth",
     "extras": ["h2"],
     "type": "large",
-    "cols": [3, 8, 6]
+    "cols": [6, 8, 6]
   },
   {
     "groups": ["animal"],
@@ -122,7 +122,7 @@
     "description": "A close up of a turtle underwater",
     "extras": ["h2"],
     "type": "tall",
-    "cols": [6, 4, 3]
+    "cols": [3, 4, 3]
   },
   {
     "groups": ["nature"],
@@ -142,7 +142,7 @@
   {
     "groups": ["animal"],
     "source": "https://unsplash.com/photos/FqkBXo2Nkq0",
-    "date": "2012-07-04",
+    "date": "2017-01-12",
     "title": "Astronaut Cat",
     "images": {
       "small": "https://images.unsplash.com/photo-1484244233201-29892afe6a2c?ixlib=rb-0.3.5&auto=format&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=284&h=160&fit=crop&s=98423596f72d9f0913a4d44f0580a34c",

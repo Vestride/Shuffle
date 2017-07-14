@@ -17,7 +17,27 @@
         </a>
         <div class="site-nav__links">
           <div class="site-nav__link site-nav__link--dropdown">
-            <button class="site-nav__link-toggle" id="demos-dropdown-btn" aria-label="Click to reveal list of Shuffle demos" aria-haspopup="true" aria-controls="demos-dropdown" aria-expanded="false">Demos</button>
+            <button class="site-nav__link-toggle btn" id="docs-dropdown-btn" aria-label="Click to reveal list of Shuffle demos" aria-haspopup="true" aria-controls="docs-dropdown" aria-expanded="false">Docs</button>
+            <div class="site-nav__dropdown site-nav__dropdown--simple-links" id="docs-dropdown" aria-labelledby="docs-dropdown-btn">
+              <ol class="unstyled">
+                <li><a href="{{ site.baseurl }}/#install">Install</a></li>
+                <li><a href="{{ site.baseurl }}/#features">Features</a></li>
+                <li><a href="{{ site.baseurl }}/#options">Options</a></li>
+                <li><a href="{{ site.baseurl }}/#usage">Usage</a></li>
+                <li><a href="{{ site.baseurl }}/#events">Events</a></li>
+                <li><a href="{{ site.baseurl }}/#sorting">Sorting</a></li>
+                <li><a href="{{ site.baseurl }}/#advanced-filtering">Advanced Filtering</a></li>
+                <li><a href="{{ site.baseurl }}/#adding-removing">Adding and Removing Items</a></li>
+                <li><a href="{{ site.baseurl }}/#public-methods">Public Methods</a></li>
+                <li><a href="{{ site.baseurl }}/#custom-styles">Custom Styles</a></li>
+                <li><a href="{{ site.baseurl }}/#dependencies">Dependencies</a></li>
+                <li><a href="{{ site.baseurl }}/#supported-browsers">Supported Browsers</a></li>
+                <li><a href="{{ site.baseurl }}/#changelog">Changelog</a></li>
+              </ol>
+            </div>
+          </div>
+          <div class="site-nav__link site-nav__link--dropdown">
+            <button class="site-nav__link-toggle btn" id="demos-dropdown-btn" aria-label="Click to reveal list of Shuffle demos" aria-haspopup="true" aria-controls="demos-dropdown" aria-expanded="false">Demos</button>
             <div class="site-nav__dropdown" id="demos-dropdown" aria-labelledby="demos-dropdown-btn">
               <ul class="unstyled">
                 {% for post in site.data.demos %}
@@ -40,9 +60,9 @@
               </ul>
             </div>
           </div>
-          <a class="site-nav__link" href="{{ site.baseurl }}/faq">FAQ</a>
-          <a class="site-nav__link" href="https://github.com/Vestride/Shuffle">
-            <img class="site-nav__link-img" src="{{ site.baseurl }}/img/github.svg" alt="View Shuffle on GitHub" title="View Shuffle on GitHub" width="16" height="16">
+          <a class="site-nav__link hidden@xs" href="{{ site.baseurl }}/faq">FAQ</a>
+          <a class="site-nav__link hidden@xs" href="https://github.com/Vestride/Shuffle">
+            <img class="site-nav__link-img" src="{{ site.baseurl }}/img/github.svg" alt="View Shuffle on GitHub" title="" width="16" height="16">
           </a>
         </div>
       </div>

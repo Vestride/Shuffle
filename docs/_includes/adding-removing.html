@@ -1,4 +1,4 @@
-<h2>Adding and removing items<a href="#adding-removing"></a></h2>
+<h2>Adding and Removing Items<a href="#adding-removing"></a></h2>
 <p>You can add and remove elements from shuffle after it has been created. This also works for infinite scrolling.</p>
 
 <h3>Adding elements</h3>
@@ -9,15 +9,15 @@
  * shuffle about the new items. You could also insert the HTML as a string.
  */
 Demo.prototype.onAppendBoxes = function () {
-  var items = this._getArrayOfElementsToAdd();
+  var elements = this._getArrayOfElementsToAdd();
 
-  items.forEach(function (item) {
-    this.shuffle.element.appendChild(item);
+  elements.forEach(function (element) {
+    this.shuffle.element.appendChild(element);
   }, this);
 
-  // Tell shuffle items have been appended.
+  // Tell shuffle elements have been appended.
   // It expects an array of elements as the parameter.
-  this.shuffle.add(items);
+  this.shuffle.add(elements);
 };</code></pre>
 </div>
 

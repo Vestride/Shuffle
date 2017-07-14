@@ -1,4 +1,3 @@
-<script src="{{ site.baseurl }}/js/site-nav.js"></script>
 {% if page.requirejs %}
 <script data-main="{{ site.baseurl }}/js/require-main.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.3/require.min.js"></script>
 {% else %}
@@ -8,6 +7,7 @@
 <!-- Shuffle! -->
 <script src="{{ site.baseurl }}/dist/shuffle.js"></script>
 {% endif %}
+<script src="{{ site.baseurl }}/js/site-nav.js"></script>
 
 {% if page.externalJS %}
 {% for src in page.externalJS %}

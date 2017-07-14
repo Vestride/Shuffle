@@ -8,6 +8,10 @@
   .hidden\@xs { display: none; }
 }
 
+@include breakpoint(sm) {
+  .visible\@xs { display: none; }
+}
+
 // Hide from both screenreaders and browsers.
 .hidden {
   display: none !important;

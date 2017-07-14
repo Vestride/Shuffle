@@ -5,7 +5,7 @@ requirejs.config({
     polyfill: 'https://unpkg.com/core-js/client/shim.min',
   },
 
-  // Shimming other page javascript.
+  // Load the polyfill before Shuffle.
   shim: {
     shufflejs: {
       deps: ['polyfill'],

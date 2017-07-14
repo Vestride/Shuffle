@@ -98,15 +98,15 @@ Demo.prototype._getHtmlMarkupToAdd = function () {
  * shuffle about the new items. You could also insert the HTML as a string.
  */
 Demo.prototype.onAppendBoxes = function () {
-  var items = this._getArrayOfElementsToAdd();
+  var elements = this._getArrayOfElementsToAdd();
 
-  items.forEach(function (item) {
-    this.shuffle.element.appendChild(item);
+  elements.forEach(function (element) {
+    this.shuffle.element.appendChild(element);
   }, this);
 
   // Tell shuffle items have been appended.
   // It expects an array of elements as the parameter.
-  this.shuffle.add(items);
+  this.shuffle.add(elements);
 };
 
 /**
