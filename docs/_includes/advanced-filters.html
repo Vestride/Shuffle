@@ -1,11 +1,11 @@
-<h2>Advanced Filtering<a href="#advanced-filters"></a></h2>
+<h2>Advanced Filters<a href="#advanced-filters"></a></h2>
 
 <p>By passing a function to <code>filter</code>, you can fully customize filtering items. Shuffle will iterate over each item and give your function the element and the shuffle instance. Return <code>true</code> to keep the element or <code>false</code> to hide it.</p>
 
 <h3>Example</h3>
 <div class="code-block">
   <pre rel="JavaScript"><code class="language-javascript">// Filters elements with a data-title attribute with less than 10 characters
-instance.filter(function (element) {
+shuffleInstance.filter(function (element) {
   return element.getAttribute('data-title').length &lt; 10;
 });</code></pre>
 </div>

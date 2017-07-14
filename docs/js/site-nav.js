@@ -41,7 +41,6 @@
   SiteNav.prototype.handleResize = function () {
     var viewportHeight = window.innerHeight;
     var navHeight = this.element.offsetHeight;
-    console.log(`viewportHeight: ${viewportHeight}\nnavHeight: ${navHeight}`);
     var dropdowns = Array.from(document.querySelectorAll('.site-nav__dropdown'));
     dropdowns.forEach(function (dropdown) {
       dropdown.style.maxHeight = (viewportHeight - navHeight) + 'px';

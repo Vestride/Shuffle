@@ -14,7 +14,7 @@ requirejs.config({
 });
 
 requirejs(['shufflejs'], function (Shuffle) {
-  window.myShuffle = new Shuffle(document.getElementById('grid'), {
+  window.shuffleInstance = new Shuffle(document.getElementById('grid'), {
     itemSelector: '.js-item',
     sizer: document.getElementById('js-sizer'),
   });

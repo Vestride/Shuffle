@@ -14,7 +14,7 @@ npm install shufflejs
 ```js
 import Shuffle from 'shufflejs';
 
-const myShuffle = new Shuffle(document.getElementById('grid'), {
+const shuffleInstance = new Shuffle(document.getElementById('grid'), {
   itemSelector: '.js-item',
   sizer: '.js-shuffle-sizer'
 });
