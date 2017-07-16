@@ -145,16 +145,16 @@ Demo.prototype.onRemoveClick = function () {
   }
 
   var numberToRemove = Math.min(3, total);
-  var indexesToRemove = [];
+  var indiciesToRemove = [];
 
   // This has the possibility to choose the same index for more than
   // one in the array, meaning sometimes less than 3 will be removed
   for (var i = 0; i < numberToRemove; i++) {
-    indexesToRemove.push(this.getRandomInt(0, total - 1));
+    indiciesToRemove.push(this.getRandomInt(0, total - 1));
   }
 
   // Make an array of elements to remove.
-  var collection = indexesToRemove.map(function (index) {
+  var collection = indiciesToRemove.map(function (index) {
     return this.shuffle.items[index].element;
   }, this);
 

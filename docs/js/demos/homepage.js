@@ -51,7 +51,7 @@ Demo.prototype.addFilterButtons = function () {
     return;
   }
 
-  var filterButtons = Array.prototype.slice.call(options.children);
+  var filterButtons = Array.from(options.children);
 
   filterButtons.forEach(function (button) {
     button.addEventListener('click', this._handleFilterClick.bind(this), false);
