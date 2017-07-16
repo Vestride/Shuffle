@@ -106,9 +106,7 @@ export function getItemPosition({ itemSize, positions, gridSize, total, threshol
   const shortColumnIndex = getShortColumn(setY, buffer);
 
   // Position the item
-  const point = new Point(
-    Math.round(gridSize * shortColumnIndex),
-    Math.round(setY[shortColumnIndex]));
+  const point = new Point(gridSize * shortColumnIndex, setY[shortColumnIndex]);
 
   // Update the columns array with the new values for each column.
   // e.g. before the update the columns could be [250, 0, 0, 0] for an item

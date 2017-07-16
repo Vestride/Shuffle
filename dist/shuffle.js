@@ -733,7 +733,7 @@ function getItemPosition(_ref) {
   var shortColumnIndex = getShortColumn(setY, buffer);
 
   // Position the item
-  var point = new Point(Math.round(gridSize * shortColumnIndex), Math.round(setY[shortColumnIndex]));
+  var point = new Point(gridSize * shortColumnIndex, setY[shortColumnIndex]);
 
   // Update the columns array with the new values for each column.
   // e.g. before the update the columns could be [250, 0, 0, 0] for an item
