@@ -15,12 +15,13 @@ Shuffle.options = {
   initialSort: null, // Shuffle can be initialized with a sort object. It is the same object given to the sort method.
   isCentered: false, // Attempt to center grid items in each row.
   itemSelector: '*', // e.g. '.picture-item'.
-  throttle: throttle, // By default, shuffle will throttle resize events. This can be changed or removed.
-  throttleTime: 300, // How often shuffle can be called on resize (in milliseconds).
+  roundTransforms: true, // Whether to round pixel values used in translate(x, y). This usually avoids blurriness.
   sizer: null, // Element or selector string. Use an element to determine the size of columns and gutters.
   speed: 250, // Transition/animation speed (milliseconds).
   staggerAmount: 15, // Transition delay offset for each item in milliseconds.
   staggerAmountMax: 150, // Maximum stagger delay in milliseconds.
+  throttle: throttle, // By default, shuffle will throttle resize events. This can be changed or removed.
+  throttleTime: 300, // How often shuffle can be called on resize (in milliseconds).
   useTransforms: true, // Whether to use transforms or absolute positioning.
 };</code></pre>
 </div>

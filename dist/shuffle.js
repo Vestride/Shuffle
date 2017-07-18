@@ -1603,6 +1603,9 @@ var Shuffle = function (_TinyEmitter) {
       var styles = Object.assign({}, styleObject);
 
       if (this.options.useTransforms) {
+        if (this.options.roundTransforms) {
+          item.point = new Point(Math.round(item.point.x), Math.round(item.point.y));
+        }
         styles.transform = 'translate(' + item.point.x + 'px, ' + item.point.y + 'px) scale(' + item.scale + ')';
       } else {
         styles.left = item.point.x + 'px';
@@ -2220,7 +2223,11 @@ Shuffle.options = {
   filterMode: Shuffle.FilterMode.ANY,
 
   // Attempt to center grid items in each row.
-  isCentered: false
+  isCentered: false,
+
+  // Whether to round pixel values used in translate(x, y). This usually avoids
+  // blurriness.
+  roundTransforms: true
 };
 
 Shuffle.Point = Point;

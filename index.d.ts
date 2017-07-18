@@ -302,6 +302,11 @@ declare namespace Shuffle {
     itemSelector?: string;
 
     /**
+     * Whether to round pixel values used in translate(x, y). This usually avoids blurriness.
+     */
+    roundTransforms?: boolean,
+
+    /**
      * Element or selector string. Use an element to determine the size of columns and gutters.
      */
     sizer?: Element|string;
