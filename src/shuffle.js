@@ -982,7 +982,7 @@ class Shuffle extends TinyEmitter {
     });
 
     // Lay out all items.
-    this.sort();
+    this.filter(this.lastFilter);
   }
 
   /**

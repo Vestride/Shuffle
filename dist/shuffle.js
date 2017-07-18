@@ -2011,7 +2011,7 @@ var Shuffle = function (_TinyEmitter) {
       });
 
       // Lay out all items.
-      this.sort();
+      this.filter(this.lastFilter);
     }
 
     /**
