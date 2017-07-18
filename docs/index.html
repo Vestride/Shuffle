@@ -66,10 +66,10 @@ prism: true
 
   <div class="container">
     <div id="grid" class="row my-shuffle-container">
-      {%- for item in site.data.items -%}
-          {%- assign item = item -%}
-          {%- include picture-item.html -%}
-      {%- endfor -%}
+      {% for item in site.data.items %}
+          {% assign item = item %}
+          {% include picture-item.html %}
+      {% endfor %}
       <div class="col-1@sm col-1@xs my-sizer-element"></div>
     </div>
   </div>
