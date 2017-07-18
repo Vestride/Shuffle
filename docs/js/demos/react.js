@@ -106,7 +106,7 @@ class PhotoGrid extends Component {
     return (
       <div ref={element => this.element = element} className="row my-shuffle">
         {this.state.photos.map((image, i) => (
-          <div key={i} className="col-4@sm photo-item">
+          <div key={i} className="col-3@xs col-4@sm photo-item">
             <div className="aspect aspect--4x3">
               <div className="aspect__inner">
                 <img src={image.src} />
