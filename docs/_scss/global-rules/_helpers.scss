@@ -1,0 +1,67 @@
+.text-center { text-align: center; }
+
+.ib {
+  display: inline-block;
+}
+
+@include breakpoint(sm, true) {
+  .hidden\@xs { display: none; }
+}
+
+@include breakpoint(sm) {
+  .visible\@xs { display: none; }
+}
+
+// Hide from both screenreaders and browsers.
+.hidden {
+  display: none !important;
+  visibility: hidden;
+}
+
+// Hide only visually, but have it available for screenreaders.
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.clearfix,
+.clearfix::after {
+  content: " ";
+  display: table;
+  clear: both;
+}
+
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.full-width { width: 100%; }
+.full-height { height: 100%; }
+
+.hide-text {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+.table-center-wrap {
+  display: table;
+  table-layout: fixed;
+}
+
+.table-center {
+  display: table-cell;
+  vertical-align: middle;
+}

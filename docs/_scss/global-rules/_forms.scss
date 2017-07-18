@@ -1,0 +1,40 @@
+.textfield {
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+  border: 2px solid $gray60;
+  border-radius: 4px;
+  padding: 0.5em;
+  font-size: 1rem;
+  color: $gray20;
+  transition: .15s;
+
+  &::placeholder {
+    color: $gray60;
+    transition: .15s;
+  }
+
+  &:hover {
+    outline-width: 0;
+    color: $gray30;
+    border-color: $gray30;
+
+    &::placeholder {
+      color: $gray30;
+    }
+  }
+
+  &:focus {
+    outline-width: 0;
+    // color: $gray20;
+    border-color: $gray20;
+
+    &::placeholder {
+      color: $gray20;
+    }
+  }
+}
+
+.textfield--large {
+  font-size: 1.125em;
+}

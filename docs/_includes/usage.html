@@ -1,0 +1,62 @@
+<h2>Usage<a href="#usage"></a></h2>
+
+<h3>The HTML Structure</h3>
+<p>The only real important thing here is the <code class="language-markup token attr-name">data-groups</code> attribute. It has to be a <a href="http://jsonlint.com/">valid JSON</a> array of strings. It can also be a string delimeted by a value you provide with the <code>delimeter</code> option.</p>
+
+<p>This example is using this site's grid. Each item would be 4 columns at the "sm" breakpoint (768px).</p>
+
+<h3>Images</h3>
+<p>Images are wrapped in <code>.aspect</code> elements to take up the same amount of space the image will when it loads. For details, check out the <a href="{{ site.baseurl }}{% post_url 2013-05-03-images %}">images demo</a>.</p>
+
+<div class="code-block">
+  <pre rel="HTML"><code class="language-markup">&lt;div class="row my-shuffle-container"&gt;
+  &lt;figure class="col-4@sm picture-item" data-groups='["animal"]' data-date-created="2016-08-12" data-title="Crocodile"&gt;
+    &lt;div class="aspect aspect--16x9"&gt;
+      &lt;div class="aspect__inner"&gt;
+        &lt;img src="crocodile.jpg" alt="A close, profile view of a crocodile looking directly into the camera" /&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;figcaption&gt;Crocodile&lt;/figcaption&gt;
+  &lt;/figure&gt;
+  &lt;figure class="col-4@sm picture-item" data-groups='["city"]' data-date-created="2016-06-09" data-title="Crossroads"&gt;
+    &lt;div class="aspect aspect--16x9"&gt;
+      &lt;div class="aspect__inner"&gt;
+        &lt;img src="crossroads.jpg" alt="A multi-level highway stack interchange in Puxi, Shanghai" /&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;figcaption&gt;Crossroads&lt;/figcaption&gt;
+  &lt;/figure&gt;
+  &lt;figure class="col-4@sm picture-item" data-groups='["nature","city"]' data-date-created="2015-10-20" data-title="Central Park"&gt;
+    &lt;div class="aspect aspect--16x9"&gt;
+      &lt;div class="aspect__inner"&gt;
+        &lt;img src="central-park.jpg" alt="Looking down on central park and the surrounding builds from the Rockefellar Center" /&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;figcaption&gt;Central Park&lt;/figcaption&gt;
+  &lt;/figure&gt;
+  &lt;div class="col-1@sm my-sizer-element"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</div>
+
+<h3 id="columns">How column widths work<a href="#how-column-widths-work"></a></h3>
+<p>There are 4 options for defining the width of the columns:</p>
+<ol>
+  <li>Use a <strong>sizer</strong> element. This is the easiest way to specify column and gutter widths. Add the sizer element and make it 1 column wide. Shuffle will measure the <code>width</code> and <code>margin-left</code> of this <code>sizer</code> element each time the grid resizes. This is awesome for responsive or fluid grids where the width of a column is a percentage.</li>
+  <li>Use a <strong>function</strong>. When a function is used, its first parameter will be the width of the shuffle element. You need to return the column width for shuffle to use (in pixels).</li>
+  <li>A <strong>number</strong>. This will explicitly set the column width to your number (in pixels).</li>
+  <li>By default, shuffle will use the width of the first item to calculate the column width.</li>
+</ol>
+
+<h3>A basic setup example</h3>
+<p>If you want functional buttons, check out <a href="{{ site.baseurl }}/js/demos/homepage.js">the js file</a>.</p>
+<p>Shuffle uses a UMD definition so that you can use it with globals, AMD, or CommonJS.</p>
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">var Shuffle = window.Shuffle;
+var element = document.querySelector('.my-shuffle-container');
+var sizer = element.querySelector('.my-sizer-element');
+
+var shuffleInstance = new Shuffle(element, {
+  itemSelector: '.picture-item',
+  sizer: sizer // could also be a selector: '.my-sizer-element'
+});</code></pre>
+</div>

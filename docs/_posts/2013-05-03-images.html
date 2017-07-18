@@ -1,0 +1,124 @@
+---
+layout: default
+title: Using images with Shuffle
+description: A Shuffle.js demo using aspect ratios to set the size of images.
+image: /demos/images.jpg
+extraJS: ["demos/images.js"]
+prism: true
+---
+
+<div class="container">
+  <div class="row">
+    <div class="col-12@sm">
+      <h2>Using images with Shuffle</h2>
+      <p>You can encounter problems when shuffle item dimensions depend on images. <a href="{{ site.baseurl }}{% post_url 2013-06-29-image-problems %}">Like this demo</a>. There are three good solutions to this.</p>
+      <ol>
+        <li>Set an explicit height on <code>.shuffle-item</code>s like the <a href="{{ site.baseurl }}{% post_url 2013-05-01-basic %}">basic demo</a>.</li>
+        <li>Similar to number 1, make the height of the image container a percentage of the width. If you know the aspect ratio of the images you're using, this is the technique you should use. This demo uses that technique.</li>
+        <li>Get notified when images load and call <code>shuffleInstance.layout()</code>. I recommend using <a href="http://desandro.github.io/imagesloaded/">Desandro's images loaded plugin</a> to know when your images have finished loading.</li>
+        <li>Do nothing and let your shuffle instance call <code>layout()</code> on the <code>window</code>'s <code>load</code> event. This will the item layout to change on page load.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+
+<style>
+
+  .my-grid-with-images {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .my-grid-with-images .img-item {
+    margin-top: 10px;
+    margin-left: 0;
+  }
+
+  .my-grid-with-images .img-item img {
+    width: 100%;
+  }
+
+</style>
+
+<div class="container shuffle-wrap">
+  <div class="my-grid-with-images row">
+    {% for item in site.data.items %}
+    <figure class="js-item img-item col-3@sm col-3@xs">
+      <div class="aspect aspect--16x9">
+        <div class="aspect__inner">
+          <img src="{{ item.images.small }}" srcset="{{ item.images.small }} 1x, {{ item.images.small-2x }} 2x" alt="{{ item.description }}" />
+        </div>
+      </div>
+      <figcaption>{{ item.title }}</figcaption>
+    </figure>
+    {% endfor %}
+    <div class="col-3@sm col-3@xs" id="js-sizer"></div>
+  </div>
+</div>
+
+
+<div class="container has-code-block">
+  <div class="row">
+    <div class="col-12@sm">
+      <h2>Setup</h2>
+    </div>
+    <div class="col-12@sm">
+      <h3>Maintaining aspect ratios</h3>
+      <p>With two elements, you can create a box which will scale with the page. Here's an example:</p>
+      <div style="width:30%;">
+        <div class="aspect aspect--2x1" style="background-color: #3498DB; color: white;">
+          <div class="aspect__inner">
+            <div class="table-center-wrap text-center full-width full-height">
+              <div class="table-center">A 2:1 box</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p>With this knowledge, you can force an image to fit inside this box and, when the image loads, it will not change the size of the box.</p>
+      <div class="code-block">
+        <pre rel="CSS"><code class="language-css">.aspect {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  overflow: hidden;
+}
+
+.aspect__inner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+/* Add more aspect ratios here */
+.aspect--16x9 {
+  padding-bottom: 56.25%;
+}</code></pre>
+      </div>
+    </div>
+    <div class="col-12@sm">
+      <h3>Markup for each item</h3>
+      <p>The most important thing here is that the images are wrapped in two other elements which define its size. This means that the size of the <code>&lt;figure&gt;</code> does not depend on the image.</p>
+      <div class="code-block">
+        <pre data-line="2-6" rel="HTML"><code class="language-markup">&lt;figure class="js-item img-item col-3@sm col-3@xs"&gt;
+  &lt;div class="aspect aspect--16x9"&gt;
+    &lt;div class="aspect__inner"&gt;
+      &lt;img src="/img/tennis-ball.png" alt="3D render of a tennis ball"&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;figcaption&gt;wallpaper, 3d&lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+      </div>
+    </div>
+    <div class="col-12@sm">
+      <h3>JavaScript used for this demo</h3>
+      <p>Link to <a href="{{ site.baseurl }}/js/demos/images.js">demo source</a></p>
+      <div class="code-block">
+        <pre rel="JavaScript" data-src="{{ site.baseurl }}/js/demos/images.js"></pre>
+      </div>
+    </div>
+  </div>
+</div>

@@ -21,7 +21,7 @@ const uglifyOptions = {
 };
 
 const entry = './src/shuffle.js';
-const moduleName = 'shuffle';
+const moduleName = 'Shuffle';
 const format = 'umd';
 const sourceMap = true;
 

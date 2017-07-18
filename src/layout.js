@@ -1,4 +1,5 @@
 import Point from './point';
+import Rect from './rect';
 import arrayMax from './array-max';
 import arrayMin from './array-min';
 
@@ -105,9 +106,7 @@ export function getItemPosition({ itemSize, positions, gridSize, total, threshol
   const shortColumnIndex = getShortColumn(setY, buffer);
 
   // Position the item
-  const point = new Point(
-    Math.round(gridSize * shortColumnIndex),
-    Math.round(setY[shortColumnIndex]));
+  const point = new Point(gridSize * shortColumnIndex, setY[shortColumnIndex]);
 
   // Update the columns array with the new values for each column.
   // e.g. before the update the columns could be [250, 0, 0, 0] for an item
@@ -118,4 +117,94 @@ export function getItemPosition({ itemSize, positions, gridSize, total, threshol
   }
 
   return point;
+}
+
+/**
+ * This method attempts to center items. This method could potentially be slow
+ * with a large number of items because it must place items, then check every
+ * previous item to ensure there is no overlap.
+ * @param {Array.<Rect>} itemRects Item data objects.
+ * @param {number} containerWidth Width of the containing element.
+ * @return {Array.<Point>}
+ */
+export function getCenteredPositions(itemRects, containerWidth) {
+  const rowMap = {};
+
+  // Populate rows by their offset because items could jump between rows like:
+  // a   c
+  //  bbb
+  itemRects.forEach((itemRect) => {
+    if (rowMap[itemRect.top]) {
+      // Push the point to the last row array.
+      rowMap[itemRect.top].push(itemRect);
+    } else {
+      // Start of a new row.
+      rowMap[itemRect.top] = [itemRect];
+    }
+  });
+
+  // For each row, find the end of the last item, then calculate
+  // the remaining space by dividing it by 2. Then add that
+  // offset to the x position of each point.
+  let rects = [];
+  const rows = [];
+  const centeredRows = [];
+  Object.keys(rowMap).forEach((key) => {
+    const itemRects = rowMap[key];
+    rows.push(itemRects);
+    const lastItem = itemRects[itemRects.length - 1];
+    const end = lastItem.left + lastItem.width;
+    const offset = Math.round((containerWidth - end) / 2);
+
+    let finalRects = itemRects;
+    let canMove = false;
+    if (offset > 0) {
+      const newRects = [];
+      canMove = itemRects.every((r) => {
+        const newRect = new Rect(r.left + offset, r.top, r.width, r.height, r.id);
+
+        // Check all current rects to make sure none overlap.
+        const noOverlap = !rects.some(r => Rect.intersects(newRect, r));
+
+        newRects.push(newRect);
+        return noOverlap;
+      });
+
+      // If none of the rectangles overlapped, the whole group can be centered.
+      if (canMove) {
+        finalRects = newRects;
+      }
+    }
+
+    // If the items are not going to be offset, ensure that the original
+    // placement for this row will not overlap previous rows (row-spanning
+    // elements could be in the way).
+    if (!canMove) {
+      let intersectingRect;
+      const hasOverlap = itemRects.some(itemRect => rects.some((r) => {
+        const intersects = Rect.intersects(itemRect, r);
+        if (intersects) {
+          intersectingRect = r;
+        }
+        return intersects;
+      }));
+
+      // If there is any overlap, replace the overlapping row with the original.
+      if (hasOverlap) {
+        const rowIndex = centeredRows.findIndex(items => items.includes(intersectingRect));
+        centeredRows.splice(rowIndex, 1, rows[rowIndex]);
+      }
+    }
+
+    rects = rects.concat(finalRects);
+    centeredRows.push(finalRects);
+  });
+
+  // Reduce array of arrays to a single array of points.
+  // https://stackoverflow.com/a/10865042/373422
+  // Then reset sort back to how the items were passed to this method.
+  // Remove the wrapper object with index, map to a Point.
+  return [].concat.apply([], centeredRows) // eslint-disable-line prefer-spread
+    .sort((a, b) => (a.id - b.id))
+    .map(itemRect => new Point(itemRect.left, itemRect.top));
 }

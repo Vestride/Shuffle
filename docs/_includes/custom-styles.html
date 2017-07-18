@@ -1,0 +1,53 @@
+<h2>Customizing Styles<a href="#custom-styles"></a></h2>
+<p>You can customize the default styles which are applied to Shuffle items upon initialization, before layout, after layout, before hiding, and after hidden.</p>
+<p>Here are the defaults:</p>
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">ShuffleItem.Css = {
+  INITIAL: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    visibility: 'visible',
+    'will-change': 'transform',
+  },
+  VISIBLE: {
+    before: {
+      opacity: 1,
+      visibility: 'visible',
+    },
+    after: {
+      transitionDelay: '',
+    },
+  },
+  HIDDEN: {
+    before: {
+      opacity: 0,
+    },
+    after: {
+      visibility: 'hidden',
+      transitionDelay: '',
+    },
+  },
+};
+
+ShuffleItem.Scale = {
+  VISIBLE: 1,
+  HIDDEN: 0.001,
+};</code></pre>
+</div>
+
+<p>If you wanted to add a 50% red background to every item when they initialize, you could do this:</p>
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">Shuffle.ShuffleItem.Css.INITIAL.backgroundColor = 'rgba(255, 0, 0, 0.5)';</code></pre>
+</div>
+
+<p>To set the text color to <code>teal</code> after the item has finished moving:</p>
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">Shuffle.ShuffleItem.Css.VISIBLE.after.color = 'teal';</code></pre>
+</div>
+
+<p>You can also customize the scaling effect with visible or hidden items.</p>
+
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">Shuffle.ShuffleItem.Scale.HIDDEN = 0.5;</code></pre>
+</div>

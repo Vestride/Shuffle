@@ -1,0 +1,19 @@
+<h2>Events<a href="#events"></a></h2>
+<p>Shuffle is a subclass of <a href="https://www.npmjs.com/package/tiny-emitter">TinyEmitter</a>. It emits an event when a layout happens and when elements are removed. The event names are <code>Shuffle.EventType.LAYOUT</code> and <code>Shuffle.EventType.REMOVED</code>.</p>
+
+<h3>Get notified when a layout happens</h3>
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.on(Shuffle.EventType.LAYOUT, function () {
+  console.log('Things finished moving!');
+});</code></pre>
+</div>
+
+
+<h3>Do something when an item is removed</h3>
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.on(Shuffle.EventType.REMOVED, function (data) {
+  console.log(this, data, data.collection, data.shuffle);
+});</code></pre>
+</div>
+
+<p class="demo-link-container">Check out the <a href="#demo">demo</a> at the top of the page, or its <a href="/js/demos/homepage.js">JavaScript file.</a></p>

@@ -1,0 +1,24 @@
+source:      .
+destination: _site
+plugins_dir: _plugins
+layouts_dir: _layouts
+data_dir:    _data
+include:     ["dist"]
+exclude:     ["./_scss"]
+
+permalink: /:title
+
+# Overriden in _config_dev.yml
+environment: production
+
+# Open graph and twitter cards require absolute urls
+url: https://vestride.github.io
+
+# jekyll serve --watch --config _config.yml,_config_dev.yml
+baseurl: /Shuffle
+
+defaultTitle: 'Shuffle.js'
+defaultDescription: 'Categorize, sort, and filter a responsive grid of items'
+defaultImage: '/img/shuffle.png'
+
+longDescription: 'Shuffle.js is a package for sorting, filtering, and laying out a group of items. It&rsquo;s performant, responsive, and fast. Check out the demos!'

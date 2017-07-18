@@ -1,0 +1,19 @@
+
+// Filters
+.filter-label {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 4px;
+  color: $gray60;
+}
+
+.filters-group {
+  margin-bottom: 4px;
+}
+
+@include breakpoint(sm) {
+  .filters-group-wrap {
+    display: flex;
+    justify-content: space-between;
+  }
+}

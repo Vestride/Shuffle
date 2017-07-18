@@ -1,0 +1,175 @@
+@import "./extensions/variables";
+@import "./extensions/mixins";
+
+/*=============================================*\
+ Some styles to show off masonry layout
+\*=============================================*/
+
+$picture-gutter: 24px;
+$item-height: 220px;
+.picture-item {
+  height: 220px;
+  margin-top: $picture-gutter;
+  margin-left: 0; /* shuffle items shouldn't have a left margin*/
+
+  img {
+    display: block;
+    width: 100%;
+  }
+}
+
+@supports (object-fit: cover) {
+  .picture-item img {
+    max-width: none;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.picture-item--h2 {
+  height: ($item-height * 2) + $picture-gutter; /* 2x the height + 1 gutter */
+}
+
+.picture-item__inner {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: $gray95;
+}
+
+img.picture-item__blur {
+  display: none;
+}
+
+.picture-item__details {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1em;
+}
+
+.picture-item__description {
+  width: 100%;
+  padding: 0 2em 1em 1em;
+  margin: 0;
+}
+
+.picture-item__title {
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+.picture-item__tags {
+  flex-shrink: 1;
+  text-align: right;
+  margin: 0;
+}
+
+@include breakpoint(sm) {
+
+  .picture-item--overlay {
+
+    .picture-item__details {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(black, .6);
+      color: white;
+      overflow: hidden;
+    }
+
+    .picture-item__description {
+      display: none;
+    }
+  }
+
+  @supports (filter: blur(1px)) and (clip-path: inset(0 0 0 0)) {
+
+    .picture-item--overlay {
+
+      .picture-item__blur {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        display: block;
+        filter: blur(7px);
+        clip-path: inset(#{$item-height - 50px} 0 0 0);
+      }
+
+      .picture-item__details {
+        background: none;
+      }
+
+      .picture-item__tags,
+      .picture-item__title {
+        position: relative;
+        z-index: 2;
+      }
+    }
+  }
+}
+
+
+/*
+  Shuffle needs either relative or absolute positioning on the container
+  It will set it for you, but it'll cause another style recalculation and layout.
+  AKA worse performance - so just set it here
+ */
+.my-shuffle-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.my-sizer-element {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+}
+
+
+/* Animate in styles */
+.shuffle--animatein {
+  overflow: visible;
+}
+
+.shuffle--animatein .picture-item__inner {
+  opacity: 0;
+  transform: translate(0, 220px);
+}
+
+.shuffle--animatein .picture-item__inner--transition {
+  transition: all .6s ease;
+}
+
+.shuffle--animatein .picture-item.in .picture-item__inner {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+
+
+@include breakpoint(sm, true) {
+
+  .picture-item {
+    height: auto;
+    margin-top: 20px;
+  }
+
+  .picture-item__details,
+  .picture-item__description {
+    font-size: .875em;
+    padding: .625em;
+  }
+
+  .picture-item__description {
+    padding-right: .875em;
+    padding-bottom: 1.25em;
+  }
+
+  .picture-item--h2 {
+    height: auto;
+  }
+}

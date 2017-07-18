@@ -1,0 +1,73 @@
+
+// @param {string} bp Breakpoint value. One of `xs, sm, md, lg`.
+// @param {boolean} isMaxWidth By default, the media queries are mobile first,
+//     so they use `min-width: __px`. By passing `true`, the mixin will subtract
+//     one pixel from the breakpoint value and make it `max-width: __px`.
+// @param {boolean} isScreenOnly Whether to hide this media query from print styles.
+//
+// Note: For print media, we want the default styles and the xs breakpoint to take effect.
+@mixin breakpoint($bp, $isMaxWidth: false, $isScreenOnly: true) {
+  $media-query: get-breakpoint-query($bp, $isMaxWidth);
+
+  @if $isScreenOnly {
+    $media-query: "screen and #{$media-query}";
+  }
+
+  @media #{$media-query} {
+    @content;
+  }
+}
+
+// https://caniuse.com/#feat=css-media-interaction
+// https://bugzilla.mozilla.org/show_bug.cgi?id=1035774#c9
+@mixin with-fine-pointer() {
+  @media (-moz-touch-enabled: 0), (pointer: fine) {
+    @content;
+  }
+}
+
+@mixin clearfix() {
+  &::before,
+  &::after {
+    content: " ";
+    display: table;
+  }
+
+  &::after {
+    clear: both;
+  }
+}
+
+@mixin keep-aspect() {
+  position: relative;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%;
+}
+
+@mixin aspect($width, $height) {
+  padding-bottom: percentage($height / $width);
+}
+
+@mixin no-aspect() {
+  height: auto;
+  padding-bottom: 0;
+  overflow: visible;
+}
+
+@function get-breakpoint-query($bp, $isMaxWidth: false) {
+  $breakpoint: map-get($breakpoints, $bp);
+  $media: if($isMaxWidth, 'max-width', 'min-width');
+
+  @if $isMaxWidth {
+    $breakpoint: $breakpoint - 1px;
+  }
+
+  @if map-has-key($breakpoints, $bp) {
+    @return "(#{$media}: #{$breakpoint})";
+  } @else {
+    @warn "#{$bp} not recognized. Valid breakpoints: #{map-keys($breakpoints)}";
+    @return "screen";
+  }
+}

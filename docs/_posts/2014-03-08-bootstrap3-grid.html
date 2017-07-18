@@ -1,0 +1,120 @@
+---
+layout: default
+title: Bootstrap 3 Grid Demo
+description: Demonstrating how Shuffle can be used with a grid system which uses padding for gutters instead of margins.
+image: /demos/bootstrap3grid.jpg
+externalCSS: [ "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" ]
+extraJS: [ "demos/padding-grid.js" ]
+photoCredit: false
+---
+<style>
+
+  .table-center-wrap {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+  }
+
+  .demo-description {
+    margin-bottom: 20px;
+  }
+
+  .grid__brick .grid__brick-inner {
+    background-color: #F0F0F0;
+    height: 100px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+  }
+
+  .grid__brick:nth-child(n+4) {
+    margin-top: 15px;
+  }
+
+  @media (max-width: 767px) {
+    .grid__brick:nth-child(n+3) {
+      margin-top: 15px;
+    }
+  }
+
+  .aside {
+    height: 200px;
+    background-color: #E0E0E0;
+  }
+
+  .aside + .aside {
+    margin-top: 10px;
+  }
+</style>
+
+<div class="container demo-description">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>Bootstrap 3 Grid</h2>
+      <p>
+        On this page, I have added the minified bootstrap css file from the <a href="https://www.bootstrapcdn.com/">Bootstrap CDN</a> (which is also why some of the site-styles are being overridden).
+        <br>
+        The <a href="http://getbootstrap.com/css/#grid">Bootstrap 3 grid</a> system uses padding for gutters instead of margins. This page demonstrates one way to use Shuffle with these types of grids, as well as showing you don't have to use the full width of the page with Shuffle.
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-9">
+      <div class="row">
+
+        <div id="grid" class="my-shuffle-container">
+          {% for i in (1..20) %}
+            <div class="grid__brick col-xs-6 col-sm-4">
+              <div class="grid__brick-inner">
+                <div class="table-center-wrap">
+                  <div class="table-center">
+                    {{ i }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          <div class="col-xs-1 my-sizer-element"></div>
+        </div>
+
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-3">
+      <aside class="aside table-center-wrap">
+        <div class="table-center">
+          Some content on the right.
+        </div>
+      </aside>
+      <aside class="aside table-center-wrap">
+        <div class="table-center">
+          Some content on the right.
+        </div>
+      </aside>
+      <aside class="aside table-center-wrap">
+        <div class="table-center">
+          Some content on the right.
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>Source code for this demo</h2>
+      <p>Link to <a href="{{ site.baseurl }}/js/demos/padding-grid.js">demo source</a></p>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>Shuffle.js</h2>
+      <p>{{ site.longDescription }}</p>
+    </div>
+  </div>
+</div>

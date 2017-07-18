@@ -8,7 +8,7 @@ var sinon = window.sinon;
 
 describe('shuffle', function () {
 
-  var Shuffle = window.shuffle;
+  var Shuffle = window.Shuffle;
   var fixtures = {};
   var fixture;
   var instance;
@@ -62,19 +62,6 @@ describe('shuffle', function () {
     fixture = null;
   }
 
-  function once(element, eventType, fn) {
-    var handler = function (e) {
-      element.removeEventListener(eventType, handler);
-      fn(e);
-    };
-
-    element.addEventListener(eventType, handler);
-  }
-
-  function toArray(thing) {
-    return Array.prototype.slice.call(thing);
-  }
-
   function id(id) {
     return document.getElementById(id);
   }
@@ -110,7 +97,6 @@ describe('shuffle', function () {
       expect(instance.options.delimeter).to.equal(null);
       expect(instance.options.initialSort).to.equal(null);
       expect(instance.options.throttleTime).to.equal(300);
-      expect(instance.useSizer).to.equal(false);
       expect(instance.id).to.equal('shuffle_0');
 
       expect(instance.isInitialized).to.be.true;
@@ -128,13 +114,13 @@ describe('shuffle', function () {
       instance.items.forEach(function (item) {
         expect(item.element).to.have.class('shuffle-item');
         expect(item.element).to.have.class('shuffle-item--visible');
-        expect(item.element.style.opacity).to.be.defined;
+        expect(item.element.style.opacity).to.be.exist;
         expect(item.element.style.position).to.equal('absolute');
         expect(item.element.style.visibility).to.equal('visible');
         expect(item.isVisible).to.equal(true);
         expect(item.scale).to.equal(Shuffle.ShuffleItem.Scale.VISIBLE);
-        expect(item.point.x).to.be.defined;
-        expect(item.point.y).to.be.defined;
+        expect(item.point.x).to.be.exist;
+        expect(item.point.y).to.be.exist;
       });
     });
 
@@ -237,7 +223,7 @@ describe('shuffle', function () {
           expect(element.style.visibility).to.equal('visible');
         });
 
-        once(fixture, Shuffle.EventType.LAYOUT, third);
+        instance.once(Shuffle.EventType.LAYOUT, third);
 
         // Filter by green.
         instance.filter('green');
@@ -266,7 +252,7 @@ describe('shuffle', function () {
         done();
       }
 
-      once(fixture, Shuffle.EventType.LAYOUT, second);
+      instance.once(Shuffle.EventType.LAYOUT, second);
       instance.filter('design');
     });
 
@@ -315,6 +301,42 @@ describe('shuffle', function () {
       var positions = [150, 0, 0, 0];
       expect(Shuffle.__getAvailablePositions(positions, 1, 4)).to.deep.equal([150, 0, 0, 0]);
       expect(Shuffle.__getAvailablePositions(positions, 2, 4)).to.deep.equal([150, 0, 0]);
+    });
+
+    it('can center already-positioned items', function() {
+      // 4-2-1 even heights
+      expect(Shuffle.__getCenteredPositions([
+        new Shuffle.Rect(0, 0, 250, 100, 0),
+        new Shuffle.Rect(250, 0, 250, 100, 1),
+        new Shuffle.Rect(500, 0, 250, 100, 2),
+        new Shuffle.Rect(750, 0, 250, 100, 3),
+        new Shuffle.Rect(0, 100, 600, 100, 4),
+        new Shuffle.Rect(600, 100, 300, 100, 5),
+        new Shuffle.Rect(0, 200, 250, 100, 6),
+      ], 1000)).to.deep.equal([
+        new Shuffle.Point(0, 0),
+        new Shuffle.Point(250, 0),
+        new Shuffle.Point(500, 0),
+        new Shuffle.Point(750, 0),
+        new Shuffle.Point(50, 100),
+        new Shuffle.Point(650, 100),
+        new Shuffle.Point(375, 200),
+      ]);
+
+      // 4 columns:
+      // 2x2 1x1
+      // 2x1
+      // Centers the first row, but then finds that the 3rd item will overlap
+      // the 2x2 and resets the first row.
+      expect(Shuffle.__getCenteredPositions([
+        new Shuffle.Rect(0, 0, 500, 200, 0),
+        new Shuffle.Rect(500, 0, 250, 100, 1),
+        new Shuffle.Rect(500, 100, 500, 100, 2),
+      ], 1000)).to.deep.equal([
+        new Shuffle.Point(0, 0),
+        new Shuffle.Point(500, 0),
+        new Shuffle.Point(500, 100),
+      ]);
     });
 
     it('can get an element option', function () {
@@ -393,13 +415,13 @@ describe('shuffle', function () {
       instance.destroy();
 
       expect(instance.element).to.be.null;
-      expect(instance.items).to.be.null;
+      expect(instance.items).to.have.lengthOf(0);
       expect(instance.options.sizer).to.be.null;
       expect(instance.isDestroyed).to.be.true;
 
       expect(fixture).to.not.have.class('shuffle');
 
-      toArray(fixture.children).forEach(function (child) {
+      Array.from(fixture.children).forEach(function (child) {
         expect(child).to.not.have.class('shuffle-item');
         expect(child).to.not.have.class('shuffle-item--visible');
         expect(child).to.not.have.class('shuffle-item--hidden');
@@ -425,20 +447,20 @@ describe('shuffle', function () {
       expect(update.called).to.be.false;
     });
 
-    it('should not update when the container is the same size', function () {
+    it('should still update when the container is the same size', function () {
       instance = new Shuffle(fixture);
       var update = sinon.spy(instance, 'update');
 
       instance._onResize();
 
-      expect(update.called).to.be.false;
+      expect(update.called).to.be.true;
     });
 
     describe('removing elements', function () {
       var children;
 
       beforeEach(function () {
-        children = toArray(fixture.children);
+        children = Array.from(fixture.children);
       });
 
       afterEach(function () {
@@ -450,12 +472,11 @@ describe('shuffle', function () {
           speed: 16,
         });
 
-        once(fixture, Shuffle.EventType.REMOVED, function (evt) {
-          var detail = evt.detail;
-          expect(detail.shuffle.visibleItems).to.equal(8);
-          expect(detail.collection[0].id).to.equal('item1');
-          expect(detail.collection[1].id).to.equal('item2');
-          expect(detail.shuffle.element.children).to.have.lengthOf(8);
+        instance.once(Shuffle.EventType.REMOVED, function (data) {
+          expect(data.shuffle.visibleItems).to.equal(8);
+          expect(data.collection[0].id).to.equal('item1');
+          expect(data.collection[1].id).to.equal('item2');
+          expect(data.shuffle.element.children).to.have.lengthOf(8);
           expect(instance.isTransitioning).to.be.false;
           done();
         });
@@ -470,13 +491,12 @@ describe('shuffle', function () {
           useTransforms: false,
         });
 
-        once(fixture, Shuffle.EventType.REMOVED, function (evt) {
-          var detail = evt.detail;
-          expect(detail.shuffle.visibleItems).to.equal(8);
-          expect(detail.collection[0].id).to.equal('item2');
-          expect(detail.collection[1].id).to.equal('item3');
-          expect(detail.shuffle.element.children).to.have.lengthOf(8);
-          expect(detail.shuffle.isTransitioning).to.be.false;
+        instance.once(Shuffle.EventType.REMOVED, function (data) {
+          expect(data.shuffle.visibleItems).to.equal(8);
+          expect(data.collection[0].id).to.equal('item2');
+          expect(data.collection[1].id).to.equal('item3');
+          expect(data.shuffle.element.children).to.have.lengthOf(8);
+          expect(data.shuffle.isTransitioning).to.be.false;
           done();
         });
 
@@ -538,14 +558,11 @@ describe('shuffle', function () {
         });
       });
 
-      afterEach(function (done) {
-        once(fixture, Shuffle.EventType.LAYOUT, function () {
-          items.length = 0;
-          done();
-        });
+      afterEach(function () {
+        items.length = 0;
       });
 
-      it('can add items', function () {
+      it('can add items', function (done) {
         fixture.appendChild(items[0]);
         fixture.appendChild(items[1]);
         instance.add(items);
@@ -553,9 +570,13 @@ describe('shuffle', function () {
         // Already 2 in the items, plus number 11.
         expect(instance.visibleItems).to.equal(3);
         expect(instance.items).to.have.lengthOf(12);
+
+        instance.once(Shuffle.EventType.LAYOUT, function () {
+          done();
+        });
       });
 
-      it('can prepend items', function () {
+      it('can prepend items', function (done) {
         fixture.insertBefore(items[1], fixture.firstElementChild);
         fixture.insertBefore(items[0], fixture.firstElementChild);
         instance.add(items);
@@ -563,6 +584,23 @@ describe('shuffle', function () {
         expect(instance.items[0].element).to.equal(items[0]);
         expect(instance.items[1].element).to.equal(items[1]);
         expect(instance.items).to.have.lengthOf(12);
+
+        instance.once(Shuffle.EventType.LAYOUT, function () {
+          done();
+        });
+      });
+
+      it('can reset items', function () {
+        fixture.textContent = '';
+        fixture.appendChild(items[0]);
+        fixture.appendChild(items[1]);
+
+        instance.resetItems();
+
+        expect(instance.isInitialized).to.be.true;
+        expect(instance.items[0].element).to.equal(items[0]);
+        expect(instance.items[1].element).to.equal(items[1]);
+        expect(instance.items).to.have.lengthOf(2);
       });
 
     });
@@ -632,11 +670,11 @@ describe('shuffle', function () {
 
     beforeEach(function (done) {
       appendFixture('regular').then(function () {
-        items = toArray(fixture.children).map(function (element) {
+        items = Array.from(fixture.children).map(function (element) {
           return { element: element };
         });
 
-        clone = toArray(items);
+        clone = Array.from(items);
 
         done();
       });
@@ -656,7 +694,7 @@ describe('shuffle', function () {
       expect(items).to.have.lengthOf(10);
       expect(Shuffle.__sorter(items)).to.deep.equal(items);
 
-      var clone = toArray(items);
+      var clone = Array.from(items);
       expect(Shuffle.__sorter(clone, { randomize: true })).to.not.deep.equal(items);
     });
 

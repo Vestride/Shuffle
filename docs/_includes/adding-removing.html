@@ -1,0 +1,30 @@
+<h2>Adding and Removing Items<a href="#adding-removing"></a></h2>
+<p>You can add and remove elements from shuffle after it has been created. This also works for infinite scrolling.</p>
+
+<h3>Adding elements</h3>
+<p>Wherever you add the element in the DOM is where it will show up in the grid (assuming you&rsquo;re using the default sort-by-dom-order). With this in mind, you can append, prepend, or insert elements wherever you need to get them to show up in the right order.</p>
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">/**
+ * Create some DOM elements, append them to the shuffle container, then notify
+ * shuffle about the new items. You could also insert the HTML as a string.
+ */
+Demo.prototype.onAppendBoxes = function () {
+  var elements = this._getArrayOfElementsToAdd();
+
+  elements.forEach(function (element) {
+    this.shuffle.element.appendChild(element);
+  }, this);
+
+  // Tell shuffle elements have been appended.
+  // It expects an array of elements as the parameter.
+  this.shuffle.add(elements);
+};</code></pre>
+</div>
+
+<h3>Removing elements</h3>
+<p>Shuffle will animate the element away and then remove it from the DOM once it's finished. It will then emit the <code>Shuffle.EventType.REMOVED</code> event with the array of elements in <code>event.collection</code>.</p>
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">this.shuffle.remove([element1, element2]);</code></pre>
+</div>
+
+<p class="demo-link-container">Check out the <a href="{{ site.baseurl }}{% post_url 2013-06-19-adding-removing %}">adding and removing demo</a>.</p>

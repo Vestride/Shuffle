@@ -1,0 +1,37 @@
+// FAQ
+
+.search-section {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.question {
+  float: none;
+  margin: 2em 0;
+  overflow: hidden;
+  transition: .2s ease-out;
+}
+
+.question--collapsed {
+  height: 0 !important; // Needs to override inline style
+  margin: 0;
+  border-width: 0;
+}
+
+.question--collapsed + .question  {
+  margin-top: 0;
+}
+
+.question--unanswered {
+  padding-top: 1.25em;
+  border-top: 2px solid $emerald;
+}
+
+.question__title {
+  margin-top: 0;
+}
+
+.question__answer {
+  padding-bottom: 1px;
+  margin-bottom: 0;
+}

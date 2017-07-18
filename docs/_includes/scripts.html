@@ -1,0 +1,26 @@
+{% if page.requirejs %}
+<script data-main="{{ site.baseurl }}/js/require-main.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.3/require.min.js"></script>
+{% else %}
+<script src="https://unpkg.com/core-js/client/shim.min.js"></script>
+<!-- Syntax highlighting via Prism -->
+<script src="{{ site.baseurl }}/js/prism.js"></script>
+<!-- Shuffle! -->
+<script src="{{ site.baseurl }}/dist/shuffle.js"></script>
+{% endif %}
+<script src="{{ site.baseurl }}/js/site-nav.js"></script>
+
+{% if page.externalJS %}
+{% for src in page.externalJS %}
+<script src="{{ src }}"></script>
+{% endfor %}
+{% endif %}
+
+{% if page.extraJS && page.extraJS.length %}
+{% for src in page.extraJS %}
+<script src="{{ site.baseurl }}/js/{{ src }}"{% if page.jsType %} type="{{ page.jsType }}"{% endif %}></script>
+{% endfor %}
+{% endif %}
+
+{% if site.environment == "production" %}
+<script>(function(G,o,O,g,l){G.GoogleAnalyticsObject=O;G[O]||(G[O]=function(){(G[O].q=G[O].q||[]).push(arguments)});G[O].l=+new Date;g=o.createElement('script'),l=o.scripts[0];g.src='//www.google-analytics.com/analytics.js';l.parentNode.insertBefore(g,l)}(this,document,'ga'));ga('create','UA-39355642-1','vestride.github.io');ga('send','pageview')</script>
+{% endif %}

@@ -1,0 +1,142 @@
+@import "../extensions/grid-framework";
+
+// .container
+.#{$grid-container} {
+  padding-left: map-get($grid-container-padding, "xs");
+  padding-right: map-get($grid-container-padding, "xs");
+  @include clearfix();
+}
+
+// .row
+.#{$grid-row} {
+  margin-left: auto;
+  margin-right: auto;
+  @include clearfix();
+
+  .#{$grid-row} {
+    margin-left: $grid-gutter-width / -2;
+    margin-right: $grid-gutter-width / -2;
+  }
+
+  &--centered {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+// .aspect
+.#{$grid-ratio-name} {
+  @include keep-aspect();
+}
+
+// .aspect--16x9 etc.
+@include grid-ratios();
+
+// .aspect > div or .aspect__inner
+.#{$grid-ratio-name} > div,
+.#{$grid-ratio-inner-name} {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+// Create basic styles for every grid class.
+@include make-grid-columns();
+
+// Only the extra small grid takes effect at all times. Mobile first!
+@include make-grid(xs, 6);
+
+@include breakpoint(sm) {
+
+  @include make-grid(sm);
+
+  // Add more padding to the container class.
+  .#{$grid-container} {
+    padding-left: map-get($grid-container-padding, "sm");
+    padding-right: map-get($grid-container-padding, "sm");
+  }
+
+  .#{$grid-row} {
+    max-width: $grid-max-width--desktop;
+  }
+}
+
+@include breakpoint(md) {
+
+  @include make-grid(md);
+}
+
+@media screen and (min-width: $viewport-at-max-grid-width) {
+
+  .#{$grid-container} {
+  }
+
+  .#{$grid-row} {
+  }
+}
+
+.code-block {
+  position: relative;
+  overflow: visible;
+  margin-top: 0.5em;
+  margin-right: calc(-3.5vw - #{($grid-gutter-width / 2)});
+  margin-bottom: 0.5em;
+  margin-left: calc(-3.5vw - #{($grid-gutter-width / 2)});
+
+  pre {
+    position: relative;
+    z-index: 1;
+    min-height: 56px;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    padding-left: calc(3.5vw + #{($grid-gutter-width / 2)});
+    padding-right: calc(3.5vw + #{($grid-gutter-width / 2)});
+    margin: 0;
+  }
+}
+
+@include breakpoint(sm) {
+
+  .code-block {
+    margin-left: calc(-7vw - #{($grid-gutter-width / 2)});
+    margin-right: calc(-7vw - #{($grid-gutter-width / 2)});
+
+    pre {
+      position: relative;
+      z-index: 1;
+      padding-left: calc(7vw + #{($grid-gutter-width / 2)});
+      padding-right: calc(7vw + #{($grid-gutter-width / 2)});
+    }
+  }
+}
+
+// @include breakpoint(md) {
+//
+//   .code-block {
+//     margin-left: calc(-3.5vw - #{($grid-gutter-width / 2)});
+//     margin-right: calc(-3.5vw - #{($grid-gutter-width / 2)});
+//
+//     pre {
+//       position: relative;
+//       z-index: 1;
+//       padding-left: calc(3.5vw + #{($grid-gutter-width / 2)});
+//       padding-right: calc(3.5vw + #{($grid-gutter-width / 2)});
+//     }
+//   }
+// }
+
+@media (min-width: $viewport-at-max-grid-width) {
+
+  .code-block {
+    margin-left: calc(((100vw - #{$grid-max-width--desktop}) / -2) - #{$grid-gutter-width / 2});
+    margin-right: calc(((100vw - #{$grid-max-width--desktop}) / -2) - #{$grid-gutter-width / 2});
+
+    pre {
+      padding-left: calc(((100vw - #{$grid-max-width--desktop}) / 2) + #{$grid-gutter-width / 2});
+      padding-right: calc(((100vw - #{$grid-max-width--desktop}) / 2) + #{$grid-gutter-width / 2});
+    }
+  }
+}

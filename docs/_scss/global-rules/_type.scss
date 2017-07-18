@@ -1,0 +1,132 @@
+body {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, sans-serif;
+  color: $gray30;
+}
+
+// Links
+a {
+  text-decoration: none;
+
+  &,
+  &:visited {
+    color: $river;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:active {
+    color: $emerald;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: $gray20;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 3vw 0;
+  font-size: 10vw;
+  font-weight: 400;
+  line-height: 1;
+}
+
+h2 {
+  position: relative;
+  font-size: 7vw;
+  margin: 3vw 0;
+}
+
+h3 {
+  font-size: 6vw;
+  margin: 2vw 0;
+}
+
+h4 {
+  font-size: 1.25em;
+}
+
+p {
+  margin: 1em 0;
+  line-height: 1.4;
+}
+
+.intro-text {
+  margin: 0.7em 0;
+  font-size: 1.125em;
+}
+
+@include breakpoint(sm) {
+  h1 {
+    margin: 0.5em 0 0.25em;
+    font-size: 3.5em;
+  }
+
+  h2 {
+    margin: 0.45em 0;
+    font-size: 2.5em;
+  }
+
+  h3 {
+    margin: 0.8em 0 0.5em;
+    font-size: 1.5em;
+  }
+
+  h1 > a,
+  h2 > a,
+  h3 > a {
+    display: none;
+  }
+
+  h1:hover > a,
+  h2:hover > a,
+  h3:hover > a {
+    position: absolute;
+    display: inline-block;
+    top: 0;
+    height: 50px;
+    width: 50px;
+    background: url('../img/link.svg') no-repeat;
+    overflow: hidden;
+    text-indent: -999em;
+  }
+
+  .intro-text {
+    font-size: 1.25em;
+  }
+}
+
+.unstyled {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.type--underline {
+  text-decoration: underline;
+}
+
+code:not([class*="language"]) {
+  padding: 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  font-size: 85%;
+  color: $gray10;
+  background-color: rgba(27,31,35,0.05);
+  border-radius: 3px;
+  font-family: Menlo, Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code:not([class*="language"])::before,
+code:not([class*="language"])::after {
+  content: "\00a0";
+  letter-spacing: -.2em;
+}

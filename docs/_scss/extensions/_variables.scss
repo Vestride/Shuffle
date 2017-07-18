@@ -1,0 +1,40 @@
+$breakpoints: (
+  xs: 0px,
+  sm: 768px,
+  md: 1024px,
+  lg: 1392px,
+  xl: 1680px
+);
+
+// Colors from Flat UI
+$turqoise: #1ABC9C;
+$greenSea: #16A085;
+$emerald: #2ECC71;
+$nephritis: #27AE60;
+$river: #3498DB;
+$belizeHole: #2980B9;
+$amethyst: #9B59B6;
+$wisteria: #8E44AD;
+$wet-asphalt: #34495E;
+$midnightBlue: #2C3E50;
+$sunflower: #F1C40F;
+$orange: #F39C12;
+$carrot: #E67E22;
+$pumpkin: #D35400;
+$alizarin: #E74C3C;
+$pomegranate: #C0392B;
+$clouds: #ECF0F1;
+$silver: #BDC3C7;
+$concrete: #95A5A6;
+$asbestos: #7F8C8D;
+
+$black: #000;
+$gray10: $midnightBlue;
+$gray20: $wet-asphalt;
+$gray30: #5D6D77;
+$gray50: $asbestos;
+$gray60: $concrete;
+$gray80: $silver;
+$gray90: #E1E5E6;
+$gray95: $clouds;
+$white: #FFF;

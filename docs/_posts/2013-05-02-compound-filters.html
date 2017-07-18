@@ -1,0 +1,78 @@
+---
+layout: default
+title: Shuffle Compound Filters Demo
+description: A demo with compound filtering
+image: /demos/adaptive.jpg
+extraJS: [ "demos/compound-filters.js" ]
+prism: true
+photoCredit: false
+---
+
+<section class="container">
+  <div class="row">
+    <h2 class="col-12@sm">Compound Filters</h2>
+  </div>
+</section>
+
+<section class="container">
+
+  <div class="filter-options filter-options--compound row">
+
+    <div class="col-6@sm">
+      <div class="filter-group filter-group--compound js-colors">
+        <p class="filter-label">Colors</p>
+        <button class="btn btn--go" data-value="green"><span class="visuallyhidden">Green</span></button>
+        <button class="btn btn--primary" data-value="blue"><span class="visuallyhidden">Blue</span></button>
+        <button class="btn btn--danger" data-value="red"><span class="visuallyhidden">Red</span></button>
+        <button class="btn btn--warning" data-value="orange"><span class="visuallyhidden">Orange</span></button>
+      </div>
+    </div>
+
+    <div class="col-6@sm">
+      <div class="filter-group filter-group--compound js-shapes">
+        <p class="filter-label">Shapes</p>
+        <span class="ib">
+          <input type="checkbox" value="circle" id="cb-circle"> <label for="cb-circle">Circle</label>
+        </span>
+        <span class="ib">
+          <input type="checkbox" value="diamond" id="cb-diamond"> <label for="cb-diamond">Diamond</label>
+        </span>
+        <span class="ib">
+          <input type="checkbox" value="square" id="cb-square"> <label for="cb-square">Square</label>
+        </span>
+        <span class="ib">
+          <input type="checkbox" value="triangle" id="cb-triangle"> <label for="cb-triangle">Triangle</label>
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="shape-shuffle-container js-shuffle">
+      {% for shape in site.data.shapes %}
+      <div class="col-3@xs col-3@sm shape shape--{{ shape.shape }} shape--{{ shape.color }}" data-shape="{{ shape.shape }}" data-color="{{ shape.color }}">
+        <div class="aspect">
+          <div class="aspect__inner">
+            <div class="shape__space"></div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="the-sizer col-1@xs col-1@sm"></div>
+    </div>
+  </div>
+
+</section>
+
+<div class="container has-code-block">
+  <div class="row">
+    <div class="col-12@sm">
+      <h2>Source code for this demo</h2>
+      <p>Link to <a href="{{ site.baseurl }}/js/demos/compound-filters.js">demo source</a></p>
+      <div class="code-block">
+        <pre rel="JavaScript" data-src="{{ site.baseurl }}/js/demos/compound-filters.js"></pre>
+      </div>
+    </div>
+  </div>
+</div>

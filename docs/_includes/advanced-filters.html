@@ -1,0 +1,33 @@
+<h2>Advanced Filters<a href="#advanced-filters"></a></h2>
+
+<p>By passing a function to <code>filter</code>, you can fully customize filtering items. Shuffle will iterate over each item and give your function the element and the shuffle instance. Return <code>true</code> to keep the element or <code>false</code> to hide it.</p>
+
+<h3>Example</h3>
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">// Filters elements with a data-title attribute with less than 10 characters
+shuffleInstance.filter(function (element) {
+  return element.getAttribute('data-title').length &lt; 10;
+});</code></pre>
+</div>
+
+<h3>Searching</h3>
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">// Advanced filtering
+Demo.prototype.addSearchFilter = function () {
+  document.querySelector('.js-shuffle-search').addEventListener('keyup', this._handleSearchKeyup.bind(this));
+};
+
+// Filter the shuffle instance by items with a title that matches the search input.
+Demo.prototype._handleSearchKeyup = function (evt) {
+  var searchText = evt.target.value.toLowerCase();
+
+  this.shuffle.filter(function (element, shuffle) {
+    var titleElement = element.querySelector('.picture-item__title');
+    var titleText = titleElement.textContent.toLowerCase().trim();
+
+    return titleText.indexOf(searchText) !== -1;
+  });
+};</code></pre>
+</div>
+
+<p class="demo-link-container">Check out the <a href="{{ site.baseurl }}{% post_url 2013-05-02-compound-filters %}">compounded filters demo</a>.</p>

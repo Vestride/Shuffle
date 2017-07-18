@@ -1,0 +1,269 @@
+---
+layout: default
+title: Shuffle.js
+bodyClass: home
+extraJS: [ "demos/homepage.js", "animated-favicon.js" ]
+includeHeader: true
+prism: true
+---
+<section id="install">
+  <div class="container">
+    <div class="row">
+      {% include install.html %}
+    </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Example<a href="#demo"></a></h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="row">
+
+      <div class="col-4@sm col-3@md filters-group">
+        <label for="filters-search-input" class="filter-label">Search</label>
+        <input class="textfield filter__search js-shuffle-search" type="search" id="filters-search-input" />
+      </div>
+
+    </div>
+    <div class="row">
+
+      <div class="col-12@sm filters-group-wrap">
+        <div class="filters-group">
+          <p class="filter-label">Filter</p>
+          <div class="btn-group filter-options">
+            <button class="btn btn--primary" data-group="space">Space</button>
+            <button class="btn btn--primary" data-group="nature">Nature</button>
+            <button class="btn btn--primary" data-group="animal">Animal</button>
+            <button class="btn btn--primary" data-group="city">City</button>
+          </div>
+        </div>
+        <div class="filters-group">
+          <p class="filter-label">Sort</p>
+          <div class="btn-group sort-options">
+            <label class="btn active">
+              <input type="radio" name="sort-value" value="dom" /> Default
+            </label>
+            <label class="btn">
+              <input type="radio" name="sort-value" value="title" /> Title
+            </label>
+            <label class="btn">
+              <input type="radio" name="sort-value" value="date-created" /> Date Created
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="container">
+    <div id="grid" class="row my-shuffle-container">
+      {%- for item in site.data.items -%}
+          {%- assign item = item -%}
+          {%- include picture-item.html -%}
+      {%- endfor -%}
+      <div class="col-1@sm col-1@xs my-sizer-element"></div>
+    </div>
+  </div>
+</section>
+
+<section id="demos">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Demos<a href="#demos"></a></h2>
+      </div>
+    </div>
+    {% include demo-list.html %}
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include features.html %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="options">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include options.html %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="usage">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include usage.html %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="filters">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include filters.html %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="advanced-filters">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include advanced-filters.html %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sorting">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include sorting.html %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="events">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include events.html %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="adding-removing">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include adding-removing.html %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="public-methods">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include public-methods.html %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="custom-styles">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include custom-styles.html %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="extra-features">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Extra Features<a href="#extra-features"></a></h2>
+
+        <p>Shuffle likely will not grow much farther than the current feature set. If you need something with drag and drop, filling in gaps, more layout modes, etc., I suggest looking into <a target="_blank" href="http://packery.metafizzy.co/">packery</a> or <a target="_blank" href="http://isotope.metafizzy.co/">isotope</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="dependencies">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Dependencies<a href="#dependencies"></a></h2>
+        <p>Shuffle's <a href="{{ site.baseurl }}/package.json">dependencies</a> are bundled with the dist file.</p>
+        <p id="polyfills">Shuffle does, however, expect the following ES6/7 features: <code>Set</code>, <code>Array.from</code>, <code>Object.assign</code>, <code>Array.prototype.find</code>, and <code>Array.prototype.includes</code>. In order to support browsers like IE11 and Safari 8, <strong class="type--underline">you must include a polyfill</strong> for these features. You can use a service like <a href="https://polyfill.io">polyfill.io</a> to only load the polyfills that specific browser needs, or a polyfill script like <a href="https://www.npmjs.com/package/babel-polyfill">babel-polyfill</a> (which uses <code>core-js</code> internally).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="supported-browsers">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Supported Browsers<a href="#supported-browsers"></a></h2>
+
+        <ul>
+          <li>Chrome</li>
+          <li>Firefox</li>
+          <li>Edge</li>
+          <li>IE 11</li>
+          <li>Safari</li>
+        </ul>
+
+        <p>Depending on what browsers you support, you may <a href="#polyfills">need to polyfill features used by Shuffle</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="be-social">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        <h2>Be Social<a href="#be-social"></a></h2>
+        <div class="text-center">
+          <iframe src="https://ghbtns.com/github-btn.html?user=Vestride&repo=Shuffle&type=star&size=large" frameborder="0" scrolling="0" width="76px" height="30px"></iframe>
+
+          <a href="https://twitter.com/share" class="twitter-share-button" data-via="Vestride" data-size="large">Tweet</a>
+
+          <div class="g-plusone" data-annotation="none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="changelog">
+  <div class="container">
+    <div class="row">
+      <div class="col-12@sm">
+        {% include changelog.html %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+
+(function() {
+  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+  po.src = 'https://apis.google.com/js/platform.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+</script>

@@ -1,0 +1,133 @@
+@import "../extensions/variables";
+
+
+.compound-filter-options {
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.filter-group--compound {
+
+  button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background-color: currentColor;
+  }
+
+  label {
+    cursor: pointer;
+  }
+
+  .ib + .ib {
+    margin-left: 8px;
+  }
+}
+
+.shape-shuffle-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.shape {
+  position: relative;
+  margin-left: 0;
+  margin-top: 10px;
+
+  .shape__space {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    border-style: solid;
+    border-width: 0;
+    border-color: transparent;
+  }
+}
+
+.shape--blue .shape__space {
+  background-color: $river;
+  border-bottom-color: $river;
+}
+
+.shape--red .shape__space {
+  background-color: $alizarin;
+  border-bottom-color: $alizarin;
+}
+
+.shape--orange .shape__space {
+  background-color: $orange;
+  border-bottom-color: $orange;
+}
+
+.shape--green .shape__space {
+  background-color: $emerald;
+  border-bottom-color: $emerald;
+}
+
+.shape--circle .shape__space {
+  border-radius: 50%;
+}
+
+.shape--square .shape__space {
+  // Nothing to see here
+}
+
+// 166 / sqrt(166^2 + 166^2) = scale
+.shape--diamond .shape__space {
+  transform: rotate(45deg) scale(0.707106781);
+}
+
+
+@mixin equilateralTriangle($size) {
+  $sqrt3: 1.73205080757;
+  $halfSize: $size / 2;
+  $fullSideWidth: round($sqrt3 * $halfSize);
+  $leftOver: $size - $fullSideWidth;
+
+  padding-top: $leftOver / 2;
+  height: 0;
+  width: 0;
+  border-width: 0 $halfSize $fullSideWidth $halfSize;
+}
+
+.shape--triangle .shape__space {
+  @include equilateralTriangle(132px);
+  background-color: transparent;
+  margin: auto;
+}
+
+@media (min-width: 425px) {
+  .shape--triangle .shape__space {
+    @include equilateralTriangle(180px);
+  }
+}
+
+@media (min-width: 600px) {
+  .shape--triangle .shape__space {
+    @include equilateralTriangle(262px);
+  }
+}
+
+@media (min-width: 768px) {
+  .shape--triangle .shape__space {
+    @include equilateralTriangle(148px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .shape--triangle .shape__space {
+    @include equilateralTriangle(204px);
+  }
+}
+
+@media (min-width: 1200px) {
+  .shape--triangle .shape__space {
+    @include equilateralTriangle(270px);
+  }
+}
+
+@media (min-width: 1392px) {
+  .shape--triangle .shape__space {
+    @include equilateralTriangle(284px);
+  }
+}

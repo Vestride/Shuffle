@@ -1,0 +1,18 @@
+{% include head.html %}
+{% include nav.html %}
+{% if page.includeHeader %}
+<header class="container">
+  <div class="row">
+    <div class="col-10@sm">
+      <h1>Shuffle</h1>
+      <p class="intro-text">{{ site.defaultDescription }}</p>
+    </div>
+  </div>
+</header>
+{% endif %}
+<main role="main" id="main">
+  {{ content }}
+</main>
+{% include footer.html %}
+{% include scripts.html %}
+{% include foot.html %}
