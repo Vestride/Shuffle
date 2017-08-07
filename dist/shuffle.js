@@ -250,7 +250,6 @@ var possibleConstructorReturn = function (self, call) {
 };
 
 var Point = function () {
-
   /**
    * Represents a coordinate pair.
    * @param {number} [x=0] X.

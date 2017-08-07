@@ -28,7 +28,6 @@ function arrayUnique(x) {
 let id = 0;
 
 class Shuffle extends TinyEmitter {
-
   /**
    * Categorize, sort, and filter a responsive grid of items.
    *
@@ -121,8 +120,8 @@ class Shuffle extends TinyEmitter {
   _getResizeFunction() {
     const resizeFunction = this._handleResize.bind(this);
     return this.options.throttle ?
-        this.options.throttle(resizeFunction, this.options.throttleTime) :
-        resizeFunction;
+      this.options.throttle(resizeFunction, this.options.throttleTime) :
+      resizeFunction;
   }
 
   /**
@@ -241,8 +240,8 @@ class Shuffle extends TinyEmitter {
     // Check each element's data-groups attribute against the given category.
     const attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
     const keys = this.options.delimeter ?
-          attr.split(this.options.delimeter) :
-          JSON.parse(attr);
+      attr.split(this.options.delimeter) :
+      JSON.parse(attr);
 
     function testCategory(category) {
       return keys.includes(category);
