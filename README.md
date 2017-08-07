@@ -25,6 +25,7 @@ This project was inspired by [Isotope](http://isotope.metafizzy.co/) and [Packer
 
 [homepage]: https://vestride.github.io/Shuffle/
 [travis-url]: https://travis-ci.org/Vestride/Shuffle
+[travis-img]: https://travis-ci.org/Vestride/Shuffle.svg?branch=master
 [travis-img]: https://img.shields.io/travis/Vestride/Shuffle.svg
 [david-url]: https://david-dm.org/Vestride/Shuffle
 [david-img]: https://david-dm.org/Vestride/Shuffle.svg
