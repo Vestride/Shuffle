@@ -1,7 +1,6 @@
 import getNumber from './get-number';
 
 class Point {
-
   /**
    * Represents a coordinate pair.
    * @param {number} [x=0] X.
