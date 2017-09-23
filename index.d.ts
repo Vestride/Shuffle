@@ -105,7 +105,7 @@ declare class Shuffle {
    * Gets the visible elements, sorts them, and passes them to layout.
    * @param {Object} [sortOptions] The options object to pass to `sorter`.
    */
-  sort(sortOptions?): void;
+  sort(sortOptions?: {reverse?: boolean, by?: Function, randomize?: boolean }): void;
 
   /**
    * Reposition everything.
@@ -117,7 +117,7 @@ declare class Shuffle {
    * Returns styles which will be applied to the an item for a transition.
    * @param {object} obj Transition options.
    */
-  protected getStylesForTransition({ item: ShuffleItem, styles: object }): object;
+  protected getStylesForTransition(obj: { item: ShuffleItem, styles: object }): object;
 
   /**
    * Mutate positions before they're applied.

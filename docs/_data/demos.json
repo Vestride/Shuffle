@@ -45,6 +45,11 @@
     "label": "Shuffle with React"
   },
   {
+    "url": "demos/2017-08-28-ajax",
+    "slug": "ajax",
+    "label": "Loading ajax content"
+  },
+  {
     "external": true,
     "url": "http://codepen.io/pen?template=qrjOpX",
     "slug": "codepen-template",
