@@ -23,25 +23,33 @@ const uglifyOptions = {
 const entry = './src/shuffle.js';
 const moduleName = 'Shuffle';
 const format = 'umd';
-const sourceMap = true;
+const sourcemap = true;
 
 module.exports.configs = [
   {
-    entry,
+    input: entry,
+    output: {
+      name: moduleName,
+      file: './dist/shuffle.js',
+      sourcemap,
+      format,
+    },
     cache: undefined,
     plugins: [
       resolve(),
       commonjs(commonjsOptions),
       babel(babelOptions),
     ],
-    dest: './dist/shuffle.js',
-    sourceMap,
-    moduleName,
-    format,
   },
 
   {
-    entry,
+    input: entry,
+    output: {
+      name: moduleName,
+      file: './dist/shuffle.min.js',
+      sourcemap,
+      format,
+    },
     cache: undefined,
     plugins: [
       resolve(),
@@ -49,10 +57,6 @@ module.exports.configs = [
       babel(babelOptions),
       uglify(uglifyOptions),
     ],
-    dest: './dist/shuffle.min.js',
-    sourceMap,
-    moduleName,
-    format,
   },
 ];
 

@@ -69,7 +69,7 @@ E.prototype = {
   }
 };
 
-var index = E;
+var tinyEmitter = E;
 
 var proto = typeof Element !== 'undefined' ? Element.prototype : {};
 var vendor = proto.matches
@@ -79,7 +79,7 @@ var vendor = proto.matches
   || proto.msMatchesSelector
   || proto.oMatchesSelector;
 
-var index$1 = match;
+var matchesSelector = match;
 
 /**
  * Match `el` to `selector`.
@@ -100,7 +100,7 @@ function match(el, selector) {
   return false;
 }
 
-var index$2 = throttle;
+var throttleit = throttle;
 
 /**
  * Returns a new function that, when invoked, invokes `func` at most once per `wait` milliseconds.
@@ -133,7 +133,7 @@ function throttle (func, wait) {
   }
 }
 
-var index$3 = function parallel(fns, context, callback) {
+var arrayParallel = function parallel(fns, context, callback) {
   if (!callback) {
     if (typeof context === 'function') {
       callback = context;
@@ -1214,7 +1214,7 @@ var Shuffle = function (_TinyEmitter) {
       var _this3 = this;
 
       return Array.from(this.element.children).filter(function (el) {
-        return index$1(el, _this3.options.itemSelector);
+        return matchesSelector(el, _this3.options.itemSelector);
       }).map(function (el) {
         return new ShuffleItem(el);
       });
@@ -1372,8 +1372,8 @@ var Shuffle = function (_TinyEmitter) {
 
   }, {
     key: '_getStaggerAmount',
-    value: function _getStaggerAmount(index$$1) {
-      return Math.min(index$$1 * this.options.staggerAmount, this.options.staggerAmountMax);
+    value: function _getStaggerAmount(index) {
+      return Math.min(index * this.options.staggerAmount, this.options.staggerAmountMax);
     }
 
     /**
@@ -1702,7 +1702,7 @@ var Shuffle = function (_TinyEmitter) {
         return _this8._getTransitionFunction(obj);
       });
 
-      index$3(callbacks, this._movementFinished.bind(this));
+      arrayParallel(callbacks, this._movementFinished.bind(this));
     }
   }, {
     key: '_cancelMovement',
@@ -2136,7 +2136,7 @@ var Shuffle = function (_TinyEmitter) {
     }
   }]);
   return Shuffle;
-}(index);
+}(tinyEmitter);
 
 Shuffle.ShuffleItem = ShuffleItem;
 
@@ -2202,7 +2202,7 @@ Shuffle.options = {
 
   // By default, shuffle will throttle resize events. This can be changed or
   // removed.
-  throttle: index$2,
+  throttle: throttleit,
 
   // How often shuffle can be called on resize (in milliseconds).
   throttleTime: 300,
