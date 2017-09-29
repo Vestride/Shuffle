@@ -11,8 +11,10 @@ import COMPUTED_SIZE_INCLUDES_PADDING from './computed-size';
  *     will return 'auto' when the element doesn't have margins instead of
  *     the computed style.
  */
-export default function getNumberStyle(element, style,
-  styles = window.getComputedStyle(element, null)) {
+export default function getNumberStyle(
+  element, style,
+  styles = window.getComputedStyle(element, null),
+) {
   let value = getNumber(styles[style]);
 
   // Support IE<=11 and W3C spec.
