@@ -457,7 +457,9 @@ var e = document.createElement('div');
 e.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
 element.appendChild(e);
 
-var width = window.getComputedStyle(e, null).width;
+var _window$getComputedSt = window.getComputedStyle(e, null);
+var width = _window$getComputedSt.width;
+
 var ret = width === '10px';
 
 element.removeChild(e);
@@ -1192,15 +1194,18 @@ var Shuffle = function (_TinyEmitter) {
   }, {
     key: 'setItemTransitions',
     value: function setItemTransitions(items) {
-      var speed = this.options.speed;
-      var easing = this.options.easing;
+      var _options = this.options,
+          speed = _options.speed,
+          easing = _options.easing;
+
       var positionProps = this.options.useTransforms ? ['transform'] : ['top', 'left'];
 
       // Allow users to transtion other properties if they exist in the `before`
       // css mapping of the shuffle item.
-      var properties = positionProps.concat(Object.keys(ShuffleItem.Css.HIDDEN.before).map(function (k) {
+      var cssProps = Object.keys(ShuffleItem.Css.HIDDEN.before).map(function (k) {
         return hyphenate(k);
-      })).join();
+      });
+      var properties = positionProps.concat(cssProps).join();
 
       items.forEach(function (item) {
         item.element.style.transitionDuration = speed + 'ms';
@@ -2110,6 +2115,7 @@ var Shuffle = function (_TinyEmitter) {
       // Save current duration and delay.
       var data = elements.map(function (element) {
         var style = element.style;
+
         var duration = style.transitionDuration;
         var delay = style.transitionDelay;
 
