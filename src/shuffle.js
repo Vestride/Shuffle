@@ -310,15 +310,13 @@ class Shuffle extends TinyEmitter {
    * @protected
    */
   setItemTransitions(items) {
-    const speed = this.options.speed;
-    const easing = this.options.easing;
+    const { speed, easing } = this.options;
     const positionProps = this.options.useTransforms ? ['transform'] : ['top', 'left'];
 
     // Allow users to transtion other properties if they exist in the `before`
     // css mapping of the shuffle item.
-    const properties = positionProps.concat(
-      Object.keys(ShuffleItem.Css.HIDDEN.before).map(k => hyphenate(k)),
-    ).join();
+    const cssProps = Object.keys(ShuffleItem.Css.HIDDEN.before).map(k => hyphenate(k));
+    const properties = positionProps.concat(cssProps).join();
 
     items.forEach((item) => {
       item.element.style.transitionDuration = speed + 'ms';
@@ -1069,7 +1067,7 @@ class Shuffle extends TinyEmitter {
 
     // Save current duration and delay.
     const data = elements.map((element) => {
-      const style = element.style;
+      const { style } = element;
       const duration = style.transitionDuration;
       const delay = style.transitionDelay;
 

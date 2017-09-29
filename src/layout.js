@@ -100,7 +100,9 @@ export function getShortColumn(positions, buffer) {
  * @param {number} buffer Vertical buffer for the height of items.
  * @return {Point}
  */
-export function getItemPosition({ itemSize, positions, gridSize, total, threshold, buffer }) {
+export function getItemPosition({
+  itemSize, positions, gridSize, total, threshold, buffer,
+}) {
   const span = getColumnSpan(itemSize.width, gridSize, total, threshold);
   const setY = getAvailablePositions(positions, span, total);
   const shortColumnIndex = getShortColumn(setY, buffer);
