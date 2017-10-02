@@ -57,3 +57,14 @@ Demo.prototype._handleSortChange = function (evt) {
 <p>Returning <code>undefined</code> from the <code>by</code> function will reset the order to DOM order.</p>
 <p>Calling sort with an empty object will reset the elements to DOM order.</p>
 <p class="demo-link-container">Check out the <a href="#demo">demo</a>.</p>
+
+<h3>Filter and sort</h3>
+<p>You can filter and sort at the same time by passing a <a href="#sorting">sort object</a> as the second parameter.</p>
+
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.filter('space', {
+  by: function (element) {
+    return element.getAttribute('data-title').toLowerCase();
+  },
+});</code></pre>
+</div>

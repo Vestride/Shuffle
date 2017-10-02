@@ -23,22 +23,16 @@
   <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.filter(Shuffle.ALL_ITEMS); // or .filter()</code></pre>
 </div>
 
-<h3>Filter and sort</h3>
-<p>You can filter and sort at the same time by passing a <a href="#sorting">sort object</a> as the second parameter.</p>
-
-<div class="code-block">
-  <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.filter('space', {
-  by: function (element) {
-    return element.getAttribute('data-title').toLowerCase();
-  },
-});</code></pre>
-</div>
-
 <h3>Overrides</h3>
 <p>You can override both <code>Shuffle.ALL_ITEMS</code> and <code>Shuffle.FILTER_ATTRIBUTE_KEY</code> if you want.</p>
 
 <div class="code-block">
-  <pre rel="JavaScript"><code class="language-javascript">Shuffle.ALL_ITEMS = 'any';
+  <pre rel="JavaScript"><code class="language-javascript">// Defaults
+Shuffle.ALL_ITEMS = 'all';
+Shuffle.FILTER_ATTRIBUTE_KEY = 'groups';
+
+// You can change them to something else.
+Shuffle.ALL_ITEMS = 'any';
 Shuffle.FILTER_ATTRIBUTE_KEY = 'categories';</code></pre>
 </div>
 
