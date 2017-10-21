@@ -62,7 +62,7 @@ export function getAvailablePositions(positions, columnSpan, columns) {
   // Another example where the second column's item extends past the first:
   // [10, 20, 10, 0] => [20, 20, 10] => 10
   const available = [];
-  
+
   // For how many possible positions for this item there are.
   for (let i = 0; i <= columns - columnSpan; i++) {
     // Find the bigger value for each place it could fit.
