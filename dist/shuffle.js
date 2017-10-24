@@ -670,14 +670,15 @@ function getAvailablePositions(positions, columnSpan, columns) {
   //  *   *   *
   //
   // Then take the places which fit and get the bigger of the two:
-  // max([20, 10]), max([10, 10]), max([10, 0]) = [20, 10, 0]
+  // max([20, 10]), max([10, 10]), max([10, 0]) = [20, 10, 10]
   //
   // Next, find the first smallest number (the short column).
-  // [20, 10, 0]
+  // [20, 10, 10]
   //          |
   //          *
   //
   // And that's where it should be placed!
+  // The index is the column and the value is the y-position.
   //
   // Another example where the second column's item extends past the first:
   // [10, 20, 10, 0] => [20, 20, 10] => 10
