@@ -24,7 +24,7 @@
     </div>
     {% endif %}
     <div class="picture-item__details">
-      <figcaption class="picture-item__title"><a href="{{ item.source }}" target="_blank">{{ item.title }}</a></figcaption>
+      <figcaption class="picture-item__title"><a href="{{ item.source }}" target="_blank" rel="noopener">{{ item.title }}</a></figcaption>
       <p class="picture-item__tags hidden@xs">{{ item.groups | join: ', ' }}</p>
     </div>
     {% if item.type == 'large' or item.type == 'tall' %}
