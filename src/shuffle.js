@@ -646,10 +646,9 @@ class Shuffle extends TinyEmitter {
     const styles = Object.assign({}, styleObject);
 
     if (this.options.useTransforms) {
-      if (this.options.roundTransforms) {
-        item.point = new Point(Math.round(item.point.x), Math.round(item.point.y));
-      }
-      styles.transform = `translate(${item.point.x}px, ${item.point.y}px) scale(${item.scale})`;
+      const x = this.options.roundTransforms ? Math.round(item.point.x) : item.point.x;
+      const y = this.options.roundTransforms ? Math.round(item.point.y) : item.point.y;
+      styles.transform = `translate(${x}px, ${y}px) scale(${item.scale})`;
     } else {
       styles.left = item.point.x + 'px';
       styles.top = item.point.y + 'px';

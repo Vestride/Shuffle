@@ -1607,10 +1607,9 @@ var Shuffle = function (_TinyEmitter) {
       var styles = Object.assign({}, styleObject);
 
       if (this.options.useTransforms) {
-        if (this.options.roundTransforms) {
-          item.point = new Point(Math.round(item.point.x), Math.round(item.point.y));
-        }
-        styles.transform = 'translate(' + item.point.x + 'px, ' + item.point.y + 'px) scale(' + item.scale + ')';
+        var x = this.options.roundTransforms ? Math.round(item.point.x) : item.point.x;
+        var y = this.options.roundTransforms ? Math.round(item.point.y) : item.point.y;
+        styles.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + item.scale + ')';
       } else {
         styles.left = item.point.x + 'px';
         styles.top = item.point.y + 'px';
