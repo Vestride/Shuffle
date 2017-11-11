@@ -57,7 +57,7 @@
     "chai-dom": "^1.4.0",
     "core-js": "^2.4.1",
     "cssnano": "^4.0.0-rc.1",
-    "eslint": "^4.4.0",
+    "eslint": "^4.11.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-mocha-phantomjs": "^0.12.0",
     "gulp-postcss": "^7.0.0",
