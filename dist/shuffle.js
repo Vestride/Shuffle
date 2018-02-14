@@ -332,14 +332,14 @@ var Classes = {
   HIDDEN: 'shuffle-item--hidden'
 };
 
-var id$1 = 0;
+var id = 0;
 
 var ShuffleItem = function () {
   function ShuffleItem(element) {
     classCallCheck(this, ShuffleItem);
 
-    id$1 += 1;
-    this.id = id$1;
+    id += 1;
+    this.id = id;
     this.element = element;
 
     /**
@@ -863,7 +863,7 @@ function arrayUnique(x) {
 }
 
 // Used for unique instance variables
-var id = 0;
+var id$1 = 0;
 
 var Shuffle = function (_TinyEmitter) {
   inherits(Shuffle, _TinyEmitter);
@@ -900,8 +900,8 @@ var Shuffle = function (_TinyEmitter) {
     }
 
     _this.element = el;
-    _this.id = 'shuffle_' + id;
-    id += 1;
+    _this.id = 'shuffle_' + id$1;
+    id$1 += 1;
 
     _this._init();
     _this.isInitialized = true;
