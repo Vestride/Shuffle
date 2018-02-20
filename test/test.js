@@ -694,7 +694,6 @@ describe('shuffle', function () {
       expect(items).to.have.lengthOf(10);
       expect(Shuffle.__sorter(items)).to.deep.equal(items);
 
-      var clone = Array.from(items);
       expect(Shuffle.__sorter(clone, { randomize: true })).to.not.deep.equal(items);
     });
 
@@ -769,6 +768,39 @@ describe('shuffle', function () {
           } else {
             return age;
           }
+        },
+      })).to.deep.equal(final);
+    });
+
+    it('can have a custom sort comparator', function () {
+      var final = [
+        clone[0], // design, 21
+        clone[8], // design, 28
+        clone[1], // design, 50
+        clone[6], // newbiz, 42
+        clone[2], // strategy, 29
+        clone[9], // technology, 25
+        clone[7], // technology, 31
+        clone[5], // ux, 23
+        clone[3], // ux, 27
+        clone[4], // ux, 35
+      ];
+      expect(Shuffle.__sorter(items, {
+        compare: function (a, b) {
+          // Sort by first group, then by age.
+          var groupA = JSON.parse(a.element.getAttribute('data-groups'))[0];
+          var groupB = JSON.parse(b.element.getAttribute('data-groups'))[0];
+          if (groupA > groupB) {
+            return 1;
+          }
+          if (groupA < groupB) {
+            return -1;
+          }
+
+          // At this point, the group strings are the exact same. Test the age.
+          var ageA = parseInt(a.element.getAttribute('data-age'), 10);
+          var ageB = parseInt(b.element.getAttribute('data-age'), 10);
+          return ageA - ageB;
         },
       })).to.deep.equal(final);
     });

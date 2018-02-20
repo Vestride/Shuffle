@@ -68,3 +68,29 @@ Demo.prototype._handleSortChange = function (evt) {
   },
 });</code></pre>
 </div>
+
+<h3>Advanced sorting</h3>
+<p>You can provide the entire sort compare function if you need more control.</p>
+<p>The parameters (<code>a</code>, <code>b</code>) are <code>ShuffleItem</code> instances and you'll probably only use the <code>element</code> property. The <code>reverse</code> option still works with the <code>compare</code> function if you need it.</p>
+<p>For example, if you wanted to sort by the first group in <code>data-groups</code>, then by <code>data-age</code>, you could do this:</p>
+
+<div class="code-block">
+  <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.sort({
+  compare: function (a, b) {
+    // Sort by first group, then by age.
+    var groupA = JSON.parse(a.element.getAttribute('data-groups'))[0];
+    var groupB = JSON.parse(b.element.getAttribute('data-groups'))[0];
+    if (groupA > groupB) {
+      return 1;
+    }
+    if (groupA < groupB) {
+      return -1;
+    }
+
+    // At this point, the group strings are the exact same. Test the age.
+    var ageA = parseInt(a.element.getAttribute('data-age'), 10);
+    var ageB = parseInt(b.element.getAttribute('data-age'), 10);
+    return ageA - ageB;
+  },
+});</code></pre>
+</div>

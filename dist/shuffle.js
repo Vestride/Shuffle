@@ -517,6 +517,9 @@ var defaults$1 = {
   // Sorting function
   by: null,
 
+  // Custom sort function
+  compare: null,
+
   // If true, this will skip the sorting and return a randomized order in the array
   randomize: false,
 
@@ -567,6 +570,8 @@ function sorter(arr, options) {
 
       return 0;
     });
+  } else if (typeof opts.compare === 'function') {
+    arr.sort(opts.compare);
   }
 
   // Revert to the original array if necessary
