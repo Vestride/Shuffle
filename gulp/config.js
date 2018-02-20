@@ -46,6 +46,22 @@ module.exports.configs = [
     input: entry,
     output: {
       name: moduleName,
+      file: './dist/shuffle.esm.js',
+      sourcemap,
+      format: 'es',
+    },
+    cache: undefined,
+    plugins: [
+      resolve(),
+      commonjs(commonjsOptions),
+      babel(babelOptions),
+    ],
+  },
+
+  {
+    input: entry,
+    output: {
+      name: moduleName,
       file: './dist/shuffle.min.js',
       sourcemap,
       format,

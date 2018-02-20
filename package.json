@@ -15,6 +15,7 @@
     "tiles"
   ],
   "main": "dist/shuffle.js",
+  "module": "dist/shuffle.esm.js",
   "moduleSource": "src/shuffle.js",
   "types": "index.d.ts",
   "scripts": {
