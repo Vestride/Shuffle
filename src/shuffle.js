@@ -332,10 +332,9 @@ class Shuffle extends TinyEmitter {
   }
 
   /**
-   * When new elements are added to the shuffle container, update the array of
-   * items because that is the order `_layout` calls them.
+   * Combine the current items array with a new one and sort it by DOM order.
    * @param {ShuffleItem[]} items Items to track.
-   * @return {Shuffle[]}
+   * @return {ShuffleItem[]}
    */
   _mergeNewItems(items) {
     const children = Array.from(this.element.children);
@@ -855,21 +854,33 @@ class Shuffle extends TinyEmitter {
 
     // Determine which items will go with the current filter.
     this._resetCols();
-    const newItemSet = this._filter(this.lastFilter, items);
-    const willBeVisible = this._mergeNewItems(newItemSet.visible);
-    const sortedVisibleItems = sorter(willBeVisible, this.lastSort);
+
+    const allItems = this._mergeNewItems(items);
+    const sortedItems = sorter(allItems, this.lastSort);
+    const allSortedItemsSet = this._filter(this.lastFilter, sortedItems);
+
+    const isNewItem = item => items.includes(item);
+    const applyHiddenState = (item) => {
+      item.scale = ShuffleItem.Scale.HIDDEN;
+      item.isHidden = true;
+      item.applyCss(ShuffleItem.Css.HIDDEN.before);
+      item.applyCss(ShuffleItem.Css.HIDDEN.after);
+    };
 
     // Layout all items again so that new items get positions.
     // Synchonously apply positions.
-    const itemPositions = this._getNextPositions(sortedVisibleItems);
-    sortedVisibleItems.forEach((item, i) => {
-      if (newItemSet.visible.includes(item)) {
+    const itemPositions = this._getNextPositions(allSortedItemsSet.visible);
+    allSortedItemsSet.visible.forEach((item, i) => {
+      if (isNewItem(item)) {
         item.point = itemPositions[i];
-        item.scale = ShuffleItem.Scale.HIDDEN;
-        item.isHidden = true;
-        item.applyCss(ShuffleItem.Css.HIDDEN.before);
-        item.applyCss(ShuffleItem.Css.HIDDEN.after);
+        applyHiddenState(item);
         item.applyCss(this.getStylesForTransition(item, {}));
+      }
+    });
+
+    allSortedItemsSet.hidden.forEach((item) => {
+      if (isNewItem(item)) {
+        applyHiddenState(item);
       }
     });
 
