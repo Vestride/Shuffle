@@ -32,6 +32,7 @@ Demo.prototype.setupEvents = function () {
   document.querySelector('#randomize').addEventListener('click', this.onRandomize.bind(this));
   document.querySelector('#remove').addEventListener('click', this.onRemoveClick.bind(this));
   document.querySelector('#sorter').addEventListener('change', this.onSortChange.bind(this));
+  document.querySelector('#filterer').addEventListener('change', this.onFilterChange.bind(this));
   this.shuffle.element.addEventListener('click', this.onContainerClick.bind(this));
 
   // Show off some shuffle events
@@ -173,36 +174,35 @@ Demo.prototype.onRandomize = function () {
   this.sortBy('random');
 };
 
-Demo.prototype.onSortChange = function (evt) {
+Demo.prototype.toggleActiveClasses = function (event) {
   // Add and remove `active` class from buttons.
-  var buttons = Array.from(evt.currentTarget.children);
+  var buttons = Array.from(event.currentTarget.children);
   buttons.forEach(function (button) {
-    if (button.querySelector('input').value === evt.target.value) {
+    if (button.querySelector('input').value === event.target.value) {
       button.classList.add('active');
     } else {
       button.classList.remove('active');
     }
   });
+}
 
+Demo.prototype.onSortChange = function (evt) {
+  this.toggleActiveClasses(evt);
   this.sortBy(evt.target.value);
 };
 
 Demo.prototype.sortBy = function (value) {
   var sortOptions;
 
-  function getReviews(element) {
-    return parseInt(element.getAttribute('data-reviews'), 10);
-  }
-
   if (value === 'most-reviews') {
     sortOptions = {
       reverse: true,
-      by: getReviews,
+      by: this.getReviews,
     };
 
   } else if (value === 'least-reviews') {
     sortOptions = {
-      by: getReviews,
+      by: this.getReviews,
     };
 
   } else if (value === 'random') {
@@ -214,6 +214,34 @@ Demo.prototype.sortBy = function (value) {
 
   // Filter elements
   this.shuffle.sort(sortOptions);
+};
+
+Demo.prototype.getReviews = function (element) {
+  return parseInt(element.getAttribute('data-reviews'), 10);
+}
+
+Demo.prototype.onFilterChange = function (event) {
+  this.toggleActiveClasses(event);
+  this.filterBy(event.target.value);
+};
+
+Demo.prototype.filterBy = function (value) {
+  var filterBy;
+  var _this = this;
+
+  if (value === 'none') {
+    filterBy = Shuffle.ALL_ITEMS;
+  } else if (value === 'odd-reviews') {
+    filterBy = function (element) {
+      return _this.getReviews(element) % 2 === 1;
+    };
+  } else {
+    filterBy = function (element) {
+      return _this.getReviews(element) % 2 === 0;
+    };
+  }
+
+  this.shuffle.filter(filterBy);
 };
 
 /**
