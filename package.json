@@ -70,6 +70,6 @@
     "rollup-plugin-commonjs": "^8.3.0",
     "rollup-plugin-node-resolve": "^3.0.2",
     "rollup-plugin-uglify": "^3.0.0",
-    "sinon": "^4.3.0"
+    "sinon": "^5.0.0"
   }
 }
