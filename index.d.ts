@@ -258,8 +258,9 @@ declare namespace Shuffle {
     columnWidth?: number;
 
     /**
-     * If your group is not json, and is comma delimeted, you could set delimeter to ','.
+     * If your group is not json, and is comma delimeted, you could set delimiter to ','.
      */
+    delimiter?: string;
     delimeter?: string;
 
     /**

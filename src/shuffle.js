@@ -39,6 +39,12 @@ class Shuffle extends TinyEmitter {
     super();
     this.options = Object.assign({}, Shuffle.options, options);
 
+    // Allow misspelling of delimiter since that's how it used to be.
+    // Remove in v6.
+    if (this.options.delimeter) {
+      this.options.delimiter = this.options.delimeter;
+    }
+
     this.lastSort = {};
     this.group = Shuffle.ALL_ITEMS;
     this.lastFilter = Shuffle.ALL_ITEMS;
@@ -239,8 +245,8 @@ class Shuffle extends TinyEmitter {
 
     // Check each element's data-groups attribute against the given category.
     const attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
-    const keys = this.options.delimeter ?
-      attr.split(this.options.delimeter) :
+    const keys = this.options.delimiter ?
+      attr.split(this.options.delimiter) :
       JSON.parse(attr);
 
     function testCategory(category) {
@@ -1150,9 +1156,9 @@ Shuffle.options = {
   // how wide the columns are (in pixels).
   columnWidth: 0,
 
-  // If your group is not json, and is comma delimeted, you could set delimeter
+  // If your group is not json, and is comma delimeted, you could set delimiter
   // to ','.
-  delimeter: null,
+  delimiter: null,
 
   // Useful for percentage based heights when they might not always be exactly
   // the same (in pixels).

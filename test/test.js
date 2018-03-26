@@ -94,7 +94,7 @@ describe('shuffle', function () {
       expect(instance.options.sizer).to.equal(null);
       expect(instance.options.columnWidth).to.equal(0);
       expect(instance.options.gutterWidth).to.equal(0);
-      expect(instance.options.delimeter).to.equal(null);
+      expect(instance.options.delimiter).to.equal(null);
       expect(instance.options.initialSort).to.equal(null);
       expect(instance.options.throttleTime).to.equal(300);
       expect(instance.id).to.equal('shuffle_0');
@@ -606,12 +606,12 @@ describe('shuffle', function () {
     });
   });
 
-  describe('delimeter fixture', function () {
+  describe('delimiter fixture', function () {
     beforeEach(function (done) {
       // Mock the transition end event wrapper.
       sinon.stub(Shuffle.prototype, '_whenTransitionDone').callsFake(whenTransitionDoneStub);
 
-      appendFixture('delimeter').then(done);
+      appendFixture('delimiter').then(done);
     });
 
     afterEach(function () {
@@ -619,7 +619,16 @@ describe('shuffle', function () {
       removeFixture();
     });
 
-    it('can have a custom delimeter', function () {
+    it('can have a custom delimiter', function () {
+      instance = new Shuffle(fixture, {
+        delimiter: ',',
+        group: 'design',
+      });
+
+      expect(instance.visibleItems).to.equal(3);
+    });
+
+    it('can use the old misspelled delimiter option', function () {
       instance = new Shuffle(fixture, {
         delimeter: ',',
         group: 'design',
