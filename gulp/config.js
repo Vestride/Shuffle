@@ -1,7 +1,7 @@
 const babel = require('rollup-plugin-babel');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
-const uglify = require('rollup-plugin-uglify');
+const { terser } = require('rollup-plugin-terser');
 
 const commonjsOptions = {
   include: 'node_modules/**',
@@ -11,13 +11,12 @@ const babelOptions = {
   exclude: 'node_modules/**',
 };
 
-const uglifyOptions = {
+const minifyOptions = {
   sourceMap: true,
   compress: {
     warnings: true,
     drop_console: true,
   },
-  mangle: true,
 };
 
 const entry = './src/shuffle.js';
@@ -71,7 +70,7 @@ module.exports.configs = [
       resolve(),
       commonjs(commonjsOptions),
       babel(babelOptions),
-      uglify(uglifyOptions),
+      terser(minifyOptions),
     ],
   },
 ];
