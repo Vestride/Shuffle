@@ -1,5 +1,5 @@
-const rollup = require('rollup').rollup;
-const configs = require('../config').configs;
+const { rollup } = require('rollup');
+const { configs } = require('../config');
 
 module.exports = function scripts() {
   const bundles = configs.map(config => rollup(config).then((bundle) => {
