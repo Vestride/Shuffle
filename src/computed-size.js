@@ -1,11 +1,17 @@
-const element = document.body || document.documentElement;
-const e = document.createElement('div');
-e.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
-element.appendChild(e);
+let value = null;
+export default () => {
+  if (value !== null) {
+    return value;
+  }
 
-const { width } = window.getComputedStyle(e, null);
-const ret = width === '10px';
+  const element = document.body || document.documentElement;
+  const e = document.createElement('div');
+  e.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
+  element.appendChild(e);
 
-element.removeChild(e);
+  value = window.getComputedStyle(e, null).width === '10px';
 
-export default ret;
+  element.removeChild(e);
+
+  return value;
+};

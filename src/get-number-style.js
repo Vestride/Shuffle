@@ -1,5 +1,5 @@
 import getNumber from './get-number';
-import COMPUTED_SIZE_INCLUDES_PADDING from './computed-size';
+import testComputedSize from './computed-size';
 
 /**
  * Retrieve the computed style for an element, parsed as a float.
@@ -18,12 +18,12 @@ export default function getNumberStyle(
   let value = getNumber(styles[style]);
 
   // Support IE<=11 and W3C spec.
-  if (!COMPUTED_SIZE_INCLUDES_PADDING && style === 'width') {
+  if (!testComputedSize() && style === 'width') {
     value += getNumber(styles.paddingLeft) +
       getNumber(styles.paddingRight) +
       getNumber(styles.borderLeftWidth) +
       getNumber(styles.borderRightWidth);
-  } else if (!COMPUTED_SIZE_INCLUDES_PADDING && style === 'height') {
+  } else if (!testComputedSize() && style === 'height') {
     value += getNumber(styles.paddingTop) +
       getNumber(styles.paddingBottom) +
       getNumber(styles.borderTopWidth) +

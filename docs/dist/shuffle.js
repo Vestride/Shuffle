@@ -433,17 +433,23 @@
     HIDDEN: 0.001
   };
 
-  var element = document.body || document.documentElement;
-  var e = document.createElement('div');
-  e.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
-  element.appendChild(e);
+  var value = null;
+  var testComputedSize = (function () {
+    if (value !== null) {
+      return value;
+    }
 
-  var _window$getComputedSt = window.getComputedStyle(e, null),
-      width = _window$getComputedSt.width;
+    var element = document.body || document.documentElement;
+    var e = document.createElement('div');
+    e.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
+    element.appendChild(e);
 
-  var ret = width === '10px';
+    value = window.getComputedStyle(e, null).width === '10px';
 
-  element.removeChild(e);
+    element.removeChild(e);
+
+    return value;
+  });
 
   /**
    * Retrieve the computed style for an element, parsed as a float.
@@ -461,9 +467,9 @@
     var value = getNumber(styles[style]);
 
     // Support IE<=11 and W3C spec.
-    if (!ret && style === 'width') {
+    if (!testComputedSize() && style === 'width') {
       value += getNumber(styles.paddingLeft) + getNumber(styles.paddingRight) + getNumber(styles.borderLeftWidth) + getNumber(styles.borderRightWidth);
-    } else if (!ret && style === 'height') {
+    } else if (!testComputedSize() && style === 'height') {
       value += getNumber(styles.paddingTop) + getNumber(styles.paddingBottom) + getNumber(styles.borderTopWidth) + getNumber(styles.borderBottomWidth);
     }
 
