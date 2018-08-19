@@ -68,10 +68,6 @@
   border-radius: 50%;
 }
 
-.shape--square .shape__space {
-  // Nothing to see here
-}
-
 // 166 / sqrt(166^2 + 166^2) = scale
 .shape--diamond .shape__space {
   transform: rotate(45deg) scale(0.707106781);

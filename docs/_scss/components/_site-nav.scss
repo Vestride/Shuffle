@@ -338,10 +338,6 @@
   margin-top: 0;
 }
 
-.site-footer__credit {
-  // margin: 0;
-}
-
 @include breakpoint(sm) {
   .site-footer__credit {
     text-align: right;
