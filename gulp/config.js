@@ -12,7 +12,7 @@ const babelOptions = {
 };
 
 const minifyOptions = {
-  sourceMap: true,
+  sourcemap: true,
   compress: {
     warnings: true,
     drop_console: true,
