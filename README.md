@@ -7,6 +7,7 @@ npm install shufflejs
 ```
 
 ## Docs and Demos
+
 [All found here][homepage]
 
 ### Usage (with ES6)
@@ -21,6 +22,7 @@ const shuffleInstance = new Shuffle(document.getElementById('grid'), {
 ```
 
 ## Inspiration
+
 This project was inspired by [Isotope](http://isotope.metafizzy.co/) and [Packery](http://packery.metafizzy.co/).
 
 [homepage]: https://vestride.github.io/Shuffle/

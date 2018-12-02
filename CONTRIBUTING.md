@@ -1,4 +1,7 @@
+# Contributing
+
 ## Submitting Issues
+
 All bug reports and issues **require** a [reduced test case](https://css-tricks.com/reduced-test-cases/).
 
 Want to start a CodePen with a shuffle template? Use this: [http://codepen.io/pen?template=qrjOpX](http://codepen.io/pen?template=qrjOpX)
@@ -8,7 +11,9 @@ Take a look at the GitHub [contributing guide](https://guides.github.com/activit
 Without a reduced test case, your issue may be closed.
 
 ## Running locally
+
 This project uses [Jekyll](https://jekyllrb.com/).
+
 * Head over to [their quickstart guide](https://jekyllrb.com/docs/quickstart/) to setup jekyll.
 * Install npm dependencies `npm install`.
 * Run `npm run watch` to rebuild, start the jekyll server, and watch for changes.
