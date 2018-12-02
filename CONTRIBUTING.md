@@ -10,6 +10,15 @@ Take a look at the GitHub [contributing guide](https://guides.github.com/activit
 
 Without a reduced test case, your issue may be closed.
 
+## Releasing a new version
+
+* Update `changelog.html`.
+* Run tests.
+* Commit changes.
+* `npm version major|minor|patch`.
+* `npm publish`
+* Create a [new release](https://github.com/Vestride/Shuffle/releases/new) on GitHub.
+
 ## Running locally
 
 This project uses [Jekyll](https://jekyllrb.com/).
