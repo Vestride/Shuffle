@@ -3,7 +3,7 @@
 // Definitions by: Glen Cheney <https://github.com/Vestride>
 
 export as namespace Shuffle;
-export = Shuffle;
+export default Shuffle;
 
 interface FilterMode {
   ALL: string;
