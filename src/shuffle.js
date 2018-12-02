@@ -125,9 +125,9 @@ class Shuffle extends TinyEmitter {
    */
   _getResizeFunction() {
     const resizeFunction = this._handleResize.bind(this);
-    return this.options.throttle ?
-      this.options.throttle(resizeFunction, this.options.throttleTime) :
-      resizeFunction;
+    return this.options.throttle
+      ? this.options.throttle(resizeFunction, this.options.throttleTime)
+      : resizeFunction;
   }
 
   /**
@@ -141,13 +141,15 @@ class Shuffle extends TinyEmitter {
     // sizer element within the outermost container
     if (typeof option === 'string') {
       return this.element.querySelector(option);
+    }
 
     // Check for an element
-    } else if (option && option.nodeType && option.nodeType === 1) {
+    if (option && option.nodeType && option.nodeType === 1) {
       return option;
+    }
 
     // Check for jQuery object
-    } else if (option && option.jquery) {
+    if (option && option.jquery) {
       return option[0];
     }
 
@@ -245,9 +247,9 @@ class Shuffle extends TinyEmitter {
 
     // Check each element's data-groups attribute against the given category.
     const attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
-    const keys = this.options.delimiter ?
-      attr.split(this.options.delimiter) :
-      JSON.parse(attr);
+    const keys = this.options.delimiter
+      ? attr.split(this.options.delimiter)
+      : JSON.parse(attr);
 
     function testCategory(category) {
       return keys.includes(category);
@@ -428,8 +430,8 @@ class Shuffle extends TinyEmitter {
     let calculatedColumns = (containerWidth + gutter) / columnWidth;
 
     // Widths given from getStyles are not precise enough...
-    if (Math.abs(Math.round(calculatedColumns) - calculatedColumns) <
-        this.options.columnThreshold) {
+    if (Math.abs(Math.round(calculatedColumns) - calculatedColumns)
+        < this.options.columnThreshold) {
       // e.g. calculatedColumns = 11.998876
       calculatedColumns = Math.round(calculatedColumns);
     }

@@ -33,7 +33,7 @@ export default class Rect {
    */
   static intersects(a, b) {
     return (
-      a.left < b.left + b.width && b.left < a.left + a.width &&
-      a.top < b.top + b.height && b.top < a.top + a.height);
+      a.left < b.left + b.width && b.left < a.left + a.width
+      && a.top < b.top + b.height && b.top < a.top + a.height);
   }
 }

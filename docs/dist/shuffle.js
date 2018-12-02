@@ -991,10 +991,16 @@
         // If column width is a string, treat is as a selector and search for the
         // sizer element within the outermost container
         if (typeof option === 'string') {
-          return this.element.querySelector(option); // Check for an element
-        } else if (option && option.nodeType && option.nodeType === 1) {
-          return option; // Check for jQuery object
-        } else if (option && option.jquery) {
+          return this.element.querySelector(option);
+        } // Check for an element
+
+
+        if (option && option.nodeType && option.nodeType === 1) {
+          return option;
+        } // Check for jQuery object
+
+
+        if (option && option.jquery) {
           return option[0];
         }
 

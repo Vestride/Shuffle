@@ -19,15 +19,15 @@ export default function getNumberStyle(
 
   // Support IE<=11 and W3C spec.
   if (!testComputedSize() && style === 'width') {
-    value += getNumber(styles.paddingLeft) +
-      getNumber(styles.paddingRight) +
-      getNumber(styles.borderLeftWidth) +
-      getNumber(styles.borderRightWidth);
+    value += getNumber(styles.paddingLeft)
+      + getNumber(styles.paddingRight)
+      + getNumber(styles.borderLeftWidth)
+      + getNumber(styles.borderRightWidth);
   } else if (!testComputedSize() && style === 'height') {
-    value += getNumber(styles.paddingTop) +
-      getNumber(styles.paddingBottom) +
-      getNumber(styles.borderTopWidth) +
-      getNumber(styles.borderBottomWidth);
+    value += getNumber(styles.paddingTop)
+      + getNumber(styles.paddingBottom)
+      + getNumber(styles.borderTopWidth)
+      + getNumber(styles.borderBottomWidth);
   }
 
   return value;
