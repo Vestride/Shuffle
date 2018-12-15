@@ -34,6 +34,9 @@ class PhotoGrid extends Component {
         { id: 3, src: greenPixel },
       ],
     };
+
+    this.element = React.createRef();
+    this.sizer = React.createRef();
   }
 
   /**
@@ -58,7 +61,7 @@ class PhotoGrid extends Component {
   /**
    * Resolve a promise when all the photos in an array have loaded.
    * @param {Object[]} photos Photos to load.
-   * @return {Promise.<Object[]>} Loaded images.
+   * @return {Promise<Object[]>} Loaded images.
    */
   _whenPhotosLoaded(photos) {
     return Promise.all(photos.map(photo => new Promise((resolve) => {
@@ -77,9 +80,9 @@ class PhotoGrid extends Component {
 
   componentDidMount() {
     // The elements are in the DOM, initialize a shuffle instance.
-    this.shuffle = new Shuffle(this.element, {
+    this.shuffle = new Shuffle(this.element.current, {
       itemSelector: '.photo-item',
-      sizer: this.sizer,
+      sizer: this.sizer.current,
     });
 
     // Kick off the network request and update the state once it returns.
@@ -104,21 +107,30 @@ class PhotoGrid extends Component {
 
   render() {
     return (
-      <div ref={element => this.element = element} className="row my-shuffle">
-        {this.state.photos.map((image) => (
-          <div key={image.id} className="col-3@xs col-4@sm photo-item">
-            <div className="aspect aspect--4x3">
-              <div className="aspect__inner">
-                <img src={image.src} />
-                <PhotoAttribution username={image.username} name={image.name} />
-              </div>
-            </div>
-          </div>
-        ))}
-        <div ref={element => this.sizer = element} className="col-1@xs col-1@sm photo-grid__sizer"></div>
+      <div ref={this.element} className="row my-shuffle">
+        {this.state.photos.map(image => <PhotoItem {...image}/>)}
+        <div ref={this.sizer} className="col-1@xs col-1@sm photo-grid__sizer"></div>
       </div>
     );
   }
+}
+
+/**
+ * A grid item for a photo.
+ * @param {{ id: number, username: string, src: string, name: string }} props Component props.
+ * @return {JSX.Element}
+ */
+function PhotoItem({ id, username, src, name }) {
+  return (
+    <div key={id} className="col-3@xs col-4@sm photo-item">
+      <div className="aspect aspect--4x3">
+        <div className="aspect__inner">
+          <img src={src} />
+          <PhotoAttribution username={username} name={name} />
+        </div>
+      </div>
+    </div>
+  )
 }
 
 /**
