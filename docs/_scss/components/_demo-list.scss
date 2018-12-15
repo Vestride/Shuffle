@@ -45,10 +45,14 @@
 
 .demo-link-container::before {
   content: '➜';
+  display: inline-block;
   color: $emerald;
   margin-right: 5px;
 }
 
+.demo-link-container--external::before {
+  transform: rotate(-45deg);
+}
 
 span.demo-link-container::before {
   margin-left: 5px;

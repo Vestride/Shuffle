@@ -116,7 +116,6 @@ Demo.prototype.addSorting = function () {
 
 Demo.prototype._handleSortChange = function (evt) {
   // Add and remove `active` class from buttons.
-  var wrapper = evt.currentTarget;
   var buttons = Array.from(evt.currentTarget.children);
   buttons.forEach(function (button) {
     if (button.querySelector('input').value === evt.target.value) {
