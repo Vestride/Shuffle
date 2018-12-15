@@ -11,7 +11,7 @@ gulp.task('watch', gulp.series(
   'set-watching',
   gulp.parallel('css', 'scripts'),
   'copy-dist',
-  'jekyll'
+  'jekyll',
 ));
 
 gulp.task('default', gulp.series('scripts', 'css', 'test', 'copy-dist'));

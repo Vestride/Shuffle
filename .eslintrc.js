@@ -26,5 +26,7 @@ module.exports = {
 
     // Allow reassigning properties of objects.
     'no-param-reassign': ['error', { props: false }],
+
+    'import/no-extraneous-dependencies': ['error', { 'devDependencies': ['gulpfile.js', 'gulp/**/*.js'] }]
   },
 };
