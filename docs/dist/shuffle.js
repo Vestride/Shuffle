@@ -1,8 +1,8 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global.Shuffle = factory());
-}(this, (function () { 'use strict';
+  (global = global || self, global.Shuffle = factory());
+}(this, function () { 'use strict';
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -2178,5 +2178,5 @@
 
   return Shuffle;
 
-})));
+}));
 //# sourceMappingURL=shuffle.js.map
