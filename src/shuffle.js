@@ -21,7 +21,19 @@ import arrayMax from './array-max';
 import hyphenate from './hyphenate';
 
 function arrayUnique(x) {
-  return Array.from(new Set(x));
+  var uniqueArray = Array.from(new Set(x));
+  if(x.length !== uniqueArray.length) {
+    //Handle issue in IE10 where
+    //Array.from() is unable to
+    //create a new array out of
+    //a Set object.
+    var newSet = new Set(x);
+    var uniqueArray = [];
+    newSet.forEach(function(item) {
+      uniqueArray.push(item);
+    })
+  }
+  return uniqueArray;
 }
 
 // Used for unique instance variables
