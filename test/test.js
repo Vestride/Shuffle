@@ -1,52 +1,19 @@
-/* globals describe, it, beforeEach, afterEach */
-/* jshint expr: true */
+import sinon from 'sinon';
 
-'use strict';
+import Shuffle from '../src/shuffle';
+import * as fixtures from './fixtures';
 
-var expect = window.chai.expect;
-var sinon = window.sinon;
-
-describe('shuffle', function () {
-
-  var Shuffle = window.Shuffle;
-  var fixtures = {};
-  var fixture;
-  var instance;
-
-  function getFixture(id) {
-    return new Promise(function (resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        resolve(xhr.responseText);
-      };
-
-      xhr.onerror = reject;
-
-      xhr.open('GET', 'fixtures/' + id + '.html');
-      xhr.send();
-    });
-  }
+describe('shuffle', () => {
+  let fixture = null;
+  let instance = null;
 
   function appendFixture(id) {
-
-    function insert(content) {
-      content = content.trim();
-      var holder = document.createElement('div');
-      holder.innerHTML = content;
-      var element = holder.firstChild;
-      document.body.appendChild(element);
-      fixture = element;
-    }
-
-    if (fixtures[id]) {
-      insert(fixtures[id]);
-      return Promise.resolve();
-    } else {
-      return getFixture(id).then(function (html) {
-        fixtures[id] = html;
-        insert(html);
-      });
-    }
+    const content = fixtures[id].trim();
+    const holder = document.createElement('div');
+    holder.innerHTML = content;
+    const element = holder.firstChild;
+    document.body.appendChild(element);
+    fixture = element;
   }
 
   function removeFixture() {
@@ -58,8 +25,8 @@ describe('shuffle', function () {
       fixture.parentNode.removeChild(fixture);
     }
 
-    instance = null;
     fixture = null;
+    instance = null;
   }
 
   function id(id) {
@@ -70,64 +37,64 @@ describe('shuffle', function () {
     setTimeout(done, 0);
   }
 
-  describe('regular fixture', function () {
+  describe('regular fixture', () => {
 
-    beforeEach(function (done) {
+    beforeEach(() => {
       // Mock the transition end event wrapper.
       sinon.stub(Shuffle.prototype, '_whenTransitionDone').callsFake(whenTransitionDoneStub);
 
-      appendFixture('regular').then(done);
+      appendFixture('regular');
     });
 
-    afterEach(function () {
+    afterEach(() => {
       Shuffle.prototype._whenTransitionDone.restore();
       removeFixture();
     });
 
-    it('should have default options', function () {
+    it('should have default options', () => {
       instance = new Shuffle(fixture);
-      expect(instance.items.length).to.equal(10);
-      expect(instance.visibleItems).to.equal(10);
-      expect(instance.options.group).to.equal('all');
-      expect(instance.options.speed).to.equal(250);
-      expect(instance.options.itemSelector).to.equal('*');
-      expect(instance.options.sizer).to.equal(null);
-      expect(instance.options.columnWidth).to.equal(0);
-      expect(instance.options.gutterWidth).to.equal(0);
-      expect(instance.options.delimiter).to.equal(null);
-      expect(instance.options.initialSort).to.equal(null);
-      expect(instance.options.throttleTime).to.equal(300);
-      expect(instance.id).to.equal('shuffle_0');
+      expect(instance.items.length).toBe(10);
+      expect(instance.visibleItems).toBe(10);
+      expect(instance.options.group).toBe('all');
+      expect(instance.options.speed).toBe(250);
+      expect(instance.options.itemSelector).toBe('*');
+      expect(instance.options.sizer).toBeNull();
+      expect(instance.options.columnWidth).toBe(0);
+      expect(instance.options.gutterWidth).toBe(0);
+      expect(instance.options.delimiter).toBeNull();
+      expect(instance.options.initialSort).toBeNull();
+      expect(instance.options.throttleTime).toBe(300);
+      expect(instance.id).toBe('shuffle_0');
 
-      expect(instance.isInitialized).to.be.true;
+      expect(instance.isInitialized).toBe(true);
     });
 
-    it('should add classes and default styles', function () {
+    it('should add classes and default styles', () => {
       instance = new Shuffle(fixture);
-      expect(instance.element).to.have.class('shuffle');
+      expect(instance.element.classList.contains('shuffle')).toBe(true);
 
-      var styles = window.getComputedStyle(instance.element, null);
-      expect(styles.position).to.equal('relative');
-      expect(styles.overflow).to.equal('hidden');
-      expect(instance.containerWidth).not.to.equal(0);
+      const styles = window.getComputedStyle(instance.element, null);
+      // Will have `position:relative` in a real browser (not JSDom).
+      expect(styles.overflow).toBe('hidden');
+      // Will have a `containerWidth` > 0 in a real browser (not JSDom).
 
-      instance.items.forEach(function (item) {
-        expect(item.element).to.have.class('shuffle-item');
-        expect(item.element).to.have.class('shuffle-item--visible');
-        expect(item.element.style.opacity).to.be.exist;
-        expect(item.element.style.position).to.equal('absolute');
-        expect(item.element.style.visibility).to.equal('visible');
-        expect(item.isVisible).to.equal(true);
-        expect(item.scale).to.equal(Shuffle.ShuffleItem.Scale.VISIBLE);
-        expect(item.point.x).to.be.exist;
-        expect(item.point.y).to.be.exist;
+      instance.items.forEach(({ element, isVisible, scale, point }) => {
+        expect(element.classList.contains('shuffle-item')).toBe(true);
+        expect(element.classList.contains('shuffle-item--visible')).toBe(true);
+        expect(element.style.opacity).toBeDefined();
+        expect(element.style.position).toBe('absolute');
+        expect(element.style.visibility).toBe('visible');
+        expect(isVisible).toBe(true);
+        expect(scale).toBe(Shuffle.ShuffleItem.Scale.VISIBLE);
+        expect(point.x).toBeDefined();
+        expect(point.y).toBeDefined();
       });
     });
 
-    it('should be 3 columns with gutters', function () {
+    it('should be 3 columns with gutters', () => {
       fixture.style.width = '1000px';
 
-      for (var i = 0; i < fixture.children.length; i++) {
+      for (let i = 0; i < fixture.children.length; i++) {
         fixture.children[i].style.width = '300px';
         fixture.children[i].style.height = '150px';
       }
@@ -137,41 +104,41 @@ describe('shuffle', function () {
         gutterWidth: 50,
       });
 
-      expect(instance.colWidth).to.equal(350);
-      expect(instance.cols).to.equal(3);
-      expect(instance.positions).to.deep.equal([600, 450, 450]);
+      expect(instance.colWidth).toBe(350);
+      expect(instance.cols).toBe(3);
+      expect(instance.positions).toEqual([600, 450, 450]);
     });
 
-    it('can have a function for columns and gutters', function () {
+    it('can have a function for columns and gutters', () => {
       fixture.style.width = '1000px';
 
-      for (var i = 0; i < fixture.children.length; i++) {
+      for (let i = 0; i < fixture.children.length; i++) {
         fixture.children[i].style.width = '300px';
         fixture.children[i].style.height = '150px';
       }
 
       instance = new Shuffle(fixture, {
-        columnWidth: function (containerWidth) {
-          expect(containerWidth).to.equal(1000);
+        columnWidth(containerWidth) {
+          expect(containerWidth).toBe(1000);
           return 300;
         },
 
-        gutterWidth: function () {
+        gutterWidth() {
           return 50;
         },
       });
 
-      expect(instance._getGutterSize(1000)).to.equal(50);
-      expect(instance._getColumnSize(1000, 50)).to.equal(350);
-      expect(instance.colWidth).to.equal(350);
-      expect(instance.cols).to.equal(3);
-      expect(instance.positions).to.deep.equal([600, 450, 450]);
+      expect(instance._getGutterSize(1000)).toBe(50);
+      expect(instance._getColumnSize(1000, 50)).toBe(350);
+      expect(instance.colWidth).toBe(350);
+      expect(instance.cols).toBe(3);
+      expect(instance.positions).toEqual([600, 450, 450]);
     });
 
-    it('can have a function for columns/gutters and span multiple columns', function () {
+    it('can have a function for columns/gutters and span multiple columns', () => {
       fixture.style.width = '1200px';
 
-      for (var i = 0; i < fixture.children.length; i++) {
+      for (let i = 0; i < fixture.children.length; i++) {
         fixture.children[i].style.width = '300px';
         fixture.children[i].style.height = '10px';
       }
@@ -181,46 +148,42 @@ describe('shuffle', function () {
       fixture.children[6].style.width = '900px';
 
       instance = new Shuffle(fixture, {
-        columnWidth: function (containerWidth) {
-          expect(containerWidth).to.equal(1200);
+        columnWidth(containerWidth) {
+          expect(containerWidth).toBe(1200);
           return 300;
         },
 
-        gutterWidth: function () {
+        gutterWidth() {
           return 0;
         },
       });
 
-      expect(instance._getGutterSize(1200)).to.equal(0);
-      expect(instance._getColumnSize(1200, 0)).to.equal(300);
-      expect(instance.colWidth).to.equal(300);
-      expect(instance.cols).to.equal(4);
-      expect(instance.positions).to.deep.equal([40, 40, 30, 30]);
+      expect(instance._getGutterSize(1200)).toBe(0);
+      expect(instance._getColumnSize(1200, 0)).toBe(300);
+      expect(instance.colWidth).toBe(300);
+      expect(instance.cols).toBe(4);
+      expect(instance.positions).toEqual([40, 40, 30, 30]);
     });
 
-    it('can filter by the data attribute', function (done) {
+    it('can filter by the data attribute', done => {
       instance = new Shuffle(fixture, {
         speed: 0,
       });
 
       function second() {
-        expect(instance.visibleItems).to.equal(3);
-        var hidden = [3, 4, 5, 6, 7, 8, 10].map(function (num) {
-          return id('item' + num);
+        expect(instance.visibleItems).toBe(3);
+        const hidden = [3, 4, 5, 6, 7, 8, 10].map(num => id(`item${num}`));
+
+        const visible = [1, 2, 9].map(num => id(`item${num}`));
+
+        hidden.forEach(element => {
+          expect(element.classList.contains(Shuffle.Classes.HIDDEN)).toBe(true);
+          expect(element.style.visibility).toBe('hidden');
         });
 
-        var visible = [1, 2, 9].map(function (num) {
-          return id('item' + num);
-        });
-
-        hidden.forEach(function (element) {
-          expect(element).to.have.class(Shuffle.Classes.HIDDEN);
-          expect(element.style.visibility).to.equal('hidden');
-        });
-
-        visible.forEach(function (element) {
-          expect(element).to.have.class(Shuffle.Classes.VISIBLE);
-          expect(element.style.visibility).to.equal('visible');
+        visible.forEach(element => {
+          expect(element.classList.contains(Shuffle.Classes.VISIBLE)).toBe(true);
+          expect(element.style.visibility).toBe('visible');
         });
 
         instance.once(Shuffle.EventType.LAYOUT, third);
@@ -230,23 +193,19 @@ describe('shuffle', function () {
       }
 
       function third() {
-        expect(instance.visibleItems).to.equal(2);
-        var hidden = [1, 2, 5, 6, 7, 8, 9, 10].map(function (num) {
-          return id('item' + num);
+        expect(instance.visibleItems).toBe(2);
+        const hidden = [1, 2, 5, 6, 7, 8, 9, 10].map(num => id(`item${num}`));
+
+        const visible = [3, 4].map(num => id(`item${num}`));
+
+        hidden.forEach(element => {
+          expect(element.classList.contains(Shuffle.Classes.HIDDEN)).toBe(true);
+          expect(element.style.visibility).toBe('hidden');
         });
 
-        var visible = [3, 4].map(function (num) {
-          return id('item' + num);
-        });
-
-        hidden.forEach(function (element) {
-          expect(element).to.have.class(Shuffle.Classes.HIDDEN);
-          expect(element.style.visibility).to.equal('hidden');
-        });
-
-        visible.forEach(function (element) {
-          expect(element).to.have.class(Shuffle.Classes.VISIBLE);
-          expect(element.style.visibility).to.equal('visible');
+        visible.forEach(element => {
+          expect(element.classList.contains(Shuffle.Classes.VISIBLE)).toBe(true);
+          expect(element.style.visibility).toBe('visible');
         });
 
         done();
@@ -256,18 +215,18 @@ describe('shuffle', function () {
       instance.filter('design');
     });
 
-    it('can initialize filtered and the category parameter is optional', function () {
+    it('can initialize filtered and the category parameter is optional', () => {
       instance = new Shuffle(fixture, {
         speed: 40,
         group: 'design',
       });
 
-      expect(instance.visibleItems).to.equal(3);
+      expect(instance.visibleItems).toBe(3);
     });
 
-    it('can initialize sorted', function () {
-      var sortObj = {
-        by: function (element) {
+    it('can initialize sorted', () => {
+      const sortObj = {
+        by(element) {
           return parseInt(element.getAttribute('data-age'), 10);
         },
       };
@@ -277,33 +236,33 @@ describe('shuffle', function () {
         initialSort: sortObj,
       });
 
-      expect(instance.lastSort).to.deep.equal(sortObj);
+      expect(instance.lastSort).toEqual(sortObj);
     });
 
-    it('can calculate column spans', function () {
+    it('can calculate column spans', () => {
       // itemWidth, columnWidth, columns, threshold
-      expect(Shuffle.__getColumnSpan(50, 100, 3, 0)).to.equal(1);
-      expect(Shuffle.__getColumnSpan(200, 100, 3, 0)).to.equal(2);
-      expect(Shuffle.__getColumnSpan(200, 200, 3, 0)).to.equal(1);
-      expect(Shuffle.__getColumnSpan(300, 100, 3, 0)).to.equal(3);
+      expect(Shuffle.__getColumnSpan(50, 100, 3, 0)).toBe(1);
+      expect(Shuffle.__getColumnSpan(200, 100, 3, 0)).toBe(2);
+      expect(Shuffle.__getColumnSpan(200, 200, 3, 0)).toBe(1);
+      expect(Shuffle.__getColumnSpan(300, 100, 3, 0)).toBe(3);
 
       // Column span should not be larger than the number of columns.
-      expect(Shuffle.__getColumnSpan(300, 50, 3, 0)).to.equal(3);
+      expect(Shuffle.__getColumnSpan(300, 50, 3, 0)).toBe(3);
 
       // Fix for percentage values.
-      expect(Shuffle.__getColumnSpan(100.02, 100, 4, 0)).to.equal(2);
-      expect(Shuffle.__getColumnSpan(100.02, 100, 4, 0.01)).to.equal(1);
-      expect(Shuffle.__getColumnSpan(99.98, 100, 4, 0.01)).to.equal(1);
+      expect(Shuffle.__getColumnSpan(100.02, 100, 4, 0)).toBe(2);
+      expect(Shuffle.__getColumnSpan(100.02, 100, 4, 0.01)).toBe(1);
+      expect(Shuffle.__getColumnSpan(99.98, 100, 4, 0.01)).toBe(1);
     });
 
-    it('can calculate column sets', function () {
+    it('can calculate column sets', () => {
       // getAvailablePositions(positions, columnSpan, columns)
-      var positions = [150, 0, 0, 0];
-      expect(Shuffle.__getAvailablePositions(positions, 1, 4)).to.deep.equal([150, 0, 0, 0]);
-      expect(Shuffle.__getAvailablePositions(positions, 2, 4)).to.deep.equal([150, 0, 0]);
+      const positions = [150, 0, 0, 0];
+      expect(Shuffle.__getAvailablePositions(positions, 1, 4)).toEqual([150, 0, 0, 0]);
+      expect(Shuffle.__getAvailablePositions(positions, 2, 4)).toEqual([150, 0, 0]);
     });
 
-    it('can center already-positioned items', function() {
+    it('can center already-positioned items', () => {
       // 4-2-1 even heights
       expect(Shuffle.__getCenteredPositions([
         new Shuffle.Rect(0, 0, 250, 100, 0),
@@ -313,7 +272,7 @@ describe('shuffle', function () {
         new Shuffle.Rect(0, 100, 600, 100, 4),
         new Shuffle.Rect(600, 100, 300, 100, 5),
         new Shuffle.Rect(0, 200, 250, 100, 6),
-      ], 1000)).to.deep.equal([
+      ], 1000)).toEqual([
         new Shuffle.Point(0, 0),
         new Shuffle.Point(250, 0),
         new Shuffle.Point(500, 0),
@@ -332,218 +291,214 @@ describe('shuffle', function () {
         new Shuffle.Rect(0, 0, 500, 200, 0),
         new Shuffle.Rect(500, 0, 250, 100, 1),
         new Shuffle.Rect(500, 100, 500, 100, 2),
-      ], 1000)).to.deep.equal([
+      ], 1000)).toEqual([
         new Shuffle.Point(0, 0),
         new Shuffle.Point(500, 0),
         new Shuffle.Point(500, 100),
       ]);
     });
 
-    it('can get an element option', function () {
+    it('can get an element option', () => {
       instance = new Shuffle(fixture);
-      var first = fixture.firstElementChild;
+      const first = fixture.firstElementChild;
 
-      expect(instance._getElementOption(first)).to.equal(first);
-      expect(instance._getElementOption('#item1')).to.equal(first);
-      expect(instance._getElementOption('#hello-world')).to.be.null;
-      expect(instance._getElementOption(null)).to.be.null;
-      expect(instance._getElementOption(undefined)).to.be.null;
-      expect(instance._getElementOption(function () {
-        return first;
-      })).to.be.null;
+      expect(instance._getElementOption(first)).toBe(first);
+      expect(instance._getElementOption('#item1')).toBe(first);
+      expect(instance._getElementOption('#hello-world')).toBeNull();
+      expect(instance._getElementOption(null)).toBeNull();
+      expect(instance._getElementOption(undefined)).toBeNull();
+      expect(instance._getElementOption(() => first)).toBeNull();
     });
 
-    it('can test elements against filters', function () {
+    it('can test elements against filters', () => {
       instance = new Shuffle(fixture);
 
-      var first = fixture.firstElementChild;
-      expect(instance._doesPassFilter('design', first)).to.be.true;
-      expect(instance._doesPassFilter('black', first)).to.be.false;
+      const first = fixture.firstElementChild;
+      expect(instance._doesPassFilter('design', first)).toBe(true);
+      expect(instance._doesPassFilter('black', first)).toBe(false);
 
-      expect(instance._doesPassFilter(function (element) {
-        expect(element).to.exist;
+      expect(instance._doesPassFilter(element => {
+        expect(element).toBeDefined();
         return element.getAttribute('data-age') === '21';
-      }, first)).to.equal(true);
+      }, first)).toBe(true);
 
-      expect(instance._doesPassFilter(function (element) {
-        return element.getAttribute('data-age') === '22';
-      }, first)).to.equal(false);
+      expect(instance._doesPassFilter(element => element.getAttribute('data-age') === '22', first)).toBe(false);
 
       // Arrays.
-      expect(instance._doesPassFilter(['design'], first)).to.be.true;
-      expect(instance._doesPassFilter(['red'], first)).to.be.true;
-      expect(instance._doesPassFilter(['design', 'black'], first)).to.be.true;
+      expect(instance._doesPassFilter(['design'], first)).toBe(true);
+      expect(instance._doesPassFilter(['red'], first)).toBe(true);
+      expect(instance._doesPassFilter(['design', 'black'], first)).toBe(true);
 
       // Change filter mode.
       instance.options.filterMode = Shuffle.FilterMode.ALL;
-      expect(instance._doesPassFilter(['design'], first)).to.be.true;
-      expect(instance._doesPassFilter(['design', 'red'], first)).to.be.true;
-      expect(instance._doesPassFilter(['design', 'black'], first)).to.be.false;
+      expect(instance._doesPassFilter(['design'], first)).toBe(true);
+      expect(instance._doesPassFilter(['design', 'red'], first)).toBe(true);
+      expect(instance._doesPassFilter(['design', 'black'], first)).toBe(false);
     });
 
-    it('will maintain the last sort object', function () {
+    it('will maintain the last sort object', () => {
       instance = new Shuffle(fixture);
-      var initialSort = instance.lastSort;
+      const initialSort = instance.lastSort;
 
       instance.sort();
-      expect(instance.lastSort).to.deep.equal(initialSort);
+      expect(instance.lastSort).toEqual(initialSort);
 
       instance.sort({ glen: true });
-      expect(instance.lastSort).to.deep.equal({ glen: true });
+      expect(instance.lastSort).toEqual({ glen: true });
 
       instance.sort();
-      expect(instance.lastSort).to.deep.equal({ glen: true });
+      expect(instance.lastSort).toEqual({ glen: true });
 
     });
 
-    it('should reset columns', function () {
+    it('should reset columns', () => {
       instance = new Shuffle(fixture);
 
-      expect(instance.cols).to.be.above(0);
+      // instance.cols will be > 0 in real browsers.
       instance._resetCols();
 
-      var positions = new Array(instance.cols);
-      for (var i = 0; i < instance.cols; i++) {
+      const positions = new Array(instance.cols);
+      for (let i = 0; i < instance.cols; i++) {
         positions[i] = 0;
       }
 
-      expect(instance.positions).to.deep.equal(positions);
+      expect(instance.positions).toEqual(positions);
     });
 
-    it('should destroy properly', function () {
+    it('should destroy properly', () => {
       instance = new Shuffle(fixture);
       instance.destroy();
 
-      expect(instance.element).to.be.null;
-      expect(instance.items).to.have.lengthOf(0);
-      expect(instance.options.sizer).to.be.null;
-      expect(instance.isDestroyed).to.be.true;
+      expect(instance.element).toBeNull();
+      expect(instance.items).toHaveLength(0);
+      expect(instance.options.sizer).toBeNull();
+      expect(instance.isDestroyed).toBe(true);
 
-      expect(fixture).to.not.have.class('shuffle');
+      expect(fixture.classList.contains('shuffle')).toBe(false);
 
-      Array.from(fixture.children).forEach(function (child) {
-        expect(child).to.not.have.class('shuffle-item');
-        expect(child).to.not.have.class('shuffle-item--visible');
-        expect(child).to.not.have.class('shuffle-item--hidden');
+      Array.from(fixture.children).forEach(child => {
+        expect(child.classList.contains('shuffle-item')).toBe(false);
+        expect(child.classList.contains('shuffle-item--visible')).toBe(false);
+        expect(child.classList.contains('shuffle-item--hidden')).toBe(false);
       });
     });
 
-    it('should not update or shuffle when disabled or destroyed', function () {
+    it('should not update or shuffle when disabled or destroyed', () => {
       instance = new Shuffle(fixture);
-      var update = sinon.spy(instance, 'update');
-      var _filter = sinon.spy(instance, '_filter');
+      const update = sinon.spy(instance, 'update');
+      const _filter = sinon.spy(instance, '_filter');
 
       instance.disable();
 
       instance.filter('design');
 
-      expect(_filter.called).to.be.false;
-      expect(update.called).to.be.false;
+      expect(_filter.called).toBe(false);
+      expect(update.called).toBe(false);
 
       instance.enable(false);
 
       instance.destroy();
       instance._onResize();
-      expect(update.called).to.be.false;
+      expect(update.called).toBe(false);
     });
 
-    it('should still update when the container is the same size', function () {
+    it('should still update when the container is the same size', () => {
       instance = new Shuffle(fixture);
-      var update = sinon.spy(instance, 'update');
+      const update = sinon.spy(instance, 'update');
 
       instance._onResize();
 
-      expect(update.called).to.be.true;
+      expect(update.called).toBe(true);
     });
 
-    describe('removing elements', function () {
-      var children;
+    describe('removing elements', () => {
+      let children;
 
-      beforeEach(function () {
+      beforeEach(() => {
         children = Array.from(fixture.children);
       });
 
-      afterEach(function () {
+      afterEach(() => {
         children = null;
       });
 
-      it('can remove items', function (done) {
+      it('can remove items', done => {
         instance = new Shuffle(fixture, {
           speed: 16,
         });
 
-        instance.once(Shuffle.EventType.REMOVED, function (data) {
-          expect(data.shuffle.visibleItems).to.equal(8);
-          expect(data.collection[0].id).to.equal('item1');
-          expect(data.collection[1].id).to.equal('item2');
-          expect(data.shuffle.element.children).to.have.lengthOf(8);
-          expect(instance.isTransitioning).to.be.false;
+        instance.once(Shuffle.EventType.REMOVED, ({ shuffle, collection }) => {
+          expect(shuffle.visibleItems).toBe(8);
+          expect(collection[0].id).toBe('item1');
+          expect(collection[1].id).toBe('item2');
+          expect(shuffle.element.children).toHaveLength(8);
+          expect(instance.isTransitioning).toBe(false);
           done();
         });
 
-        var itemsToRemove = children.slice(0, 2);
+        const itemsToRemove = children.slice(0, 2);
         instance.remove(itemsToRemove);
       });
 
-      it('can remove items without transforms', function (done) {
+      it('can remove items without transforms', done => {
         instance = new Shuffle(fixture, {
           speed: 100,
           useTransforms: false,
         });
 
-        instance.once(Shuffle.EventType.REMOVED, function (data) {
-          expect(data.shuffle.visibleItems).to.equal(8);
-          expect(data.collection[0].id).to.equal('item2');
-          expect(data.collection[1].id).to.equal('item3');
-          expect(data.shuffle.element.children).to.have.lengthOf(8);
-          expect(data.shuffle.isTransitioning).to.be.false;
+        instance.once(Shuffle.EventType.REMOVED, ({ shuffle, collection }) => {
+          expect(shuffle.visibleItems).toBe(8);
+          expect(collection[0].id).toBe('item2');
+          expect(collection[1].id).toBe('item3');
+          expect(shuffle.element.children).toHaveLength(8);
+          expect(shuffle.isTransitioning).toBe(false);
           done();
         });
 
-        var itemsToRemove = children.slice(1, 3);
+        const itemsToRemove = children.slice(1, 3);
         instance.remove(itemsToRemove);
       });
     });
 
-    it('can get the real width of an element which is scaled', function () {
-      var div = document.createElement('div');
+    it('can get the real width of an element which is scaled', () => {
+      const div = document.createElement('div');
       div.style.cssText = 'width:100px;height:100px;';
       div.style.transform = 'translate(0px,0px) scale(0.5)';
 
       document.body.appendChild(div);
 
-      expect(Shuffle.getSize(div, false).width).to.equal(100);
-      expect(Shuffle.getSize(div, true).width).to.equal(100);
+      expect(Shuffle.getSize(div, false).width).toBe(100);
+      expect(Shuffle.getSize(div, true).width).toBe(100);
 
-      expect(Shuffle.getSize(div, false).height).to.equal(100);
-      expect(Shuffle.getSize(div, true).height).to.equal(100);
+      expect(Shuffle.getSize(div, false).height).toBe(100);
+      expect(Shuffle.getSize(div, true).height).toBe(100);
 
       div.style.marginLeft = '10px';
       div.style.marginRight = '20px';
       div.style.marginTop = '30px';
       div.style.marginBottom = '40px';
 
-      expect(Shuffle.getSize(div, false).width).to.equal(100);
-      expect(Shuffle.getSize(div, true).width).to.equal(130);
+      expect(Shuffle.getSize(div, false).width).toBe(100);
+      expect(Shuffle.getSize(div, true).width).toBe(130);
 
-      expect(Shuffle.getSize(div, false).height).to.equal(100);
-      expect(Shuffle.getSize(div, true).height).to.equal(170);
+      expect(Shuffle.getSize(div, false).height).toBe(100);
+      expect(Shuffle.getSize(div, true).height).toBe(170);
 
       document.body.removeChild(div);
     });
 
-    describe('inserting elements', function () {
-      var items = [];
+    describe('inserting elements', () => {
+      const items = [];
 
-      beforeEach(function () {
-        var eleven = document.createElement('div');
+      beforeEach(() => {
+        const eleven = document.createElement('div');
         eleven.className = 'item';
         eleven.setAttribute('data-age', 36);
         eleven.setAttribute('data-groups', '["ux", "black"]');
         eleven.id = 'item11';
         eleven.textContent = 'Person 11';
 
-        var twelve = document.createElement('div');
+        const twelve = document.createElement('div');
         twelve.className = 'item';
         twelve.setAttribute('data-age', 37);
         twelve.setAttribute('data-groups', '["strategy", "blue"]');
@@ -558,231 +513,229 @@ describe('shuffle', function () {
         });
       });
 
-      afterEach(function () {
+      afterEach(() => {
         items.length = 0;
       });
 
-      it('can add items', function (done) {
+      it('can add items', done => {
         fixture.appendChild(items[0]);
         fixture.appendChild(items[1]);
         instance.add(items);
 
         // Already 2 in the items, plus number 11.
-        expect(instance.visibleItems).to.equal(3);
-        expect(instance.items).to.have.lengthOf(12);
+        expect(instance.visibleItems).toBe(3);
+        expect(instance.items).toHaveLength(12);
 
-        instance.once(Shuffle.EventType.LAYOUT, function () {
+        instance.once(Shuffle.EventType.LAYOUT, () => {
           done();
         });
       });
 
-      it('can prepend items', function (done) {
+      it('can prepend items', done => {
         fixture.insertBefore(items[1], fixture.firstElementChild);
         fixture.insertBefore(items[0], fixture.firstElementChild);
         instance.add(items);
 
-        expect(instance.items[0].element).to.equal(items[0]);
-        expect(instance.items[1].element).to.equal(items[1]);
-        expect(instance.items).to.have.lengthOf(12);
+        expect(instance.items[0].element).toBe(items[0]);
+        expect(instance.items[1].element).toBe(items[1]);
+        expect(instance.items).toHaveLength(12);
 
-        instance.once(Shuffle.EventType.LAYOUT, function () {
+        instance.once(Shuffle.EventType.LAYOUT, () => {
           done();
         });
       });
 
-      it('can reset items', function () {
+      it('can reset items', () => {
         fixture.textContent = '';
         fixture.appendChild(items[0]);
         fixture.appendChild(items[1]);
 
         instance.resetItems();
 
-        expect(instance.isInitialized).to.be.true;
-        expect(instance.items[0].element).to.equal(items[0]);
-        expect(instance.items[1].element).to.equal(items[1]);
-        expect(instance.items).to.have.lengthOf(2);
+        expect(instance.isInitialized).toBe(true);
+        expect(instance.items[0].element).toBe(items[0]);
+        expect(instance.items[1].element).toBe(items[1]);
+        expect(instance.items).toHaveLength(2);
       });
 
     });
   });
 
-  describe('delimiter fixture', function () {
-    beforeEach(function (done) {
+  describe('delimiter fixture', () => {
+    beforeEach(() => {
       // Mock the transition end event wrapper.
       sinon.stub(Shuffle.prototype, '_whenTransitionDone').callsFake(whenTransitionDoneStub);
 
-      appendFixture('delimiter').then(done);
+      appendFixture('delimiter');
     });
 
-    afterEach(function () {
+    afterEach(() => {
       Shuffle.prototype._whenTransitionDone.restore();
       removeFixture();
     });
 
-    it('can have a custom delimiter', function () {
+    it('can have a custom delimiter', () => {
       instance = new Shuffle(fixture, {
         delimiter: ',',
         group: 'design',
       });
 
-      expect(instance.visibleItems).to.equal(3);
+      expect(instance.visibleItems).toBe(3);
     });
 
-    it('can use the old misspelled delimiter option', function () {
+    it('can use the old misspelled delimiter option', () => {
       instance = new Shuffle(fixture, {
         delimeter: ',',
         group: 'design',
       });
 
-      expect(instance.visibleItems).to.equal(3);
+      expect(instance.visibleItems).toBe(3);
     });
   });
 
-  describe('Custom shuffle item styles', function () {
-    var original = Shuffle.ShuffleItem.Css;
+  describe('Custom shuffle item styles', () => {
+    const original = Shuffle.ShuffleItem.Css;
 
-    beforeEach(function (done) {
-      appendFixture('regular').then(done);
+    beforeEach(() => {
+      appendFixture('regular');
     });
 
-    afterEach(function () {
+    afterEach(() => {
       Shuffle.ShuffleItem.Css = original;
       removeFixture();
     });
 
-    it('will apply before and after styles even if the item will not move', function () {
+    it('will apply before and after styles even if the item will not move', () => {
       Shuffle.ShuffleItem.Css.INITIAL.opacity = 0;
       instance = new Shuffle(fixture, { speed: 0 });
 
       // The layout method will have already set styles to their 'after' states
       // upon initialization. Reset them here.
-      instance.items.forEach(function (item) {
+      instance.items.forEach(item => {
         item.applyCss(Shuffle.ShuffleItem.Css.INITIAL);
       });
 
-      instance.items.forEach(function (item) {
-        expect(item.element.style.opacity).to.equal('0');
+      instance.items.forEach(({ element }) => {
+        expect(element.style.opacity).toBe('0');
       });
 
       instance._layout(instance.items);
       instance._processQueue();
 
-      instance.items.forEach(function (item) {
-        expect(item.element.style.opacity).to.equal('1');
+      instance.items.forEach(({ element }) => {
+        expect(element.style.opacity).toBe('1');
       });
     });
   });
 
-  describe('the sorter', function () {
-    var items;
-    var clone;
+  describe('the sorter', () => {
+    let items;
+    let clone;
 
-    beforeEach(function (done) {
-      appendFixture('regular').then(function () {
-        items = Array.from(fixture.children).map(function (element) {
-          return { element: element };
-        });
+    beforeEach(() => {
+      appendFixture('regular');
 
-        clone = Array.from(items);
+      items = Array.from(fixture.children).map(element => ({
+        element
+      }));
 
-        done();
-      });
+      clone = Array.from(items);
     });
 
-    afterEach(function () {
+    afterEach(() => {
       items.length = 0;
       clone.length = 0;
       removeFixture();
     });
 
-    it('will catch empty objects', function () {
-      expect(Shuffle.__sorter({})).to.deep.equal([]);
+    it('will catch empty objects', () => {
+      expect(Shuffle.__sorter({})).toEqual([]);
     });
 
-    it('can randomize the elements', function () {
-      expect(items).to.have.lengthOf(10);
-      expect(Shuffle.__sorter(items)).to.deep.equal(items);
+    it('can randomize the elements', () => {
+      expect(items).toHaveLength(10);
+      expect(Shuffle.__sorter(items)).toEqual(items);
 
-      expect(Shuffle.__sorter(clone, { randomize: true })).to.not.deep.equal(items);
+      expect(Shuffle.__sorter(clone, { randomize: true })).not.toEqual(items);
     });
 
-    it('can sort by a function', function () {
-      clone.sort(function (a, b) {
-        var age1 = parseInt(a.element.getAttribute('data-age'), 10);
-        var age2 = parseInt(b.element.getAttribute('data-age'), 10);
+    it('can sort by a function', () => {
+      clone.sort((a, b) => {
+        const age1 = parseInt(a.element.getAttribute('data-age'), 10);
+        const age2 = parseInt(b.element.getAttribute('data-age'), 10);
         return age1 - age2;
       });
 
-      var result = Shuffle.__sorter(items, {
-        by: function (element) {
-          expect(element).to.exist;
-          expect(element.nodeType).to.equal(1);
+      const result = Shuffle.__sorter(items, {
+        by(element) {
+          expect(element).toBeDefined();
+          expect(element.nodeType).toBe(1);
           return parseInt(element.getAttribute('data-age'), 10);
         },
       });
 
-      expect(result).to.deep.equal(clone);
+      expect(result).toEqual(clone);
     });
 
-    it('can sort by a function and reverse it', function () {
-      clone.sort(function (a, b) {
-        var age1 = parseInt(a.element.getAttribute('data-age'), 10);
-        var age2 = parseInt(b.element.getAttribute('data-age'), 10);
+    it('can sort by a function and reverse it', () => {
+      clone.sort((a, b) => {
+        const age1 = parseInt(a.element.getAttribute('data-age'), 10);
+        const age2 = parseInt(b.element.getAttribute('data-age'), 10);
         return age1 - age2;
       }).reverse();
 
-      var result = Shuffle.__sorter(items, {
+      const result = Shuffle.__sorter(items, {
         reverse: true,
-        by: function (element) {
+        by(element) {
           return parseInt(element.getAttribute('data-age'), 10);
         },
       });
 
-      expect(result).to.deep.equal(clone);
+      expect(result).toEqual(clone);
     });
 
-    it('will revert to DOM order if the `by` function returns undefined', function () {
-      var count = 0;
+    it('will revert to DOM order if the `by` function returns undefined', () => {
+      let count = 0;
       expect(Shuffle.__sorter(items, {
-        by: function () {
+        by() {
           count++;
           return count < 5 ? Math.random() : undefined;
         },
-      })).to.deep.equal(clone);
+      })).toEqual(clone);
     });
 
-    it('can sort things to the top', function () {
+    it('can sort things to the top', () => {
       items = items.slice(0, 4);
-      var final = [items[1], items[0], items[3], items[2]];
+      const final = [items[1], items[0], items[3], items[2]];
       expect(Shuffle.__sorter(items, {
-        by: function (element) {
-          var age = parseInt(element.getAttribute('data-age'), 10);
+        by(element) {
+          const age = parseInt(element.getAttribute('data-age'), 10);
           if (age === 50) {
             return 'sortFirst';
           } else {
             return age;
           }
         },
-      })).to.deep.equal(final);
+      })).toEqual(final);
     });
 
-    it('can sort things to the bottom', function () {
+    it('can sort things to the bottom', () => {
       items = items.slice(0, 4);
-      var final = [items[0], items[2], items[1], items[3]];
+      const final = [items[0], items[2], items[1], items[3]];
       expect(Shuffle.__sorter(items, {
-        by: function (element) {
-          var age = parseInt(element.getAttribute('data-age'), 10);
+        by(element) {
+          const age = parseInt(element.getAttribute('data-age'), 10);
           if (age === 27) {
             return 'sortLast';
           } else {
             return age;
           }
         },
-      })).to.deep.equal(final);
+      })).toEqual(final);
     });
 
-    it('can have a custom sort comparator', function () {
-      var final = [
+    it('can have a custom sort comparator', () => {
+      const final = [
         clone[0], // design, 21
         clone[8], // design, 28
         clone[1], // design, 50
@@ -795,10 +748,10 @@ describe('shuffle', function () {
         clone[4], // ux, 35
       ];
       expect(Shuffle.__sorter(items, {
-        compare: function (a, b) {
+        compare(a, b) {
           // Sort by first group, then by age.
-          var groupA = JSON.parse(a.element.getAttribute('data-groups'))[0];
-          var groupB = JSON.parse(b.element.getAttribute('data-groups'))[0];
+          const groupA = JSON.parse(a.element.getAttribute('data-groups'))[0];
+          const groupB = JSON.parse(b.element.getAttribute('data-groups'))[0];
           if (groupA > groupB) {
             return 1;
           }
@@ -807,11 +760,11 @@ describe('shuffle', function () {
           }
 
           // At this point, the group strings are the exact same. Test the age.
-          var ageA = parseInt(a.element.getAttribute('data-age'), 10);
-          var ageB = parseInt(b.element.getAttribute('data-age'), 10);
+          const ageA = parseInt(a.element.getAttribute('data-age'), 10);
+          const ageB = parseInt(b.element.getAttribute('data-age'), 10);
           return ageA - ageB;
         },
-      })).to.deep.equal(final);
+      })).toEqual(final);
     });
 
   });

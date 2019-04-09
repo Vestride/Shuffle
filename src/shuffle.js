@@ -436,7 +436,7 @@ class Shuffle extends TinyEmitter {
       calculatedColumns = Math.round(calculatedColumns);
     }
 
-    this.cols = Math.max(Math.floor(calculatedColumns), 1);
+    this.cols = Math.max(Math.floor(calculatedColumns || 0), 1);
     this.containerWidth = containerWidth;
     this.colWidth = columnWidth;
   }

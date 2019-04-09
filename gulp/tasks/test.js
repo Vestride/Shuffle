@@ -1,22 +1,9 @@
 const gulp = require('gulp');
-const mochaPhantomJS = require('gulp-mocha-phantomjs');
-const config = require('../config');
+const shell = require('gulp-shell');
 
 module.exports = function test() {
-  return gulp.src('test/runner.html', {
+  return gulp.src('package.json', {
     read: false,
   })
-    .pipe(mochaPhantomJS({
-      phantomjs: {
-        useColors: true,
-      },
-    }))
-
-    // https://github.com/gulpjs/gulp/issues/259#issuecomment-61976830
-    .on('error', function onerror(err) {
-      if (config.watch) {
-        console.error(err.message);
-        this.emit('end');
-      }
-    });
+    .pipe(shell(['npx jest']));
 };
