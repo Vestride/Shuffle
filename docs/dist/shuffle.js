@@ -138,6 +138,8 @@
   };
 
   var tinyEmitter = E;
+  var TinyEmitter = E;
+  tinyEmitter.TinyEmitter = TinyEmitter;
 
   var proto = typeof Element !== 'undefined' ? Element.prototype : {};
   var vendor = proto.matches
@@ -338,7 +340,7 @@
     HIDDEN: 'shuffle-item--hidden'
   };
 
-  var id$1 = 0;
+  var id = 0;
 
   var ShuffleItem =
   /*#__PURE__*/
@@ -346,8 +348,8 @@
     function ShuffleItem(element) {
       _classCallCheck(this, ShuffleItem);
 
-      id$1 += 1;
-      this.id = id$1;
+      id += 1;
+      this.id = id;
       this.element = element;
       /**
        * Used to separate items for layout and shrink.
@@ -865,7 +867,7 @@
   } // Used for unique instance variables
 
 
-  var id$2 = 0;
+  var id$1 = 0;
 
   var Shuffle =
   /*#__PURE__*/
@@ -911,8 +913,8 @@
       }
 
       _this.element = el;
-      _this.id = 'shuffle_' + id$2;
-      id$2 += 1;
+      _this.id = 'shuffle_' + id$1;
+      id$1 += 1;
 
       _this._init();
 
@@ -1321,7 +1323,7 @@
           calculatedColumns = Math.round(calculatedColumns);
         }
 
-        this.cols = Math.max(Math.floor(calculatedColumns), 1);
+        this.cols = Math.max(Math.floor(calculatedColumns || 0), 1);
         this.containerWidth = containerWidth;
         this.colWidth = columnWidth;
       }
