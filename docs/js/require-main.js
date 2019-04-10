@@ -2,7 +2,7 @@ requirejs.config({
   baseUrl: window.site_url + '/js',
   paths: {
     shufflejs: '../dist/shuffle',
-    polyfill: 'https://unpkg.com/core-js/client/shim.min',
+    polyfill: 'https://polyfill.io/v3/polyfill.min.js?features=default%2Ces5%2Ces6%2Ces7',
   },
 
   // Load the polyfill before Shuffle.
