@@ -63,7 +63,7 @@
     "jest": "^24.7.1",
     "rollup": "^1.9.1",
     "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-node-resolve": "^4.2.2",
     "rollup-plugin-terser": "^4.0.4",
     "sinon": "^7.3.1"
