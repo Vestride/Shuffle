@@ -49,23 +49,23 @@
     "tiny-emitter": "^2.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.3",
-    "@babel/preset-env": "^7.4.3",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
     "autoprefixer": "^9.5.1",
     "cssnano": "^4.1.10",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.16.0",
-    "gulp": "^4.0.0",
+    "eslint-plugin-import": "^2.17.3",
+    "gulp": "^4.0.2",
     "gulp-postcss": "^8.0.0",
     "gulp-sass": "^4.0.0",
     "gulp-shell": "^0.7.0",
-    "jest": "^24.7.1",
-    "rollup": "^1.9.1",
+    "jest": "^24.8.0",
+    "rollup": "^1.13.1",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-terser": "^5.0.0",
-    "sinon": "^7.3.1"
+    "sinon": "^7.3.2"
   }
 }
