@@ -19,6 +19,6 @@ baseurl: /Shuffle
 
 defaultTitle: 'Shuffle.js'
 defaultDescription: 'Categorize, sort, and filter a responsive grid of items'
-defaultImage: '/img/shuffle.png'
+ogImage: '/img/shuffle-open-graph.png'
 
 longDescription: 'Shuffle.js is a package for sorting, filtering, and laying out a group of items. It&rsquo;s performant, responsive, and fast. Check out the demos!'

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <title>{{ page.title }}</title>
   {% capture description %}{% if page.description %}{{ page.description }}{% else %}{{ site.defaultDescription }}{% endif %}{% endcapture %}
-  {% capture image %}{% if page.image %}{{ page.image }}{% else %}{{ site.defaultImage }}{% endif %}{% endcapture %}
+  {% capture image %}{% if page.image %}{{ page.image }}{% else %}{{ site.ogImage }}{% endif %}{% endcapture %}
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta property="og:title" content="{{ page.title }}" />
   <meta property="og:description" content="{{ description }}" />
