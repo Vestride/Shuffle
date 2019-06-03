@@ -80,7 +80,7 @@ ShuffleItem.Css = {
     top: 0,
     left: 0,
     visibility: 'visible',
-    'will-change': 'transform',
+    willChange: 'transform',
   },
   VISIBLE: {
     before: {

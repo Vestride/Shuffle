@@ -37,7 +37,12 @@ const defaults = {
   key: 'element',
 };
 
-// You can return `undefined` from the `by` function to revert to DOM order.
+/**
+ * You can return `undefined` from the `by` function to revert to DOM order.
+ * @param {Array<T>} arr Array to sort.
+ * @param {SortOptions} options Sorting options.
+ * @return {Array<T>}
+ */
 export default function sorter(arr, options) {
   const opts = Object.assign({}, defaults, options);
   const original = Array.from(arr);

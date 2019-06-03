@@ -776,9 +776,9 @@ class Shuffle extends TinyEmitter {
    * The magic. This is what makes the plugin 'shuffle'
    * @param {string|string[]|function(Element):boolean} [category] Category to filter by.
    *     Can be a function, string, or array of strings.
-   * @param {Object} [sortObj] A sort object which can sort the visible set
+   * @param {SortOptions} [sortOptions] A sort object which can sort the visible set
    */
-  filter(category, sortObj) {
+  filter(category, sortOptions) {
     if (!this.isEnabled) {
       return;
     }
@@ -796,12 +796,12 @@ class Shuffle extends TinyEmitter {
     this._updateItemCount();
 
     // Update transforms on visible elements so they will animate to their new positions.
-    this.sort(sortObj);
+    this.sort(sortOptions);
   }
 
   /**
    * Gets the visible elements, sorts them, and passes them to layout.
-   * @param {Object} [sortOptions] The options object to pass to `sorter`.
+   * @param {SortOptions} [sortOptions] The options object to pass to `sorter`.
    */
   sort(sortOptions = this.lastSort) {
     if (!this.isEnabled) {
