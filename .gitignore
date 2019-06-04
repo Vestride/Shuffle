@@ -1,5 +1,6 @@
 node_modules
 coverage
+test/types/build
 .DS_Store
 _site
 .sass-cache

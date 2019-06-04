@@ -1,55 +1,163 @@
-// Type definitions for Shuffle 5.0
+// Type definitions for Shuffle 5.2.2
 // Project: https://github.com/Vestride/Shuffle
 // Definitions by: Glen Cheney <https://github.com/Vestride>
 
 export as namespace Shuffle;
 export default Shuffle;
 
-interface FilterMode {
-  ALL: string;
-  ANY: string;
+/** Default options that can be overridden. */
+export interface ShuffleOptions {
+  /**
+   * Useful for percentage based heights when they might not always be exactly
+   * the same (in pixels).
+   */
+  buffer?: number;
+
+  /**
+   * Reading the width of elements isn't precise enough and can cause columns to
+   * jump between values.
+   */
+  columnThreshold?: number;
+
+  /**
+   * A static number or function that returns a number which tells the plugin
+   * how wide the columns are (in pixels).
+   */
+  columnWidth?: number;
+
+  /**
+   * If your group is not json, and is comma delimeted, you could set delimiter to ','.
+   */
+  delimiter?: string;
+
+  /** @deprecated Misspelling that will be removed in v6 */
+  delimeter?: string;
+
+  /**
+   * CSS easing function to use.
+   */
+  easing?: string;
+
+  /**
+   * Affects using an array with filter. e.g. `filter(['one', 'two'])`. With "any",
+   * the element passes the test if any of its groups are in the array. With "all",
+   * the element only passes if all groups are in the array.
+   */
+  filterMode?: Shuffle.FilterMode;
+
+  /**
+   * Initial filter group.
+   */
+  group?: string;
+
+  /**
+   * A static number or function that tells the plugin how wide the gutters
+   * between columns are (in pixels).
+   */
+  gutterWidth?: number;
+
+  /**
+   * Shuffle can be isInitialized with a sort object. It is the same object
+   * given to the sort method.
+   */
+  initialSort?: SortOptions;
+
+  /**
+   * Whether to center grid items in the row with the leftover space.
+   */
+  isCentered?: boolean;
+
+  /**
+   * e.g. '.picture-item'.
+   */
+  itemSelector?: string;
+
+  /**
+   * Whether to round pixel values used in translate(x, y). This usually avoids blurriness.
+   */
+  roundTransforms?: boolean,
+
+  /**
+   * Element or selector string. Use an element to determine the size of columns and gutters.
+   */
+  sizer?: HTMLElement | string;
+
+  /**
+   * Transition/animation speed (milliseconds).
+   */
+  speed?: number;
+
+  /**
+   * Transition delay offset for each item in milliseconds.
+   */
+  staggerAmount?: number;
+
+  /**
+   * Maximum stagger delay in milliseconds.
+   */
+  staggerAmountMax?: number;
+
+  /**
+   * How often shuffle can be called on resize (in milliseconds).
+   */
+  throttleTime?: number;
+
+  /**
+   * Whether to use transforms or absolute positioning.
+   */
+  useTransforms?: boolean;
+
+  /**
+   * By default, shuffle will throttle resize events. This can be changed or removed.
+   */
+  throttle?(func: Function, wait: number): Function;
 }
 
-declare class ShuffleItem {
-  constructor(element: Element);
-  addClasses(classes: string[]): void;
-  applyCss(obj: object): void;
-  dispose(): void;
-  hide(): void;
-  init(): void;
-  removeClasses(classes: string[]): void;
-  show(): void;
-  id: number;
-  element: Element;
-  isVisible: boolean;
+export interface SortOptions {
+  // Use array.reverse() to reverse the results of your sort.
+  reverse?: boolean;
+
+  // Sorting function which gives you the element each shuffle item is using by default.
+  by?: (a: Shuffle.ShuffleItem['element'], b: Shuffle.ShuffleItem['element']) => any;
+
+  // Custom sort function.
+  compare?: (a: Shuffle.ShuffleItem, b: Shuffle.ShuffleItem) => number;
+
+  // If true, this will skip the sorting and return a randomized order in the array.
+  randomize?: boolean;
+
+  // Determines which property of each item in the array is passed to the
+  // sorting method. Only used if you use the `by` function.
+  key?: keyof Shuffle.ShuffleItem;
 }
 
-declare namespace ShuffleItem {
-  const Css: {
-    HIDDEN: {
-      after: object;
-      before: object;
-    };
-    INITIAL: object;
-    VISIBLE: {
-      after: object;
-      before: object;
-    };
+export interface InlineCssStyles {
+  [property: string]: string | number;
+}
+
+export interface ShuffleItemCss {
+  INITIAL: InlineCssStyles;
+  VISIBLE: {
+    before: InlineCssStyles;
+    after: InlineCssStyles;
   };
-  const Scale: {
-    HIDDEN: number;
-    VISIBLE: number;
+  HIDDEN: {
+    before: InlineCssStyles;
+    after: InlineCssStyles;
   };
 }
+
+export type FilterFunction = (this: HTMLElement, element: HTMLElement, shuffle: Shuffle) => boolean;
+export type FilterArg = string | string[] | FilterFunction;
 
 declare class Shuffle {
-  constructor(element: Element, options?: Shuffle.ShuffleOptions);
+  constructor(element: HTMLElement, options?: ShuffleOptions);
 
   /**
    * New items have been appended to shuffle. Mix them in with the current filter or sort status.
-   * @param {Element[]} newItems Collection of new items.
+   * @param {HTMLElement[]} newItems Collection of new items.
    */
-  add(newItems: Element[]): void;
+  add(newItems: HTMLElement[]): void;
 
   /**
    * Destroys shuffle, removes events, styles, and classes
@@ -65,21 +173,21 @@ declare class Shuffle {
    * Enables shuffle again.
    * @param {boolean} [isUpdateLayout=true] if undefined, shuffle will update columns and gutters
    */
-  enable(isUpdateLayout?: true): void;
+  enable(isUpdateLayout?: boolean): void;
 
   /**
    * Filter items.
-   * @param {string|string[]|Function} [category] Category to filter by.
+   * @param {FilterArg} [category] Category to filter by.
    *     Can be a function, string, or array of strings.
-   * @param {Object} [sortObj] A sort object which can sort the visible set
+   * @param {SortOptions} [sortOptions] A sort object which can sort the visible set
    */
-  filter(category?: string|string[]|Function, sortObj?: object): void;
+  filter(category?: FilterArg, sortOptions?: SortOptions): void;
 
   /**
    * Retrieve a shuffle item by its element.
-   * @param {Element} element Element to look for.
+   * @param {HTMLElement} element Element to look for.
    */
-  getItemByElement(element: Element): ShuffleItem|null;
+  getItemByElement(element: HTMLElement): Shuffle.ShuffleItem | null;
 
   /**
    * Use this instead of `update()` if you don't need the columns and gutters updated
@@ -90,10 +198,10 @@ declare class Shuffle {
 
   /**
    * Remove 1 or more shuffle items.
-   * @param {Element[]} elements An array containing one or more
+   * @param {HTMLElement[]} elements An array containing one or more
    *     elements in shuffle
    */
-  remove(elements: Element[]): Shuffle;
+  remove(elements: HTMLElement[]): Shuffle;
 
   /**
    * Dump the elements currently stored and reinitialize all child elements which
@@ -103,21 +211,21 @@ declare class Shuffle {
 
   /**
    * Gets the visible elements, sorts them, and passes them to layout.
-   * @param {Object} [sortOptions] The options object to pass to `sorter`.
+   * @param {SortOptions} [sortOptions] The options object to pass to `sorter`.
    */
-  sort(sortOptions?: {reverse?: boolean, by?: Function, randomize?: boolean }): void;
+  sort(sortOptions?: SortOptions): void;
 
   /**
    * Reposition everything.
    * @param {boolean} [isOnlyLayout=false] If true, column and gutter widths won't be recalculated.
    */
-  update(isOnlyLayout?: false): void;
+  update(isOnlyLayout?: boolean): void;
 
   /**
    * Returns styles which will be applied to the an item for a transition.
    * @param {object} obj Transition options.
    */
-  protected getStylesForTransition(obj: { item: ShuffleItem, styles: object }): object;
+  protected getStylesForTransition(obj: { item: Shuffle.ShuffleItem, styles: InlineCssStyles }): InlineCssStyles;
 
   /**
    * Mutate positions before they're applied.
@@ -132,7 +240,7 @@ declare class Shuffle {
    * initialization of Shuffle.
    * @param {ShuffleItem[]} items Shuffle items to set transitions on.
    */
-  protected setItemTransitions(items: ShuffleItem[]): void;
+  protected setItemTransitions(items: Shuffle.ShuffleItem[]): void;
 
   /** Width of one column */
   colWidth: number;
@@ -144,7 +252,7 @@ declare class Shuffle {
   containerWidth: number;
 
   /** Main element */
-  element: Element;
+  element: HTMLElement;
 
   /** Current filter group */
   group: string;
@@ -165,53 +273,73 @@ declare class Shuffle {
   isTransitioning: boolean;
 
   /** ShuffleItems being kept track of */
-  items: ShuffleItem[];
-  lastFilter: any;
-  lastSort: any;
+  items: Shuffle.ShuffleItem[];
+  lastFilter: FilterArg;
+  lastSort: SortOptions;
 
   /** Current (merged) options */
-  options: Shuffle.ShuffleOptions;
+  options: ShuffleOptions;
 
   /** Item positions */
   positions: number[];
 
   /** Number of currently visible items */
   visibleItems: number;
+
+  /**
+   * Returns the outer width of an element, optionally including its margins.
+   * @param {HTMLElement} element The element.
+   * @param {boolean} [includeMargins=false] Whether to include margins.
+   */
+  static getSize(element: HTMLElement, includeMargins?: boolean): {width: number, height: number};
 }
 
 declare namespace Shuffle {
   /** Filter string for all items */
-  let ALL_ITEMS: 'all';
+  let ALL_ITEMS: string;
 
   /** Data attribute key to use. */
-  let FILTER_ATTRIBUTE_KEY: 'groups';
+  let FILTER_ATTRIBUTE_KEY: string;
 
   /** Class name strings */
-  const Classes: {
-    BASE: string;
-    HIDDEN: string;
-    SHUFFLE_ITEM: string;
-    VISIBLE: string;
-  };
+  enum Classes {
+    BASE = 'shuffle',
+    SHUFFLE_ITEM = 'shuffle-item',
+    VISIBLE = 'shuffle-item--visible',
+    HIDDEN = 'shuffle-item--hidden',
+  }
 
   /** Event types emitted by the instance */
-  const EventType: {
-    LAYOUT: string;
-    REMOVED: string;
-  };
+  enum EventType {
+    LAYOUT = 'shuffle:layout',
+    REMOVED = 'shuffle:removed',
+  }
 
   /** Available filter modes. */
-  const FilterMode: FilterMode;
+  enum FilterMode {
+    ALL = 'all',
+    ANY = 'any',
+  }
 
   /** ShuffleItem class */
-  const ShuffleItem: ShuffleItem;
-
-  /**
-   * Returns the outer width of an element, optionally including its margins.
-   * @param {Element} element The element.
-   * @param {boolean} [includeMargins=false] Whether to include margins.
-   */
-  function getSize(element: Element, includeMargins?: false): {width: number, height: number};
+  class ShuffleItem {
+    constructor(element: HTMLElement);
+    addClasses(classes: string[]): void;
+    applyCss(obj: InlineCssStyles): void;
+    dispose(): void;
+    hide(): void;
+    init(): void;
+    removeClasses(classes: string[]): void;
+    show(): void;
+    id: number;
+    element: HTMLElement;
+    isVisible: boolean;
+    static Css: ShuffleItemCss;
+    static Scale: {
+      HIDDEN: number;
+      VISIBLE: number;
+    };
+  }
 
   class Rect {
     constructor(x: number, y: number, w: number, h: number, id?: number);
@@ -220,126 +348,13 @@ declare namespace Shuffle {
     top: number;
     width: number;
     height: number;
-  }
-
-  namespace Rect {
-    function intersects(a: Rect, b: Rect): boolean;
+    static intersects(a: Rect, b: Rect): boolean;
   }
 
   class Point {
     constructor(x?: number, y?: number);
     x: number;
     y: number;
-  }
-
-  namespace Point {
-    function equals(a: Point, b: Point): boolean;
-  }
-
-  /** Default options that can be overridden. */
-  interface ShuffleOptions {
-
-    /**
-     * Useful for percentage based heights when they might not always be exactly
-     * the same (in pixels).
-     */
-    buffer?: number;
-
-    /**
-     * Reading the width of elements isn't precise enough and can cause columns to
-     * jump between values.
-     */
-    columnThreshold?: number;
-
-    /**
-     * A static number or function that returns a number which tells the plugin
-     * how wide the columns are (in pixels).
-     */
-    columnWidth?: number;
-
-    /**
-     * If your group is not json, and is comma delimeted, you could set delimiter to ','.
-     */
-    delimiter?: string;
-    delimeter?: string;
-
-    /**
-     * CSS easing function to use.
-     */
-    easing?: string;
-
-    /**
-     * Affects using an array with filter. e.g. `filter(['one', 'two'])`. With "any",
-     * the element passes the test if any of its groups are in the array. With "all",
-     * the element only passes if all groups are in the array.
-     */
-    filterMode?: FilterMode;
-
-    /**
-     * Initial filter group.
-     */
-    group?: string;
-
-    /**
-     * A static number or function that tells the plugin how wide the gutters
-     * between columns are (in pixels).
-     */
-    gutterWidth?: number;
-
-    /**
-     * Shuffle can be isInitialized with a sort object. It is the same object
-     * given to the sort method.
-     */
-    initialSort?: object;
-
-    /**
-     * Whether to center grid items in the row with the leftover space.
-     */
-    isCentered?: boolean;
-
-    /**
-     * e.g. '.picture-item'.
-     */
-    itemSelector?: string;
-
-    /**
-     * Whether to round pixel values used in translate(x, y). This usually avoids blurriness.
-     */
-    roundTransforms?: boolean,
-
-    /**
-     * Element or selector string. Use an element to determine the size of columns and gutters.
-     */
-    sizer?: Element|string;
-
-    /**
-     * Transition/animation speed (milliseconds).
-     */
-    speed?: number;
-
-    /**
-     * Transition delay offset for each item in milliseconds.
-     */
-    staggerAmount?: number;
-
-    /**
-     * Maximum stagger delay in milliseconds.
-     */
-    staggerAmountMax?: number;
-
-    /**
-     * How often shuffle can be called on resize (in milliseconds).
-     */
-    throttleTime?: number;
-
-    /**
-     * Whether to use transforms or absolute positioning.
-     */
-    useTransforms?: boolean;
-
-    /**
-     * By default, shuffle will throttle resize events. This can be changed or removed.
-     */
-    throttle?(func: Function, wait: number): Function;
+    static equals(a: Point, b: Point): boolean;
   }
 }
