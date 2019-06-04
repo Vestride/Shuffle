@@ -1,39 +1,39 @@
 <h2>Changelog<a href="#changelog"></a></h2>
 <p>For a more detailed changelog, visit <a href="https://github.com/Vestride/Shuffle/releases">the latest releases</a> on GitHub.</p>
 <ul>
-  <li><code>v5.3.0</code> 12/01/18 - Change `index.d.ts` to use `export default Shuffle` (<a href="https://github.com/Vestride/Shuffle/issues/214#issuecomment-441409237">#214</a>). Upgrade dev dependencies.</li>
-  <li><code>v5.2.0</code> 8/19/18 - Lazily test whether the browser's <code>getComputedStyle</code> includes padding. This allows the bundled file to be imported in node for server side rendering.</li>
-  <li><code>v5.1.2</code> 3/26/18 - Fix misspelled <code>delimiter</code> option. Both "delimiter" and "delimeter" will continue to work for v5.</li>
-  <li><code>v5.1.1</code> 3/2/18 - Fix new item animation when there is an active filter.</li>
-  <li><code>v5.1.0</code> 2/20/18 - Add <code>compare</code> option to sorter. Add <code>es</code> build to package and <code>"module"</code> field to <code>package.json</code>.</li>
-  <li><code>v5.0.3</code> 10/30/17 - Fix rounding error.</li>
-  <li><code>v5.0.2</code> 9/23/17 - Update type definitions. Upgrade dev dependencies.</li>
-  <li><code>v5.0.1</code> 7/18/17 - Add <code>roundTransforms</code> option.</li>
-  <li><code>v5.0.0</code> 7/18/17 - Change global export from <code>shuffle</code> to <code>Shuffle</code>. Remove bower support. Expect ES6 environment. Make Shuffle instances Event Emitters instead of dispatching <code>CustomEvent</code>.</li>
-  <li><code>v4.2.0</code> 5/10/17 - Replace <code>webpack</code> build with <code>rollup</code>. Replace <code>jshint</code> and <code>jscs</code> with <code>eslint</code>. Add <code>filterMode</code> option.</li>
-  <li><code>v4.1.1</code> 3/21/17 - the <code>before</code> styles for a <code>ShuffleItem</code> were not applied if the item didn&rsquo;t move.</li>
-  <li><code>v4.1.0</code> 1/30/17 - Use webpack-2 to bundle Shuffle.</li>
-  <li><code>v4.0.2</code> 9/15/16 - Update <code>custom-event-polyfill</code> dependency.</li>
-  <li><code>v4.0.1</code> 7/30/16 - Fix <code>delimiter</code> option.</li>
-  <li><code>v4.0.0</code> 4/20/16 - Rewrite in ES6 with babel. Remove jQuery and Modernizr dependencies. Remove support for IE&lt;11. Docs improvements. Switch to gulp build system with webpack.</li>
-  <li><code>v3.1.0</code> 3/23/15 - Allow zero speed option (<a href="https://github.com/Vestride/Shuffle/issues/64">#64</a>) and cancel previous animations instead of ignoring new ones (<a href="https://github.com/Vestride/Shuffle/issues/69">#69</a>). Handle non-integer columns better (<a href="https://github.com/Vestride/Shuffle/issues/46">#46</a>)</li>
-  <li><code>v3.0.4</code> 2/16/15 - Publish to NPM.</li>
-  <li><code>v3.0.2</code> 1/21/15 - Remove from jQuery plugins directory.</li>
-  <li><code>v3.0.1</code> 12/29/14 - Add CommonJS support.</li>
-  <li><code>v3.0.0</code> 10/6/14 - Refactored with improvements, added unit tests, more documentation. Removed some triggered events.</li>
-  <li><code>v2.1.2</code> 6/1/14 - Use <code>window.jQuery</code> instead of <code>window.$</code> to work better with noConflict. Fixed <a href="https://github.com/Vestride/Shuffle/issues/25">#25</a>.</li>
-  <li><code>v2.1.1</code> 4/16/14 - Fix items with zero opacity overlapping visible ones in IE&lt;10.</li>
-  <li><code>v2.1.0</code> 4/12/14 - Register with bower as <code>shufflejs</code>.</li>
-  <li>4/10/14 - Add AMD support.</li>
-  <li>4/8/14 - Separate Modernizr into its own file and custom Shuffle build.</li>
-  <li>3/8/14 - Add Bootstrap 3 demo. Fixed issue with percentage width items.</li>
-  <li>10/4/13 - Moved some Shuffle instance properties to constants. Converted from 4 to 2 space indentation. Added events enum and pulled out some strings to constants.</li>
-  <li>8/30/13 - Added animate-in demo.</li>
-  <li><code>v2.0.0</code> 7/5/13 - Shuffle 2.0 with masonry, adding and removing, and more.</li>
-  <li>11/3/12 - Replaced layout system with <a href="http://masonry.desandro.com/">masonry</a>. Items can now be different sizes! Added addtional examples.</li>
-  <li>10/24/12 - Better handling of grid item dimensions. Added a minimal markup page.</li>
-  <li>9/20/12 - Added <code>destroy</code> method</li>
-  <li>9/18/12 - Added sorting ability and made plugin responsive. Updated to Modernizr 2.6.2</li>
-  <li>7/21/12 - Rewrote plugin in more object oriented structure. Added custom events. Updated to Modernizr 2.6.1</li>
-  <li>7/3/12 - Removed dependency on the css file and now apply the css with javascript</li>
+  <li><code>v5.2.1</code> 2018-12-01 - Change `index.d.ts` to use `export default Shuffle` (<a href="https://github.com/Vestride/Shuffle/issues/214#issuecomment-441409237">#214</a>). Upgrade dev dependencies.</li>
+  <li><code>v5.2.0</code> 2018-08-19 - Lazily test whether the browser's <code>getComputedStyle</code> includes padding. This allows the bundled file to be imported in node for server side rendering.</li>
+  <li><code>v5.1.2</code> 2018-03-26 - Fix misspelled <code>delimiter</code> option. Both "delimiter" and "delimeter" will continue to work for v5.</li>
+  <li><code>v5.1.1</code> 2018-03-02 - Fix new item animation when there is an active filter.</li>
+  <li><code>v5.1.0</code> 2018-02-20 - Add <code>compare</code> option to sorter. Add <code>es</code> build to package and <code>"module"</code> field to <code>package.json</code>.</li>
+  <li><code>v5.0.3</code> 2017-10-30 - Fix rounding error.</li>
+  <li><code>v5.0.2</code> 2017-09-23 - Update type definitions. Upgrade dev dependencies.</li>
+  <li><code>v5.0.1</code> 2017-07-18 - Add <code>roundTransforms</code> option.</li>
+  <li><code>v5.0.0</code> 2017-07-18 - Change global export from <code>shuffle</code> to <code>Shuffle</code>. Remove bower support. Expect ES6 environment. Make Shuffle instances Event Emitters instead of dispatching <code>CustomEvent</code>.</li>
+  <li><code>v4.2.0</code> 2017-05-10 - Replace <code>webpack</code> build with <code>rollup</code>. Replace <code>jshint</code> and <code>jscs</code> with <code>eslint</code>. Add <code>filterMode</code> option.</li>
+  <li><code>v4.1.1</code> 2017-03-21 - the <code>before</code> styles for a <code>ShuffleItem</code> were not applied if the item didn&rsquo;t move.</li>
+  <li><code>v4.1.0</code> 2017-01-30 - Use webpack-2 to bundle Shuffle.</li>
+  <li><code>v4.0.2</code> 2016-09-15 - Update <code>custom-event-polyfill</code> dependency.</li>
+  <li><code>v4.0.1</code> 2016-07-30 - Fix <code>delimiter</code> option.</li>
+  <li><code>v4.0.0</code> 2016-04-20 - Rewrite in ES6 with babel. Remove jQuery and Modernizr dependencies. Remove support for IE&lt;11. Docs improvements. Switch to gulp build system with webpack.</li>
+  <li><code>v3.1.0</code> 2015-03-23 - Allow zero speed option (<a href="https://github.com/Vestride/Shuffle/issues/64">#64</a>) and cancel previous animations instead of ignoring new ones (<a href="https://github.com/Vestride/Shuffle/issues/69">#69</a>). Handle non-integer columns better (<a href="https://github.com/Vestride/Shuffle/issues/46">#46</a>)</li>
+  <li><code>v3.0.4</code> 2015-02-16 - Publish to NPM.</li>
+  <li><code>v3.0.2</code> 2015-01-21 - Remove from jQuery plugins directory.</li>
+  <li><code>v3.0.1</code> 2014-12-29 - Add CommonJS support.</li>
+  <li><code>v3.0.0</code> 2014-10-06 - Refactored with improvements, added unit tests, more documentation. Removed some triggered events.</li>
+  <li><code>v2.1.2</code> 2014-06-01 - Use <code>window.jQuery</code> instead of <code>window.$</code> to work better with noConflict. Fixed <a href="https://github.com/Vestride/Shuffle/issues/25">#25</a>.</li>
+  <li><code>v2.1.1</code> 2014-04-16 - Fix items with zero opacity overlapping visible ones in IE&lt;10.</li>
+  <li><code>v2.1.0</code> 2014-04-12 - Register with bower as <code>shufflejs</code>.</li>
+  <li>2014-04-10 - Add AMD support.</li>
+  <li>2014-04-08 - Separate Modernizr into its own file and custom Shuffle build.</li>
+  <li>2014-03-08 - Add Bootstrap 3 demo. Fixed issue with percentage width items.</li>
+  <li>2013-10-04 - Moved some Shuffle instance properties to constants. Converted from 4 to 2 space indentation. Added events enum and pulled out some strings to constants.</li>
+  <li>2013-08-30 - Added animate-in demo.</li>
+  <li><code>v2.0.0</code> 2013-07-05 - Shuffle 2.0 with masonry, adding and removing, and more.</li>
+  <li>2012-11-03 - Replaced layout system with <a href="http://masonry.desandro.com/">masonry</a>. Items can now be different sizes! Added addtional examples.</li>
+  <li>2012-10-24 - Better handling of grid item dimensions. Added a minimal markup page.</li>
+  <li>2012-09-20 - Added <code>destroy</code> method</li>
+  <li>2012-09-18 - Added sorting ability and made plugin responsive. Updated to Modernizr 2.6.2</li>
+  <li>2012-07-21 - Rewrote plugin in more object oriented structure. Added custom events. Updated to Modernizr 2.6.1</li>
+  <li>2012-07-03 - Removed dependency on the css file and now apply the css with javascript</li>
 </ul>
