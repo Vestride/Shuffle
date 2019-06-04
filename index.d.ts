@@ -60,7 +60,7 @@ export interface ShuffleOptions {
    * Shuffle can be isInitialized with a sort object. It is the same object
    * given to the sort method.
    */
-  initialSort?: object;
+  initialSort?: SortOptions;
 
   /**
    * Whether to center grid items in the row with the leftover space.
@@ -225,7 +225,7 @@ declare class Shuffle {
    * Returns styles which will be applied to the an item for a transition.
    * @param {object} obj Transition options.
    */
-  protected getStylesForTransition(obj: { item: Shuffle.ShuffleItem, styles: CSSStyleDeclaration }): object;
+  protected getStylesForTransition(obj: { item: Shuffle.ShuffleItem, styles: InlineCssStyles }): InlineCssStyles;
 
   /**
    * Mutate positions before they're applied.
@@ -274,8 +274,8 @@ declare class Shuffle {
 
   /** ShuffleItems being kept track of */
   items: Shuffle.ShuffleItem[];
-  lastFilter: any;
-  lastSort: any;
+  lastFilter: FilterArg;
+  lastSort: SortOptions;
 
   /** Current (merged) options */
   options: ShuffleOptions;
@@ -325,7 +325,7 @@ declare namespace Shuffle {
   class ShuffleItem {
     constructor(element: HTMLElement);
     addClasses(classes: string[]): void;
-    applyCss(obj: object): void;
+    applyCss(obj: InlineCssStyles): void;
     dispose(): void;
     hide(): void;
     init(): void;
