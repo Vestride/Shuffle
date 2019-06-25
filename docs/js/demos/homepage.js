@@ -130,7 +130,7 @@ Demo.prototype._handleSortChange = function (evt) {
   var options = {};
 
   function sortByDate(element) {
-    return element.getAttribute('data-created');
+    return Date.parse(element.getAttribute('data-date-created'));
   }
 
   function sortByTitle(element) {
