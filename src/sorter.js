@@ -44,6 +44,7 @@ const defaults = {
  * @return {Array<T>}
  */
 export default function sorter(arr, options) {
+  // eslint-disable-next-line prefer-object-spread
   const opts = Object.assign({}, defaults, options);
   const original = Array.from(arr);
   let revert = false;

@@ -542,6 +542,7 @@
    */
 
   function sorter(arr, options) {
+    // eslint-disable-next-line prefer-object-spread
     var opts = Object.assign({}, defaults, options);
     var original = Array.from(arr);
     var revert = false;
@@ -894,7 +895,8 @@
 
       _classCallCheck(this, Shuffle);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Shuffle).call(this));
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Shuffle).call(this)); // eslint-disable-next-line prefer-object-spread
+
       _this.options = Object.assign({}, Shuffle.options, options); // Allow misspelling of delimiter since that's how it used to be.
       // Remove in v6.
 
@@ -1581,6 +1583,7 @@
       key: "getStylesForTransition",
       value: function getStylesForTransition(item, styleObject) {
         // Clone the object to avoid mutating the original.
+        // eslint-disable-next-line prefer-object-spread
         var styles = Object.assign({}, styleObject);
 
         if (this.options.useTransforms) {

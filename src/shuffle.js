@@ -37,6 +37,7 @@ class Shuffle extends TinyEmitter {
    */
   constructor(element, options = {}) {
     super();
+    // eslint-disable-next-line prefer-object-spread
     this.options = Object.assign({}, Shuffle.options, options);
 
     // Allow misspelling of delimiter since that's how it used to be.
@@ -323,7 +324,7 @@ class Shuffle extends TinyEmitter {
 
     // Allow users to transtion other properties if they exist in the `before`
     // css mapping of the shuffle item.
-    const cssProps = Object.keys(ShuffleItem.Css.HIDDEN.before).map(k => hyphenate(k));
+    const cssProps = Object.keys(ShuffleItem.Css.HIDDEN.before).map((k) => hyphenate(k));
     const properties = positionProps.concat(cssProps).join();
 
     items.forEach((item) => {
@@ -335,8 +336,8 @@ class Shuffle extends TinyEmitter {
 
   _getItems() {
     return Array.from(this.element.children)
-      .filter(el => matches(el, this.options.itemSelector))
-      .map(el => new ShuffleItem(el));
+      .filter((el) => matches(el, this.options.itemSelector))
+      .map((el) => new ShuffleItem(el));
   }
 
   /**
@@ -354,11 +355,11 @@ class Shuffle extends TinyEmitter {
   }
 
   _getFilteredItems() {
-    return this.items.filter(item => item.isVisible);
+    return this.items.filter((item) => item.isVisible);
   }
 
   _getConcealedItems() {
-    return this.items.filter(item => !item.isVisible);
+    return this.items.filter((item) => !item.isVisible);
   }
 
   /**
@@ -556,7 +557,7 @@ class Shuffle extends TinyEmitter {
 
     // If no transforms are going to happen, simply return an array of the
     // future points of each item.
-    return items.map(item => this._getItemPosition(Shuffle.getSize(item.element, true)));
+    return items.map((item) => this._getItemPosition(Shuffle.getSize(item.element, true)));
   }
 
   /**
@@ -650,6 +651,7 @@ class Shuffle extends TinyEmitter {
    */
   getStylesForTransition(item, styleObject) {
     // Clone the object to avoid mutating the original.
+    // eslint-disable-next-line prefer-object-spread
     const styles = Object.assign({}, styleObject);
 
     if (this.options.useTransforms) {
@@ -732,7 +734,7 @@ class Shuffle extends TinyEmitter {
     this.isTransitioning = true;
 
     // Create an array of functions to be called.
-    const callbacks = transitions.map(obj => this._getTransitionFunction(obj));
+    const callbacks = transitions.map((obj) => this._getTransitionFunction(obj));
 
     parallel(callbacks, this._movementFinished.bind(this));
   }
@@ -755,7 +757,7 @@ class Shuffle extends TinyEmitter {
    */
   _styleImmediately(objects) {
     if (objects.length) {
-      const elements = objects.map(obj => obj.item.element);
+      const elements = objects.map((obj) => obj.item.element);
 
       Shuffle._skipTransitions(elements, () => {
         objects.forEach((obj) => {
@@ -855,7 +857,7 @@ class Shuffle extends TinyEmitter {
    * @param {Element[]} newItems Collection of new items.
    */
   add(newItems) {
-    const items = arrayUnique(newItems).map(el => new ShuffleItem(el));
+    const items = arrayUnique(newItems).map((el) => new ShuffleItem(el));
 
     // Add classes and set initial positions.
     this._initItems(items);
@@ -867,7 +869,7 @@ class Shuffle extends TinyEmitter {
     const sortedItems = sorter(allItems, this.lastSort);
     const allSortedItemsSet = this._filter(this.lastFilter, sortedItems);
 
-    const isNewItem = item => items.includes(item);
+    const isNewItem = (item) => items.includes(item);
     const applyHiddenState = (item) => {
       item.scale = ShuffleItem.Scale.HIDDEN;
       item.isHidden = true;
@@ -937,8 +939,8 @@ class Shuffle extends TinyEmitter {
     const collection = arrayUnique(elements);
 
     const oldItems = collection
-      .map(element => this.getItemByElement(element))
-      .filter(item => !!item);
+      .map((element) => this.getItemByElement(element))
+      .filter((item) => !!item);
 
     const handleLayout = () => {
       this._disposeItems(oldItems);
@@ -963,7 +965,7 @@ class Shuffle extends TinyEmitter {
 
     // Update the list of items here because `remove` could be called again
     // with an item that is in the process of being removed.
-    this.items = this.items.filter(item => !oldItems.includes(item));
+    this.items = this.items.filter((item) => !oldItems.includes(item));
     this._updateItemCount();
 
     this.once(Shuffle.EventType.LAYOUT, handleLayout);
@@ -975,7 +977,7 @@ class Shuffle extends TinyEmitter {
    * @return {?ShuffleItem} A shuffle item or undefined if it's not found.
    */
   getItemByElement(element) {
-    return this.items.find(item => item.element === element);
+    return this.items.find((item) => item.element === element);
   }
 
   /**

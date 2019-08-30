@@ -166,7 +166,7 @@ export function getCenteredPositions(itemRects, containerWidth) {
         const newRect = new Rect(r.left + offset, r.top, r.width, r.height, r.id);
 
         // Check all current rects to make sure none overlap.
-        const noOverlap = !rects.some(r => Rect.intersects(newRect, r));
+        const noOverlap = !rects.some((r) => Rect.intersects(newRect, r));
 
         newRects.push(newRect);
         return noOverlap;
@@ -183,7 +183,7 @@ export function getCenteredPositions(itemRects, containerWidth) {
     // elements could be in the way).
     if (!canMove) {
       let intersectingRect;
-      const hasOverlap = itemRects.some(itemRect => rects.some((r) => {
+      const hasOverlap = itemRects.some((itemRect) => rects.some((r) => {
         const intersects = Rect.intersects(itemRect, r);
         if (intersects) {
           intersectingRect = r;
@@ -193,7 +193,7 @@ export function getCenteredPositions(itemRects, containerWidth) {
 
       // If there is any overlap, replace the overlapping row with the original.
       if (hasOverlap) {
-        const rowIndex = centeredRows.findIndex(items => items.includes(intersectingRect));
+        const rowIndex = centeredRows.findIndex((items) => items.includes(intersectingRect));
         centeredRows.splice(rowIndex, 1, rows[rowIndex]);
       }
     }
@@ -208,5 +208,5 @@ export function getCenteredPositions(itemRects, containerWidth) {
   // Remove the wrapper object with index, map to a Point.
   return [].concat.apply([], centeredRows) // eslint-disable-line prefer-spread
     .sort((a, b) => (a.id - b.id))
-    .map(itemRect => new Point(itemRect.left, itemRect.top));
+    .map((itemRect) => new Point(itemRect.left, itemRect.top));
 }
