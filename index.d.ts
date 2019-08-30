@@ -2,6 +2,8 @@
 // Project: https://github.com/Vestride/Shuffle
 // Definitions by: Glen Cheney <https://github.com/Vestride>
 
+import { TinyEmitter } from 'tiny-emitter';
+
 export as namespace Shuffle;
 export default Shuffle;
 
@@ -149,9 +151,19 @@ export interface ShuffleItemCss {
 
 export type FilterFunction = (this: HTMLElement, element: HTMLElement, shuffle: Shuffle) => boolean;
 export type FilterArg = string | string[] | FilterFunction;
+export interface ShuffleEventData {
+  shuffle: Shuffle;
+  collection?: HTMLElement[];
+}
+export type ShuffleEventCallback = (data: ShuffleEventData) => void;
 
-declare class Shuffle {
+declare class Shuffle extends TinyEmitter {
   constructor(element: HTMLElement, options?: ShuffleOptions);
+
+  on(event: Shuffle.EventType, callback: ShuffleEventCallback, context?: any): this;
+  once(event: Shuffle.EventType, callback: ShuffleEventCallback, context?: any): this;
+  // Use inherited version of emit.
+  off(event: Shuffle.EventType, callback?: ShuffleEventCallback): this;
 
   /**
    * New items have been appended to shuffle. Mix them in with the current filter or sort status.
