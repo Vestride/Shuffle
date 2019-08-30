@@ -25,6 +25,14 @@ const options: ShuffleOptions = {
   filterMode: Shuffle.FilterMode.ALL,
 };
 const shuffle = new Shuffle(mainElement, options);
+
+shuffle.on(Shuffle.EventType.REMOVED, (data) => {
+  console.log(data.shuffle);
+  console.log(data.collection);
+});
+
+shuffle.off(Shuffle.EventType.REMOVED);
+
 shuffle.filter('wallpaper');
 shuffle.filter(function filterEachItem(element, shuffle) {
   console.log(`shuffle id: ${shuffle.id}, element id: ${element.id}`);
