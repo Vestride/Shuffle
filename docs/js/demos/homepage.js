@@ -159,7 +159,7 @@ Demo.prototype.addSearchFilter = function () {
     return;
   }
 
-  searchInput.addEventListener('keyup', this._handleSearchKeyup.bind(this));
+  searchInput.addEventListener('input', this._handleSearchKeyup.bind(this));
 };
 
 /**
