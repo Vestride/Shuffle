@@ -57,6 +57,19 @@
     return _setPrototypeOf(o, p);
   }
 
+  function _isNativeReflectConstruct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
+
+    try {
+      Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function _assertThisInitialized(self) {
     if (self === void 0) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -71,6 +84,23 @@
     }
 
     return _assertThisInitialized(self);
+  }
+
+  function _createSuper(Derived) {
+    return function () {
+      var Super = _getPrototypeOf(Derived),
+          result;
+
+      if (_isNativeReflectConstruct()) {
+        var NewTarget = _getPrototypeOf(this).constructor;
+
+        result = Reflect.construct(Super, arguments, NewTarget);
+      } else {
+        result = Super.apply(this, arguments);
+      }
+
+      return _possibleConstructorReturn(this, result);
+    };
   }
 
   function E () {
@@ -253,9 +283,7 @@
     return parseFloat(value) || 0;
   }
 
-  var Point =
-  /*#__PURE__*/
-  function () {
+  var Point = /*#__PURE__*/function () {
     /**
      * Represents a coordinate pair.
      * @param {number} [x=0] X.
@@ -285,9 +313,7 @@
     return Point;
   }();
 
-  var Rect =
-  /*#__PURE__*/
-  function () {
+  var Rect = /*#__PURE__*/function () {
     /**
      * Class for representing rectangular regions.
      * https://github.com/google/closure-library/blob/master/closure/goog/math/rect.js
@@ -342,9 +368,7 @@
 
   var id = 0;
 
-  var ShuffleItem =
-  /*#__PURE__*/
-  function () {
+  var ShuffleItem = /*#__PURE__*/function () {
     function ShuffleItem(element) {
       _classCallCheck(this, ShuffleItem);
 
@@ -876,10 +900,10 @@
 
   var id$1 = 0;
 
-  var Shuffle =
-  /*#__PURE__*/
-  function (_TinyEmitter) {
+  var Shuffle = /*#__PURE__*/function (_TinyEmitter) {
     _inherits(Shuffle, _TinyEmitter);
+
+    var _super = _createSuper(Shuffle);
 
     /**
      * Categorize, sort, and filter a responsive grid of items.
@@ -895,7 +919,7 @@
 
       _classCallCheck(this, Shuffle);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Shuffle).call(this)); // eslint-disable-next-line prefer-object-spread
+      _this = _super.call(this); // eslint-disable-next-line prefer-object-spread
 
       _this.options = Object.assign({}, Shuffle.options, options); // Allow misspelling of delimiter since that's how it used to be.
       // Remove in v6.
