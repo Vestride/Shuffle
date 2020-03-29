@@ -4,6 +4,7 @@ test/types/build
 .DS_Store
 _site
 .sass-cache
+.jekyll-cache
 .jekyll-metadata
 *.scssc
 *.esm.js
