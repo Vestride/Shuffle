@@ -1,4 +1,4 @@
-# [Shuffle][homepage] [![Build Status][travis-img]][travis-url] [![Dependency Status][david-img]][david-url] [![Dependabot Status][dependabot-img]][dependabot-img] [![NPM version][npm-img]][npm-url]
+# [Shuffle][homepage] [![Build Status][travis-img]][travis-url] [![Dependency Status][david-img]][david-url] [![Dependabot Status][dependabot-img]][dependabot-url] [![NPM version][npm-img]][npm-url]
 
 Categorize, sort, and filter a responsive grid of items.
 
