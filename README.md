@@ -1,4 +1,4 @@
-# [Shuffle][homepage] [![Build Status][travis-img]][travis-url] [![Dependency Status][david-img]][david-url] [![Greenkeeper badge][greenkeeper-img]][greenkeeper-img] [![NPM version][npm-img]][npm-url]
+# [Shuffle][homepage] [![Build Status][travis-img]][travis-url] [![Dependency Status][david-img]][david-url] [![Dependabot Status][dependabot-img]][dependabot-img] [![NPM version][npm-img]][npm-url]
 
 Categorize, sort, and filter a responsive grid of items.
 
@@ -17,7 +17,7 @@ import Shuffle from 'shufflejs';
 
 const shuffleInstance = new Shuffle(document.getElementById('grid'), {
   itemSelector: '.js-item',
-  sizer: '.js-shuffle-sizer'
+  sizer: '.js-shuffle-sizer',
 });
 ```
 
@@ -32,5 +32,5 @@ This project was inspired by [Isotope](http://isotope.metafizzy.co/) and [Packer
 [david-img]: https://david-dm.org/Vestride/Shuffle.svg
 [npm-url]: https://www.npmjs.com/package/shufflejs
 [npm-img]: https://img.shields.io/npm/v/shufflejs.svg
-[greenkeeper-url]: https://greenkeeper.io/
-[greenkeeper-img]: https://badges.greenkeeper.io/Vestride/Shuffle.svg
+[dependabot-url]: https://dependabot.com/
+[dependabot-img]: https://api.dependabot.com/badges/status?host=github&repo=Vestride/Shuffle
