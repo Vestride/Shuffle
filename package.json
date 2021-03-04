@@ -51,7 +51,7 @@
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
-    "autoprefixer": "^9.5.1",
+    "autoprefixer": "^10.2.4",
     "cssnano": "^4.1.10",
     "eslint": "^7.5.0",
     "eslint-config-airbnb-base": "^14.0.0",
