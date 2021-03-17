@@ -337,7 +337,7 @@ class Shuffle extends TinyEmitter {
   _getItems() {
     return Array.from(this.element.children)
       .filter((el) => matches(el, this.options.itemSelector))
-      .map((el) => new ShuffleItem(el));
+      .map((el) => new ShuffleItem(el, this.options));
   }
 
   /**
@@ -655,11 +655,16 @@ class Shuffle extends TinyEmitter {
     const styles = Object.assign({}, styleObject);
 
     if (this.options.useTransforms) {
+      const sign = this.options.isRTL ? '-' : '';
       const x = this.options.roundTransforms ? Math.round(item.point.x) : item.point.x;
       const y = this.options.roundTransforms ? Math.round(item.point.y) : item.point.y;
-      styles.transform = `translate(${x}px, ${y}px) scale(${item.scale})`;
+      styles.transform = `translate(${sign}${x}px, ${y}px) scale(${item.scale})`;
     } else {
-      styles.left = item.point.x + 'px';
+      if (this.options.isRTL) {
+        styles.right = item.point.x + 'px';
+      } else {
+        styles.left = item.point.x + 'px';
+      }
       styles.top = item.point.y + 'px';
     }
 
@@ -857,7 +862,7 @@ class Shuffle extends TinyEmitter {
    * @param {Element[]} newItems Collection of new items.
    */
   add(newItems) {
-    const items = arrayUnique(newItems).map((el) => new ShuffleItem(el));
+    const items = arrayUnique(newItems).map((el) => new ShuffleItem(el, this.options));
 
     // Add classes and set initial positions.
     this._initItems(items);
@@ -1199,6 +1204,9 @@ Shuffle.options = {
 
   // Attempt to center grid items in each row.
   isCentered: false,
+
+  // Attempt to align grid items to right.
+  isRTL: false,
 
   // Whether to round pixel values used in translate(x, y). This usually avoids
   // blurriness.
