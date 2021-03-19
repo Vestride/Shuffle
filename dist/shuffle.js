@@ -1083,7 +1083,7 @@
     }
 
     _getItems() {
-      return Array.from(this.element.children).filter(el => matchesSelector(el, this.options.itemSelector)).map(el => new ShuffleItem(el, this.options));
+      return Array.from(this.element.children).filter(el => matchesSelector(el, this.options.itemSelector)).map(el => new ShuffleItem(el, this.options.isRTL));
     }
     /**
      * Combine the current items array with a new one and sort it by DOM order.
@@ -1627,7 +1627,7 @@
 
 
     add(newItems) {
-      const items = arrayUnique(newItems).map(el => new ShuffleItem(el, this.options)); // Add classes and set initial positions.
+      const items = arrayUnique(newItems).map(el => new ShuffleItem(el, this.options.isRTL)); // Add classes and set initial positions.
 
       this._initItems(items); // Determine which items will go with the current filter.
 
