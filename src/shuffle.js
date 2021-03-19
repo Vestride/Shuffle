@@ -337,7 +337,7 @@ class Shuffle extends TinyEmitter {
   _getItems() {
     return Array.from(this.element.children)
       .filter((el) => matches(el, this.options.itemSelector))
-      .map((el) => new ShuffleItem(el, this.options));
+      .map((el) => new ShuffleItem(el, this.options.isRTL));
   }
 
   /**
@@ -862,7 +862,7 @@ class Shuffle extends TinyEmitter {
    * @param {Element[]} newItems Collection of new items.
    */
   add(newItems) {
-    const items = arrayUnique(newItems).map((el) => new ShuffleItem(el, this.options));
+    const items = arrayUnique(newItems).map((el) => new ShuffleItem(el, this.options.isRTL));
 
     // Add classes and set initial positions.
     this._initItems(items);
