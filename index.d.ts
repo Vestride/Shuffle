@@ -70,6 +70,11 @@ export interface ShuffleOptions {
   isCentered?: boolean;
 
   /**
+   * Whether to align grid items to the right in the row.
+   */
+  isRTL?: boolean;
+
+  /**
    * e.g. '.picture-item'.
    */
   itemSelector?: string;
@@ -139,6 +144,10 @@ export interface InlineCssStyles {
 
 export interface ShuffleItemCss {
   INITIAL: InlineCssStyles;
+  DIRECTION: {
+    ltr: InlineCssStyles;
+    rtl: InlineCssStyles;
+  };
   VISIBLE: {
     before: InlineCssStyles;
     after: InlineCssStyles;
