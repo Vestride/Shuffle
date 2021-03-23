@@ -4,10 +4,15 @@ import Classes from './classes';
 let id = 0;
 
 class ShuffleItem {
-  constructor(element) {
+  constructor(element, isRTL) {
     id += 1;
     this.id = id;
     this.element = element;
+
+    /**
+     * Set correct direction of item
+     */
+    this.isRTL = isRTL;
 
     /**
      * Used to separate items for layout and shrink.
@@ -40,6 +45,7 @@ class ShuffleItem {
   init() {
     this.addClasses([Classes.SHUFFLE_ITEM, Classes.VISIBLE]);
     this.applyCss(ShuffleItem.Css.INITIAL);
+    this.applyCss(this.isRTL ? ShuffleItem.Css.DIRECTION.rtl : ShuffleItem.Css.DIRECTION.ltr);
     this.scale = ShuffleItem.Scale.VISIBLE;
     this.point = new Point();
   }
@@ -78,9 +84,16 @@ ShuffleItem.Css = {
   INITIAL: {
     position: 'absolute',
     top: 0,
-    left: 0,
     visibility: 'visible',
     willChange: 'transform',
+  },
+  DIRECTION: {
+    ltr: {
+      left: 0,
+    },
+    rtl: {
+      right: 0,
+    },
   },
   VISIBLE: {
     before: {
