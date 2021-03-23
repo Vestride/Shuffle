@@ -1,6 +1,6 @@
-const babel = require('rollup-plugin-babel');
-const resolve = require('rollup-plugin-node-resolve');
-const commonjs = require('rollup-plugin-commonjs');
+const { babel } = require('@rollup/plugin-babel');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
+const commonjs = require('@rollup/plugin-commonjs');
 const { terser } = require('rollup-plugin-terser');
 
 const commonjsOptions = {
@@ -33,11 +33,7 @@ module.exports.configs = [
       format,
     },
     cache: undefined,
-    plugins: [
-      resolve(),
-      commonjs(commonjsOptions),
-      babel(babelOptions),
-    ],
+    plugins: [nodeResolve(), commonjs(commonjsOptions), babel(babelOptions)],
   },
 
   {
@@ -49,11 +45,7 @@ module.exports.configs = [
       format: 'es',
     },
     cache: undefined,
-    plugins: [
-      resolve(),
-      commonjs(commonjsOptions),
-      babel(babelOptions),
-    ],
+    plugins: [nodeResolve(), commonjs(commonjsOptions), babel(babelOptions)],
   },
 
   {
@@ -65,12 +57,7 @@ module.exports.configs = [
       format,
     },
     cache: undefined,
-    plugins: [
-      resolve(),
-      commonjs(commonjsOptions),
-      babel(babelOptions),
-      terser(minifyOptions),
-    ],
+    plugins: [nodeResolve(), commonjs(commonjsOptions), babel(babelOptions), terser(minifyOptions)],
   },
 ];
 
