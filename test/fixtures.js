@@ -26,4 +26,4 @@ export const delimiter = `
   <div class="item" id="item9" data-groups='design,red'>Person 9</div>
   <div class="item" id="item10" data-groups='technology,black'>Person 10</div>
 </div>
-`
+`;

@@ -82,7 +82,7 @@ export interface ShuffleOptions {
   /**
    * Whether to round pixel values used in translate(x, y). This usually avoids blurriness.
    */
-  roundTransforms?: boolean,
+  roundTransforms?: boolean;
 
   /**
    * Element or selector string. Use an element to determine the size of columns and gutters.
@@ -246,7 +246,7 @@ declare class Shuffle extends TinyEmitter {
    * Returns styles which will be applied to the an item for a transition.
    * @param {object} obj Transition options.
    */
-  protected getStylesForTransition(obj: { item: Shuffle.ShuffleItem, styles: InlineCssStyles }): InlineCssStyles;
+  protected getStylesForTransition(obj: { item: Shuffle.ShuffleItem; styles: InlineCssStyles }): InlineCssStyles;
 
   /**
    * Mutate positions before they're applied.
@@ -293,8 +293,12 @@ declare class Shuffle extends TinyEmitter {
   /** Whether items are currently transitioning */
   isTransitioning: boolean;
 
-  /** ShuffleItems being kept track of */
+  /** ShuffleItems being kept track of, sorted in DOM order. */
   items: Shuffle.ShuffleItem[];
+
+  /** Visible ShuffleItems being tracked, sorted in the current sort order */
+  sortedItems: Shuffle.ShuffleItem[];
+
   lastFilter: FilterArg;
   lastSort: SortOptions;
 
@@ -312,7 +316,7 @@ declare class Shuffle extends TinyEmitter {
    * @param {HTMLElement} element The element.
    * @param {boolean} [includeMargins=false] Whether to include margins.
    */
-  static getSize(element: HTMLElement, includeMargins?: boolean): {width: number, height: number};
+  static getSize(element: HTMLElement, includeMargins?: boolean): { width: number; height: number };
 }
 
 declare namespace Shuffle {
