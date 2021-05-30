@@ -10,13 +10,7 @@ import Classes from './classes';
 import getNumberStyle from './get-number-style';
 import sorter from './sorter';
 import { onTransitionEnd, cancelTransitionEnd } from './on-transition-end';
-import {
-  getItemPosition,
-  getColumnSpan,
-  getAvailablePositions,
-  getShortColumn,
-  getCenteredPositions,
-} from './layout';
+import { getItemPosition, getColumnSpan, getAvailablePositions, getShortColumn, getCenteredPositions } from './layout';
 import arrayMax from './array-max';
 import hyphenate from './hyphenate';
 
@@ -72,6 +66,7 @@ class Shuffle extends TinyEmitter {
 
   _init() {
     this.items = this._getItems();
+    this.sortedItems = this.items;
 
     this.options.sizer = this._getElementOption(this.options.sizer);
 
@@ -126,9 +121,7 @@ class Shuffle extends TinyEmitter {
    */
   _getResizeFunction() {
     const resizeFunction = this._handleResize.bind(this);
-    return this.options.throttle
-      ? this.options.throttle(resizeFunction, this.options.throttleTime)
-      : resizeFunction;
+    return this.options.throttle ? this.options.throttle(resizeFunction, this.options.throttleTime) : resizeFunction;
   }
 
   /**
@@ -216,8 +209,8 @@ class Shuffle extends TinyEmitter {
     if (category === Shuffle.ALL_ITEMS) {
       visible = items;
 
-    // Loop through each item and use provided function to determine
-    // whether to hide it or not.
+      // Loop through each item and use provided function to determine
+      // whether to hide it or not.
     } else {
       items.forEach((item) => {
         if (this._doesPassFilter(category, item.element)) {
@@ -248,9 +241,7 @@ class Shuffle extends TinyEmitter {
 
     // Check each element's data-groups attribute against the given category.
     const attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
-    const keys = this.options.delimiter
-      ? attr.split(this.options.delimiter)
-      : JSON.parse(attr);
+    const keys = this.options.delimiter ? attr.split(this.options.delimiter) : JSON.parse(attr);
 
     function testCategory(category) {
       return keys.includes(category);
@@ -376,19 +367,19 @@ class Shuffle extends TinyEmitter {
     if (typeof this.options.columnWidth === 'function') {
       size = this.options.columnWidth(containerWidth);
 
-    // columnWidth option isn't a function, are they using a sizing element?
+      // columnWidth option isn't a function, are they using a sizing element?
     } else if (this.options.sizer) {
       size = Shuffle.getSize(this.options.sizer).width;
 
-    // if not, how about the explicitly set option?
+      // if not, how about the explicitly set option?
     } else if (this.options.columnWidth) {
       size = this.options.columnWidth;
 
-    // or use the size of the first item
+      // or use the size of the first item
     } else if (this.items.length > 0) {
       size = Shuffle.getSize(this.items[0].element, true).width;
 
-    // if there's no items, use size of container
+      // if there's no items, use size of container
     } else {
       size = containerWidth;
     }
@@ -431,8 +422,7 @@ class Shuffle extends TinyEmitter {
     let calculatedColumns = (containerWidth + gutter) / columnWidth;
 
     // Widths given from getStyles are not precise enough...
-    if (Math.abs(Math.round(calculatedColumns) - calculatedColumns)
-        < this.options.columnThreshold) {
+    if (Math.abs(Math.round(calculatedColumns) - calculatedColumns) < this.options.columnThreshold) {
       // e.g. calculatedColumns = 11.998876
       calculatedColumns = Math.round(calculatedColumns);
     }
@@ -719,9 +709,9 @@ class Shuffle extends TinyEmitter {
       this._styleImmediately(this._queue);
       this._dispatch(Shuffle.EventType.LAYOUT);
 
-    // A call to layout happened, but none of the newly visible items will
-    // change position or the transition duration is zero, which will not trigger
-    // the transitionend event.
+      // A call to layout happened, but none of the newly visible items will
+      // change position or the transition duration is zero, which will not trigger
+      // the transitionend event.
     } else {
       this._dispatch(Shuffle.EventType.LAYOUT);
     }
@@ -818,6 +808,7 @@ class Shuffle extends TinyEmitter {
     this._resetCols();
 
     const items = sorter(this._getFilteredItems(), sortOptions);
+    this.sortedItems = items;
 
     this._layout(items);
 
@@ -943,9 +934,7 @@ class Shuffle extends TinyEmitter {
 
     const collection = arrayUnique(elements);
 
-    const oldItems = collection
-      .map((element) => this.getItemByElement(element))
-      .filter((item) => !!item);
+    const oldItems = collection.map((element) => this.getItemByElement(element)).filter((item) => !!item);
 
     const handleLayout = () => {
       this._disposeItems(oldItems);
@@ -1025,6 +1014,7 @@ class Shuffle extends TinyEmitter {
     this._disposeItems(this.items);
 
     this.items.length = 0;
+    this.sortedItems.length = 0;
     this._transitions.length = 0;
 
     // Null DOM references

@@ -1,3 +1,5 @@
+import getNumber from './get-number';
+
 let value = null;
 export default () => {
   if (value !== null) {
@@ -9,7 +11,9 @@ export default () => {
   e.style.cssText = 'width:10px;padding:2px;box-sizing:border-box;';
   element.appendChild(e);
 
-  value = window.getComputedStyle(e, null).width === '10px';
+  const { width } = window.getComputedStyle(e, null);
+  // Fix for issue #314
+  value = Math.round(getNumber(width)) === 10;
 
   element.removeChild(e);
 

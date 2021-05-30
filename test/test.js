@@ -38,7 +38,6 @@ describe('shuffle', () => {
   }
 
   describe('regular fixture', () => {
-
     beforeEach(() => {
       // Mock the transition end event wrapper.
       sinon.stub(Shuffle.prototype, '_whenTransitionDone').callsFake(whenTransitionDoneStub);
@@ -55,6 +54,7 @@ describe('shuffle', () => {
       instance = new Shuffle(fixture);
       expect(instance.items.length).toBe(10);
       expect(instance.visibleItems).toBe(10);
+      expect(instance.sortedItems).toHaveLength(10);
       expect(instance.options.group).toBe('all');
       expect(instance.options.speed).toBe(250);
       expect(instance.options.itemSelector).toBe('*');
@@ -165,23 +165,23 @@ describe('shuffle', () => {
       expect(instance.positions).toEqual([40, 40, 30, 30]);
     });
 
-    it('can filter by the data attribute', done => {
+    it('can filter by the data attribute', (done) => {
       instance = new Shuffle(fixture, {
         speed: 0,
       });
 
       function second() {
         expect(instance.visibleItems).toBe(3);
-        const hidden = [3, 4, 5, 6, 7, 8, 10].map(num => id(`item${num}`));
+        const hidden = [3, 4, 5, 6, 7, 8, 10].map((num) => id(`item${num}`));
 
-        const visible = [1, 2, 9].map(num => id(`item${num}`));
+        const visible = [1, 2, 9].map((num) => id(`item${num}`));
 
-        hidden.forEach(element => {
+        hidden.forEach((element) => {
           expect(element.classList.contains(Shuffle.Classes.HIDDEN)).toBe(true);
           expect(element.style.visibility).toBe('hidden');
         });
 
-        visible.forEach(element => {
+        visible.forEach((element) => {
           expect(element.classList.contains(Shuffle.Classes.VISIBLE)).toBe(true);
           expect(element.style.visibility).toBe('visible');
         });
@@ -194,16 +194,16 @@ describe('shuffle', () => {
 
       function third() {
         expect(instance.visibleItems).toBe(2);
-        const hidden = [1, 2, 5, 6, 7, 8, 9, 10].map(num => id(`item${num}`));
+        const hidden = [1, 2, 5, 6, 7, 8, 9, 10].map((num) => id(`item${num}`));
 
-        const visible = [3, 4].map(num => id(`item${num}`));
+        const visible = [3, 4].map((num) => id(`item${num}`));
 
-        hidden.forEach(element => {
+        hidden.forEach((element) => {
           expect(element.classList.contains(Shuffle.Classes.HIDDEN)).toBe(true);
           expect(element.style.visibility).toBe('hidden');
         });
 
-        visible.forEach(element => {
+        visible.forEach((element) => {
           expect(element.classList.contains(Shuffle.Classes.VISIBLE)).toBe(true);
           expect(element.style.visibility).toBe('visible');
         });
@@ -264,15 +264,20 @@ describe('shuffle', () => {
 
     it('can center already-positioned items', () => {
       // 4-2-1 even heights
-      expect(Shuffle.__getCenteredPositions([
-        new Shuffle.Rect(0, 0, 250, 100, 0),
-        new Shuffle.Rect(250, 0, 250, 100, 1),
-        new Shuffle.Rect(500, 0, 250, 100, 2),
-        new Shuffle.Rect(750, 0, 250, 100, 3),
-        new Shuffle.Rect(0, 100, 600, 100, 4),
-        new Shuffle.Rect(600, 100, 300, 100, 5),
-        new Shuffle.Rect(0, 200, 250, 100, 6),
-      ], 1000)).toEqual([
+      expect(
+        Shuffle.__getCenteredPositions(
+          [
+            new Shuffle.Rect(0, 0, 250, 100, 0),
+            new Shuffle.Rect(250, 0, 250, 100, 1),
+            new Shuffle.Rect(500, 0, 250, 100, 2),
+            new Shuffle.Rect(750, 0, 250, 100, 3),
+            new Shuffle.Rect(0, 100, 600, 100, 4),
+            new Shuffle.Rect(600, 100, 300, 100, 5),
+            new Shuffle.Rect(0, 200, 250, 100, 6),
+          ],
+          1000,
+        ),
+      ).toEqual([
         new Shuffle.Point(0, 0),
         new Shuffle.Point(250, 0),
         new Shuffle.Point(500, 0),
@@ -287,15 +292,16 @@ describe('shuffle', () => {
       // 2x1
       // Centers the first row, but then finds that the 3rd item will overlap
       // the 2x2 and resets the first row.
-      expect(Shuffle.__getCenteredPositions([
-        new Shuffle.Rect(0, 0, 500, 200, 0),
-        new Shuffle.Rect(500, 0, 250, 100, 1),
-        new Shuffle.Rect(500, 100, 500, 100, 2),
-      ], 1000)).toEqual([
-        new Shuffle.Point(0, 0),
-        new Shuffle.Point(500, 0),
-        new Shuffle.Point(500, 100),
-      ]);
+      expect(
+        Shuffle.__getCenteredPositions(
+          [
+            new Shuffle.Rect(0, 0, 500, 200, 0),
+            new Shuffle.Rect(500, 0, 250, 100, 1),
+            new Shuffle.Rect(500, 100, 500, 100, 2),
+          ],
+          1000,
+        ),
+      ).toEqual([new Shuffle.Point(0, 0), new Shuffle.Point(500, 0), new Shuffle.Point(500, 100)]);
     });
 
     it('can get an element option', () => {
@@ -317,12 +323,14 @@ describe('shuffle', () => {
       expect(instance._doesPassFilter('design', first)).toBe(true);
       expect(instance._doesPassFilter('black', first)).toBe(false);
 
-      expect(instance._doesPassFilter(element => {
-        expect(element).toBeDefined();
-        return element.getAttribute('data-age') === '21';
-      }, first)).toBe(true);
+      expect(
+        instance._doesPassFilter((element) => {
+          expect(element).toBeDefined();
+          return element.getAttribute('data-age') === '21';
+        }, first),
+      ).toBe(true);
 
-      expect(instance._doesPassFilter(element => element.getAttribute('data-age') === '22', first)).toBe(false);
+      expect(instance._doesPassFilter((element) => element.getAttribute('data-age') === '22', first)).toBe(false);
 
       // Arrays.
       expect(instance._doesPassFilter(['design'], first)).toBe(true);
@@ -348,7 +356,39 @@ describe('shuffle', () => {
 
       instance.sort();
       expect(instance.lastSort).toEqual({ glen: true });
+    });
 
+    it('tracks sorted items', () => {
+      instance = new Shuffle(fixture);
+      expect(instance.sortedItems.map((item) => item.element.id)).toEqual([
+        'item1',
+        'item2',
+        'item3',
+        'item4',
+        'item5',
+        'item6',
+        'item7',
+        'item8',
+        'item9',
+        'item10',
+      ]);
+
+      instance.sort({
+        reverse: true,
+      });
+
+      expect(instance.sortedItems.map((item) => item.element.id)).toEqual([
+        'item10',
+        'item9',
+        'item8',
+        'item7',
+        'item6',
+        'item5',
+        'item4',
+        'item3',
+        'item2',
+        'item1',
+      ]);
     });
 
     it('should reset columns', () => {
@@ -376,7 +416,7 @@ describe('shuffle', () => {
 
       expect(fixture.classList.contains('shuffle')).toBe(false);
 
-      Array.from(fixture.children).forEach(child => {
+      Array.from(fixture.children).forEach((child) => {
         expect(child.classList.contains('shuffle-item')).toBe(false);
         expect(child.classList.contains('shuffle-item--visible')).toBe(false);
         expect(child.classList.contains('shuffle-item--hidden')).toBe(false);
@@ -422,7 +462,7 @@ describe('shuffle', () => {
         children = null;
       });
 
-      it('can remove items', done => {
+      it('can remove items', (done) => {
         instance = new Shuffle(fixture, {
           speed: 16,
         });
@@ -440,7 +480,7 @@ describe('shuffle', () => {
         instance.remove(itemsToRemove);
       });
 
-      it('can remove items without transforms', done => {
+      it('can remove items without transforms', (done) => {
         instance = new Shuffle(fixture, {
           speed: 100,
           useTransforms: false,
@@ -517,13 +557,14 @@ describe('shuffle', () => {
         items.length = 0;
       });
 
-      it('can add items', done => {
+      it('can add items', (done) => {
         fixture.appendChild(items[0]);
         fixture.appendChild(items[1]);
         instance.add(items);
 
         // Already 2 in the items, plus number 11.
         expect(instance.visibleItems).toBe(3);
+        expect(instance.sortedItems.map((item) => item.element.id)).toEqual(['item8', 'item10', 'item11']);
         expect(instance.items).toHaveLength(12);
 
         instance.once(Shuffle.EventType.LAYOUT, () => {
@@ -531,13 +572,14 @@ describe('shuffle', () => {
         });
       });
 
-      it('can prepend items', done => {
+      it('can prepend items', (done) => {
         fixture.insertBefore(items[1], fixture.firstElementChild);
         fixture.insertBefore(items[0], fixture.firstElementChild);
         instance.add(items);
 
         expect(instance.items[0].element).toBe(items[0]);
         expect(instance.items[1].element).toBe(items[1]);
+        expect(instance.sortedItems.map((item) => item.element.id)).toEqual(['item11', 'item8', 'item10']);
         expect(instance.items).toHaveLength(12);
 
         instance.once(Shuffle.EventType.LAYOUT, () => {
@@ -557,7 +599,6 @@ describe('shuffle', () => {
         expect(instance.items[1].element).toBe(items[1]);
         expect(instance.items).toHaveLength(2);
       });
-
     });
   });
 
@@ -611,7 +652,7 @@ describe('shuffle', () => {
 
       // The layout method will have already set styles to their 'after' states
       // upon initialization. Reset them here.
-      instance.items.forEach(item => {
+      instance.items.forEach((item) => {
         item.applyCss(Shuffle.ShuffleItem.Css.INITIAL);
       });
 
@@ -635,8 +676,8 @@ describe('shuffle', () => {
     beforeEach(() => {
       appendFixture('regular');
 
-      items = Array.from(fixture.children).map(element => ({
-        element
+      items = Array.from(fixture.children).map((element) => ({
+        element,
       }));
 
       clone = Array.from(items);
@@ -678,11 +719,13 @@ describe('shuffle', () => {
     });
 
     it('can sort by a function and reverse it', () => {
-      clone.sort((a, b) => {
-        const age1 = parseInt(a.element.getAttribute('data-age'), 10);
-        const age2 = parseInt(b.element.getAttribute('data-age'), 10);
-        return age1 - age2;
-      }).reverse();
+      clone
+        .sort((a, b) => {
+          const age1 = parseInt(a.element.getAttribute('data-age'), 10);
+          const age2 = parseInt(b.element.getAttribute('data-age'), 10);
+          return age1 - age2;
+        })
+        .reverse();
 
       const result = Shuffle.__sorter(items, {
         reverse: true,
@@ -696,42 +739,48 @@ describe('shuffle', () => {
 
     it('will revert to DOM order if the `by` function returns undefined', () => {
       let count = 0;
-      expect(Shuffle.__sorter(items, {
-        by() {
-          count++;
-          return count < 5 ? Math.random() : undefined;
-        },
-      })).toEqual(clone);
+      expect(
+        Shuffle.__sorter(items, {
+          by() {
+            count++;
+            return count < 5 ? Math.random() : undefined;
+          },
+        }),
+      ).toEqual(clone);
     });
 
     it('can sort things to the top', () => {
       items = items.slice(0, 4);
       const final = [items[1], items[0], items[3], items[2]];
-      expect(Shuffle.__sorter(items, {
-        by(element) {
-          const age = parseInt(element.getAttribute('data-age'), 10);
-          if (age === 50) {
-            return 'sortFirst';
-          } else {
-            return age;
-          }
-        },
-      })).toEqual(final);
+      expect(
+        Shuffle.__sorter(items, {
+          by(element) {
+            const age = parseInt(element.getAttribute('data-age'), 10);
+            if (age === 50) {
+              return 'sortFirst';
+            } else {
+              return age;
+            }
+          },
+        }),
+      ).toEqual(final);
     });
 
     it('can sort things to the bottom', () => {
       items = items.slice(0, 4);
       const final = [items[0], items[2], items[1], items[3]];
-      expect(Shuffle.__sorter(items, {
-        by(element) {
-          const age = parseInt(element.getAttribute('data-age'), 10);
-          if (age === 27) {
-            return 'sortLast';
-          } else {
-            return age;
-          }
-        },
-      })).toEqual(final);
+      expect(
+        Shuffle.__sorter(items, {
+          by(element) {
+            const age = parseInt(element.getAttribute('data-age'), 10);
+            if (age === 27) {
+              return 'sortLast';
+            } else {
+              return age;
+            }
+          },
+        }),
+      ).toEqual(final);
     });
 
     it('can have a custom sort comparator', () => {
@@ -747,25 +796,26 @@ describe('shuffle', () => {
         clone[3], // ux, 27
         clone[4], // ux, 35
       ];
-      expect(Shuffle.__sorter(items, {
-        compare(a, b) {
-          // Sort by first group, then by age.
-          const groupA = JSON.parse(a.element.getAttribute('data-groups'))[0];
-          const groupB = JSON.parse(b.element.getAttribute('data-groups'))[0];
-          if (groupA > groupB) {
-            return 1;
-          }
-          if (groupA < groupB) {
-            return -1;
-          }
+      expect(
+        Shuffle.__sorter(items, {
+          compare(a, b) {
+            // Sort by first group, then by age.
+            const groupA = JSON.parse(a.element.getAttribute('data-groups'))[0];
+            const groupB = JSON.parse(b.element.getAttribute('data-groups'))[0];
+            if (groupA > groupB) {
+              return 1;
+            }
+            if (groupA < groupB) {
+              return -1;
+            }
 
-          // At this point, the group strings are the exact same. Test the age.
-          const ageA = parseInt(a.element.getAttribute('data-age'), 10);
-          const ageB = parseInt(b.element.getAttribute('data-age'), 10);
-          return ageA - ageB;
-        },
-      })).toEqual(final);
+            // At this point, the group strings are the exact same. Test the age.
+            const ageA = parseInt(a.element.getAttribute('data-age'), 10);
+            const ageB = parseInt(b.element.getAttribute('data-age'), 10);
+            return ageA - ageB;
+          },
+        }),
+      ).toEqual(final);
     });
-
   });
 });

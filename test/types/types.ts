@@ -9,12 +9,7 @@ if (!mainElement) {
   throw new TypeError('oopsie');
 }
 
-console.log(
-  Shuffle.EventType.LAYOUT,
-  Shuffle.Classes.SHUFFLE_ITEM,
-  Shuffle.FilterMode.ALL,
-  Shuffle.ShuffleItem.Css,
-);
+console.log(Shuffle.EventType.LAYOUT, Shuffle.Classes.SHUFFLE_ITEM, Shuffle.FilterMode.ALL, Shuffle.ShuffleItem.Css);
 
 const options: ShuffleOptions = {
   buffer: 0,
@@ -49,6 +44,7 @@ const sortOptions: SortOptions = {
   },
 };
 shuffle.sort(sortOptions);
+console.log(shuffle.sortedItems);
 
 shuffle.update(true);
 Shuffle.getSize(mainElement, true);
