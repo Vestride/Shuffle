@@ -62,7 +62,7 @@
     "eslint-plugin-import": "^2.17.3",
     "gulp": "^4.0.2",
     "gulp-postcss": "^9.0.0",
-    "gulp-sass": "^4.0.0",
+    "gulp-sass": "^5.0.0",
     "gulp-shell": "^0.8.0",
     "jest": "^27.0.3",
     "postcss": "^8.2.8",
