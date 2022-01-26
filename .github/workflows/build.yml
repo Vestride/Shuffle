@@ -20,6 +20,6 @@ jobs:
       - name: Lint files
         run: npm run lint
       - name: Build bundle
-        run: npm run build
+        run: npm run compile
       - name: Run unit tests
         run: npm test
