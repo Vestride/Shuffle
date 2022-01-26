@@ -1,4 +1,4 @@
-# [Shuffle][homepage] [![Build Status][travis-img]][travis-url] [![Dependency Status][david-img]][david-url] [![Dependabot Status][dependabot-img]][dependabot-url] [![NPM version][npm-img]][npm-url]
+# [Shuffle][homepage] [![Build Status][travis-img]][travis-url] [![Dependabot Status][dependabot-img]][dependabot-url] [![NPM version][npm-img]][npm-url]
 
 Categorize, sort, and filter a responsive grid of items.
 
@@ -28,8 +28,6 @@ This project was inspired by [Isotope](http://isotope.metafizzy.co/) and [Packer
 [homepage]: https://vestride.github.io/Shuffle/
 [travis-url]: https://travis-ci.com/Vestride/Shuffle
 [travis-img]: https://travis-ci.com/Vestride/Shuffle.svg?branch=main
-[david-url]: https://david-dm.org/Vestride/Shuffle
-[david-img]: https://david-dm.org/Vestride/Shuffle.svg
 [npm-url]: https://www.npmjs.com/package/shufflejs
 [npm-img]: https://img.shields.io/npm/v/shufflejs.svg
 [dependabot-url]: https://docs.github.com/en/code-security/supply-chain-security/managing-vulnerabilities-in-your-projects-dependencies/configuring-dependabot-security-updates

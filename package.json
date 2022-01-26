@@ -24,7 +24,10 @@
     "gulp": "gulp",
     "build": "npm run gulp && npm run css",
     "serve": "gulp jekyll",
-    "test": "eslint src && jest && tsc --project ./test/types",
+    "test-all": "npm run lint && npm test && npm run type-check",
+    "test": "jest",
+    "lint": "eslint src",
+    "type-check": "tsc --project ./test/types",
     "watch": "gulp watch"
   },
   "repository": {
