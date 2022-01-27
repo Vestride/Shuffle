@@ -1,4 +1,3 @@
-
 // @param {string} bp Breakpoint value. One of `xs, sm, md, lg`.
 // @param {boolean} isMaxWidth By default, the media queries are mobile first,
 //     so they use `min-width: __px`. By passing `true`, the mixin will subtract
@@ -6,11 +5,13 @@
 // @param {boolean} isScreenOnly Whether to hide this media query from print styles.
 //
 // Note: For print media, we want the default styles and the xs breakpoint to take effect.
+@use 'sass:math';
+
 @mixin breakpoint($bp, $isMaxWidth: false, $isScreenOnly: true) {
   $media-query: get-breakpoint-query($bp, $isMaxWidth);
 
   @if $isScreenOnly {
-    $media-query: "screen and #{$media-query}";
+    $media-query: 'screen and #{$media-query}';
   }
 
   @media #{$media-query} {
@@ -29,7 +30,7 @@
 @mixin clearfix() {
   &::before,
   &::after {
-    content: " ";
+    content: ' ';
     display: table;
   }
 
@@ -47,7 +48,7 @@
 }
 
 @mixin aspect($width, $height) {
-  padding-bottom: percentage($height / $width);
+  padding-bottom: percentage(math.div($height, $width));
 }
 
 @mixin no-aspect() {
@@ -65,9 +66,9 @@
   }
 
   @if map-has-key($breakpoints, $bp) {
-    @return "(#{$media}: #{$breakpoint})";
+    @return '(#{$media}: #{$breakpoint})';
   } @else {
     @warn "#{$bp} not recognized. Valid breakpoints: #{map-keys($breakpoints)}";
-    @return "screen";
+    @return 'screen';
   }
 }

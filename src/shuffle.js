@@ -1,5 +1,4 @@
 import TinyEmitter from 'tiny-emitter';
-import matches from 'matches-selector';
 import throttle from 'throttleit';
 import parallel from 'array-parallel';
 
@@ -31,14 +30,7 @@ class Shuffle extends TinyEmitter {
    */
   constructor(element, options = {}) {
     super();
-    // eslint-disable-next-line prefer-object-spread
-    this.options = Object.assign({}, Shuffle.options, options);
-
-    // Allow misspelling of delimiter since that's how it used to be.
-    // Remove in v6.
-    if (this.options.delimeter) {
-      this.options.delimiter = this.options.delimeter;
-    }
+    this.options = { ...Shuffle.options, ...options };
 
     this.lastSort = {};
     this.group = Shuffle.ALL_ITEMS;
@@ -327,7 +319,7 @@ class Shuffle extends TinyEmitter {
 
   _getItems() {
     return Array.from(this.element.children)
-      .filter((el) => matches(el, this.options.itemSelector))
+      .filter((el) => el.matches(this.options.itemSelector))
       .map((el) => new ShuffleItem(el, this.options.isRTL));
   }
 
@@ -641,8 +633,7 @@ class Shuffle extends TinyEmitter {
    */
   getStylesForTransition(item, styleObject) {
     // Clone the object to avoid mutating the original.
-    // eslint-disable-next-line prefer-object-spread
-    const styles = Object.assign({}, styleObject);
+    const styles = { ...styleObject };
 
     if (this.options.useTransforms) {
       const sign = this.options.isRTL ? '-' : '';

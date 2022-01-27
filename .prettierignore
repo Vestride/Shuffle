@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+docs/dist
+docs/css
+docs/_site
+prism.js
+prism.css
+
+.jekyll-cache
+
+# Prettier can't handle liquid templates AND changes the JSON attributes to use
+# double quotes, breaking the parser.
+*.html

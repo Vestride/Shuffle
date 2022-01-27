@@ -6,8 +6,6 @@ var loadMoreButton = document.getElementById('load-more-button');
 var shuffleInstance;
 
 // Fetch first page of results from the API.
-// You should probably polyfill `fetch` if you're going to copy this demo.
-// https://github.com/github/fetch
 fetch('https://reqres.in/api/users?page=' + currentPage)
   .then(function (response) {
     return response.json();

@@ -9,7 +9,7 @@
   float: none;
   margin: 2em 0;
   overflow: hidden;
-  transition: .2s ease-out;
+  transition: 0.2s ease-out;
 }
 
 .question--collapsed {
@@ -18,7 +18,7 @@
   border-width: 0;
 }
 
-.question--collapsed + .question  {
+.question--collapsed + .question {
   margin-top: 0;
 }
 

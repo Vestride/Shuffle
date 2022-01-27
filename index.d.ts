@@ -1,4 +1,4 @@
-// Type definitions for Shuffle 5.2.2
+// Type definitions for Shuffle 6.0.0
 // Project: https://github.com/Vestride/Shuffle
 // Definitions by: Glen Cheney <https://github.com/Vestride>
 
@@ -31,9 +31,6 @@ export interface ShuffleOptions {
    * If your group is not json, and is comma delimeted, you could set delimiter to ','.
    */
   delimiter?: string;
-
-  /** @deprecated Misspelling that will be removed in v6 */
-  delimeter?: string;
 
   /**
    * CSS easing function to use.

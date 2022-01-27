@@ -9,6 +9,7 @@ const commonjsOptions = {
 
 const babelOptions = {
   exclude: 'node_modules/**',
+  babelHelpers: 'bundled',
 };
 
 const minifyOptions = {

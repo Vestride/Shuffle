@@ -18,7 +18,7 @@
     border-radius: 0 3px 3px 0;
   }
 
-  label.btn input[type=radio] {
+  label.btn input[type='radio'] {
     position: absolute;
     clip: rect(0, 0, 0, 0);
     pointer-events: none;
@@ -27,14 +27,14 @@
 
 .btn {
   display: inline-block;
-  padding: .75em .8em;
+  padding: 0.75em 0.8em;
   text-align: center;
   border-radius: 3px;
   border: 1px solid $gray20;
   color: $gray20;
   font-size: 1rem;
   background-color: rgba($gray20, 0);
-  transition: .2s ease-out;
+  transition: 0.2s ease-out;
   cursor: pointer;
   -webkit-appearance: none;
 
@@ -53,13 +53,13 @@
 
   &.active,
   &:active {
-    box-shadow: inset 0 1px 2px rgba(0,0,0,.3);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
     color: white;
     background-color: $gray20;
   }
 
   &:focus.active {
-    box-shadow: inset 0 1px 2px rgba(0,0,0,.3), 0 0 0 2px rgba($gray20, 0.4);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba($gray20, 0.4);
   }
 
   &:disabled {
@@ -99,7 +99,7 @@ $btn-variants: (
     }
 
     &:focus.active {
-      box-shadow: inset 0 1px 2px rgba(0,0,0,.3), 0 0 0 2px rgba($color, 0.4);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba($color, 0.4);
     }
 
     &:disabled {
@@ -128,10 +128,10 @@ $btn-variants: (
     left: 50%;
     width: $size;
     height: $size;
-    margin-left: -$size / 2;
-    margin-top: -$size / 2;
+    margin-left: -$size * 0.5;
+    margin-top: -$size * 0.5;
     opacity: 0;
-    transition: .2s;
+    transition: 0.2s;
   }
 
   // Circle

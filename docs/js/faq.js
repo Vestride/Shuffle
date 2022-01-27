@@ -1,7 +1,5 @@
-(function () {
-  'use strict';
-
-  var Questions = function () {
+class Questions {
+  constructor() {
     this.searchInput = document.querySelector('#search');
     this.questions = document.querySelectorAll('.js-question');
 
@@ -15,9 +13,9 @@
     window.addEventListener('resize', this.onWindowResize.bind(this));
 
     this.setHeights();
-  };
+  }
 
-  Questions.prototype._handleInput = function (evt) {
+  _handleInput(evt) {
     var val = evt.target.value.toLowerCase();
 
     // Filter elements based on if their string exists in the product model
@@ -32,27 +30,26 @@
         el.classList.remove('question--collapsed');
       }
     }
-  };
+  }
 
-  Questions.prototype.setHeights = function () {
+  setHeights() {
     var elements = Array.from(this.questions);
 
-    elements.forEach(function (element) {
+    elements.forEach((element) => {
       element.style.height = '';
     });
 
-    var heights = elements.map(function (element) {
+    var heights = elements.map((element) => {
       return element.firstElementChild.offsetHeight;
     });
 
-    elements.forEach(function (element, i) {
+    elements.forEach((element, i) => {
       element.style.height = heights[i] + 'px';
     });
-  };
-
-  Questions.prototype.onWindowResize = function () {
+  }
+  onWindowResize() {
     this.setHeights();
-  };
+  }
+}
 
-  new Questions();
-}());
+new Questions();

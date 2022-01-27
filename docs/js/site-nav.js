@@ -1,5 +1,5 @@
-(function () {
-  var SiteNav = function (element) {
+class SiteNav {
+  constructor(element) {
     this.element = element;
     var buttons = Array.from(document.querySelectorAll('.site-nav__link-toggle'));
     var dropdowns = buttons.map(function (button) {
@@ -15,9 +15,9 @@
     this.handleResize = this.handleResize.bind(this);
     window.addEventListener('resize', this.handleResize);
     window.addEventListener('load', this.handleResize);
-  };
+  }
 
-  SiteNav.prototype.toggle = function (event) {
+  toggle(event) {
     var button = event.currentTarget;
     var wrapper = button.parentNode;
     var willOpen = !wrapper.classList.contains('site-nav__link--dropdown-active');
@@ -36,16 +36,16 @@
     } else {
       document.body.classList.toggle('site-nav--open');
     }
-  };
+  }
 
-  SiteNav.prototype.handleResize = function () {
+  handleResize() {
     var viewportHeight = window.innerHeight;
     var navHeight = this.element.offsetHeight;
     var dropdowns = Array.from(document.querySelectorAll('.site-nav__dropdown'));
     dropdowns.forEach(function (dropdown) {
-      dropdown.style.maxHeight = (viewportHeight - navHeight) + 'px';
+      dropdown.style.maxHeight = viewportHeight - navHeight + 'px';
     });
-  };
+  }
+}
 
-  new SiteNav(document.querySelector('.site-nav'));
-})();
+new SiteNav(document.querySelector('.site-nav'));

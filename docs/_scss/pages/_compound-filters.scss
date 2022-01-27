@@ -1,5 +1,4 @@
-@import "../extensions/variables";
-
+@import '../extensions/variables';
 
 .compound-filter-options {
   margin-top: 20px;
@@ -7,7 +6,6 @@
 }
 
 .filter-group--compound {
-
   button {
     width: 40px;
     height: 40px;
@@ -73,14 +71,13 @@
   transform: rotate(45deg) scale(0.707106781);
 }
 
-
 @mixin equilateralTriangle($size) {
   $sqrt3: 1.73205080757;
-  $halfSize: $size / 2;
+  $halfSize: $size * 0.5;
   $fullSideWidth: round($sqrt3 * $halfSize);
   $leftOver: $size - $fullSideWidth;
 
-  padding-top: $leftOver / 2;
+  padding-top: $leftOver * 0.5;
   height: 0;
   width: 0;
   border-width: 0 $halfSize $fullSideWidth $halfSize;

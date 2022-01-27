@@ -15,11 +15,11 @@
 </div>
 
 <div class="code-block">
-  <pre rel="JavaScript"><code class="language-javascript">Demo.prototype.addSorting = function () {
+  <pre rel="JavaScript"><code class="language-javascript">addSorting() {
   document.querySelector('.sort-options').addEventListener('change', this._handleSortChange.bind(this));
 };
 
-Demo.prototype._handleSortChange = function (evt) {
+_handleSortChange(evt) {
   var value = evt.target.value;
 
   function sortByDate(element) {

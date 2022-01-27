@@ -1,5 +1,5 @@
-@import "./extensions/variables";
-@import "./extensions/mixins";
+@import './extensions/variables';
+@import './extensions/mixins';
 
 /*=============================================*\
  Some styles to show off masonry layout
@@ -67,15 +67,13 @@ img.picture-item__blur {
 }
 
 @include breakpoint(sm) {
-
   .picture-item--overlay {
-
     .picture-item__details {
       position: absolute;
       bottom: 0;
       left: 0;
       width: 100%;
-      background-color: rgba(black, .6);
+      background-color: rgba(black, 0.6);
       color: white;
       overflow: hidden;
     }
@@ -86,9 +84,7 @@ img.picture-item__blur {
   }
 
   @supports (filter: blur(1px)) and (clip-path: inset(0 0 0 0)) {
-
     .picture-item--overlay {
-
       .picture-item__blur {
         position: absolute;
         z-index: 1;
@@ -112,7 +108,6 @@ img.picture-item__blur {
   }
 }
 
-
 /*
   Shuffle needs either relative or absolute positioning on the container
   It will set it for you, but it'll cause another style recalculation and layout.
@@ -129,7 +124,6 @@ img.picture-item__blur {
   visibility: hidden;
 }
 
-
 /* Animate in styles */
 .shuffle--animatein {
   overflow: visible;
@@ -141,7 +135,7 @@ img.picture-item__blur {
 }
 
 .shuffle--animatein .picture-item__inner--transition {
-  transition: all .6s ease;
+  transition: all 0.6s ease;
 }
 
 .shuffle--animatein .picture-item.in .picture-item__inner {
@@ -149,10 +143,7 @@ img.picture-item__blur {
   transform: translate(0, 0);
 }
 
-
-
 @include breakpoint(sm, true) {
-
   .picture-item {
     height: auto;
     margin-top: 20px;
@@ -160,12 +151,12 @@ img.picture-item__blur {
 
   .picture-item__details,
   .picture-item__description {
-    font-size: .875em;
-    padding: .625em;
+    font-size: 0.875em;
+    padding: 0.625em;
   }
 
   .picture-item__description {
-    padding-right: .875em;
+    padding-right: 0.875em;
     padding-bottom: 1.25em;
   }
 

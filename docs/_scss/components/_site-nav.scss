@@ -1,4 +1,7 @@
 .site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   padding: 10px 0;
   border-bottom: 1px solid $gray90;
   margin-bottom: 28px;
@@ -37,7 +40,7 @@
 }
 
 .site-nav__logo rect {
-  transition: 180ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .site-nav__link {
@@ -51,7 +54,7 @@
 
 .site-nav__dropdown {
   position: absolute;
-  z-index: 2;
+  z-index: 50;
   top: 40px;
   right: 0;
   opacity: 0;
@@ -130,7 +133,7 @@
   border-top: 6px solid currentColor;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  transition: transform 180ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .site-nav__link--dropdown-active {
@@ -302,7 +305,6 @@
   }
 
   .site-nav__dropdown--simple-links {
-
     &::before {
       right: 24px;
     }

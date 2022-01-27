@@ -13,12 +13,12 @@ shuffleInstance.filter(function (element) {
 <h3>Searching</h3>
 <div class="code-block">
   <pre rel="JavaScript"><code class="language-javascript">// Advanced filtering
-Demo.prototype.addSearchFilter = function () {
+addSearchFilter() {
   document.querySelector('.js-shuffle-search').addEventListener('keyup', this._handleSearchKeyup.bind(this));
 };
 
 // Filter the shuffle instance by items with a title that matches the search input.
-Demo.prototype._handleSearchKeyup = function (evt) {
+_handleSearchKeyup(evt) {
   var searchText = evt.target.value.toLowerCase();
 
   this.shuffle.filter(function (element, shuffle) {

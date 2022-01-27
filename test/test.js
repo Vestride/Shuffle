@@ -623,15 +623,6 @@ describe('shuffle', () => {
 
       expect(instance.visibleItems).toBe(3);
     });
-
-    it('can use the old misspelled delimiter option', () => {
-      instance = new Shuffle(fixture, {
-        delimeter: ',',
-        group: 'design',
-      });
-
-      expect(instance.visibleItems).toBe(3);
-    });
   });
 
   describe('Custom shuffle item styles', () => {

@@ -100,9 +100,7 @@ export function getShortColumn(positions, buffer) {
  * @param {number} buffer Vertical buffer for the height of items.
  * @return {Point}
  */
-export function getItemPosition({
-  itemSize, positions, gridSize, total, threshold, buffer,
-}) {
+export function getItemPosition({ itemSize, positions, gridSize, total, threshold, buffer }) {
   const span = getColumnSpan(itemSize.width, gridSize, total, threshold);
   const setY = getAvailablePositions(positions, span, total);
   const shortColumnIndex = getShortColumn(setY, buffer);
@@ -183,13 +181,15 @@ export function getCenteredPositions(itemRects, containerWidth) {
     // elements could be in the way).
     if (!canMove) {
       let intersectingRect;
-      const hasOverlap = itemRects.some((itemRect) => rects.some((r) => {
-        const intersects = Rect.intersects(itemRect, r);
-        if (intersects) {
-          intersectingRect = r;
-        }
-        return intersects;
-      }));
+      const hasOverlap = itemRects.some((itemRect) =>
+        rects.some((r) => {
+          const intersects = Rect.intersects(itemRect, r);
+          if (intersects) {
+            intersectingRect = r;
+          }
+          return intersects;
+        }),
+      );
 
       // If there is any overlap, replace the overlapping row with the original.
       if (hasOverlap) {
@@ -206,7 +206,8 @@ export function getCenteredPositions(itemRects, containerWidth) {
   // https://stackoverflow.com/a/10865042/373422
   // Then reset sort back to how the items were passed to this method.
   // Remove the wrapper object with index, map to a Point.
-  return [].concat.apply([], centeredRows) // eslint-disable-line prefer-spread
-    .sort((a, b) => (a.id - b.id))
+  return centeredRows
+    .flat()
+    .sort((a, b) => a.id - b.id)
     .map((itemRect) => new Point(itemRect.left, itemRect.top));
 }

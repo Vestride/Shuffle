@@ -7,21 +7,20 @@
 .demo-list .figure-wrap img {
   // Promote to its own layer. makes filters look ok on retina with images
   transform: translateZ(0);
-  transition: .1s ease;
+  transition: 0.1s ease;
 }
 
 .demo-list:hover .figure-wrap {
-  transform: scale3d( 1, 1, 1 );
+  transform: scale3d(1, 1, 1);
 
   img {
-
     filter: grayscale(1);
   }
 }
 
 .demo-list:hover .figure-wrap:hover {
   z-index: 2;
-  transform: scale3d( 1.05, 1.05, 1 );
+  transform: scale3d(1.05, 1.05, 1);
 
   img {
     filter: none;
@@ -38,10 +37,9 @@
 
 .demo-list .figure-wrap figcaption {
   height: 2em;
-  margin-top: .5em;
+  margin-top: 0.5em;
   margin-bottom: 1em;
 }
-
 
 .demo-link-container::before {
   content: '➜';
@@ -59,7 +57,6 @@ span.demo-link-container::before {
 }
 
 @media screen and (max-width: 47.9375em) {
-
   .demo-list + .demo-list {
     margin-top: 1em;
   }

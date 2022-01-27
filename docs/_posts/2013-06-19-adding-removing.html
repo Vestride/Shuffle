@@ -150,7 +150,7 @@ photoCredit: false
       <h3>Adding elements</h3>
       <p>Wherever you add the element in the DOM is where it will show up in the grid (assuming you&rsquo;re using the default sort-by-dom-order). With this in mind, you can append, prepend, or insert elements wherever you need to get them to show up in the right order.</p>
       <div class="code-block">
-        <pre rel="JavaScript"><code class="language-javascript">Demo.prototype.setupEvents = function () {
+        <pre rel="JavaScript"><code class="language-javascript">setupEvents() {
   document.querySelector('#append').addEventListener('click', this.onAppendBoxes.bind(this));
 };
 
@@ -158,7 +158,7 @@ photoCredit: false
  * Create some DOM elements, append them to the shuffle container, then notify
  * shuffle about the new items. You could also insert the HTML as a string.
  */
-Demo.prototype.onAppendBoxes = function () {
+onAppendBoxes() {
   var elements = this._getArrayOfElementsToAdd();
 
   elements.forEach(function (element) {
