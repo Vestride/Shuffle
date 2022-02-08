@@ -1,6 +1,6 @@
 'use strict';
 
-var Shuffle = window.Shuffle;
+const Shuffle = window.Shuffle;
 
 class Demo {
   constructor(element) {
@@ -67,7 +67,7 @@ class Demo {
    * @param {Event} evt Click event object.
    */
   _handleColorChange(evt) {
-    var button = evt.currentTarget;
+    const button = evt.currentTarget;
 
     // Treat these buttons like radio buttons where only 1 can be selected.
     if (button.classList.contains('active')) {
@@ -112,10 +112,10 @@ class Demo {
    * @return {boolean} Whether it satisfies all current filters.
    */
   itemPassesFilters(element) {
-    var shapes = this.filters.shapes;
-    var colors = this.filters.colors;
-    var shape = element.getAttribute('data-shape');
-    var color = element.getAttribute('data-color');
+    const shapes = this.filters.shapes;
+    const colors = this.filters.colors;
+    const shape = element.getAttribute('data-shape');
+    const color = element.getAttribute('data-color');
 
     // If there are active shape filters and this shape is not in that array.
     if (shapes.length > 0 && !shapes.includes(shape)) {

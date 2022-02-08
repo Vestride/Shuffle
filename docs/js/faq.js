@@ -7,7 +7,7 @@ class Questions {
       return;
     }
 
-    var handler = this._handleInput.bind(this);
+    const handler = this._handleInput.bind(this);
     this.searchInput.addEventListener('keyup', handler);
     this.searchInput.addEventListener('change', handler);
     window.addEventListener('resize', this.onWindowResize.bind(this));
@@ -16,13 +16,13 @@ class Questions {
   }
 
   _handleInput(evt) {
-    var val = evt.target.value.toLowerCase();
+    const val = evt.target.value.toLowerCase();
 
     // Filter elements based on if their string exists in the product model
-    for (var i = 0, len = this.questions.length; i < len; i++) {
-      var el = this.questions[i];
-      var title = el.querySelector('.question__title').textContent;
-      var text = title.trim().toLowerCase();
+    for (let i = 0, len = this.questions.length; i < len; i++) {
+      const el = this.questions[i];
+      const title = el.querySelector('.question__title').textContent;
+      const text = title.trim().toLowerCase();
 
       if (text.indexOf(val) === -1) {
         el.classList.add('question--collapsed');
@@ -33,15 +33,13 @@ class Questions {
   }
 
   setHeights() {
-    var elements = Array.from(this.questions);
+    const elements = Array.from(this.questions);
 
     elements.forEach((element) => {
       element.style.height = '';
     });
 
-    var heights = elements.map((element) => {
-      return element.firstElementChild.offsetHeight;
-    });
+    const heights = elements.map((element) => element.firstElementChild.offsetHeight);
 
     elements.forEach((element, i) => {
       element.style.height = heights[i] + 'px';

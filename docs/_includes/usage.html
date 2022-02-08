@@ -51,11 +51,11 @@
 <p>If you want functional buttons, check out <a href="{{ site.baseurl }}/js/demos/homepage.js">the js file</a>.</p>
 <p>Shuffle uses a UMD definition so that you can use it with globals, AMD, or CommonJS.</p>
 <div class="code-block">
-  <pre rel="JavaScript"><code class="language-javascript">var Shuffle = window.Shuffle;
-var element = document.querySelector('.my-shuffle-container');
-var sizer = element.querySelector('.my-sizer-element');
+  <pre rel="JavaScript"><code class="language-javascript">const Shuffle = window.Shuffle;
+const element = document.querySelector('.my-shuffle-container');
+const sizer = element.querySelector('.my-sizer-element');
 
-var shuffleInstance = new Shuffle(element, {
+const shuffleInstance = new Shuffle(element, {
   itemSelector: '.picture-item',
   sizer: sizer // could also be a selector: '.my-sizer-element'
 });</code></pre>

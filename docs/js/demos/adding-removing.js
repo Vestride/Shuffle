@@ -1,6 +1,6 @@
 'use strict';
 
-var Shuffle = window.Shuffle;
+const Shuffle = window.Shuffle;
 
 class Demo {
   constructor(element) {
@@ -15,15 +15,10 @@ class Demo {
       itemSelector: '.box',
       speed: 250,
       easing: 'ease',
-      columnWidth: function (containerWidth) {
-        // .box's have a width of 18%
-        return 0.18 * containerWidth;
-      },
-
-      gutterWidth: function (containerWidth) {
-        // .box's have a margin-left of 2.5%
-        return 0.025 * containerWidth;
-      },
+      // .box's have a width of 18%
+      columnWidth: (containerWidth) => 0.18 * containerWidth,
+      // .box's have a margin-left of 2.5%
+      gutterWidth: (containerWidth) => 0.025 * containerWidth,
     });
   }
 
@@ -37,7 +32,7 @@ class Demo {
     this.shuffle.element.addEventListener('click', this.onContainerClick.bind(this));
 
     // Show off some shuffle events
-    this.shuffle.on(Shuffle.EventType.REMOVED, function (data) {
+    this.shuffle.on(Shuffle.EventType.REMOVED, (data) => {
       console.log(data);
     });
   }
@@ -49,20 +44,19 @@ class Demo {
    */
   _generateBoxes(itemsToCreate) {
     // Creating random elements. You could use an ajax request or clone elements instead.
-    var items = [];
-    var modifierClasses = ['w2', 'h2', 'w3'];
-    var i = 0;
+    const items = [];
+    const modifierClasses = ['w2', 'h2', 'w3'];
 
-    for (i = 0; i < itemsToCreate; i++) {
-      var random = Math.random();
-      var box = document.createElement('div');
+    for (let i = 0; i < itemsToCreate; i++) {
+      const random = Math.random();
+      const box = document.createElement('div');
       box.className = 'box';
       box.style.backgroundColor = this.getRandomColor();
       box.setAttribute('data-reviews', this.getRandomInt(1, 150));
 
       // Randomly add a class
       if (random > 0.8) {
-        var randomClass = Math.floor(Math.random() * 3);
+        const randomClass = Math.floor(Math.random() * 3);
         box.className = box.className + ' ' + modifierClasses[randomClass];
       }
 
@@ -85,12 +79,12 @@ class Demo {
    * @return {string} A mock HTML string.
    */
   _getHtmlMarkupToAdd() {
-    var fragment = document.createDocumentFragment();
-    this._generateBoxes(5).forEach(function (item) {
+    const fragment = document.createDocumentFragment();
+    this._generateBoxes(5).forEach((item) => {
       fragment.appendChild(item);
     });
 
-    var dummy = document.createElement('div');
+    const dummy = document.createElement('div');
     dummy.appendChild(fragment);
     return dummy.innerHTML;
   }
@@ -100,11 +94,11 @@ class Demo {
    * shuffle about the new items. You could also insert the HTML as a string.
    */
   onAppendBoxes() {
-    var elements = this._getArrayOfElementsToAdd();
+    const elements = this._getArrayOfElementsToAdd();
 
-    elements.forEach(function (element) {
+    elements.forEach((element) => {
       this.shuffle.element.appendChild(element);
-    }, this);
+    });
 
     // Tell shuffle items have been appended.
     // It expects an array of elements as the parameter.
@@ -117,13 +111,13 @@ class Demo {
    * the `onAppendBoxes` method.
    */
   onPrependBoxes() {
-    var markup = this._getHtmlMarkupToAdd();
+    const markup = this._getHtmlMarkupToAdd();
 
     // Prepend HTML string.
     this.element.insertAdjacentHTML('afterbegin', markup);
 
     // Get the first 5 children of the container (we are inserting 5 items).
-    var items = Array.prototype.slice.call(this.element.children, 0, 5);
+    const items = Array.prototype.slice.call(this.element.children, 0, 5);
 
     // Notify the instance.
     this.shuffle.add(items);
@@ -139,35 +133,35 @@ class Demo {
 
   // Randomly choose some elements to remove
   onRemoveClick() {
-    var total = this.shuffle.visibleItems;
+    const total = this.shuffle.visibleItems;
 
     // None left
     if (!total) {
       return;
     }
 
-    var numberToRemove = Math.min(3, total);
-    var indiciesToRemove = [];
+    const numberToRemove = Math.min(3, total);
+    const indiciesToRemove = [];
 
     // This has the possibility to choose the same index for more than
     // one in the array, meaning sometimes less than 3 will be removed
-    for (var i = 0; i < numberToRemove; i++) {
+    for (let i = 0; i < numberToRemove; i++) {
       indiciesToRemove.push(this.getRandomInt(0, total - 1));
     }
 
     // Make an array of elements to remove.
-    var collection = indiciesToRemove.map(function (index) {
+    const collection = indiciesToRemove.map((index) => {
       return this.shuffle.items[index].element;
-    }, this);
+    });
 
     // Tell shuffle to remove them
     this.shuffle.remove(collection);
   }
 
   onRandomize() {
-    var label = document.getElementById('sorter').querySelector('label.btn.active');
+    const label = document.getElementById('sorter').querySelector('label.btn.active');
     if (label) {
-      var radio = label.querySelector('input');
+      const radio = label.querySelector('input');
       radio.checked = false;
       label.classList.remove('active');
     }
@@ -177,8 +171,8 @@ class Demo {
 
   toggleActiveClasses(event) {
     // Add and remove `active` class from buttons.
-    var buttons = Array.from(event.currentTarget.children);
-    buttons.forEach(function (button) {
+    const buttons = Array.from(event.currentTarget.children);
+    buttons.forEach((button) => {
       if (button.querySelector('input').value === event.target.value) {
         button.classList.add('active');
       } else {
@@ -193,7 +187,7 @@ class Demo {
   }
 
   sortBy(value) {
-    var sortOptions;
+    let sortOptions;
 
     if (value === 'most-reviews') {
       sortOptions = {
@@ -224,18 +218,17 @@ class Demo {
   }
 
   filterBy(value) {
-    var filterBy;
-    var _this = this;
+    let filterBy;
 
     if (value === 'none') {
       filterBy = Shuffle.ALL_ITEMS;
     } else if (value === 'odd-reviews') {
-      filterBy = function (element) {
-        return _this.getReviews(element) % 2 === 1;
+      filterBy = (element) => {
+        return this.getReviews(element) % 2 === 1;
       };
     } else {
-      filterBy = function (element) {
-        return _this.getReviews(element) % 2 === 0;
+      filterBy = (element) => {
+        return this.getReviews(element) % 2 === 0;
       };
     }
 
@@ -252,13 +245,13 @@ class Demo {
       return;
     }
 
-    var element = event.target.closest('.box');
+    const element = event.target.closest('.box');
     if (element !== null) {
       this.shuffle.remove([element]);
     }
   }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
   window.demo = new Demo(document.getElementById('my-shuffle'));
 });

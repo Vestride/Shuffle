@@ -1,6 +1,6 @@
 'use strict';
 
-var Shuffle = window.Shuffle;
+const Shuffle = window.Shuffle;
 
 class Demo {
   constructor(element) {
@@ -46,13 +46,13 @@ class Demo {
   }
 
   addFilterButtons() {
-    var options = document.querySelector('.filter-options');
+    const options = document.querySelector('.filter-options');
 
     if (!options) {
       return;
     }
 
-    var filterButtons = Array.from(options.children);
+    const filterButtons = Array.from(options.children);
 
     filterButtons.forEach((button) => {
       button.addEventListener('click', this._handleFilterClick.bind(this), false);
@@ -60,9 +60,9 @@ class Demo {
   }
 
   _handleFilterClick(evt) {
-    var btn = evt.currentTarget;
-    var isActive = btn.classList.contains('active');
-    var btnGroup = btn.getAttribute('data-group');
+    const btn = evt.currentTarget;
+    const isActive = btn.classList.contains('active');
+    const btnGroup = btn.getAttribute('data-group');
 
     // You don't need _both_ of these modes. This is only for the demo.
     // For this custom 'additive' mode in the demo, clicking on filter buttons
@@ -84,7 +84,7 @@ class Demo {
     } else {
       this._removeActiveClassFromChildren(btn.parentNode);
 
-      var filterGroup;
+      let filterGroup;
       if (isActive) {
         btn.classList.remove('active');
         filterGroup = Shuffle.ALL_ITEMS;
@@ -98,14 +98,14 @@ class Demo {
   }
 
   _removeActiveClassFromChildren(parent) {
-    var children = parent.children;
-    for (var i = children.length - 1; i >= 0; i--) {
+    const children = parent.children;
+    for (let i = children.length - 1; i >= 0; i--) {
       children[i].classList.remove('active');
     }
   }
 
   addSorting() {
-    var buttonGroup = document.querySelector('.sort-options');
+    const buttonGroup = document.querySelector('.sort-options');
 
     if (!buttonGroup) {
       return;
@@ -116,7 +116,7 @@ class Demo {
 
   _handleSortChange(evt) {
     // Add and remove `active` class from buttons.
-    var buttons = Array.from(evt.currentTarget.children);
+    const buttons = Array.from(evt.currentTarget.children);
     buttons.forEach((button) => {
       if (button.querySelector('input').value === evt.target.value) {
         button.classList.add('active');
@@ -126,8 +126,8 @@ class Demo {
     });
 
     // Create the sort options to give to Shuffle.
-    var value = evt.target.value;
-    var options = {};
+    const value = evt.target.value;
+    let options = {};
 
     function sortByDate(element) {
       return Date.parse(element.getAttribute('data-date-created'));
@@ -153,7 +153,7 @@ class Demo {
 
   // Advanced filtering
   addSearchFilter() {
-    var searchInput = document.querySelector('.js-shuffle-search');
+    const searchInput = document.querySelector('.js-shuffle-search');
 
     if (!searchInput) {
       return;
@@ -167,14 +167,14 @@ class Demo {
    * @param {Event} evt Event object.
    */
   _handleSearchKeyup(evt) {
-    var searchText = evt.target.value.toLowerCase();
+    const searchText = evt.target.value.toLowerCase();
 
     this.shuffle.filter((element, shuffle) => {
       // If there is a current filter applied, ignore elements that don't match it.
       if (shuffle.group !== Shuffle.ALL_ITEMS) {
         // Get the item's groups.
-        var groups = JSON.parse(element.getAttribute('data-groups'));
-        var isElementInCurrentGroup = groups.indexOf(shuffle.group) !== -1;
+        const groups = JSON.parse(element.getAttribute('data-groups'));
+        const isElementInCurrentGroup = groups.indexOf(shuffle.group) !== -1;
 
         // Only search elements in the current group
         if (!isElementInCurrentGroup) {
@@ -182,8 +182,8 @@ class Demo {
         }
       }
 
-      var titleElement = element.querySelector('.picture-item__title');
-      var titleText = titleElement.textContent.toLowerCase().trim();
+      const titleElement = element.querySelector('.picture-item__title');
+      const titleText = titleElement.textContent.toLowerCase().trim();
 
       return titleText.indexOf(searchText) !== -1;
     });

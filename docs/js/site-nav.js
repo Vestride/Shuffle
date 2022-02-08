@@ -1,13 +1,11 @@
 class SiteNav {
   constructor(element) {
     this.element = element;
-    var buttons = Array.from(document.querySelectorAll('.site-nav__link-toggle'));
-    var dropdowns = buttons.map(function (button) {
-      return button.parentNode.querySelector('.site-nav__dropdown');
-    });
+    const buttons = Array.from(document.querySelectorAll('.site-nav__link-toggle'));
+    const dropdowns = buttons.map((button) => button.parentNode.querySelector('.site-nav__dropdown'));
 
-    var toggle = this.toggle.bind(this);
-    buttons.forEach(function (button, i) {
+    const toggle = this.toggle.bind(this);
+    buttons.forEach((button, i) => {
       button.addEventListener('click', toggle);
       dropdowns[i].addEventListener('click', toggle);
     });
@@ -18,10 +16,10 @@ class SiteNav {
   }
 
   toggle(event) {
-    var button = event.currentTarget;
-    var wrapper = button.parentNode;
-    var willOpen = !wrapper.classList.contains('site-nav__link--dropdown-active');
-    var otherOpenWrapper = this.element.querySelector('.site-nav__link--dropdown-active');
+    const button = event.currentTarget;
+    const wrapper = button.parentNode;
+    const willOpen = !wrapper.classList.contains('site-nav__link--dropdown-active');
+    const otherOpenWrapper = this.element.querySelector('.site-nav__link--dropdown-active');
 
     button.setAttribute('aria-expanded', willOpen);
     button.classList.toggle('active');
@@ -30,7 +28,7 @@ class SiteNav {
     // Check if there is another dropdown that's open.
     if (otherOpenWrapper && otherOpenWrapper !== wrapper) {
       otherOpenWrapper.classList.remove('site-nav__link--dropdown-active');
-      var otherButton = otherOpenWrapper.querySelector('.site-nav__link-toggle');
+      const otherButton = otherOpenWrapper.querySelector('.site-nav__link-toggle');
       otherButton.setAttribute('aria-expanded', false);
       otherButton.classList.remove('active');
     } else {
@@ -39,10 +37,10 @@ class SiteNav {
   }
 
   handleResize() {
-    var viewportHeight = window.innerHeight;
-    var navHeight = this.element.offsetHeight;
-    var dropdowns = Array.from(document.querySelectorAll('.site-nav__dropdown'));
-    dropdowns.forEach(function (dropdown) {
+    const viewportHeight = window.innerHeight;
+    const navHeight = this.element.offsetHeight;
+    const dropdowns = Array.from(document.querySelectorAll('.site-nav__dropdown'));
+    dropdowns.forEach((dropdown) => {
       dropdown.style.maxHeight = viewportHeight - navHeight + 'px';
     });
   }

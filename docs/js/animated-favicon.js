@@ -21,7 +21,7 @@ class Sprite {
   }
 
   drawFrame(frameNumber) {
-    var frame = this.getFrame(frameNumber);
+    const frame = this.getFrame(frameNumber);
 
     // Clear out the last frame
     this.clearCanvas();
@@ -49,7 +49,7 @@ class Favicon {
 
     // If it's not a data url, pick apart the filename and add @2x for retina
     if (!this.src.match(/data:/) && window.devicePixelRatio > 1) {
-      var dot = this.src.lastIndexOf('.');
+      const dot = this.src.lastIndexOf('.');
       this.src = this.src.substring(0, dot) + '@2x' + this.src.substring(dot);
     }
 
@@ -86,9 +86,9 @@ class Favicon {
   // Clone the current #favicon and replace it with a new element
   // which has the updated data URI href
   setFavicon() {
-    var data = this.getData();
-    var originalFavicon = document.getElementById('favicon');
-    var clone = originalFavicon.cloneNode(true);
+    const data = this.getData();
+    const originalFavicon = document.getElementById('favicon');
+    const clone = originalFavicon.cloneNode(true);
 
     clone.setAttribute('href', data);
     originalFavicon.parentNode.replaceChild(clone, originalFavicon);

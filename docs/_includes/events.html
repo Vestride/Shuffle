@@ -3,7 +3,7 @@
 
 <h3>Get notified when a layout happens</h3>
 <div class="code-block">
-  <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.on(Shuffle.EventType.LAYOUT, function () {
+  <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.on(Shuffle.EventType.LAYOUT, () => {
   console.log('Things finished moving!');
 });</code></pre>
 </div>
@@ -11,7 +11,7 @@
 
 <h3>Do something when an item is removed</h3>
 <div class="code-block">
-  <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.on(Shuffle.EventType.REMOVED, function (data) {
+  <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.on(Shuffle.EventType.REMOVED, (data) => {
   console.log(this, data, data.collection, data.shuffle);
 });</code></pre>
 </div>
