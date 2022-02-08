@@ -1,5 +1,3 @@
-'use strict';
-
 const Shuffle = window.Shuffle;
 
 class Demo {
