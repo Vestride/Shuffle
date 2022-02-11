@@ -47,9 +47,7 @@ class Demo {
    * @return {Array.<string>}
    */
   _getCurrentColorFilters() {
-    return this.colors
-      .filter((button) => button.classList.contains('active'))
-      .map((button) => button.getAttribute('data-value'));
+    return this.colors.filter((button) => button.classList.contains('active')).map((button) => button.dataset.value);
   }
 
   /**
@@ -112,8 +110,8 @@ class Demo {
   itemPassesFilters(element) {
     const shapes = this.filters.shapes;
     const colors = this.filters.colors;
-    const shape = element.getAttribute('data-shape');
-    const color = element.getAttribute('data-color');
+    const shape = element.dataset.shape;
+    const color = element.dataset.color;
 
     // If there are active shape filters and this shape is not in that array.
     if (shapes.length > 0 && !shapes.includes(shape)) {

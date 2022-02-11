@@ -238,7 +238,7 @@ describe('shuffle', () => {
     it('can initialize sorted', () => {
       const sortObj = {
         by(element) {
-          return parseInt(element.getAttribute('data-age'), 10);
+          return parseInt(element.dataset.age, 10);
         },
       };
 
@@ -337,11 +337,11 @@ describe('shuffle', () => {
       expect(
         instance._doesPassFilter((element) => {
           expect(element).toBeDefined();
-          return element.getAttribute('data-age') === '21';
+          return element.dataset.age === '21';
         }, first),
       ).toBe(true);
 
-      expect(instance._doesPassFilter((element) => element.getAttribute('data-age') === '22', first)).toBe(false);
+      expect(instance._doesPassFilter((element) => element.dataset.age === '22', first)).toBe(false);
 
       // Arrays.
       expect(instance._doesPassFilter(['design'], first)).toBe(true);
@@ -731,8 +731,8 @@ describe('shuffle', () => {
 
     it('can sort by a function', () => {
       clone.sort((a, b) => {
-        const age1 = parseInt(a.element.getAttribute('data-age'), 10);
-        const age2 = parseInt(b.element.getAttribute('data-age'), 10);
+        const age1 = parseInt(a.element.dataset.age, 10);
+        const age2 = parseInt(b.element.dataset.age, 10);
         return age1 - age2;
       });
 
@@ -740,7 +740,7 @@ describe('shuffle', () => {
         by(element) {
           expect(element).toBeDefined();
           expect(element.nodeType).toBe(1);
-          return parseInt(element.getAttribute('data-age'), 10);
+          return parseInt(element.dataset.age, 10);
         },
       });
 
@@ -750,8 +750,8 @@ describe('shuffle', () => {
     it('can sort by a function and reverse it', () => {
       clone
         .sort((a, b) => {
-          const age1 = parseInt(a.element.getAttribute('data-age'), 10);
-          const age2 = parseInt(b.element.getAttribute('data-age'), 10);
+          const age1 = parseInt(a.element.dataset.age, 10);
+          const age2 = parseInt(b.element.dataset.age, 10);
           return age1 - age2;
         })
         .reverse();
@@ -759,7 +759,7 @@ describe('shuffle', () => {
       const result = Shuffle.__sorter(items, {
         reverse: true,
         by(element) {
-          return parseInt(element.getAttribute('data-age'), 10);
+          return parseInt(element.dataset.age, 10);
         },
       });
 
@@ -784,7 +784,7 @@ describe('shuffle', () => {
       expect(
         Shuffle.__sorter(items, {
           by(element) {
-            const age = parseInt(element.getAttribute('data-age'), 10);
+            const age = parseInt(element.dataset.age, 10);
             if (age === 50) {
               return 'sortFirst';
             } else {
@@ -801,7 +801,7 @@ describe('shuffle', () => {
       expect(
         Shuffle.__sorter(items, {
           by(element) {
-            const age = parseInt(element.getAttribute('data-age'), 10);
+            const age = parseInt(element.dataset.age, 10);
             if (age === 27) {
               return 'sortLast';
             } else {
@@ -829,8 +829,8 @@ describe('shuffle', () => {
         Shuffle.__sorter(items, {
           compare(a, b) {
             // Sort by first group, then by age.
-            const groupA = JSON.parse(a.element.getAttribute('data-groups'))[0];
-            const groupB = JSON.parse(b.element.getAttribute('data-groups'))[0];
+            const groupA = JSON.parse(a.element.dataset.groups)[0];
+            const groupB = JSON.parse(b.element.dataset.groups)[0];
             if (groupA > groupB) {
               return 1;
             }
@@ -839,8 +839,8 @@ describe('shuffle', () => {
             }
 
             // At this point, the group strings are the exact same. Test the age.
-            const ageA = parseInt(a.element.getAttribute('data-age'), 10);
-            const ageB = parseInt(b.element.getAttribute('data-age'), 10);
+            const ageA = parseInt(a.element.dataset.age, 10);
+            const ageB = parseInt(b.element.dataset.age, 10);
             return ageA - ageB;
           },
         }),

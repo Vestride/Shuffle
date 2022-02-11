@@ -207,7 +207,7 @@ class Demo {
   }
 
   getReviews(element) {
-    return parseInt(element.getAttribute('data-reviews'), 10);
+    return parseInt(element.dataset.reviews, 10);
   }
 
   onFilterChange(event) {

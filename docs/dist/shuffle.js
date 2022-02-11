@@ -931,7 +931,7 @@
       } // Check each element's data-groups attribute against the given category.
 
 
-      const attr = element.getAttribute('data-' + Shuffle.FILTER_ATTRIBUTE_KEY);
+      const attr = element.dataset[Shuffle.FILTER_ATTRIBUTE_KEY];
       const keys = this.options.delimiter ? attr.split(this.options.delimiter) : JSON.parse(attr);
 
       function testCategory(category) {

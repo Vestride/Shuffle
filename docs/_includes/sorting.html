@@ -23,11 +23,11 @@ _handleSortChange(evt) {
   const value = evt.target.value;
 
   function sortByDate(element) {
-    return element.getAttribute('data-created');
+    return element.dataset.created;
   }
 
   function sortByTitle(element) {
-    return element.getAttribute('data-title').toLowerCase();
+    return element.dataset.title.toLowerCase();
   }
 
   let options;
@@ -64,7 +64,7 @@ _handleSortChange(evt) {
 <div class="code-block">
   <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.filter('space', {
   by: (element) => {
-    return element.getAttribute('data-title').toLowerCase();
+    return element.dataset.title.toLowerCase();
   },
 });</code></pre>
 </div>
@@ -78,8 +78,8 @@ _handleSortChange(evt) {
   <pre rel="JavaScript"><code class="language-javascript">shuffleInstance.sort({
   compare: (a, b) => {
     // Sort by first group, then by age.
-    const groupA = JSON.parse(a.element.getAttribute('data-groups'))[0];
-    const groupB = JSON.parse(b.element.getAttribute('data-groups'))[0];
+    const groupA = JSON.parse(a.element.dataset.groups)[0];
+    const groupB = JSON.parse(b.element.dataset.groups)[0];
     if (groupA > groupB) {
       return 1;
     }
@@ -88,8 +88,8 @@ _handleSortChange(evt) {
     }
 
     // At this point, the group strings are the exact same. Test the age.
-    const ageA = parseInt(a.element.getAttribute('data-age'), 10);
-    const ageB = parseInt(b.element.getAttribute('data-age'), 10);
+    const ageA = parseInt(a.element.dataset.age, 10);
+    const ageB = parseInt(b.element.dataset.age, 10);
     return ageA - ageB;
   },
 });</code></pre>

@@ -60,7 +60,7 @@ class Demo {
   _handleFilterClick(evt) {
     const btn = evt.currentTarget;
     const isActive = btn.classList.contains('active');
-    const btnGroup = btn.getAttribute('data-group');
+    const btnGroup = btn.dataset.group;
 
     // You don't need _both_ of these modes. This is only for the demo.
     // For this custom 'additive' mode in the demo, clicking on filter buttons
@@ -128,11 +128,11 @@ class Demo {
     let options = {};
 
     function sortByDate(element) {
-      return Date.parse(element.getAttribute('data-date-created'));
+      return Date.parse(element.dataset.dateCreated);
     }
 
     function sortByTitle(element) {
-      return element.getAttribute('data-title').toLowerCase();
+      return element.dataset.title.toLowerCase();
     }
 
     if (value === 'date-created') {
@@ -171,7 +171,7 @@ class Demo {
       // If there is a current filter applied, ignore elements that don't match it.
       if (shuffle.group !== Shuffle.ALL_ITEMS) {
         // Get the item's groups.
-        const groups = JSON.parse(element.getAttribute('data-groups'));
+        const groups = JSON.parse(element.dataset.groups);
         const isElementInCurrentGroup = groups.indexOf(shuffle.group) !== -1;
 
         // Only search elements in the current group
