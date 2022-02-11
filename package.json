@@ -47,7 +47,6 @@
   ],
   "dependencies": {
     "array-parallel": "^0.1.3",
-    "throttleit": "^1.0.0",
     "tiny-emitter": "^2.1.0"
   },
   "devDependencies": {

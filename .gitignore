@@ -7,7 +7,9 @@ _site
 .jekyll-cache
 .jekyll-metadata
 *.scssc
-dist
+/dist
+*.esm.js
+*.esm.js.map
 
 # https://github.com/sindresorhus/ama/issues/479#issuecomment-310661514
 package-lock.json

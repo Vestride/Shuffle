@@ -37,6 +37,18 @@ describe('shuffle', () => {
     setTimeout(done, 0);
   }
 
+  // Super simple version of Testing Library's `waitFor`.
+  async function waitForTrue(callback) {
+    return new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (callback()) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 50);
+    });
+  }
+
   describe('regular fixture', () => {
     beforeEach(() => {
       // Mock the transition end event wrapper.
@@ -63,7 +75,6 @@ describe('shuffle', () => {
       expect(instance.options.gutterWidth).toBe(0);
       expect(instance.options.delimiter).toBeNull();
       expect(instance.options.initialSort).toBeNull();
-      expect(instance.options.throttleTime).toBe(300);
       expect(instance.id).toBe('shuffle_0');
 
       expect(instance.isInitialized).toBe(true);
@@ -438,17 +449,44 @@ describe('shuffle', () => {
       instance.enable(false);
 
       instance.destroy();
-      instance._onResize();
+      instance._handleResizeCallback([
+        {
+          contentRect: {
+            width: instance.containerWidth + 1,
+          },
+        },
+      ]);
       expect(update.called).toBe(false);
     });
 
-    it('should still update when the container is the same size', () => {
+    it('should not update when the container is the same size', () => {
       instance = new Shuffle(fixture);
       const update = sinon.spy(instance, 'update');
 
-      instance._onResize();
+      instance._handleResizeCallback([
+        {
+          contentRect: {
+            width: instance.containerWidth,
+          },
+        },
+      ]);
 
-      expect(update.called).toBe(true);
+      expect(update.called).toBe(false);
+    });
+
+    it('should update when the container is a different', async () => {
+      instance = new Shuffle(fixture);
+      const update = sinon.spy(instance, 'update');
+
+      instance._handleResizeCallback([
+        {
+          contentRect: {
+            width: instance.containerWidth + 1,
+          },
+        },
+      ]);
+
+      await waitForTrue(() => update.called);
     });
 
     describe('removing elements', () => {

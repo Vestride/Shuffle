@@ -1,5 +1,4 @@
 import TinyEmitter from 'tiny-emitter';
-import throttle from 'throttleit';
 import parallel from 'array-parallel';
 
 import Point from './point';
@@ -68,10 +67,6 @@ class Shuffle extends TinyEmitter {
     // Set initial css for each item
     this._initItems(this.items);
 
-    // Bind resize events
-    this._onResize = this._getResizeFunction();
-    window.addEventListener('resize', this._onResize);
-
     // If the page has not already emitted the `load` event, call layout on load.
     // This avoids layout issues caused by images and fonts loading after the
     // instance has been initialized.
@@ -97,6 +92,16 @@ class Shuffle extends TinyEmitter {
     // Kick off!
     this.filter(this.options.group, this.options.initialSort);
 
+    // Bind resize events
+    this._rafId = null;
+    // This is true for all supported browsers, but just to be safe, avoid throwing
+    // an error if ResizeObserver is not present. You can manually add a window resize
+    // event and call `update()` if ResizeObserver is missing, or use Shuffle v5.
+    if ('ResizeObserver' in window) {
+      this._resizeObserver = new ResizeObserver(this._handleResizeCallback.bind(this));
+      this._resizeObserver.observe(this.element);
+    }
+
     // The shuffle items haven't had transitions set on them yet so the user
     // doesn't see the first layout. Set them now that the first layout is done.
     // First, however, a synchronous layout must be caused for the previous
@@ -104,16 +109,6 @@ class Shuffle extends TinyEmitter {
     this.element.offsetWidth; // eslint-disable-line no-unused-expressions
     this.setItemTransitions(this.items);
     this.element.style.transition = `height ${this.options.speed}ms ${this.options.easing}`;
-  }
-
-  /**
-   * Returns a throttled and proxied function for the resize handler.
-   * @return {function}
-   * @private
-   */
-  _getResizeFunction() {
-    const resizeFunction = this._handleResize.bind(this);
-    return this.options.throttle ? this.options.throttle(resizeFunction, this.options.throttleTime) : resizeFunction;
   }
 
   /**
@@ -612,15 +607,27 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Resize handler.
-   * @private
+   * @param {ResizeObserverEntry[]} entries
    */
-  _handleResize() {
-    // If shuffle is disabled, destroyed, don't do anything
+  _handleResizeCallback(entries) {
+    // If shuffle is disabled, destroyed, don't do anything.
+    // You can still manually force a shuffle update with shuffle.update({ force: true }).
     if (!this.isEnabled || this.isDestroyed) {
       return;
     }
 
-    this.update();
+    // The reason ESLint disables this is because for..of generates a lot of extra
+    // code using Babel, but Shuffle no longer supports browsers that old, so
+    // nothing to worry about.
+    // eslint-disable-next-line no-restricted-syntax
+    for (const entry of entries) {
+      if (Math.round(entry.contentRect.width) !== Math.round(this.containerWidth)) {
+        // If there was already an animation waiting, cancel it.
+        cancelAnimationFrame(this._rafId);
+        // Offload updating the DOM until the browser is ready.
+        this._rafId = requestAnimationFrame(this.update.bind(this));
+      }
+    }
   }
 
   /**
@@ -815,12 +822,14 @@ class Shuffle extends TinyEmitter {
 
   /**
    * Reposition everything.
-   * @param {boolean} [isOnlyLayout=false] If true, column and gutter widths won't be recalculated.
+   * @param {object} options options object
+   * @param {boolean} [options.recalculateSizes=true] Whether to calculate column, gutter, and container widths again.
+   * @param {boolean} [options.force=false] By default, `update` does nothing if the instance is disabled. Setting this
+   *    to true forces the update to happen regardless.
    */
-  update(isOnlyLayout = false) {
-    if (this.isEnabled) {
-      if (!isOnlyLayout) {
-        // Get updated colCount
+  update({ recalculateSizes = true, force = false } = {}) {
+    if (this.isEnabled || force) {
+      if (recalculateSizes) {
         this._setColumns();
       }
 
@@ -835,7 +844,9 @@ class Shuffle extends TinyEmitter {
    * could be off.
    */
   layout() {
-    this.update(true);
+    this.update({
+      recalculateSizes: true,
+    });
   }
 
   /**
@@ -995,7 +1006,10 @@ class Shuffle extends TinyEmitter {
    */
   destroy() {
     this._cancelMovement();
-    window.removeEventListener('resize', this._onResize);
+    if (this._resizeObserver) {
+      this._resizeObserver.unobserve(this.element);
+      this._resizeObserver = null;
+    }
 
     // Reset container styles
     this.element.classList.remove('shuffle');
@@ -1161,13 +1175,6 @@ Shuffle.options = {
   // Shuffle can be isInitialized with a sort object. It is the same object
   // given to the sort method.
   initialSort: null,
-
-  // By default, shuffle will throttle resize events. This can be changed or
-  // removed.
-  throttle,
-
-  // How often shuffle can be called on resize (in milliseconds).
-  throttleTime: 300,
 
   // Transition delay offset for each item in milliseconds.
   staggerAmount: 15,

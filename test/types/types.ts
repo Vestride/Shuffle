@@ -46,7 +46,11 @@ const sortOptions: SortOptions = {
 shuffle.sort(sortOptions);
 console.log(shuffle.sortedItems);
 
-shuffle.update(true);
+shuffle.update();
+shuffle.update({
+  recalculateSizes: true,
+  force: true,
+});
 Shuffle.getSize(mainElement, true);
 
 const rect1 = new Shuffle.Rect(0, 0, 20, 20);

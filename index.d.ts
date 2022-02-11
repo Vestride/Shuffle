@@ -102,19 +102,9 @@ export interface ShuffleOptions {
   staggerAmountMax?: number;
 
   /**
-   * How often shuffle can be called on resize (in milliseconds).
-   */
-  throttleTime?: number;
-
-  /**
    * Whether to use transforms or absolute positioning.
    */
   useTransforms?: boolean;
-
-  /**
-   * By default, shuffle will throttle resize events. This can be changed or removed.
-   */
-  throttle?(func: Function, wait: number): Function;
 }
 
 export interface SortOptions {
@@ -235,9 +225,12 @@ declare class Shuffle extends TinyEmitter {
 
   /**
    * Reposition everything.
-   * @param {boolean} [isOnlyLayout=false] If true, column and gutter widths won't be recalculated.
+   * @param {object} options options object
+   * @param {boolean} [options.recalculateSizes=true] Whether to calculate column, gutter, and container widths again.
+   * @param {boolean} [options.force=false] By default, `update` does nothing if the instance is disabled. Setting this
+   *    to true forces the update to happen regardless.
    */
-  update(isOnlyLayout?: boolean): void;
+  update(options?: { recalculateSizes?: boolean; force?: boolean }): void;
 
   /**
    * Returns styles which will be applied to the an item for a transition.

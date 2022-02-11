@@ -75,39 +75,6 @@
 
   var TinyEmitter = tinyEmitter.exports;
 
-  var throttleit = throttle;
-
-  /**
-   * Returns a new function that, when invoked, invokes `func` at most once per `wait` milliseconds.
-   *
-   * @param {Function} func Function to wrap.
-   * @param {Number} wait Number of milliseconds that must elapse between `func` invocations.
-   * @return {Function} A new function that wraps the `func` function passed in.
-   */
-
-  function throttle (func, wait) {
-    var ctx, args, rtn, timeoutID; // caching
-    var last = 0;
-
-    return function throttled () {
-      ctx = this;
-      args = arguments;
-      var delta = new Date() - last;
-      if (!timeoutID)
-        if (delta >= wait) call();
-        else timeoutID = setTimeout(call, wait - delta);
-      return rtn;
-    };
-
-    function call () {
-      timeoutID = 0;
-      last = +new Date();
-      rtn = func.apply(ctx, args);
-      ctx = null;
-      args = null;
-    }
-  }
-
   var arrayParallel = function parallel(fns, context, callback) {
     if (!callback) {
       if (typeof context === 'function') {
@@ -798,13 +765,10 @@
 
       this.element.classList.add(Shuffle.Classes.BASE); // Set initial css for each item
 
-      this._initItems(this.items); // Bind resize events
-
-
-      this._onResize = this._getResizeFunction();
-      window.addEventListener('resize', this._onResize); // If the page has not already emitted the `load` event, call layout on load.
+      this._initItems(this.items); // If the page has not already emitted the `load` event, call layout on load.
       // This avoids layout issues caused by images and fonts loading after the
       // instance has been initialized.
+
 
       if (document.readyState !== 'complete') {
         const layout = this.layout.bind(this);
@@ -825,27 +789,26 @@
       this._setColumns(containerWidth); // Kick off!
 
 
-      this.filter(this.options.group, this.options.initialSort); // The shuffle items haven't had transitions set on them yet so the user
+      this.filter(this.options.group, this.options.initialSort); // Bind resize events
+
+      this._rafId = null; // This is true for all supported browsers, but just to be safe, avoid throwing
+      // an error if ResizeObserver is not present. You can manually add a window resize
+      // event and call `update()` if ResizeObserver is missing, or use Shuffle v5.
+
+      if ('ResizeObserver' in window) {
+        this._resizeObserver = new ResizeObserver(this._handleResizeCallback.bind(this));
+
+        this._resizeObserver.observe(this.element);
+      } // The shuffle items haven't had transitions set on them yet so the user
       // doesn't see the first layout. Set them now that the first layout is done.
       // First, however, a synchronous layout must be caused for the previous
       // styles to be applied without transitions.
+
 
       this.element.offsetWidth; // eslint-disable-line no-unused-expressions
 
       this.setItemTransitions(this.items);
       this.element.style.transition = `height ${this.options.speed}ms ${this.options.easing}`;
-    }
-    /**
-     * Returns a throttled and proxied function for the resize handler.
-     * @return {function}
-     * @private
-     */
-
-
-    _getResizeFunction() {
-      const resizeFunction = this._handleResize.bind(this);
-
-      return this.options.throttle ? this.options.throttle(resizeFunction, this.options.throttleTime) : resizeFunction;
     }
     /**
      * Retrieve an element from an option.
@@ -1368,17 +1331,29 @@
     }
     /**
      * Resize handler.
-     * @private
+     * @param {ResizeObserverEntry[]} entries
      */
 
 
-    _handleResize() {
-      // If shuffle is disabled, destroyed, don't do anything
+    _handleResizeCallback(entries) {
+      // If shuffle is disabled, destroyed, don't do anything.
+      // You can still manually force a shuffle update with shuffle.update({ force: true }).
       if (!this.isEnabled || this.isDestroyed) {
         return;
-      }
+      } // The reason ESLint disables this is because for..of generates a lot of extra
+      // code using Babel, but Shuffle no longer supports browsers that old, so
+      // nothing to worry about.
+      // eslint-disable-next-line no-restricted-syntax
 
-      this.update();
+
+      for (const entry of entries) {
+        if (Math.round(entry.contentRect.width) !== Math.round(this.containerWidth)) {
+          // If there was already an animation waiting, cancel it.
+          cancelAnimationFrame(this._rafId); // Offload updating the DOM until the browser is ready.
+
+          this._rafId = requestAnimationFrame(this.update.bind(this));
+        }
+      }
     }
     /**
      * Returns styles which will be applied to the an item for a transition.
@@ -1583,16 +1558,21 @@
     }
     /**
      * Reposition everything.
-     * @param {boolean} [isOnlyLayout=false] If true, column and gutter widths won't be recalculated.
+     * @param {object} options options object
+     * @param {boolean} [options.recalculateSizes=true] Whether to calculate column, gutter, and container widths again.
+     * @param {boolean} [options.force=false] By default, `update` does nothing if the instance is disabled. Setting this
+     *    to true forces the update to happen regardless.
      */
 
 
     update() {
-      let isOnlyLayout = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      let {
+        recalculateSizes = true,
+        force = false
+      } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-      if (this.isEnabled) {
-        if (!isOnlyLayout) {
-          // Get updated colCount
+      if (this.isEnabled || force) {
+        if (recalculateSizes) {
           this._setColumns();
         } // Layout items
 
@@ -1608,7 +1588,9 @@
 
 
     layout() {
-      this.update(true);
+      this.update({
+        recalculateSizes: true
+      });
     }
     /**
      * New items have been appended to shuffle. Mix them in with the current
@@ -1776,7 +1758,12 @@
     destroy() {
       this._cancelMovement();
 
-      window.removeEventListener('resize', this._onResize); // Reset container styles
+      if (this._resizeObserver) {
+        this._resizeObserver.unobserve(this.element);
+
+        this._resizeObserver = null;
+      } // Reset container styles
+
 
       this.element.classList.remove('shuffle');
       this.element.removeAttribute('style'); // Reset individual item styles
@@ -1915,7 +1902,7 @@
     // A static number or function that returns a number which tells the plugin
     // how wide the columns are (in pixels).
     columnWidth: 0,
-    // If your group is not json, and is comma delimeted, you could set delimiter
+    // If your group is not json, and is comma delimited, you could set delimiter
     // to ','.
     delimiter: null,
     // Useful for percentage based heights when they might not always be exactly
@@ -1927,11 +1914,6 @@
     // Shuffle can be isInitialized with a sort object. It is the same object
     // given to the sort method.
     initialSort: null,
-    // By default, shuffle will throttle resize events. This can be changed or
-    // removed.
-    throttle: throttleit,
-    // How often shuffle can be called on resize (in milliseconds).
-    throttleTime: 300,
     // Transition delay offset for each item in milliseconds.
     staggerAmount: 15,
     // Maximum stagger delay in milliseconds.
@@ -1941,6 +1923,7 @@
     // Affects using an array with filter. e.g. `filter(['one', 'two'])`. With "any",
     // the element passes the test if any of its groups are in the array. With "all",
     // the element only passes if all groups are in the array.
+    // Note, this has no effect if you supply a custom filter function.
     filterMode: Shuffle.FilterMode.ANY,
     // Attempt to center grid items in each row.
     isCentered: false,
