@@ -1146,7 +1146,7 @@ Shuffle.options = {
   // how wide the columns are (in pixels).
   columnWidth: 0,
 
-  // If your group is not json, and is comma delimeted, you could set delimiter
+  // If your group is not json, and is comma delimited, you could set delimiter
   // to ','.
   delimiter: null,
 
@@ -1181,6 +1181,7 @@ Shuffle.options = {
   // Affects using an array with filter. e.g. `filter(['one', 'two'])`. With "any",
   // the element passes the test if any of its groups are in the array. With "all",
   // the element only passes if all groups are in the array.
+  // Note, this has no effect if you supply a custom filter function.
   filterMode: Shuffle.FilterMode.ANY,
 
   // Attempt to center grid items in each row.

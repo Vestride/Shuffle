@@ -28,7 +28,7 @@ export interface ShuffleOptions {
   columnWidth?: number;
 
   /**
-   * If your group is not json, and is comma delimeted, you could set delimiter to ','.
+   * If your group is not json, and is comma delimited, you could set delimiter to ','.
    */
   delimiter?: string;
 
