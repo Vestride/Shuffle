@@ -8,12 +8,12 @@
  * Create some DOM elements, append them to the shuffle container, then notify
  * shuffle about the new items. You could also insert the HTML as a string.
  */
-Demo.prototype.onAppendBoxes = function () {
-  var elements = this._getArrayOfElementsToAdd();
+onAppendBoxes() {
+  const elements = this._getArrayOfElementsToAdd();
 
-  elements.forEach(function (element) {
+  elements.forEach((element) => {
     this.shuffle.element.appendChild(element);
-  }, this);
+  });
 
   // Tell shuffle elements have been appended.
   // It expects an array of elements as the parameter.

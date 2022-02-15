@@ -69,11 +69,7 @@ class ShuffleItem {
   }
 
   dispose() {
-    this.removeClasses([
-      Classes.HIDDEN,
-      Classes.VISIBLE,
-      Classes.SHUFFLE_ITEM,
-    ]);
+    this.removeClasses([Classes.HIDDEN, Classes.VISIBLE, Classes.SHUFFLE_ITEM]);
 
     this.element.removeAttribute('style');
     this.element = null;

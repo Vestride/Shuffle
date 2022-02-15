@@ -1,13 +1,3 @@
 {
-  "presets": [
-    [
-      "@babel/preset-env",
-      {
-        "targets": {
-          "browsers": "> 1%, not dead, not IE < 11, IE 11, not OperaMini all",
-          "node": "current"
-        }
-      }
-    ]
-  ]
+  "presets": [["@babel/preset-env"]]
 }

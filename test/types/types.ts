@@ -31,14 +31,14 @@ shuffle.off(Shuffle.EventType.REMOVED);
 shuffle.filter('wallpaper');
 shuffle.filter(function filterEachItem(element, shuffle) {
   console.log(`shuffle id: ${shuffle.id}, element id: ${element.id}`);
-  const reviews = this.getAttribute('data-reviews');
+  const reviews = this.dataset.reviews;
   return !!reviews && parseInt(reviews, 10) > 2;
 });
 
 const sortOptions: SortOptions = {
   randomize: true,
   reverse: false,
-  by: (element: Shuffle.ShuffleItem['element']) => element.getAttribute('data-reviews'),
+  by: (element: Shuffle.ShuffleItem['element']) => element.dataset.reviews,
   compare(a: Shuffle.ShuffleItem, b: Shuffle.ShuffleItem) {
     return 0;
   },
@@ -46,7 +46,11 @@ const sortOptions: SortOptions = {
 shuffle.sort(sortOptions);
 console.log(shuffle.sortedItems);
 
-shuffle.update(true);
+shuffle.update();
+shuffle.update({
+  recalculateSizes: true,
+  force: true,
+});
 Shuffle.getSize(mainElement, true);
 
 const rect1 = new Shuffle.Rect(0, 0, 20, 20);

@@ -51,13 +51,13 @@ prism: true
           <legend class="filter-label">Sort</legend>
           <div class="btn-group sort-options">
             <label class="btn active">
-              <input type="radio" name="sort-value" value="dom" /> Default
+              <input type="radio" autocomplete="off" name="sort-value" value="dom" /> Default
             </label>
             <label class="btn">
-              <input type="radio" name="sort-value" value="title" /> Title
+              <input type="radio" autocomplete="off" name="sort-value" value="title" /> Title
             </label>
             <label class="btn">
-              <input type="radio" name="sort-value" value="date-created" /> Date Created
+              <input type="radio" autocomplete="off" name="sort-value" value="date-created" /> Date Created
             </label>
           </div>
         </fieldset>
@@ -214,7 +214,6 @@ prism: true
       <div class="col-12@sm">
         <h2>Dependencies<a href="#dependencies"></a></h2>
         <p>Shuffle's <a href="https://github.com/Vestride/Shuffle/blob/master/package.json">dependencies</a> are bundled with the dist file.</p>
-        <p id="polyfills">Shuffle does, however, expect the following ES6/7 features: <code>Set</code>, <code>Array.from</code>, <code>Object.assign</code>, <code>Array.prototype.find</code>, and <code>Array.prototype.includes</code>. In order to support browsers like IE11 and Safari 8, <strong class="type--underline">you must include a polyfill</strong> for these features. You can use a service like <a href="https://polyfill.io">polyfill.io</a> to only load the polyfills that specific browser needs, or a polyfill script like <a href="https://www.npmjs.com/package/@babel/polyfill">@babel/polyfill</a> (which uses <code>core-js</code> internally).</p>
       </div>
     </div>
   </div>
@@ -230,27 +229,28 @@ prism: true
           <li>Chrome</li>
           <li>Firefox</li>
           <li>Edge</li>
-          <li>IE 11</li>
           <li>Safari</li>
         </ul>
 
-        <p>Depending on what browsers you support, you may <a href="#polyfills">need to polyfill features used by Shuffle</a>.</p>
+        <p>If you still need to support IE 11, you can use Shuffle v5.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section id="be-social">
+<section id="share">
   <div class="container">
     <div class="row">
       <div class="col-12@sm">
-        <h2>Be Social<a href="#be-social"></a></h2>
-        <div class="text-center">
+        <h2>Share<a href="#share"></a></h2>
+        <div>
+          <a href="https://www.buymeacoffee.com/glen.cheney" target="_blank" style="display:inline-block;">
+            <img loading="lazy" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 160px !important;" />
+          </a>
+
           <iframe src="https://ghbtns.com/github-btn.html?user=Vestride&repo=Shuffle&type=star&size=large" frameborder="0" scrolling="0" width="76px" height="30px" title="Star this repository on GitHub"></iframe>
 
           <a href="https://twitter.com/share" class="twitter-share-button" data-via="Vestride" data-size="large">Tweet</a>
-
-          <div class="g-plusone" data-annotation="none"></div>
         </div>
       </div>
     </div>
@@ -268,12 +268,5 @@ prism: true
 </section>
 
 <script>
-
 !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-
-(function() {
-  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-  po.src = 'https://apis.google.com/js/platform.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-})();
 </script>

@@ -37,6 +37,18 @@ describe('shuffle', () => {
     setTimeout(done, 0);
   }
 
+  // Super simple version of Testing Library's `waitFor`.
+  async function waitForTrue(callback) {
+    return new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (callback()) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 50);
+    });
+  }
+
   describe('regular fixture', () => {
     beforeEach(() => {
       // Mock the transition end event wrapper.
@@ -63,7 +75,6 @@ describe('shuffle', () => {
       expect(instance.options.gutterWidth).toBe(0);
       expect(instance.options.delimiter).toBeNull();
       expect(instance.options.initialSort).toBeNull();
-      expect(instance.options.throttleTime).toBe(300);
       expect(instance.id).toBe('shuffle_0');
 
       expect(instance.isInitialized).toBe(true);
@@ -227,7 +238,7 @@ describe('shuffle', () => {
     it('can initialize sorted', () => {
       const sortObj = {
         by(element) {
-          return parseInt(element.getAttribute('data-age'), 10);
+          return parseInt(element.dataset.age, 10);
         },
       };
 
@@ -326,11 +337,11 @@ describe('shuffle', () => {
       expect(
         instance._doesPassFilter((element) => {
           expect(element).toBeDefined();
-          return element.getAttribute('data-age') === '21';
+          return element.dataset.age === '21';
         }, first),
       ).toBe(true);
 
-      expect(instance._doesPassFilter((element) => element.getAttribute('data-age') === '22', first)).toBe(false);
+      expect(instance._doesPassFilter((element) => element.dataset.age === '22', first)).toBe(false);
 
       // Arrays.
       expect(instance._doesPassFilter(['design'], first)).toBe(true);
@@ -438,17 +449,44 @@ describe('shuffle', () => {
       instance.enable(false);
 
       instance.destroy();
-      instance._onResize();
+      instance._handleResizeCallback([
+        {
+          contentRect: {
+            width: instance.containerWidth + 1,
+          },
+        },
+      ]);
       expect(update.called).toBe(false);
     });
 
-    it('should still update when the container is the same size', () => {
+    it('should not update when the container is the same size', () => {
       instance = new Shuffle(fixture);
       const update = sinon.spy(instance, 'update');
 
-      instance._onResize();
+      instance._handleResizeCallback([
+        {
+          contentRect: {
+            width: instance.containerWidth,
+          },
+        },
+      ]);
 
-      expect(update.called).toBe(true);
+      expect(update.called).toBe(false);
+    });
+
+    it('should update when the container is a different', async () => {
+      instance = new Shuffle(fixture);
+      const update = sinon.spy(instance, 'update');
+
+      instance._handleResizeCallback([
+        {
+          contentRect: {
+            width: instance.containerWidth + 1,
+          },
+        },
+      ]);
+
+      await waitForTrue(() => update.called);
     });
 
     describe('removing elements', () => {
@@ -623,15 +661,6 @@ describe('shuffle', () => {
 
       expect(instance.visibleItems).toBe(3);
     });
-
-    it('can use the old misspelled delimiter option', () => {
-      instance = new Shuffle(fixture, {
-        delimeter: ',',
-        group: 'design',
-      });
-
-      expect(instance.visibleItems).toBe(3);
-    });
   });
 
   describe('Custom shuffle item styles', () => {
@@ -702,8 +731,8 @@ describe('shuffle', () => {
 
     it('can sort by a function', () => {
       clone.sort((a, b) => {
-        const age1 = parseInt(a.element.getAttribute('data-age'), 10);
-        const age2 = parseInt(b.element.getAttribute('data-age'), 10);
+        const age1 = parseInt(a.element.dataset.age, 10);
+        const age2 = parseInt(b.element.dataset.age, 10);
         return age1 - age2;
       });
 
@@ -711,7 +740,7 @@ describe('shuffle', () => {
         by(element) {
           expect(element).toBeDefined();
           expect(element.nodeType).toBe(1);
-          return parseInt(element.getAttribute('data-age'), 10);
+          return parseInt(element.dataset.age, 10);
         },
       });
 
@@ -721,8 +750,8 @@ describe('shuffle', () => {
     it('can sort by a function and reverse it', () => {
       clone
         .sort((a, b) => {
-          const age1 = parseInt(a.element.getAttribute('data-age'), 10);
-          const age2 = parseInt(b.element.getAttribute('data-age'), 10);
+          const age1 = parseInt(a.element.dataset.age, 10);
+          const age2 = parseInt(b.element.dataset.age, 10);
           return age1 - age2;
         })
         .reverse();
@@ -730,7 +759,7 @@ describe('shuffle', () => {
       const result = Shuffle.__sorter(items, {
         reverse: true,
         by(element) {
-          return parseInt(element.getAttribute('data-age'), 10);
+          return parseInt(element.dataset.age, 10);
         },
       });
 
@@ -755,7 +784,7 @@ describe('shuffle', () => {
       expect(
         Shuffle.__sorter(items, {
           by(element) {
-            const age = parseInt(element.getAttribute('data-age'), 10);
+            const age = parseInt(element.dataset.age, 10);
             if (age === 50) {
               return 'sortFirst';
             } else {
@@ -772,7 +801,7 @@ describe('shuffle', () => {
       expect(
         Shuffle.__sorter(items, {
           by(element) {
-            const age = parseInt(element.getAttribute('data-age'), 10);
+            const age = parseInt(element.dataset.age, 10);
             if (age === 27) {
               return 'sortLast';
             } else {
@@ -800,8 +829,8 @@ describe('shuffle', () => {
         Shuffle.__sorter(items, {
           compare(a, b) {
             // Sort by first group, then by age.
-            const groupA = JSON.parse(a.element.getAttribute('data-groups'))[0];
-            const groupB = JSON.parse(b.element.getAttribute('data-groups'))[0];
+            const groupA = JSON.parse(a.element.dataset.groups)[0];
+            const groupB = JSON.parse(b.element.dataset.groups)[0];
             if (groupA > groupB) {
               return 1;
             }
@@ -810,8 +839,8 @@ describe('shuffle', () => {
             }
 
             // At this point, the group strings are the exact same. Test the age.
-            const ageA = parseInt(a.element.getAttribute('data-age'), 10);
-            const ageB = parseInt(b.element.getAttribute('data-age'), 10);
+            const ageA = parseInt(a.element.dataset.age, 10);
+            const ageB = parseInt(b.element.dataset.age, 10);
             return ageA - ageB;
           },
         }),

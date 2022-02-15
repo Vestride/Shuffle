@@ -1,15 +1,21 @@
-.text-center { text-align: center; }
+.text-center {
+  text-align: center;
+}
 
 .ib {
   display: inline-block;
 }
 
 @include breakpoint(sm, true) {
-  .hidden\@xs { display: none; }
+  .hidden\@xs {
+    display: none;
+  }
 }
 
 @include breakpoint(sm) {
-  .visible\@xs { display: none; }
+  .visible\@xs {
+    display: none;
+  }
 }
 
 // Hide from both screenreaders and browsers.
@@ -32,7 +38,7 @@
 
 .clearfix,
 .clearfix::after {
-  content: " ";
+  content: ' ';
   display: table;
   clear: both;
 }
@@ -45,8 +51,12 @@
   float: right;
 }
 
-.full-width { width: 100%; }
-.full-height { height: 100%; }
+.full-width {
+  width: 100%;
+}
+.full-height {
+  height: 100%;
+}
 
 .hide-text {
   font: 0/0 a;

@@ -1,10 +1,10 @@
-source:      .
+source: .
 destination: _site
 plugins_dir: _plugins
 layouts_dir: _layouts
-data_dir:    _data
-include:     ["dist"]
-exclude:     ["./_scss"]
+data_dir: _data
+include: ['dist']
+exclude: ['./_scss']
 
 permalink: /:title
 

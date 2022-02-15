@@ -12,19 +12,19 @@ Without a reduced test case, your issue may be closed.
 
 ## Releasing a new version
 
-* Update `changelog.html`.
-* Run tests.
-* Commit changes.
-* `npm version major|minor|patch`.
-* `npm publish`
-* `git push && git push --tags`
-* Create a [new release](https://github.com/Vestride/Shuffle/releases/new) on GitHub.
+- Update `changelog.html`.
+- Run tests.
+- Commit changes.
+- `npm version major|minor|patch`.
+- `npm publish`
+- `git push && git push --tags`
+- Create a [new release](https://github.com/Vestride/Shuffle/releases/new) on GitHub.
 
 ## Running locally
 
 This project uses [Jekyll](https://jekyllrb.com/).
 
-* Head over to [their quickstart guide](https://jekyllrb.com/docs/quickstart/) to setup jekyll.
-* Install npm dependencies `npm install`.
-* Run `npm run watch` to rebuild, start the jekyll server, and watch for changes.
-* go to `http://localhost:4000` to see it.
+- Head over to [their quickstart guide](https://jekyllrb.com/docs/quickstart/) to setup jekyll.
+- Install npm dependencies `npm install`.
+- Run `npm run watch` to rebuild, start the jekyll server, and watch for changes.
+- go to `http://localhost:4000` to see it.

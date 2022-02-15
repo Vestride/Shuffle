@@ -1,4 +1,4 @@
-// Type definitions for Shuffle 5.2.2
+// Type definitions for Shuffle 6.0.0
 // Project: https://github.com/Vestride/Shuffle
 // Definitions by: Glen Cheney <https://github.com/Vestride>
 
@@ -28,12 +28,9 @@ export interface ShuffleOptions {
   columnWidth?: number;
 
   /**
-   * If your group is not json, and is comma delimeted, you could set delimiter to ','.
+   * If your group is not json, and is comma delimited, you could set delimiter to ','.
    */
   delimiter?: string;
-
-  /** @deprecated Misspelling that will be removed in v6 */
-  delimeter?: string;
 
   /**
    * CSS easing function to use.
@@ -105,19 +102,9 @@ export interface ShuffleOptions {
   staggerAmountMax?: number;
 
   /**
-   * How often shuffle can be called on resize (in milliseconds).
-   */
-  throttleTime?: number;
-
-  /**
    * Whether to use transforms or absolute positioning.
    */
   useTransforms?: boolean;
-
-  /**
-   * By default, shuffle will throttle resize events. This can be changed or removed.
-   */
-  throttle?(func: Function, wait: number): Function;
 }
 
 export interface SortOptions {
@@ -238,9 +225,12 @@ declare class Shuffle extends TinyEmitter {
 
   /**
    * Reposition everything.
-   * @param {boolean} [isOnlyLayout=false] If true, column and gutter widths won't be recalculated.
+   * @param {object} options options object
+   * @param {boolean} [options.recalculateSizes=true] Whether to calculate column, gutter, and container widths again.
+   * @param {boolean} [options.force=false] By default, `update` does nothing if the instance is disabled. Setting this
+   *    to true forces the update to happen regardless.
    */
-  update(isOnlyLayout?: boolean): void;
+  update(options?: { recalculateSizes?: boolean; force?: boolean }): void;
 
   /**
    * Returns styles which will be applied to the an item for a transition.

@@ -113,20 +113,20 @@ p {
   text-decoration: underline;
 }
 
-code:not([class*="language"]) {
+code:not([class*='language']) {
   padding: 0;
   padding-top: 0.2em;
   padding-bottom: 0.2em;
   margin: 0;
   font-size: 85%;
   color: $gray10;
-  background-color: rgba(27,31,35,0.05);
+  background-color: rgba(27, 31, 35, 0.05);
   border-radius: 3px;
-  font-family: Menlo, Consolas, "Liberation Mono", Courier, monospace;
+  font-family: Menlo, Consolas, 'Liberation Mono', Courier, monospace;
 }
 
-code:not([class*="language"])::before,
-code:not([class*="language"])::after {
-  content: "\00a0";
-  letter-spacing: -.2em;
+code:not([class*='language'])::before,
+code:not([class*='language'])::after {
+  content: '\00a0';
+  letter-spacing: -0.2em;
 }

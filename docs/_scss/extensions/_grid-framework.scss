@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 $grid-gutter-width: 16px;
 $grid-columns: 12;
 $grid-container: 'container';
@@ -8,34 +10,23 @@ $grid-ratio-name: 'aspect';
 $grid-ratio-inner-name: 'aspect__inner';
 $grid-container-padding: (
   xs: 3.5%,
-  sm: 7%
+  sm: 7%,
 );
 $grid-max-width--desktop: 1200px;
-$grid-ratios: (
-  (16, 9),
-  (9, 16),
-  (4, 3),
-  (3, 4),
-  (3, 2),
-  (3, 1),
-  (2, 3),
-  (2, 1),
-  (1, 2),
-  (1, 1)
-);
+$grid-ratios: ((16, 9), (9, 16), (4, 3), (3, 4), (3, 2), (3, 1), (2, 3), (2, 1), (1, 2), (1, 1));
 
 // 7% => 0.07
-$_grid-padding-pct: map-get($grid-container-padding, "sm") / 100%;
+$_grid-padding-pct: math.div(map-get($grid-container-padding, 'sm'), 100%);
 // 0.07 => 0.14 => 0.86
 $_grid-padding-value: 1 - $_grid-padding-pct * 2;
 
 // Size of the window when the grid row has hit max-width.
-$_viewport-at-max-grid-width: $grid-max-width--desktop / $_grid-padding-value;
+$_viewport-at-max-grid-width: math.div($grid-max-width--desktop, $_grid-padding-value);
 $viewport-at-max-grid-width: round($_viewport-at-max-grid-width) + 0px;
 $padding-at-max-grid-width: round($_viewport-at-max-grid-width * $_grid-padding-pct) + 0px;
 
 @function get-column-selector($number, $breakpoint) {
-  @return ".#{$grid-prefix}-#{$number}\\@#{$breakpoint}";
+  @return '.#{$grid-prefix}-#{$number}\\@#{$breakpoint}';
 }
 
 @function get-grid-breakpoint-selectors($breakpoint) {
@@ -56,7 +47,6 @@ $padding-at-max-grid-width: round($_viewport-at-max-grid-width * $_grid-padding-
   @return $selectors;
 }
 
-
 @mixin make-grid-columns() {
   $selectors: get-all-grid-breakpoint-selectors();
 
@@ -66,11 +56,10 @@ $padding-at-max-grid-width: round($_viewport-at-max-grid-width * $_grid-padding-
     // Prevent columns from collapsing when empty
     min-height: 1px;
     // Inner gutter via padding
-    padding-left:  ($grid-gutter-width / 2);
-    padding-right: ($grid-gutter-width / 2);
+    padding-left: ($grid-gutter-width * 0.5);
+    padding-right: ($grid-gutter-width * 0.5);
   }
 }
-
 
 @mixin float-grid-columns($breakpoint) {
   $selectors: get-grid-breakpoint-selectors($breakpoint);
@@ -80,21 +69,20 @@ $padding-at-max-grid-width: round($_viewport-at-max-grid-width * $_grid-padding-
   }
 }
 
-
-@mixin grid-ratios($breakpoint: "") {
+@mixin grid-ratios($breakpoint: '') {
   // If there is a grid breakpoint class here, prepend a @.
   // e.g. "@sm" or "" when there isn't a class.
-  @if $breakpoint != "" {
-    $breakpoint: "\\@" + $breakpoint;
+  @if $breakpoint != '' {
+    $breakpoint: '\\@'+ $breakpoint;
   }
 
   // Note @extend isn't used because it cannot be used within @media directives.
   @each $list in $grid-ratios {
     $top: nth($list, 1);
     $bottom: nth($list, 2);
-    $name: "#{$top}x#{$bottom}";
+    $name: '#{$top}x#{$bottom}';
     .#{$grid-ratio-name}--#{$name}#{$breakpoint} {
-      padding-bottom: percentage($bottom / $top);
+      padding-bottom: percentage(math.div($bottom, $top));
     }
   }
 
@@ -109,34 +97,34 @@ $padding-at-max-grid-width: round($_viewport-at-max-grid-width * $_grid-padding-
 }
 
 @mixin calc-grid-column($index, $columns, $breakpoint, $type) {
-  @if ($type == "width") and ($index > 0) {
+  @if ($type == 'width') and ($index > 0) {
     .#{$grid-prefix}-#{$index}\@#{$breakpoint} {
-      width: percentage(($index / $columns));
+      width: percentage(math.div($index, $columns));
     }
   }
-  @if ($type == "push") and ($index > 0) {
+  @if ($type == 'push') and ($index > 0) {
     .#{$grid-prefix}-push-#{$index}\@#{$breakpoint} {
-      left: percentage(($index / $columns));
+      left: percentage(math.div($index, $columns));
     }
   }
-  @if ($type == "push") and ($index == 0) {
+  @if ($type == 'push') and ($index == 0) {
     .#{$grid-prefix}-push-0\@#{$breakpoint} {
       left: auto;
     }
   }
-  @if ($type == "pull") and ($index > 0) {
+  @if ($type == 'pull') and ($index > 0) {
     .#{$grid-prefix}-pull-#{$index}\@#{$breakpoint} {
-      right: percentage(($index / $columns));
+      right: percentage(math.div($index, $columns));
     }
   }
-  @if ($type == "pull") and ($index == 0) {
+  @if ($type == 'pull') and ($index == 0) {
     .#{$grid-prefix}-pull-0\@#{$breakpoint} {
       right: auto;
     }
   }
-  @if ($type == "offset") {
+  @if ($type == 'offset') {
     .#{$grid-prefix}-offset-#{$index}\@#{$breakpoint} {
-      margin-left: percentage(($index / $columns));
+      margin-left: percentage(math.div($index, $columns));
     }
   }
 }
@@ -152,8 +140,8 @@ $padding-at-max-grid-width: round($_viewport-at-max-grid-width * $_grid-padding-
   @include float-grid-columns($breakpoint);
   @include grid-ratios($breakpoint);
 
-  @include loop-grid-columns($columns, $breakpoint, "width");
-  @include loop-grid-columns($columns, $breakpoint, "pull");
-  @include loop-grid-columns($columns, $breakpoint, "push");
-  @include loop-grid-columns($columns, $breakpoint, "offset");
+  @include loop-grid-columns($columns, $breakpoint, 'width');
+  @include loop-grid-columns($columns, $breakpoint, 'pull');
+  @include loop-grid-columns($columns, $breakpoint, 'push');
+  @include loop-grid-columns($columns, $breakpoint, 'offset');
 }
