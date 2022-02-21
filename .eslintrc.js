@@ -1,16 +1,15 @@
 module.exports = {
-  extends: ['airbnb-base', 'prettier'],
+  // extends: ['airbnb-base', 'prettier'],
+  extends: ['airbnb', 'eslint:recommended', 'plugin:react/recommended', 'prettier'],
+  plugins: ['react'],
   env: {
-    node: true,
+    // node: true,
     browser: true,
   },
   rules: {
     // We like _private methods and variables. It's easier to refactor code
     // when you know other components shouldn't be using private methods + props.
     'no-underscore-dangle': 'off',
-
-    // Prefer template is nice, but tedious for things like: width + 'px'
-    'prefer-template': 'off',
 
     // Allow + and - in the same line.
     'no-mixed-operators': 'off',
@@ -27,6 +26,7 @@ module.exports = {
     // Allow reassigning properties of objects.
     'no-param-reassign': ['error', { props: false }],
 
-    'import/no-extraneous-dependencies': ['error', { devDependencies: ['gulpfile.js', 'gulp/**/*.js'] }],
+    'react/prop-types': 'off',
+    'react/jsx-props-no-spreading': 'warn',
   },
 };
