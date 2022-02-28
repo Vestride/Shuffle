@@ -15,6 +15,7 @@ const config = {
   favicon: 'img/favicon.png',
   organizationName: 'Vestride',
   projectName: 'Shuffle',
+  trailingSlash: false,
 
   presets: [
     [
@@ -23,16 +24,13 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
-          editUrl: 'https://github.com/Vestride/Shuffle/tree/main/packages/create-docusaurus/templates/shared/',
-        },
-        blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          editUrl: 'https://github.com/Vestride/Shuffle/tree/main/packages/create-docusaurus/templates/shared/',
+          editUrl: 'https://github.com/Vestride/Shuffle/tree/main/apps/website/docs/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
+        },
+        googleAnalytics: {
+          trackingID: 'UA-39355642-1',
         },
       }),
     ],
@@ -61,7 +59,11 @@ const config = {
             position: 'left',
             label: 'Docs',
           },
-          { to: '/blog', label: 'Blog', position: 'left' },
+          {
+            href: 'https://www.buymeacoffee.com/glen.cheney',
+            label: 'Buy me a coffee',
+            position: 'right',
+          },
           {
             href: 'https://github.com/Vestride/Shuffle',
             label: 'GitHub',
@@ -118,6 +120,7 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
+      image: 'img/shuffle-open-graph.png',
     }),
 };
 

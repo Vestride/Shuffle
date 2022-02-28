@@ -23,9 +23,7 @@ The easiest way to use Shuffle is to add a `data-groups` attribute to each of th
 <!-- highlight-next-line -->
 <figure class="picture-item" data-groups='["nature","city"]'>
   <img src="central-park.jpg" alt="Aerial view of Central Park" />
-  <figcaption>
-      Looking down on central park and the surrounding builds from the Rockefellar Center
-  </figcaption>
+  <figcaption>Looking down on central park and the surrounding builds from the Rockefellar Center</figcaption>
 </figure>
 ```
 
@@ -35,9 +33,7 @@ Alternatively, you can set the `delimiter` option to a comma (`delimiter: ','`) 
 <!-- highlight-next-line -->
 <figure class="picture-item" data-groups="nature,city">
   <img src="central-park.jpg" alt="Aerial view of Central Park" />
-  <figcaption>
-      Looking down on central park and the surrounding builds from the Rockefellar Center
-  </figcaption>
+  <figcaption>Looking down on central park and the surrounding builds from the Rockefellar Center</figcaption>
 </figure>
 ```
 
@@ -59,7 +55,10 @@ If you were using Bootstrap v4 grids, you could use the `col-*` classes like thi
   </figure>
   <figure class="col-3 picture-item" data-groups='["nature","city"]'>
     <div class="aspect">
-      <img src="central-park.jpg" alt="Looking down on central park and the surrounding builds from the Rockefellar Center" />
+      <img
+        src="central-park.jpg"
+        alt="Looking down on central park and the surrounding builds from the Rockefellar Center"
+      />
     </div>
     <figcaption>Central Park</figcaption>
   </figure>
@@ -72,7 +71,7 @@ If you were using Bootstrap v4 grids, you could use the `col-*` classes like thi
 Once the markup is ready, initialize Shuffle by giving it the container element and an optional options object.
 
 ```js
-const Shuffle = window.Shuffle;
+const Shuffle = window.Shuffle; // Assumes you're using the UMD version of Shuffle (for example, from unpkg.com).
 const element = document.getElementById('photo-gallery');
 const sizer = element.querySelector('.js-shuffle-sizer');
 

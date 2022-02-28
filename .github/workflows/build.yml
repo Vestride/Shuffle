@@ -1,6 +1,6 @@
 name: build
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   build:
@@ -16,10 +16,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
-        run: npm install
+        run: yarn install
       - name: Lint files
-        run: npm run lint
+        run: yarn run lint
       - name: Build bundle
-        run: npm run compile
+        run: yarn run compile
       - name: Run unit tests
-        run: npm test
+        run: yarn test
