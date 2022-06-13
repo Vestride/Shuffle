@@ -65,7 +65,7 @@
     "gulp-postcss": "^9.0.1",
     "gulp-sass": "^5.1.0",
     "gulp-shell": "^0.8.0",
-    "jest": "^27.4.7",
+    "jest": "^28.1.1",
     "postcss": "^8.4.5",
     "prettier": "^2.5.1",
     "rollup": "^2.66.1",
