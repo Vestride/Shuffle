@@ -41,16 +41,14 @@ const config = {
     ({
       colorMode: {
         respectPrefersColorScheme: true,
-        switchConfig: {
-          darkIcon: '🌕',
-          lightIcon: '️☀️',
-        },
       },
       navbar: {
         title: 'Shuffle.js',
         logo: {
           alt: 'Shuffle.js Logo',
           src: 'img/favicon.svg',
+          width: 24,
+          height: 24,
         },
         items: [
           {
@@ -78,8 +76,12 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Tutorial',
+                label: 'Installation',
                 to: '/docs/install',
+              },
+              {
+                label: 'FAQs',
+                to: '/docs/faqs',
               },
             ],
           },
@@ -87,16 +89,12 @@ const config = {
             title: 'Community',
             items: [
               {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-              },
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
-              },
-              {
                 label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
+                href: 'https://twitter.com/Vestride',
+              },
+              {
+                label: 'Stack Overflow',
+                href: 'https://stackoverflow.com/search?q=shuffle+js',
               },
             ],
           },
@@ -104,17 +102,17 @@ const config = {
             title: 'More',
             items: [
               {
-                label: 'Blog',
-                to: '/blog',
-              },
-              {
                 label: 'GitHub',
                 href: 'https://github.com/Vestride/Shuffle',
+              },
+              {
+                label: 'CodePen template',
+                href: 'http://codepen.io/pen?template=qrjOpX',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} ShuffleJS. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Glen Cheney. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,

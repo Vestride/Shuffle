@@ -1,48 +1,51 @@
 import React from 'react';
 import clsx from 'clsx';
-import styles from './HomepageFeatures.module.css';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useColorMode } from '@docusaurus/theme-common';
 
-const FeatureList = [
+import styles from './HomepageFeatures.module.css';
+import responsiveSvg from '../../static/img/undraw-responsive-design.svg';
+import findSvg from '../../static/img/undraw-find-things.svg';
+import browsersSvg from '../../static/img/undraw-browsers.svg';
+import responsiveSvgDark from '../../static/img/undraw-responsive-design-dark.svg';
+import findSvgDark from '../../static/img/undraw-find-things-dark.svg';
+import browsersSvgDark from '../../static/img/undraw-browsers-dark.svg';
+
+const features = [
   {
-    title: 'Easy to Use',
-    // eslint-disable-next-line global-require
-    Svg: require('../../static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Responsive design',
+    Svg: responsiveSvg,
+    SvgDark: responsiveSvgDark,
     description: (
-      <>
-        Docusaurus was designed from the ground up to be easily installed and used to get your website up and running
-        quickly.
-      </>
+      <>Shuffle was built to make responsive design easy. Quickly update items in the grid by adding a class.</>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    // eslint-disable-next-line global-require
-    Svg: require('../../static/img/undraw_docusaurus_tree.svg').default,
-    description: (
-      <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go ahead and move your docs into the{' '}
-        <code>docs</code> directory.
-      </>
-    ),
+    title: 'Powerful filters',
+    Svg: findSvg,
+    SvgDark: findSvgDark,
+    description: <>Let your users find what they&rsquo;re looking for with groups and custom filters.</>,
   },
   {
-    title: 'Powered by React',
-    // eslint-disable-next-line global-require
-    Svg: require('../../static/img/undraw_docusaurus_react.svg').default,
+    title: 'Smooth animations',
+    Svg: browsersSvg,
+    SvgDark: browsersSvgDark,
     description: (
-      <>
-        Extend or customize your website layout by reusing React. Docusaurus can be extended while reusing the same
-        header and footer.
-      </>
+      <>Transitions are all handled by the CSS, which lets the browser optimize them for the user&rsquo;s device.</>
     ),
   },
 ];
 
-function Feature({ Svg, title, description }) {
+function Feature({ Svg, SvgDark, title, description }) {
+  const { colorMode } = useColorMode();
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} alt={title} />
+        {colorMode === 'dark' ? (
+          <SvgDark className={styles.featureSvg} alt={title} />
+        ) : (
+          <Svg className={styles.featureSvg} alt={title} />
+        )}
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>
@@ -54,12 +57,12 @@ function Feature({ Svg, title, description }) {
 
 export default function HomepageFeatures() {
   return (
-    <section className={styles.features}>
+    <section className={clsx(styles.features, 'padding-vert--lg')}>
       <div className="container">
         <div className="row">
-          {FeatureList.map((props, idx) => (
-            // eslint-disable-next-line react/no-array-index-key, react/jsx-props-no-spreading
-            <Feature key={idx} {...props} />
+          {features.map((props) => (
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            <Feature key={props.title} {...props} />
           ))}
         </div>
       </div>

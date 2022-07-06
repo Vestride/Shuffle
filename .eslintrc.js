@@ -1,9 +1,7 @@
 module.exports = {
-  // extends: ['airbnb-base', 'prettier'],
   extends: ['airbnb', 'eslint:recommended', 'plugin:react/recommended', 'prettier'],
   plugins: ['react'],
   env: {
-    // node: true,
     browser: true,
   },
   rules: {

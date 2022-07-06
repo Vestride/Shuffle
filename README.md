@@ -32,7 +32,6 @@ This project was inspired by [Isotope](http://isotope.metafizzy.co/) and [Packer
 [dependabot-url]: https://docs.github.com/en/code-security/supply-chain-security/managing-vulnerabilities-in-your-projects-dependencies/configuring-dependabot-security-updates
 [dependabot-img]: https://img.shields.io/badge/Dependabot-enabled-blue.svg
 
-
 # Turborepo starter
 
 This is an official Yarn v1 starter turborepo.

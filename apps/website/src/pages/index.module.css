@@ -21,3 +21,45 @@
   align-items: center;
   justify-content: center;
 }
+
+.rect {
+  transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  stroke: #1B1B1D;
+  stroke-width: 2px;
+}
+
+@media (-moz-touch-enabled:0),(pointer: fine) {
+  .logo:hover .rect1 {
+    transform: translate(20px, 10px);
+  }
+
+  .logo:hover .rect2 {
+    transform: translate(0, 20px);
+    transition-delay: calc(1 * 10ms);
+  }
+
+  .logo:hover .rect3 {
+    transform: translate(-20px, 6px);
+    transition-delay: calc(2 * 10ms);
+  }
+
+  .logo:hover .rect4 {
+    transform: translate(10px, -10px);
+    transition-delay: calc(3 * 10ms);
+  }
+
+  .logo:hover .rect5 {
+    transform: translate(-10px, 10px);
+    transition-delay: calc(4 * 10ms);
+  }
+
+  .logo:hover .rect6 {
+    transform: translate(-20px, -14px);
+    transition-delay: calc(5 * 10ms);
+  }
+
+  .logo:hover .rect7 {
+    transform: translate(0, -20px);
+    transition-delay: calc(6 * 10ms);
+  }
+}
