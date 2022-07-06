@@ -1,7 +1,5 @@
 import React from 'react';
 import clsx from 'clsx';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { useColorMode } from '@docusaurus/theme-common';
 
 import styles from './HomepageFeatures.module.css';
 import responsiveSvg from '../../static/img/undraw-responsive-design.svg';
@@ -37,15 +35,11 @@ const features = [
 ];
 
 function Feature({ Svg, SvgDark, title, description }) {
-  const { colorMode } = useColorMode();
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        {colorMode === 'dark' ? (
-          <SvgDark className={styles.featureSvg} alt={title} />
-        ) : (
-          <Svg className={styles.featureSvg} alt={title} />
-        )}
+        <SvgDark className={clsx(styles.featureSvg, styles.featureSvgDark)} />
+        <Svg className={clsx(styles.featureSvg, styles.featureSvgLight)} />
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>
