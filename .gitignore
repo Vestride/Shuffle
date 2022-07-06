@@ -1,16 +1,24 @@
+# dependencies
 node_modules
-coverage
-test/types/build
-.DS_Store
-_site
-.sass-cache
-.jekyll-cache
-.jekyll-metadata
-*.scssc
-/dist
-*.esm.js
-*.esm.js.map
 
-# https://github.com/sindresorhus/ama/issues/479#issuecomment-310661514
-package-lock.json
-yarn.lock
+dist
+
+# testing
+coverage
+
+# next.js
+.next/
+out/
+build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# turbo
+.turbo

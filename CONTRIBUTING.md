@@ -12,9 +12,10 @@ Without a reduced test case, your issue may be closed.
 
 ## Releasing a new version
 
-- Update `changelog.html`.
+- Update `changelog.md`.
 - Run tests.
 - Commit changes.
+- `cd packages/shuffle`
 - `npm version major|minor|patch`.
 - `npm publish`
 - `git push && git push --tags`
@@ -22,9 +23,7 @@ Without a reduced test case, your issue may be closed.
 
 ## Running locally
 
-This project uses [Jekyll](https://jekyllrb.com/).
-
-- Head over to [their quickstart guide](https://jekyllrb.com/docs/quickstart/) to setup jekyll.
-- Install npm dependencies `npm install`.
-- Run `npm run watch` to rebuild, start the jekyll server, and watch for changes.
-- go to `http://localhost:4000` to see it.
+- Clone the project.
+- Install dependencies with `yarn`.
+- Run `yarn watch` to rebuild, start the server, and watch for changes.
+- go to `http://localhost:3000/Shuffle/` to see it.

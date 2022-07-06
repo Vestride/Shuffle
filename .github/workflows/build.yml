@@ -1,13 +1,13 @@
 name: build
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x, 14.x]
+        node-version: [16.x]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -16,10 +16,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
-        run: npm install
+        run: yarn install
       - name: Lint files
-        run: npm run lint
-      - name: Build bundle
-        run: npm run compile
+        run: yarn run lint
+      - name: Build library and website
+        run: yarn run build
       - name: Run unit tests
-        run: npm test
+        run: yarn test

@@ -1,77 +1,42 @@
 {
-  "name": "shufflejs",
-  "version": "6.0.0",
-  "description": "Categorize, sort, and filter a responsive grid of items",
-  "keywords": [
-    "gallery",
-    "shuffle",
-    "layout",
-    "masonry",
-    "filter",
-    "sort",
-    "responsive",
-    "grid",
-    "mobile",
-    "tiles"
+  "name": "shuffle-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
   ],
-  "main": "dist/shuffle.js",
-  "module": "dist/shuffle.esm.js",
-  "moduleSource": "src/shuffle.js",
-  "types": "index.d.ts",
   "scripts": {
-    "compile": "gulp scripts",
-    "css": "gulp css",
-    "gulp": "gulp",
-    "build": "npm run gulp && npm run css",
-    "serve": "gulp jekyll",
-    "test-all": "npm run lint && npm test && npm run type-check",
-    "test": "jest",
-    "lint": "eslint src",
-    "type-check": "tsc --project ./test/types",
-    "watch": "gulp watch"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/Vestride/Shuffle.git"
-  },
-  "author": "Glen Cheney <cheney.glen@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Vestride/Shuffle/issues"
-  },
-  "homepage": "https://github.com/Vestride/Shuffle",
-  "files": [
-    "dist",
-    "src",
-    "index.d.ts"
-  ],
-  "dependencies": {
-    "array-parallel": "^0.1.3",
-    "tiny-emitter": "^2.1.0"
+    "build": "turbo run build",
+    "dev": "turbo run watch --parallel",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "@babel/core": "^7.16.12",
-    "@babel/preset-env": "^7.16.11",
-    "@rollup/plugin-babel": "^5.3.0",
+    "@babel/preset-env": "^7.18.6",
+    "@babel/core": "^7.18.6",
+    "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "^22.0.1",
-    "@rollup/plugin-node-resolve": "^13.1.3",
-    "autoprefixer": "^10.4.2",
-    "cssnano": "^5.0.16",
-    "eslint": "^8.7.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.25.4",
-    "gulp": "^4.0.2",
-    "gulp-postcss": "^9.0.1",
-    "gulp-sass": "^5.1.0",
-    "gulp-shell": "^0.8.0",
-    "jest": "^27.4.7",
-    "postcss": "^8.4.5",
-    "prettier": "^2.5.1",
-    "rollup": "^2.66.1",
-    "rollup-plugin-terser": "^7.0.0",
-    "sass": "^1.49.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-jsx-a11y": "^6.6.0",
+    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "jest": "^28.1.2",
+    "prettier": "^2.7.1",
+    "rollup": "^2.x.x",
+    "rollup-plugin-terser": "^7.0.2",
     "sinon": "^14.0.0",
-    "typescript": "^4.5.5"
-  }
+    "turbo": "latest",
+    "typescript": "^4.7.x"
+  },
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=16.15.1"
+  },
+  "packageManager": "yarn@1.22.19"
 }

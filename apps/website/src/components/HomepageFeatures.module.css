@@ -1,0 +1,19 @@
+.features {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.featureSvg {
+  height: 200px;
+  width: 200px;
+}
+
+.featureSvgDark,
+[data-theme="dark"] .featureSvgLight {
+  display: none;
+}
+
+[data-theme="dark"] .featureSvgDark {
+  display: inline-block;
+}
