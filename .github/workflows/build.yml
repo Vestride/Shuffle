@@ -19,7 +19,7 @@ jobs:
         run: yarn install
       - name: Lint files
         run: yarn run lint
-      - name: Build bundle
-        run: yarn run compile
+      - name: Build library and website
+        run: yarn run build
       - name: Run unit tests
         run: yarn test
