@@ -1,5 +1,5 @@
 ---
-sidebar_position: 9
+sidebar_position: 10
 ---
 
 # API
@@ -16,6 +16,10 @@ Filters all the shuffle items and then sorts them.
 ## `sort(sortObject?)`
 
 Sorts the currently filtered shuffle items.
+
+Calling sort with an empty object will reset the elements to DOM order.
+
+See the [SortOptions](./configuration.md#sorting-object) for the available properties.
 
 ## `update(options?)`
 

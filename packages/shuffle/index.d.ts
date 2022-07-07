@@ -22,15 +22,15 @@ export interface ShuffleOptions {
   columnThreshold?: number;
 
   /**
-   * A static number or function that returns a number which tells the plugin
+   * A static number or function that returns a number which determines
    * how wide the columns are (in pixels).
    */
-  columnWidth?: number;
+  columnWidth?: number | ((conatinerWidth: number) => number);
 
   /**
    * If your group is not json, and is comma delimited, you could set delimiter to ','.
    */
-  delimiter?: string;
+  delimiter?: string | null;
 
   /**
    * CSS easing function to use.
@@ -50,16 +50,16 @@ export interface ShuffleOptions {
   group?: string;
 
   /**
-   * A static number or function that tells the plugin how wide the gutters
+   * A static number or function that determines how wide the gutters
    * between columns are (in pixels).
    */
-  gutterWidth?: number;
+  gutterWidth?: number | ((conatinerWidth: number) => number);
 
   /**
-   * Shuffle can be isInitialized with a sort object. It is the same object
+   * Shuffle can be initialized with a sort object. It is the same object
    * given to the sort method.
    */
-  initialSort?: SortOptions;
+  initialSort?: SortOptions | null;
 
   /**
    * Whether to center grid items in the row with the leftover space.
@@ -112,16 +112,15 @@ export interface SortOptions {
   reverse?: boolean;
 
   // Sorting function which gives you the element each shuffle item is using by default.
-  by?: (a: Shuffle.ShuffleItem['element'], b: Shuffle.ShuffleItem['element']) => any;
+  by?: ((element: Shuffle.ShuffleItem['element']) => any) | null;
 
   // Custom sort function.
-  compare?: (a: Shuffle.ShuffleItem, b: Shuffle.ShuffleItem) => number;
+  compare?: ((a: Shuffle.ShuffleItem, b: Shuffle.ShuffleItem) => number) | null;
 
   // If true, this will skip the sorting and return a randomized order in the array.
   randomize?: boolean;
 
-  // Determines which property of each item in the array is passed to the
-  // sorting method. Only used if you use the `by` function.
+  // Determines which property of the `ShuffleItem` instance is passed to the `by` function.
   key?: keyof Shuffle.ShuffleItem;
 }
 

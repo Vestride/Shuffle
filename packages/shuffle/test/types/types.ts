@@ -38,7 +38,7 @@ shuffle.filter(function filterEachItem(element, shuffle) {
 const sortOptions: SortOptions = {
   randomize: true,
   reverse: false,
-  by: (element: Shuffle.ShuffleItem['element']) => element.dataset.reviews,
+  by: (element) => element.dataset.reviews,
   compare(a: Shuffle.ShuffleItem, b: Shuffle.ShuffleItem) {
     return 0;
   },
