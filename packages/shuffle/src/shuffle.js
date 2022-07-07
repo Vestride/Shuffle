@@ -1172,7 +1172,7 @@ Shuffle.options = {
   // jump between values.
   columnThreshold: 0.01,
 
-  // Shuffle can be isInitialized with a sort object. It is the same object
+  // Shuffle can be initialized with a sort object. It is the same object
   // given to the sort method.
   initialSort: null,
 
