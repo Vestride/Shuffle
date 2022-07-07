@@ -13,7 +13,7 @@ Without a reduced test case, your issue may be closed.
 ## Releasing a new version
 
 - Update `changelog.md`.
-- Run tests.
+- Run tests (`yarn test` from the root).
 - Commit changes.
 - `cd packages/shuffle`
 - `npm version major|minor|patch`.
