@@ -24,12 +24,12 @@
   "types": "./index.d.ts",
   "sideEffects": false,
   "scripts": {
-    "build": "rollup --config ./rollup.config.js",
+    "build": "rollup --config ./rollup.config.mjs",
     "test-all": "npm run lint && npm test && npm run type-check",
     "test": "jest",
     "lint": "eslint src",
     "type-check": "tsc --project ./test/types",
-    "watch": "rollup --config ./rollup.config.js --watch"
+    "watch": "rollup --config ./rollup.config.mjs --watch"
   },
   "repository": {
     "type": "git",
