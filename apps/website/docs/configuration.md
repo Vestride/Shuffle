@@ -32,7 +32,7 @@ A static number or function that returns a number which determines how wide the 
 
 Default: `null`
 
-A static number or function that returns a number which determines how wide the columns are (in pixels).
+Set a delimiter to parse the `data-groups` attribute with using `String.prototype.split()`, instead of using `JSON.parse()`. For example, if your HTML was `data-groups="nature,city"`, you could set `delimiter: ','`.
 
 ### `easing` [string]
 
