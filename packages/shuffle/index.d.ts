@@ -25,7 +25,7 @@ export interface ShuffleOptions {
    * A static number or function that returns a number which determines
    * how wide the columns are (in pixels).
    */
-  columnWidth?: number | ((conatinerWidth: number) => number);
+  columnWidth?: number | ((containerWidth: number) => number);
 
   /**
    * If your group is not json, and is comma delimited, you could set delimiter to ','.
@@ -53,7 +53,7 @@ export interface ShuffleOptions {
    * A static number or function that determines how wide the gutters
    * between columns are (in pixels).
    */
-  gutterWidth?: number | ((conatinerWidth: number) => number);
+  gutterWidth?: number | ((containerWidth: number) => number);
 
   /**
    * Shuffle can be initialized with a sort object. It is the same object
