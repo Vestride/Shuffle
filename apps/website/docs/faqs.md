@@ -38,7 +38,7 @@ The padding is ignored by Shuffle because it creates complexities with absolute 
 
 Yes. Use the `isCentered` option.
 
-## It’s not working with Boostrap 4
+## It’s not working with Bootstrap 4
 
 Bootstrap 4 uses flexbox for grids, so your main shuffle container element must be a `.row` and the items inside the row (shuffle items) should all be columns. See the [Bootstrap 4 grid demo](https://codepen.io/Vestride/details/weWbJQ).
 

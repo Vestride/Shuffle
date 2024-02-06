@@ -22,7 +22,7 @@ Default: `0.01`
 
 Reading the width of elements isn't precise enough and can cause columns to jump between values.
 
-### `columnWidth` [number | (conatinerWidth: number) => number]
+### `columnWidth` [number | (containerWidth: number) => number]
 
 Default: `0`
 
@@ -52,7 +52,7 @@ Default: `Shuffle.ALL_ITEMS` (`"all"`)
 
 Initial filter group.
 
-### `gutterWidth` [number | (conatinerWidth: number) => number]
+### `gutterWidth` [number | (containerWidth: number) => number]
 
 Default: `0`
 

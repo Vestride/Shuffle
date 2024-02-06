@@ -30,7 +30,7 @@ export function getColumnSpan(itemWidth, columnWidth, columns, threshold) {
  * Retrieves the column set to use for placement.
  * @param {number} columnSpan The number of columns this current item spans.
  * @param {number} columns The total columns in the grid.
- * @return {Array.<number>} An array of numbers represeting the column set.
+ * @return {Array.<number>} An array of numbers representing the column set.
  */
 export function getAvailablePositions(positions, columnSpan, columns) {
   // The item spans only one column.

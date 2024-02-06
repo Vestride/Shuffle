@@ -300,7 +300,7 @@ class Shuffle extends TinyEmitter {
     const { speed, easing } = this.options;
     const positionProps = this.options.useTransforms ? ['transform'] : ['top', 'left'];
 
-    // Allow users to transtion other properties if they exist in the `before`
+    // Allow users to transition other properties if they exist in the `before`
     // css mapping of the shuffle item.
     const cssProps = Object.keys(ShuffleItem.Css.HIDDEN.before).map((k) => hyphenate(k));
     const properties = positionProps.concat(cssProps).join();
@@ -876,7 +876,7 @@ class Shuffle extends TinyEmitter {
     };
 
     // Layout all items again so that new items get positions.
-    // Synchonously apply positions.
+    // Synchronously apply positions.
     const itemPositions = this._getNextPositions(allSortedItemsSet.visible);
     allSortedItemsSet.visible.forEach((item, i) => {
       if (isNewItem(item)) {
@@ -1134,7 +1134,7 @@ Shuffle.FilterMode = {
   ALL: 'all',
 };
 
-// Overrideable options
+// Overridable options
 Shuffle.options = {
   // Initial filter group.
   group: Shuffle.ALL_ITEMS,
