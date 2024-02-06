@@ -1134,7 +1134,7 @@ Shuffle.FilterMode = {
   ALL: 'all',
 };
 
-// Overrideable options
+// Overridable options
 Shuffle.options = {
   // Initial filter group.
   group: Shuffle.ALL_ITEMS,
