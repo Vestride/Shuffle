@@ -26,14 +26,14 @@ For a more detailed changelog, visit [the latest releases](https://github.com/Ve
 - `v4.1.0` 2017-01-30 - Use webpack-2 to bundle Shuffle.
 - `v4.0.2` 2016-09-15 - Update `custom-event-polyfill` dependency.
 - `v4.0.1` 2016-07-30 - Fix `delimiter` option.
-- `v4.0.0` 2016-04-20 - Rewrite in ES6 with babel. Remove jQuery and Modernizr dependencies. Remove support for IE<11. Docs improvements. Switch to gulp build system with webpack.
+- `v4.0.0` 2016-04-20 - Rewrite in ES6 with babel. Remove jQuery and Modernizr dependencies. Remove support for IE&lt;11. Docs improvements. Switch to gulp build system with webpack.
 - `v3.1.0` 2015-03-23 - Allow zero speed option ([#64](https://github.com/Vestride/Shuffle/issues/64)) and cancel previous animations instead of ignoring new ones ([#69](https://github.com/Vestride/Shuffle/issues/69)). Handle non-integer columns better ([#46](https://github.com/Vestride/Shuffle/issues/46))
 - `v3.0.4` 2015-02-16 - Publish to NPM.
 - `v3.0.2` 2015-01-21 - Remove from jQuery plugins directory.
 - `v3.0.1` 2014-12-29 - Add CommonJS support.
 - `v3.0.0` 2014-10-06 - Refactored with improvements, added unit tests, more documentation. Removed some triggered events.
 - `v2.1.2` 2014-06-01 - Use `window.jQuery` instead of `window.$` to work better with noConflict. Fixed [#25](https://github.com/Vestride/Shuffle/issues/25).
-- `v2.1.1` 2014-04-16 - Fix items with zero opacity overlapping visible ones in IE<10.
+- `v2.1.1` 2014-04-16 - Fix items with zero opacity overlapping visible ones in IE&lt;10.
 - `v2.1.0` 2014-04-12 - Register with bower as `shufflejs`.
 - 2014-04-10 - Add AMD support.
 - 2014-04-08 - Separate Modernizr into its own file and custom Shuffle build.
