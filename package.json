@@ -31,12 +31,12 @@
     "rollup": "^3.17.2",
     "rollup-plugin-terser": "^7.0.2",
     "sinon": "^15.1.0",
-    "turbo": "1.11.2",
+    "turbo": "^1.12.4",
     "typescript": "^4.9.5"
   },
   "engines": {
     "npm": ">=7.0.0",
-    "node": ">=16.15.1"
+    "node": ">=20.11.1"
   },
   "packageManager": "yarn@1.22.19",
   "dependencies": {}
