@@ -176,55 +176,56 @@ describe('shuffle', () => {
       expect(instance.positions).toEqual([40, 40, 30, 30]);
     });
 
-    it('can filter by the data attribute', (done) => {
-      instance = new Shuffle(fixture, {
-        speed: 0,
-      });
-
-      function second() {
-        expect(instance.visibleItems).toBe(3);
-        const hidden = [3, 4, 5, 6, 7, 8, 10].map((num) => id(`item${num}`));
-
-        const visible = [1, 2, 9].map((num) => id(`item${num}`));
-
-        hidden.forEach((element) => {
-          expect(element.classList.contains(Shuffle.Classes.HIDDEN)).toBe(true);
-          expect(element.style.visibility).toBe('hidden');
+    it('can filter by the data attribute', () =>
+      new Promise((done) => {
+        instance = new Shuffle(fixture, {
+          speed: 0,
         });
 
-        visible.forEach((element) => {
-          expect(element.classList.contains(Shuffle.Classes.VISIBLE)).toBe(true);
-          expect(element.style.visibility).toBe('visible');
-        });
+        function second() {
+          expect(instance.visibleItems).toBe(3);
+          const hidden = [3, 4, 5, 6, 7, 8, 10].map((num) => id(`item${num}`));
 
-        instance.once(Shuffle.EventType.LAYOUT, third);
+          const visible = [1, 2, 9].map((num) => id(`item${num}`));
 
-        // Filter by green.
-        instance.filter('green');
-      }
+          hidden.forEach((element) => {
+            expect(element.classList.contains(Shuffle.Classes.HIDDEN)).toBe(true);
+            expect(element.style.visibility).toBe('hidden');
+          });
 
-      function third() {
-        expect(instance.visibleItems).toBe(2);
-        const hidden = [1, 2, 5, 6, 7, 8, 9, 10].map((num) => id(`item${num}`));
+          visible.forEach((element) => {
+            expect(element.classList.contains(Shuffle.Classes.VISIBLE)).toBe(true);
+            expect(element.style.visibility).toBe('visible');
+          });
 
-        const visible = [3, 4].map((num) => id(`item${num}`));
+          instance.once(Shuffle.EventType.LAYOUT, third);
 
-        hidden.forEach((element) => {
-          expect(element.classList.contains(Shuffle.Classes.HIDDEN)).toBe(true);
-          expect(element.style.visibility).toBe('hidden');
-        });
+          // Filter by green.
+          instance.filter('green');
+        }
 
-        visible.forEach((element) => {
-          expect(element.classList.contains(Shuffle.Classes.VISIBLE)).toBe(true);
-          expect(element.style.visibility).toBe('visible');
-        });
+        function third() {
+          expect(instance.visibleItems).toBe(2);
+          const hidden = [1, 2, 5, 6, 7, 8, 9, 10].map((num) => id(`item${num}`));
 
-        done();
-      }
+          const visible = [3, 4].map((num) => id(`item${num}`));
 
-      instance.once(Shuffle.EventType.LAYOUT, second);
-      instance.filter('design');
-    });
+          hidden.forEach((element) => {
+            expect(element.classList.contains(Shuffle.Classes.HIDDEN)).toBe(true);
+            expect(element.style.visibility).toBe('hidden');
+          });
+
+          visible.forEach((element) => {
+            expect(element.classList.contains(Shuffle.Classes.VISIBLE)).toBe(true);
+            expect(element.style.visibility).toBe('visible');
+          });
+
+          done();
+        }
+
+        instance.once(Shuffle.EventType.LAYOUT, second);
+        instance.filter('design');
+      }));
 
     it('can initialize filtered and the category parameter is optional', () => {
       instance = new Shuffle(fixture, {

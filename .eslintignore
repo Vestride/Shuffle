@@ -2,3 +2,4 @@ dist
 js
 test
 _site
+vitest.config.ts

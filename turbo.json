@@ -7,6 +7,10 @@
     },
     "lint": {},
     "test": {},
+    "test:watch": {
+      "cache": false,
+      "persistent": true
+    },
     "watch": {
       "cache": false
     }
