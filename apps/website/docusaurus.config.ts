@@ -7,8 +7,8 @@ const { github: lightCodeTheme, dracula: darkCodeTheme } = themes;
 export default {
   title: 'Shuffle.js',
   tagline: 'Categorize, sort, and filter a responsive grid of items',
-  url: 'https://vestride.github.io/',
-  baseUrl: '/Shuffle/',
+  url: 'https://shuffle.js.org/',
+  baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.png',

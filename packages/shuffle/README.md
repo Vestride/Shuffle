@@ -25,7 +25,7 @@ const shuffleInstance = new Shuffle(document.getElementById('grid'), {
 
 This project was inspired by [Isotope](http://isotope.metafizzy.co/) and [Packery](http://packery.metafizzy.co/).
 
-[homepage]: https://vestride.github.io/Shuffle/
+[homepage]: https://shuffle.js.org
 [actions-img]: https://github.com/Vestride/Shuffle/actions/workflows/build.yml/badge.svg?branch=main
 [npm-url]: https://www.npmjs.com/package/shufflejs
 [npm-img]: https://img.shields.io/npm/v/shufflejs.svg
