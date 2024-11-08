@@ -18,32 +18,13 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
+
       - name: Lint files
         run: yarn run lint
+
       - name: Build library and website
         run: yarn run build
+
       - name: Run unit tests
         run: yarn test
-
-  test-deploy:
-    name: Test deployment
-    needs: build # make the build job run first
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: yarn
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      - name: Test build website
-        run: yarn build
