@@ -26,8 +26,9 @@
   "sideEffects": false,
   "scripts": {
     "build": "rollup --config ./rollup.config.mjs",
-    "test-all": "npm run lint && npm test && npm run type-check",
-    "test": "jest",
+    "test": "npm run test:unit && npm run type-check",
+    "test:unit": "vitest",
+    "test:watch": "vitest --watch",
     "lint": "eslint src",
     "type-check": "tsc --project ./test/types",
     "watch": "rollup --config ./rollup.config.mjs --watch"
