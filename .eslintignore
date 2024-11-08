@@ -3,3 +3,4 @@ js
 test
 _site
 vitest.config.ts
+docusaurus.config.ts
