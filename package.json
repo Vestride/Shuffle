@@ -36,7 +36,7 @@
   },
   "engines": {
     "npm": ">=10.9.0",
-    "node": ">=22.11.0"
+    "node": ">=22.10.0"
   },
   "packageManager": "yarn@1.22.19",
   "dependencies": {}
